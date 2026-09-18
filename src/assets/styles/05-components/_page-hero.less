@@ -85,15 +85,26 @@
       align-items: center;
       gap: 0.5625rem; // 9
       line-height: 1.96; // 29.4
+      min-height: var(--tap-size);
       @media (min-width: @bp-lg) { flex-direction: row-reverse; }
+      @media @fine-lg { min-height: 0; }
       + li { line-height: var(--line-height-body); }
     }
     a {
+      .tap-area();
+      @media @fine-lg {
+        &::before { display: none; }
+      }
       color: var(--color-white);
       font-family: var(--font-ui);
       font-weight: var(--font-weight-semibold);
       letter-spacing: var(--letter-spacing-ui);
       &:hover { color: var(--color-secondary); }
+      span {
+        font-family: var(--font-body);
+        font-weight: var(--font-weight-regular);
+        letter-spacing: var(--letter-spacing-body);
+      }
     }
     .icon {
       width: 1.4375rem;  // 23 glyph centred in the 29 column

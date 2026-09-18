@@ -6,6 +6,9 @@
 @bp-lg: 62em;    // 992
 @bp-xl: 75em;    // 1200
 @bp-xxl: 87.5em; // 1400
+// Compact Figma hit areas only apply to a mouse at desktop widths; touch screens keep 44px targets
+@fine-lg: ~"(min-width: 62em) and (hover: hover) and (pointer: fine)";
+@fine-xl: ~"(min-width: 75em) and (hover: hover) and (pointer: fine)";
 
 :root {
   /* Colours — named as in Figma */
@@ -45,7 +48,7 @@
 
   --font-size-xs: 0.75rem;      /* 12 */
   --font-size-sm: 0.8125rem;    /* 13 */
-  --font-size-base: 0.9375rem;  /* 15 */
+  --font-size-base: 1rem;       /* 16 on phones, 15 from md as designed */
   --font-size-md: 1rem;         /* 16 */
   --font-size-lg: 1.1875rem;    /* 19 */
   --font-size-xl: 1.5625rem;    /* 25 */
@@ -111,8 +114,10 @@
   /* Layout */
   --container-max: 80rem;        /* 1280 incl. gutters → 1240 content */
   --container-content: 77.5rem;  /* 1240 */
-  --container-gutter: 1.25rem;   /* 20 */
-  --edge-gutter: 1.25rem;        /* header + footer side padding (3.75rem from xl) */
+  /* 20 on phones, 32 from md, 40 from lg, 20 inside the 1280 frame at xxl; never less than a notch inset */
+  --container-gutter: ~"max(1.25rem, env(safe-area-inset-left), env(safe-area-inset-right))";
+  --edge-gutter: var(--container-gutter); /* header + footer side padding (3.75rem at xxl) */
+  --tap-size: 2.75rem;           /* 44: minimum touch target */
   --header-height: 5rem;         /* 6.875rem from lg */
   --control-height: 3rem;        /* 48 — buttons, tabs, arrows */
   --marker-size: 1.5625rem;      /* 25 — hotspot dots */
@@ -130,9 +135,21 @@
   --z-header: 100;
 }
 
-@media (min-width: @bp-lg) {
-  :root { --header-height: 6.875rem; }
+@media (min-width: @bp-md) {
+  :root {
+    --font-size-base: 0.9375rem;
+    --container-gutter: ~"max(2rem, env(safe-area-inset-left), env(safe-area-inset-right))";
+  }
 }
-@media (min-width: @bp-xl) {
-  :root { --edge-gutter: 3.75rem; }
+@media (min-width: @bp-lg) {
+  :root {
+    --header-height: 6.875rem;
+    --container-gutter: ~"max(2.5rem, env(safe-area-inset-left), env(safe-area-inset-right))";
+  }
+}
+@media (min-width: @bp-xxl) {
+  :root {
+    --container-gutter: 1.25rem;
+    --edge-gutter: 3.75rem;
+  }
 }

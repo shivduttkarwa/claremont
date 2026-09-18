@@ -9,14 +9,22 @@
   --footer-leading: 1rem;            // 13 type in 16 boxes
   --footer-leading-sm: 0.9375rem;    // 12 type in 15 boxes
 
+  --footer-text: 0.875rem;  // 14 below the designed desktop footer
+  --footer-small: 0.8125rem; // 13
+
   background: var(--color-primary-dark);
   color: var(--color-muted);
   font-family: var(--font-ui);
-  font-size: var(--font-size-sm);
-  line-height: var(--footer-leading);
+  font-size: var(--footer-text);
+  line-height: 1.45;
   letter-spacing: 0;
-  padding-block: var(--space-8) var(--space-6);
-  @media (min-width: @bp-xl) { padding-block: var(--footer-pad-top) var(--footer-pad-bottom); }
+  padding-block: var(--space-8) ~"calc(var(--space-6) + env(safe-area-inset-bottom))";
+  @media (min-width: @bp-xl) {
+    --footer-text: var(--font-size-sm);
+    --footer-small: var(--font-size-xs);
+    line-height: var(--footer-leading);
+    padding-block: var(--footer-pad-top) var(--footer-pad-bottom);
+  }
 
   a:not(.btn) {
     color: inherit;
@@ -26,7 +34,7 @@
   h2 {
     margin: 0 0 var(--footer-heading-gap);
     font-family: var(--font-ui);
-    font-size: var(--font-size-xs);
+    font-size: var(--footer-small);
     font-weight: var(--font-weight-bold);
     line-height: var(--footer-leading-sm);
     letter-spacing: 0;
@@ -38,6 +46,10 @@
     gap: var(--space-6) var(--space-4);
     @media (min-width: @bp-md) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     @media (min-width: @bp-xl) {
+      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 0.7fr) minmax(0, 1fr);
+      gap: 0 var(--space-6);
+    }
+    @media (min-width: @bp-xxl) {
       grid-template-columns: 30.4375rem 18.75rem 11.75rem minmax(0, 1fr); // 487 / 300 / 188 / rest
       gap: 0 var(--footer-col-gap);
     }
@@ -54,7 +66,7 @@
 
   &__about p {
     margin-bottom: var(--footer-heading-gap);
-    line-height: 1.25rem; // 20
+    @media (min-width: @bp-xl) { line-height: 1.25rem; } // 20
   }
 
   // The footer uses the button component scaled to 41.3 tall (13.77 type)
@@ -64,21 +76,36 @@
     gap: 0.8609rem; // 13.77
     margin-bottom: var(--footer-heading-gap);
     .btn {
-      --bs-btn-font-size: 0.8606rem;
-      --bs-btn-padding-x: 1.2913rem;
-      --bs-btn-padding-y: calc((2.5825rem - 1.2em - var(--border-width) * 2) / 2);
+      .tap-area();
+      @media (min-width: @bp-xl) {
+        --bs-btn-font-size: 0.8606rem;
+        --bs-btn-padding-x: 1.2913rem;
+        --bs-btn-padding-y: calc((2.5825rem - 1.2em - var(--border-width) * 2) / 2);
+      }
     }
   }
 
+  // Touch: 44 anchors around the 32 glyphs, pulled back so the first glyph keeps its left edge
   &__social {
     .reset-list();
     display: flex;
-    gap: var(--space-1);
+    gap: 0;
+    margin-left: -0.375rem;
+    @media @fine-xl {
+      gap: var(--space-1);
+      margin-left: 0;
+    }
     li { display: flex; }
     a:not(.btn) {
       display: inline-flex;
-      width: 2rem;
-      height: 2rem;
+      width: var(--tap-size);
+      height: var(--tap-size);
+      padding: 0.375rem;
+      @media @fine-xl {
+        width: 2rem;
+        height: 2rem;
+        padding: 0;
+      }
       color: var(--color-white);
       transition: transform var(--duration-fast) var(--ease-out), color var(--duration-fast) ease;
       &:hover { color: var(--color-secondary); transform: translateY(-0.125rem); }
@@ -97,7 +124,7 @@
   &__label {
     display: block;
     margin-bottom: 0.25rem; // 4
-    font-size: var(--font-size-xs);
+    font-size: var(--footer-small);
     font-weight: var(--font-weight-bold);
     line-height: var(--footer-leading-sm);
     color: var(--color-white);
@@ -107,12 +134,19 @@
     .reset-list();
     display: flex;
     flex-direction: column;
-    gap: 0.75rem; // 12
+    gap: 0;
+    margin-block: -0.75rem;
+    @media @fine-xl {
+      gap: 0.75rem; // 12
+      margin-block: 0;
+    }
     li { display: flex; }
     a:not(.btn) {
       display: inline-flex;
       align-items: center;
       gap: var(--space-1); // 8
+      min-height: var(--tap-size);
+      @media @fine-xl { min-height: 0; }
       .icon {
         width: 0.75rem;
         height: 0.75rem;
@@ -122,6 +156,23 @@
     }
   }
 
+  &__contact {
+    gap: 0.25rem;
+    @media @fine-xl { gap: var(--space-2); }
+    .site-footer__label {
+      margin-bottom: 0;
+      @media @fine-xl { margin-bottom: 0.25rem; }
+    }
+    p a {
+      display: inline-flex;
+      align-items: center;
+      min-height: var(--tap-size);
+      @media @fine-xl {
+        display: inline;
+        min-height: 0;
+      }
+    }
+  }
   &__contact li {
     display: flex;
     align-items: flex-start;
@@ -139,9 +190,13 @@
     gap: var(--space-3);
     margin-top: var(--space-6);
     @media (min-width: @bp-xl) {
+      grid-template-columns: minmax(0, 2.6fr) minmax(0, 1fr);
+      gap: var(--space-6);
+      margin-top: var(--footer-bottom-gap);
+    }
+    @media (min-width: @bp-xxl) {
       grid-template-columns: 55.5625rem minmax(0, 1fr); // 889, copyright starts at x 1003
       gap: 3.375rem;                                     // 54
-      margin-top: var(--footer-bottom-gap);
     }
   }
 
@@ -155,7 +210,7 @@
 
   &__copy {
     margin: 0;
-    font-size: var(--font-size-xs);
+    font-size: var(--footer-small);
     line-height: var(--footer-leading-sm);
   }
 }

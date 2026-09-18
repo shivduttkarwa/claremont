@@ -4,12 +4,13 @@
   --contact-pad-top: 7.8125rem;     // 125
   --contact-pad-bottom: 7.75rem;    // 124
   --contact-icon-col: 2.1875rem;    // 35
-  --contact-row: 2.1875rem;         // 35 between detail rows
+  --contact-row: var(--tap-size);   // 44 on touch, 35 as designed for a mouse
   --contact-field-gap: 1.9375rem;   // 31
   --contact-rule: var(--color-text);
 
   padding-block: var(--space-8);
   @media (min-width: @bp-lg) { padding-block: var(--contact-pad-top) var(--contact-pad-bottom); }
+  @media @fine-lg { --contact-row: 2.1875rem; }
 
   // --- Details ---
   &__details {
@@ -47,6 +48,7 @@
       color: var(--color-heading);
     }
     a {
+      min-height: var(--contact-row);
       color: inherit;
       &:hover { color: var(--color-heading); }
     }
@@ -71,13 +73,16 @@
       color: var(--color-text);
     }
 
+    // Touch: 16px type (iOS zooms the page on anything smaller) in a 44 field
     .form-control {
-      padding: 0 0 0.46875rem; // rule 31 under the value top
+      padding: 0.625rem 0;
+      @media @fine-lg { padding: 0 0 0.46875rem; } // rule 31 under the value top
       border-width: 0 0 var(--border-width);
       border-color: var(--contact-rule);
       border-radius: var(--radius-none);
       background: transparent;
-      font-size: var(--font-size-base);
+      font-size: var(--font-size-md);
+      @media @fine-lg { font-size: var(--font-size-base); }
       line-height: var(--line-height-body);
       letter-spacing: var(--letter-spacing-body);
       color: var(--color-text);
@@ -90,12 +95,16 @@
     }
 
     textarea.form-control {
-      height: 7.4375rem;     // 119: placeholder sits on the last line, as designed
-      min-height: 7.4375rem;
-      padding-top: 5.5rem;
+      min-height: 8rem;
       resize: vertical;
-      &:focus,
-      &:not(:placeholder-shown) { padding-top: 0.5rem; }
+      // 119 tall with the placeholder on the last line, as designed
+      @media @fine-lg {
+        height: 7.4375rem;
+        min-height: 7.4375rem;
+        padding-top: 5.5rem;
+        &:focus,
+        &:not(:placeholder-shown) { padding-top: 0.5rem; }
+      }
     }
   }
 

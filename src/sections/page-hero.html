@@ -6,7 +6,7 @@
      locals: title, image, width, height, aside (HTML list items, or empty), modifier -->
 <section class="page-hero {{ modifier }}" aria-labelledby="page-title" data-anim-parallax-trigger>
   <div class="page-hero__media" aria-hidden="true">
-    <img class="page-hero__img" src="{{ image }}" alt="" width="{{ width }}" height="{{ height }}"
+    <img class="page-hero__img" fetchpriority="high" decoding="async" src="{{ image }}" alt="" width="{{ width }}" height="{{ height }}"
          data-anim="parallax" data-anim-axis="y" data-anim-speed="12" data-anim-reverse data-anim-start="top top" data-anim-disable-mobile>
   </div>
 

@@ -11,7 +11,9 @@ body {
   font-family: var(--font-body);
   letter-spacing: var(--letter-spacing-body);
   overflow-x: hidden;
+  overflow-x: clip;
   -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
 }
 
 img,
@@ -29,6 +31,13 @@ a {
 button {
   font: inherit;
   letter-spacing: inherit;
+}
+
+a,
+button,
+input,
+textarea {
+  touch-action: manipulation;
 }
 
 :focus-visible {

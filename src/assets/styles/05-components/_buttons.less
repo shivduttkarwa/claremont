@@ -111,13 +111,19 @@
   }
   &--prev .icon { transform: rotate(180deg); }
 
-  &:hover,
   &:focus-visible {
     background: var(--color-primary);
     color: var(--color-white);
   }
-  &--next:hover .icon { transform: translateX(0.1875rem); }
-  &--prev:hover .icon { transform: rotate(180deg) translateX(0.1875rem); }
+  // A tapped arrow stays on screen, so hover only styles devices that really hover
+  @media (hover: hover) {
+    &:hover {
+      background: var(--color-primary);
+      color: var(--color-white);
+    }
+    &--next:hover .icon { transform: translateX(0.1875rem); }
+    &--prev:hover .icon { transform: rotate(180deg) translateX(0.1875rem); }
+  }
 
   &:disabled {
     opacity: 0.4;

@@ -38,12 +38,13 @@
   --bs-focus-ring-color: rgba(194, 225, 255, 0.6);
 }
 
-// Containers: 1240 content width at xxl, 20px gutters; header/footer use the wider edge gutter.
+// Fluid up to the 1240 content width, so every block shares one gutter at every breakpoint
 .container,
 .container-fluid {
   --bs-gutter-x: calc(var(--container-gutter) * 2);
 }
 .container {
+  max-width: calc(var(--container-content) + var(--container-gutter) * 2);
   @media (min-width: @bp-xxl) { max-width: var(--container-max); }
 }
 .container-edge {

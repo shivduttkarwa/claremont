@@ -1,12 +1,12 @@
 // 04-layout/_header.less — transparent header over hero imagery
 
 .site-header {
-  --header-logo-width: 11rem;
+  --header-logo-width: ~"clamp(11.5rem, 52vw, 13.5rem)"; // legible wordmark beside two 44px tools
   --header-logo-top: 0;
   --header-right-top: 0;
   --header-nav-gap: var(--space-4);
   --header-tools-gap: var(--space-1);
-  --header-tool-size: 2.5rem; // 40 hit area around each icon
+  --header-tool-size: var(--tap-size);
 
   position: absolute;
   inset: 0 0 auto;
@@ -22,6 +22,7 @@
     --header-right-top: 2.5625rem;   // 41: icon boxes centred on y 61
     --header-nav-gap: 2.625rem;      // 42
     --header-tools-gap: 0.375rem;    // 6 between the 40px hit areas → 29 between glyphs
+    --header-tool-size: 2.5rem;      // 40
   }
 
   &__inner {
@@ -63,7 +64,7 @@
   }
 
   &__link {
-    position: relative;
+    .tap-area();
     padding-block: 0.25rem;
     font-family: var(--font-ui);
     font-size: var(--font-size-md);
@@ -113,6 +114,7 @@
     background: none;
     color: var(--color-white);
     transition: transform var(--duration-fast) var(--ease-out), color var(--duration-fast) ease;
+    .tap-area();
     .icon { width: 1.25rem; height: 1.25rem; }          // search 20 × 20
     &--secondary .icon { width: 1.125rem; height: 1.375rem; } // pin 18 × 22
     &:hover { color: var(--color-secondary); transform: translateY(-0.125rem); }
@@ -150,13 +152,30 @@
 
 // Mobile menu (Bootstrap offcanvas, themed via --bs-offcanvas-* in 01-settings)
 .site-menu {
+  --header-logo-width: 12.5rem;
+  &:focus-visible { outline: 0; } // Bootstrap focuses the panel itself on open
+  --header-logo-top: 0;
+  .offcanvas-header {
+    justify-content: space-between;
+    padding-top: ~"max(var(--space-3), env(safe-area-inset-top))";
+  }
+  .offcanvas-body { padding-bottom: ~"max(var(--space-3), env(safe-area-inset-bottom))"; }
+  .btn-close {
+    width: var(--tap-size);
+    height: var(--tap-size);
+    padding: 0;
+    margin: 0 -0.75rem 0 auto;
+  }
   &__nav {
     display: flex;
     flex-direction: column;
-    gap: var(--space-2);
-    margin-bottom: var(--space-6);
+    gap: var(--space-1);
+    margin-bottom: var(--space-5);
   }
   &__link {
+    display: flex;
+    align-items: center;
+    min-height: var(--tap-size);
     font-size: var(--font-size-xl);
     line-height: var(--line-height-snug);
     color: var(--color-white);

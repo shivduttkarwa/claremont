@@ -31,8 +31,9 @@ async function buildCss() {
     paths: ["node_modules", `${SRC}/assets/styles`],
   });
   const prefixed = await postcss([autoprefixer]).process(out.css, { from: undefined });
+  const css = DEV ? prefixed.css : (await esbuild.transform(prefixed.css, { loader: "css", minify: true, legalComments: "none" })).code;
   fs.mkdirSync(`${DIST}/assets/css`, { recursive: true });
-  fs.writeFileSync(`${DIST}/assets/css/main.css`, prefixed.css);
+  fs.writeFileSync(`${DIST}/assets/css/main.css`, css);
 }
 
 // --- HTML (partial includes) ----------------------------------------

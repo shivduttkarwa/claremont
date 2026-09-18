@@ -73,6 +73,17 @@ Known, deliberate differences:
 
 The `.qa/` folder (scripts, Figma JSON, access token) is git-ignored and local to the machine that ran the audit.
 
+## Phone and tablet
+
+Figma has no mobile or tablet frames, so these layouts follow common practice and are checked by `node .qa/mobile-audit.mjs` at 360, 390, 768, 820, 1024 and 1280 on every page. At the last run it reported nothing: no horizontal overflow, no touch target under 44px, no text under 12px, no form control under 16px.
+
+- One fluid gutter for every block (20px phone, 32px tablet, 40px small laptop), which also respects the notch in landscape.
+- Touch targets are at least 44px: header icons, menu links and close button, footer buttons, links and social icons, contact links, form fields, hotspot dots. Where the Figma size is smaller it only applies at desktop width with a mouse.
+- Form fields use 16px type on touch so iOS does not zoom the page on focus. Body copy is 16px on phones and the designed 15px from tablet up.
+- The footer keeps its exact Figma columns from 1400px; between 1200 and 1399 it uses proportional columns, because the fixed ones need about 1440px.
+- The mobile menu shows the logo at a fixed size with a 44px close button.
+- Loading: the hero photo is fetched first, all other images are lazy and decode off the main thread, the logo file is sized to twice its largest slot, and production CSS is minified. A page weighs 180 to 490 KB of images, 42 KB of CSS and 64 KB of JS gzipped.
+
 ## Assumptions / to confirm with the client
 
 1. **Argent CF** is a licensed font and was not supplied. `Instrument Serif` stands in, so display headings are narrower than in Figma and some wrap differently. Drop `ArgentCF-Thin.woff2` / `ArgentCF-ThinItalic.woff2` into `src/assets/fonts/` and uncomment the two `@font-face` rules in `03-base/_fonts.less`; the `--font-display` stack already lists it first.

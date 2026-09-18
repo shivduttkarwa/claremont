@@ -28,6 +28,15 @@ Stack: plain **HTML** pages · Bootstrap 5.3 (CSS-variable themed) · **LESS** (
 - Animation only via `data-anim-*` (loops use `data-anim-group` on the parent). Reveal animations leave an inline `opacity` on the element, so state styles that touch opacity go on a child. Banner photos use `.parallax-media(@travel)`; the inner hero uses the spare image Figma has below the frame (exact at rest).
 - No inline styles. Data-driven positions (hotspots) use modifier classes that set `--x` / `--y`.
 
+## Phone + tablet
+- Figma only designs 1640. Everything below is mobile-first interpretation, checked with `node .qa/mobile-audit.mjs <widths> [page …]` (overflow, tap targets under 44, text under 12, inputs under 16, oversized images). It must print no findings from 360 to 1366.
+- **One gutter everywhere**: `.container` is fluid up to the 1240 content width and every full-bleed block pads with `--container-gutter` (20 phone, 32 from md, 40 from lg, notch-aware through `env(safe-area-inset-*)`). Never reintroduce Bootstrap's fixed container widths.
+- **Touch targets are 44 (`--tap-size`)**. Base styles are the touch size; the compact Figma size goes inside `@media @fine-lg` / `@fine-xl` (desktop width + a real mouse). Where the layout must not move, `.tap-area()` adds an invisible 44 hit area through `::before`; never on stacked links closer than 44 apart, and not on elements that already use `::before`.
+- Form controls are 16px on touch (iOS zooms the page below that); body copy is 16 on phones, 15 from md.
+- Hover styling on controls that stay on screen (carousel arrows) sits inside `@media (hover: hover)`.
+- Desktop-only measures (`max-width` for the zigzag timeline, fixed footer columns) start at the breakpoint that needs them, not before.
+- Hero images carry `fetchpriority="high"`; everything below the fold is `loading="lazy" decoding="async"`. Production CSS is minified by esbuild in `build.mjs`.
+
 ## QA
 - **Never build a section from a guess.** Read its Figma nodes first (`python .qa/find.py <page-id> "<text>"` shows a text's box, style and parent frames; `.qa/extract.py <page-id>` dumps a page).
 - `bash .qa/audit.sh summary|full [page …]` builds, measures each page at 1640 (`measure.mjs`) and compares with Figma (`compare.py` for sections + text runs, `compare-img.py` for photo boxes). A change is done when the page shows no `<<<` section flags and no text run off by more than ~3px. Expected noise: the two logos (Figma frame is wider than the artwork), `weight 400 vs 100` (Argent CF stand-in), the hero subtitle `dy +5` (mixed line heights), labels joined by `<br>`.
