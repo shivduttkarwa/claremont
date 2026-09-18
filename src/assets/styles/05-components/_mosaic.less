@@ -1,8 +1,4 @@
-// =====================================================================
-// 05-components/_mosaic.less — 4 × 4 mosaic of photos and text cards (1611 tall at 1640).
-// Heading at 110, copy at (822, 123), grid from 233, 140 below. Cells are 306 square on a 6 gutter;
-// --wide spans two columns, --tall spans two rows. DOM order alone produces the designed layout.
-// =====================================================================
+// 05-components/_mosaic.less — 4 × 4 mosaic of photos and text cards; DOM order alone produces the layout
 
 .mosaic {
   --mosaic-pad-top: 6.875rem;      // 110
@@ -35,6 +31,7 @@
     gap: var(--mosaic-gap);
     @media (min-width: @bp-sm) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     @media (min-width: @bp-lg) { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    @media (min-width: @bp-xxl) { grid-template-rows: 19rem 19rem 19.125rem 19.125rem; } // rows start 233 / 543 / 853 / 1165
   }
 
   &__cell {
@@ -48,8 +45,14 @@
         aspect-ratio: 617 / 306;
       }
     }
+    // Two-column layout: tall cards run wide so no cell is left empty beside them
     &--tall {
       @media (min-width: @bp-sm) {
+        grid-column: span 2;
+        aspect-ratio: 617 / 306;
+      }
+      @media (min-width: @bp-lg) {
+        grid-column: auto;
         grid-row: span 2;
         aspect-ratio: 306 / 617;
       }
@@ -68,6 +71,15 @@
     &--media&--wide {
       @media (min-width: @bp-sm) { aspect-ratio: 617 / 306; }
     }
+  }
+
+  // Rows are explicit at the design width, so the ratios step aside
+  &__cell,
+  &__cell--wide,
+  &__cell--tall,
+  &__cell--media,
+  &__cell--media&__cell--wide {
+    @media (min-width: @bp-xxl) { aspect-ratio: auto; }
   }
 
   // Title at (32, 32), pictogram frame 21 down and 26 in from the right, copy ending 28 above the edge

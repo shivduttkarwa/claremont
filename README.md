@@ -57,9 +57,21 @@ src/
 ## Design system
 
 - **Colours:** Green `#0d4749`, Dark Green `#053333`, Blue `#c2e1ff`, Light Blue `#f4faff`, Yellow `#ffec60`, Near Black `#2b2b2b`, Grey `#a3a3a3`.
-- **Type:** Instrument Sans (body, buttons, subheadings), Inter (nav, footer, labels), Argent CF Thin for display (see note below). Sizes are fluid `clamp()` tokens; 1rem = 16px; everything in rem.
-- **Spacing:** 8px system, `--space-1` (0.5rem) … `--space-26` (13rem).
+- **Type:** Instrument Sans (body, outline buttons, subheadings), Inter (nav, footer, labels, primary buttons), Argent CF Thin for display (see note below). Sizes are fluid `clamp()` tokens; 1rem = 16px; everything in rem.
+- **Spacing:** 8px system, `--space-1` (0.5rem) … `--space-26` (13rem), used for the mobile and tablet rhythm. At the design width each component carries the exact Figma value in rem, with the px figure in a trailing comment, because Figma is not on an 8px grid (hand-placed values such as 85, 99, 115, 237).
 - **Buttons:** square, 48px tall. `.btn-primary` (blue), `.btn-outline-primary` (green outline), `.btn-outline-light` (white outline), `.btn-sm` (footer), `.btn-icon` (label + icon).
+
+## Figma match
+
+Desktop is verified by measurement, not by eye. `bash .qa/audit.sh summary` builds the site, loads every page at 1640 wide, and compares it with the Figma node data: each section's offset and height, every text run's position, size, line height, weight, colour and family, and every photo's box. At the last run all ten pages were within 0 to 2px of Figma's total height, every section and photo box matched, and no text run was more than 3.5px from its Figma position.
+
+Known, deliberate differences:
+
+- **Argent CF** (below) is the one blocker to a literal match: display headings use a stand-in face, so glyph shapes and some line breaks differ even though their boxes are in position.
+- Figma places a few items by hand with 2 to 4px of scatter that does not repeat between pages (link-column headings at 34 / 35 / 38 / 41 inside their columns, one list label 21 instead of 18 below its rule, one form label in `#000` beside three in `#2b2b2b`). Those are normalised to one value.
+- Hand-placed Figma values that are consistent are kept, through modifiers: `page-hero--low-title` (Welcome), `timeline__item--tight`, `feature-banner--y168` / `--y237`, `btn-primary--sans` (the homepage hero button is the only primary not set in Inter), `btn-primary--ink` / `--deep` (label colour).
+
+The `.qa/` folder (scripts, Figma JSON, access token) is git-ignored and local to the machine that ran the audit.
 
 ## Assumptions / to confirm with the client
 

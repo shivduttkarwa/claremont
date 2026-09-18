@@ -1,8 +1,4 @@
-// =====================================================================
 // 05-components/_buttons.less — Bootstrap buttons re-themed via --bs-btn-*
-// Figma: square, 48 tall, 24 side padding, Instrument Sans Medium 16 / 1.2.
-// Figma strokes sit inside the box, so the border is taken off the padding.
-// =====================================================================
 
 .btn {
   --bs-btn-font-family: var(--font-body);
@@ -10,7 +6,7 @@
   --bs-btn-font-weight: var(--font-weight-medium);
   --bs-btn-line-height: var(--line-height-ui);
   --bs-btn-border-width: var(--border-width-rule);
-  --bs-btn-padding-x: calc(1.5rem - var(--bs-btn-border-width));
+  --bs-btn-padding-x: calc(1.5rem - var(--bs-btn-border-width)); // Figma strokes sit inside the 24 padding
   --bs-btn-padding-y: calc((var(--control-height) - 1.2em - var(--bs-btn-border-width) * 2) / 2);
   --bs-btn-border-radius: var(--radius-none);
   --bs-btn-focus-box-shadow: 0 0 0 0.25rem var(--bs-focus-ring-color);
@@ -25,6 +21,8 @@
 }
 
 .btn-primary {
+  --bs-btn-font-family: var(--font-ui);
+  letter-spacing: var(--letter-spacing-ui);
   --bs-btn-color: var(--color-primary);
   --bs-btn-bg: var(--color-secondary);
   --bs-btn-border-color: var(--color-secondary);
@@ -34,6 +32,12 @@
   --bs-btn-active-color: var(--color-primary);
   --bs-btn-active-bg: var(--color-blue-hover);
   --bs-btn-active-border-color: var(--color-blue-hover);
+}
+
+// Homepage hero button keeps the body face
+.btn-primary--sans {
+  --bs-btn-font-family: var(--font-body);
+  letter-spacing: var(--letter-spacing-body);
 }
 
 // Several Figma instances set the primary label in Near Black instead of Green

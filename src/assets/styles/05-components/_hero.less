@@ -1,6 +1,4 @@
-// =====================================================================
 // 05-components/_hero.less — homepage hero, 1182 tall at 1640 (header overlays it)
-// =====================================================================
 
 .hero {
   --hero-pad-top: calc(var(--header-height) + var(--space-8));
@@ -35,8 +33,7 @@
     }
   }
 
-  // The photo runs taller than the frame (Figma has spare image below the crop): that strip is the
-  // parallax travel, so the crop is exact at rest and the scrub never exposes the section behind.
+  // Spare image below the crop is the parallax travel, so the crop is exact at rest
   &__img {
     position: absolute;
     inset: 0 auto auto 0;
@@ -58,6 +55,7 @@
     font-size: var(--font-size-display);
     line-height: var(--line-height-display);
     color: var(--color-white);
+    @media (min-width: @bp-xxl) { margin-left: -0.125rem; } // x 198
   }
   &__title-line {
     display: block;

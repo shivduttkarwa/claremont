@@ -1,8 +1,4 @@
-// =====================================================================
-// 05-components/_article.less — news article body (1496 tall at 1640).
-// Standfirst at (198, 99) with the back button at 217; photo (724, 114) 712 × 388; copy from 542, 700 wide;
-// previous / next at 1348; 102 below.
-// =====================================================================
+// 05-components/_article.less — news article body
 
 .article {
   --article-pad-top: 6.1875rem;      // 99
@@ -39,7 +35,11 @@
     }
   }
 
-  &__body { max-width: var(--article-body-width); }
+  &__body {
+    max-width: var(--article-body-width);
+    p { margin-bottom: 0.625rem; } // 10
+    p:last-child { margin-bottom: 0; }
+  }
 
   // Previous / next article
   &__nav {
@@ -48,6 +48,7 @@
     max-width: var(--article-media-width);
     margin-top: var(--space-6);
     @media (min-width: @bp-sm) { grid-template-columns: 1fr 1fr; }
+    @media (min-width: @bp-lg) { margin-top: 5.6875rem; } // copy ends 1257, pager at 1348
   }
 
   &__nav-link {

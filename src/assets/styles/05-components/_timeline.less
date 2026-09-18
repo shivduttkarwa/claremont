@@ -1,14 +1,9 @@
-// =====================================================================
-// 05-components/_timeline.less — labelled steps zigzagging down a dotted centre line.
-// Figma: heading at 85, first step at 237, steps 1030 wide (x 305 → 1335), marker on the line at x 819.
-// Each step: label (28) on the rule, title 27 below it. Row rhythm is hand-set per page in Figma,
-// so each variant carries its own row template. Below lg: one column, line on the left.
-// =====================================================================
+// 05-components/_timeline.less — labelled steps zigzagging down a dotted centre line
 
 .timeline {
   --timeline-pad-top: 5.3125rem;      // 85
-  --timeline-pad-bottom: 5.3125rem;   // 85
-  --timeline-header-gap: 2.21875rem;  // copy ends 201.5, first step 237
+  --timeline-pad-bottom: 5.46875rem;  // 87.5
+  --timeline-header-gap: 3.625rem;    // copy ends 179, first step 237
   --timeline-width: 64.375rem;        // 1030
   --timeline-rows: none;
   --timeline-row: 9.875rem;           // fallback rhythm
@@ -17,7 +12,8 @@
   --timeline-dash: 0.125rem;          // 2 on, 2 off
   --timeline-text-width: 19rem;       // 304
   --timeline-title-width: 19.5rem;    // 305 box, a little slack for the stand-in serif
-  --timeline-title-gap: 1.1875rem;    // 19
+  --timeline-title-gap: 1.203125rem;  // 19.25
+  --timeline-title-gap-tight: 0.625rem; // 10
   --timeline-dots-x: repeating-linear-gradient(90deg, var(--color-primary) 0, var(--color-primary) var(--timeline-dash), transparent var(--timeline-dash), transparent calc(var(--timeline-dash) * 2));
   --timeline-dots-y: repeating-linear-gradient(180deg, var(--color-primary) 0, var(--color-primary) var(--timeline-dash), transparent var(--timeline-dash), transparent calc(var(--timeline-dash) * 2));
 
@@ -39,15 +35,19 @@
   &__header {
     position: relative;
     margin-bottom: var(--space-6);
-    @media (min-width: @bp-lg) { margin-bottom: var(--timeline-header-gap); }
+    @media (min-width: @bp-lg) {
+      display: grid;
+      grid-template-columns: 58.629% minmax(0, 1fr); // copy starts at x 927
+      margin-bottom: var(--timeline-header-gap);
+    }
     h2 {
       margin: 0 0 var(--space-3);
       @media (min-width: @bp-lg) { margin: 0; }
     }
     p {
-      max-width: 31.875rem;
+      max-width: 31.875rem; // 510
       margin: 0;
-      @media (min-width: @bp-lg) { margin: 0.25rem 0 0 0.25rem; } // (927, 89)
+      @media (min-width: @bp-lg) { margin-top: 0.25rem; }
     }
   }
 
@@ -130,9 +130,13 @@
   }
   &__item:nth-child(even) &__body {
     @media (min-width: @bp-lg) {
+      padding-top: 1.875rem; // 30
       h3,
       p { margin-inline-start: auto; }
     }
+  }
+  &__item--tight {
+    @media (min-width: @bp-lg) { --timeline-title-gap: var(--timeline-title-gap-tight); }
   }
 
   &__marker {
@@ -169,6 +173,7 @@
   &--day {
     @media (min-width: @bp-xxl) {
       --timeline-rows: 9.75rem 10rem 9.75rem 10.1875rem 9.75rem 9.9375rem 9.75rem 10.0625rem 11.5rem auto;
+      --timeline-row: 0rem;
     }
   }
 
@@ -178,10 +183,11 @@
     @media (min-width: @bp-lg) {
       --timeline-row: 11.375rem;
       --timeline-header-gap: 7.203125rem;
-      --timeline-pad-bottom: 9.625rem;
+      --timeline-pad-bottom: 10.21875rem; // 163.5
     }
     @media (min-width: @bp-xxl) {
       --timeline-rows: 11.1875rem 11.5rem 11.5625rem 11.6875rem auto;
+      --timeline-row: 0rem;
     }
   }
 }

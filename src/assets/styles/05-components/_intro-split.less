@@ -1,7 +1,4 @@
-// =====================================================================
-// 05-components/_intro-split.less — display-serif statement left, copy right.
-// Figma fixes the band height per page (291 / 308 / 382) with the copy starting 99 down.
-// =====================================================================
+// 05-components/_intro-split.less — display-serif statement left, copy right
 
 .intro-split {
   --intro-pad-top: 6.1875rem;      // 99
@@ -45,6 +42,7 @@
     flex-wrap: wrap;
     gap: var(--space-2);
     margin-top: 1.875rem; // 30: lead 99 + 42.75 → buttons at 172
+    @media (min-width: @bp-xxl) { margin-left: -0.0625rem; } // buttons start at x 198, labels round wider in Figma
     &:empty { display: none; }
   }
 

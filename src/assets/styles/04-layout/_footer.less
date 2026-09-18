@@ -1,6 +1,4 @@
-// =====================================================================
-// 04-layout/_footer.less — 536 tall at 1640. Columns sit at x 60 / 623 / 999 / 1263.
-// =====================================================================
+// 04-layout/_footer.less — 536 tall at 1640, columns at x 60 / 623 / 999 / 1263
 
 .site-footer {
   --footer-pad-top: 5rem;            // 80
@@ -8,7 +6,8 @@
   --footer-col-gap: 4.75rem;         // 76
   --footer-heading-gap: 1.5rem;      // 24
   --footer-bottom-gap: 2.41875rem;   // 38.7 from the social row to the acknowledgement
-  --footer-leading: 1.21;            // Inter "normal": 13 → 15.7, 12 → 14.5
+  --footer-leading: 1rem;            // 13 type in 16 boxes
+  --footer-leading-sm: 0.9375rem;    // 12 type in 15 boxes
 
   background: var(--color-primary-dark);
   color: var(--color-muted);
@@ -29,7 +28,7 @@
     font-family: var(--font-ui);
     font-size: var(--font-size-xs);
     font-weight: var(--font-weight-bold);
-    line-height: var(--footer-leading);
+    line-height: var(--footer-leading-sm);
     letter-spacing: 0;
     color: var(--color-white);
   }
@@ -47,7 +46,8 @@
   &__logo {
     display: block;
     max-width: 23.375rem; // 374: the 389 frame shows the artwork at 96.11%
-    min-height: 5.75rem;  // 92
+    height: 5.75rem;      // 92
+    overflow: hidden;
     margin-bottom: var(--footer-heading-gap);
     img { display: block; width: 100%; height: auto; }
   }
@@ -68,16 +68,13 @@
       --bs-btn-padding-x: 1.2913rem;
       --bs-btn-padding-y: calc((2.5825rem - 1.2em - var(--border-width) * 2) / 2);
     }
-    .btn-primary {
-      --bs-btn-font-family: var(--font-ui);
-      letter-spacing: var(--letter-spacing-ui);
-    }
   }
 
   &__social {
     .reset-list();
     display: flex;
     gap: var(--space-1);
+    li { display: flex; }
     a:not(.btn) {
       display: inline-flex;
       width: 2rem;
@@ -102,6 +99,7 @@
     margin-bottom: 0.25rem; // 4
     font-size: var(--font-size-xs);
     font-weight: var(--font-weight-bold);
+    line-height: var(--footer-leading-sm);
     color: var(--color-white);
   }
 
@@ -110,6 +108,7 @@
     display: flex;
     flex-direction: column;
     gap: 0.75rem; // 12
+    li { display: flex; }
     a:not(.btn) {
       display: inline-flex;
       align-items: center;
@@ -157,5 +156,6 @@
   &__copy {
     margin: 0;
     font-size: var(--font-size-xs);
+    line-height: var(--footer-leading-sm);
   }
 }

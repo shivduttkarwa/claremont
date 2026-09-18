@@ -3,8 +3,8 @@
      image: ImageChooserBlock
      aside: ListBlock(StructBlock(label:CharBlock, value:CharBlock, url:URLBlock, icon:ChoiceBlock)) — optional contact lines
      quick links come from the subnav site setting (partials/subnav.html)
-     locals: title, image, width, height, aside (HTML list items, or empty) -->
-<section class="page-hero" aria-labelledby="page-title" data-anim-parallax-trigger>
+     locals: title, image, width, height, aside (HTML list items, or empty), modifier -->
+<section class="page-hero {{ modifier }}" aria-labelledby="page-title" data-anim-parallax-trigger>
   <div class="page-hero__media" aria-hidden="true">
     <img class="page-hero__img" src="{{ image }}" alt="" width="{{ width }}" height="{{ height }}"
          data-anim="parallax" data-anim-axis="y" data-anim-speed="12" data-anim-reverse data-anim-start="top top" data-anim-disable-mobile>

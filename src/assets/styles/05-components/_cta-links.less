@@ -1,15 +1,11 @@
-// =====================================================================
-// 05-components/_cta-links.less — heading left, ruled link list right.
-// Homepage (347 tall): heading at 75, list at (820, 76), rows 18 / 27.5 / 18 under a 1.2 rule, arrow 8 in.
-// Inner pages: list at x 825, rows on a 65.5 pitch with the arrow flush right.
-// =====================================================================
+// 05-components/_cta-links.less — heading left, ruled link list right
 
 .cta-links {
   --cta-pad-top: 4.6875rem;      // 75
   --cta-pad-bottom: 4.6375rem;   // 74.2
   --cta-list-offset: 0.0625rem;  // list starts 1 below the heading
   --cta-list-inset: 0rem;        // list x relative to the half-way line
-  --cta-row-pad-y: 1.125rem;     // 18
+  --cta-row-pad-y: 1.15rem;      // 65.2 row pitch
   --cta-row-pad-x: 0.5rem;       // 8
   --cta-icon-width: 2rem;        // 32 symbol (Figma frame is 26)
   --cta-icon-height: 1.625rem;   // 26
@@ -82,7 +78,6 @@
       --cta-pad-top: 6.4375rem;
       --cta-pad-bottom: 6.3625rem;
       --cta-list-inset: 0.3125rem;
-      --cta-row-pad-y: 1.15rem; // 65.5 pitch
       --cta-row-pad-x: 0rem;
     }
     .cta-links__link {
@@ -101,9 +96,10 @@
     background: var(--color-background);
     color: var(--color-heading);
     @media (min-width: @bp-lg) {
-      --cta-pad-bottom: 7.675rem;
+      --cta-pad-bottom: 7.7rem;
       --cta-list-offset: 0.5625rem;
       --cta-list-inset: 0.25rem;
+      --cta-row-pad-y: 1.13125rem; // rules at 244 / 309 / 375 / 440 / 503
       --cta-row-pad-x: 0rem;
     }
     h2 {

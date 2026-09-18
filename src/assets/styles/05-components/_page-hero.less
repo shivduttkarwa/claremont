@@ -1,6 +1,4 @@
-// =====================================================================
 // 05-components/_page-hero.less — inner-page hero, 784 tall at 1640: photo, title bottom-left
-// =====================================================================
 
 .page-hero {
   --page-hero-height: 28rem;
@@ -38,8 +36,7 @@
     }
   }
 
-  // Figma's photo runs 971 tall behind a 785 frame: that spare strip is the parallax travel,
-  // so the crop is exact at rest and the scrub never exposes the section behind.
+  // Spare image below the crop is the parallax travel, so the crop is exact at rest
   &__img {
     position: absolute;
     inset: 0 auto auto 0;
@@ -109,6 +106,11 @@
     display: none;
     @media (min-width: @bp-lg) { display: block; }
     .subnav-dock(var(--page-hero-subnav-top));
+  }
+
+  // Welcome: the two-line title box ends at 755.6
+  &--low-title {
+    @media (min-width: @bp-lg) { --page-hero-pad-bottom: 1.775rem; }
   }
 
   // No photo: solid dark green, 564 tall (news article); title box ends 63 above the edge

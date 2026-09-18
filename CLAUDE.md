@@ -14,7 +14,7 @@ Stack: plain **HTML** pages · Bootstrap 5.3 (CSS-variable themed) · **LESS** (
 - Compare against the true renders in `.qa/figma/renders/` at 1640 wide.
 
 ## Tokens + units
-- Every design value lives in `src/assets/styles/01-settings/_tokens.less` as a `:root` custom property. Custom CSS uses `var(--…)` only; **no px anywhere** (rem, em, %, vw). Spacing is the 8px scale (`--space-*`). Component-specific Figma measures are declared as local custom properties at the top of the block, with the px value in a trailing comment.
+- Every design value lives in `src/assets/styles/01-settings/_tokens.less` as a `:root` custom property. Custom CSS uses `var(--…)` only; **no px anywhere** (rem, em, %, vw). The 8px scale (`--space-*`) drives mobile and tablet rhythm; at the design width components use the exact Figma value in rem with the px figure in a trailing comment (`5.3125rem; // 85`). Component-specific Figma measures are declared as local custom properties at the top of the block, with the px value in a trailing comment.
 - Bootstrap is themed only through `--bs-*` in `_bootstrap-vars.less`; buttons through `--bs-btn-*` in `05-components/_buttons.less`.
 - **Escape fluid maths from LESS**: `~"clamp(1rem, 0.5rem + 2vw, 3rem)"`, `~"max(…)"`, `~"min(…)"`. Unescaped, LESS adds rem + vw into a wrong constant.
 - Breakpoints are the LESS vars `@bp-sm … @bp-xxl` (em), mobile-first `min-width` queries.
@@ -29,6 +29,9 @@ Stack: plain **HTML** pages · Bootstrap 5.3 (CSS-variable themed) · **LESS** (
 - No inline styles. Data-driven positions (hotspots) use modifier classes that set `--x` / `--y`.
 
 ## QA
+- **Never build a section from a guess.** Read its Figma nodes first (`python .qa/find.py <page-id> "<text>"` shows a text's box, style and parent frames; `.qa/extract.py <page-id>` dumps a page).
+- `bash .qa/audit.sh summary|full [page …]` builds, measures each page at 1640 (`measure.mjs`) and compares with Figma (`compare.py` for sections + text runs, `compare-img.py` for photo boxes). A change is done when the page shows no `<<<` section flags and no text run off by more than ~3px. Expected noise: the two logos (Figma frame is wider than the artwork), `weight 400 vs 100` (Argent CF stand-in), the hero subtitle `dy +5` (mixed line heights), labels joined by `<br>`.
+- Figma rounds text boxes up to whole pixels and draws strokes inside the box: buttons are exactly label + 48 wide, so the border comes off the padding.
 - `npm run build`, then compare at 1640 with plain headless Chrome (`--window-size=1640,<tall> --screenshot`), and at phone/tablet widths with `node .qa/shot.mjs <file-url> <width> <height> <out.png> 1 [wait-ms]` (real device emulation; plain headless clamps to a minimum window width). `python .qa/slice.py` cuts tall shots into strips.
 - In a very tall test viewport every reveal fires in one batch, so late elements can still be mid-animation at capture time. That is a test artefact; raise the wait.
 

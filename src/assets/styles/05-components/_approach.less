@@ -1,7 +1,4 @@
-// =====================================================================
-// 05-components/_approach.less — tabbed full-bleed panel with hotspots (854 tall at 1640).
-// Tabs + arrows at 69, panel (1640 × 684) from 170, panel title 57 down.
-// =====================================================================
+// 05-components/_approach.less — tabbed full-bleed panel with hotspots (854 tall at 1640)
 
 .approach {
   --approach-pad-top: 4.3125rem;     // 69
@@ -26,6 +23,10 @@
     flex: 1 1 auto;
     gap: var(--space-2);
     min-width: 0;
+    @media (min-width: @bp-xxl) {
+      gap: 1.0625rem; // Figma rounds each label up a pixel, so tabs land at 201 / 427 / 644 / 847
+      margin-left: 0.0625rem;
+    }
     margin-block: -0.125rem;
     padding-block: 0.125rem;
     overflow-x: auto;
@@ -95,9 +96,7 @@
   }
 }
 
-// --- Hotspots -------------------------------------------------------
-// Below lg the list flows as stacked cards under the image (markers hidden);
-// from lg each item is absolutely positioned by its --x / --y modifier.
+// Hotspots: stacked cards below lg, positioned by their --x / --y modifier from lg
 .hotspots {
   .reset-list();
   display: flex;
