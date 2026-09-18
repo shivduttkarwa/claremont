@@ -1,0 +1,42 @@
+<!doctype html>
+<!-- Source template: partials resolve at build time. Preview dist/news.html (npm run build) or run npm run dev. -->
+<html lang="en">
+<head>
+  <include src="partials/head.html" locals='{
+    "title": "News and community | Claremont College",
+    "description": "News and events from the Claremont College community, big and small."
+  }'></include>
+</head>
+<body>
+  <include src="partials/icons.html"></include>
+  <a class="visually-hidden-focusable" href="#main">Skip to content</a>
+
+  <include src="partials/header.html"></include>
+
+  <main id="main">
+    <!-- Hero -->
+    <include src="sections/page-hero.html" locals='{
+      "title": "News and community",
+      "aside": "",
+      "image": "assets/images/shared/inner-hero.webp",
+      "width": "1840",
+      "height": "1090"
+    }'></include>
+
+    <!-- Green intro band -->
+    <include src="sections/intro-split.html" locals='{
+      "theme": "intro-split--dark intro-split--md intro-split--wide-lead intro-split--body-offset",
+      "actions": "",
+      "lead": "At Claremont, community isn’t a<br>value on a wall, <em>it’s a calendar.</em>",
+      "body": "<p>It’s the concert someone’s dad rigged the lighting for, the cake stall that sold out before lunch, and the Saturday working bee nobody was obliged to turn up to. This is where we post all the events - big and small - that make Claremont feel like Claremont.</p>"
+    }'></include>
+
+    <!-- Article listing -->
+    <include src="sections/news/article-grid.html"></include>
+  </main>
+
+  <include src="partials/footer.html"></include>
+
+  <script src="assets/js/main.js" defer></script>
+</body>
+</html>

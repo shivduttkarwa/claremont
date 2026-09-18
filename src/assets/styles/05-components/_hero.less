@@ -1,0 +1,100 @@
+// =====================================================================
+// 05-components/_hero.less — homepage hero, 1182 tall at 1640 (header overlays it)
+// =====================================================================
+
+.hero {
+  --hero-pad-top: calc(var(--header-height) + var(--space-8));
+  --hero-pad-bottom: var(--space-8);
+  --hero-subnav-top: 11.8125rem;   // 189
+  --hero-title-gap: var(--space-6);
+
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding-top: var(--hero-pad-top);
+  padding-bottom: var(--hero-pad-bottom);
+  background: var(--color-primary);
+  color: var(--color-white);
+
+  @media (min-width: @bp-lg) {
+    --hero-pad-top: 13.25rem;      // 212
+    --hero-pad-bottom: 13.75rem;   // 220
+    --hero-title-gap: 4.66875rem;  // 74.7: title 212 + 2 × 102.64 → subtitle at 492
+  }
+
+  &__media {
+    .cover();
+    z-index: var(--z-behind);
+    &::after {
+      content: "";
+      .cover();
+      background: linear-gradient(180deg, rgba(5, 51, 51, 0.1) 0%, rgba(5, 51, 51, 0.55) 55%, rgba(5, 51, 51, 0.8) 100%);
+      @media (min-width: @bp-lg) {
+        background: linear-gradient(152deg, rgba(0, 0, 0, 0.3) 8%, rgba(0, 0, 0, 0) 14%);
+      }
+    }
+  }
+
+  // The photo runs taller than the frame (Figma has spare image below the crop): that strip is the
+  // parallax travel, so the crop is exact at rest and the scrub never exposes the section behind.
+  &__img {
+    position: absolute;
+    inset: 0 auto auto 0;
+    width: 100%;
+    height: 124.34%; // export is 1842 × 1650 against the 1842 × 1327 frame crop
+    object-fit: cover;
+    object-position: 80% 0;
+    @media (min-width: @bp-lg) { object-position: 50% 0; }
+  }
+
+  &__content {
+    position: relative;
+    z-index: var(--z-content);
+  }
+
+  h1 {
+    max-width: 75.75rem;
+    margin-bottom: var(--hero-title-gap);
+    font-size: var(--font-size-display);
+    line-height: var(--line-height-display);
+    color: var(--color-white);
+  }
+  &__title-line {
+    display: block;
+    &--indent {
+      @media (min-width: @bp-lg) { padding-inline-start: 0.6em; }
+    }
+  }
+
+  // 45 / 0.95 with the italic run at 48 / 1.1 → a 52.8 line box, body 23.2 below it
+  &__subtitle {
+    max-width: 33.625rem;
+    margin-bottom: 1.45rem;
+    font-family: var(--font-display);
+    font-size: var(--font-size-callout);
+    line-height: var(--line-height-tight);
+    em {
+      font-size: 1.0667em;
+      line-height: var(--line-height-snug);
+    }
+  }
+
+  &__body {
+    max-width: 38.5625rem; // 617
+    font-size: var(--font-size-lg);
+    line-height: var(--line-height-relaxed);
+    p { margin-bottom: 0.5483rem; } // 8.77
+  }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-top: 2.8125rem; // 45
+  }
+
+  &__subnav {
+    margin-top: var(--space-6);
+    .subnav-dock(var(--hero-subnav-top));
+  }
+}

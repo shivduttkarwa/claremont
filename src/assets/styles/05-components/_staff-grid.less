@@ -1,0 +1,65 @@
+// =====================================================================
+// 05-components/_staff-grid.less — executive team (1539 tall at 1640).
+// Heading at 115, cards (409 × 630: a 403 portrait + a 1.2 rule on the right) from 218, rows 30 apart, 31 below.
+// =====================================================================
+
+.staff-grid {
+  --staff-pad-top: 7.1875rem;        // 115
+  --staff-pad-bottom: 1.9375rem;     // 31
+  --staff-header-gap: 4.140625rem;   // heading box ends 151.75, cards start 218
+  --staff-card: 25.5625rem;          // 409
+  --staff-gap-x: 0.40625rem;         // 6.5
+  --staff-gap-y: 1.875rem;           // 30
+  --staff-card-height: 39.375rem;    // 630
+  --staff-text-inset: 0.625rem;      // 10
+
+  padding-block: var(--space-8) var(--staff-pad-bottom);
+  @media (min-width: @bp-lg) { padding-top: var(--staff-pad-top); }
+
+  &__header {
+    margin-bottom: var(--space-5);
+    @media (min-width: @bp-lg) { margin-bottom: var(--staff-header-gap); }
+    h2 { margin: 0; }
+  }
+
+  &__grid {
+    .reset-list();
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--staff-gap-y) var(--staff-gap-x);
+    @media (min-width: @bp-sm) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    @media (min-width: @bp-lg) { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  }
+
+  &__card {
+    padding-right: 0.3rem; // 403 portrait inside the 409 card, less the rule
+    border-right: var(--border-width-rule) solid var(--color-text);
+    @media (min-width: @bp-xxl) { min-height: var(--staff-card-height); }
+
+    h3 {
+      margin: 1.1875rem 0 0; // 19 under the portrait
+      padding-inline: var(--staff-text-inset);
+    }
+  }
+
+  &__photo {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1;
+    object-fit: cover;
+  }
+
+  &__role {
+    margin: 2.40625rem 0 0; // name box ends 449.5, role at 488
+    padding-inline: var(--staff-text-inset);
+    font-family: var(--font-ui);
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: var(--letter-spacing-ui);
+  }
+
+  &__bio {
+    margin: 0.625rem 0 0; // paragraph spacing 10
+    padding: 0 var(--staff-text-inset) var(--space-2);
+  }
+}

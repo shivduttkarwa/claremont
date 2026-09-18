@@ -1,0 +1,123 @@
+// =====================================================================
+// 05-components/_page-hero.less — inner-page hero, 784 tall at 1640: photo, title bottom-left
+// =====================================================================
+
+.page-hero {
+  --page-hero-height: 28rem;
+  --page-hero-pad-bottom: var(--space-4);
+  --page-hero-subnav-top: 10.3125rem; // 165
+  --page-hero-title-shift: 0rem;
+
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+  min-height: var(--page-hero-height);
+  padding-top: calc(var(--header-height) + var(--space-6));
+  padding-bottom: var(--page-hero-pad-bottom);
+  background: var(--color-primary);
+  color: var(--color-white);
+
+  @media (min-width: @bp-md) { --page-hero-height: 36rem; }
+  @media (min-width: @bp-lg) {
+    --page-hero-height: ~"clamp(34rem, 47.8vw, 49rem)"; // 784 at 1640
+    --page-hero-pad-bottom: 2.45rem;                     // title box ends at 744.8
+  }
+  // Figma hangs the display title 16 left of the content edge (x 184) on every inner page
+  @media (min-width: @bp-xxl) { --page-hero-title-shift: -1rem; }
+
+  &__media {
+    .cover();
+    z-index: var(--z-behind);
+    &::after {
+      content: "";
+      .cover();
+      background: linear-gradient(180deg, rgba(0, 0, 0, 0.35) 0%, rgba(0, 0, 0, 0) 28%, rgba(0, 0, 0, 0) 52%, rgba(0, 0, 0, 0.55) 100%);
+      @media (min-width: @bp-lg) { background: none; } // the Figma photo carries no overlay
+    }
+  }
+
+  // Figma's photo runs 971 tall behind a 785 frame: that spare strip is the parallax travel,
+  // so the crop is exact at rest and the scrub never exposes the section behind.
+  &__img {
+    position: absolute;
+    inset: 0 auto auto 0;
+    width: 100%;
+    height: 123.7%;
+    object-fit: cover;
+    object-position: 70% 0;
+    @media (min-width: @bp-lg) { object-position: 50% 0; }
+  }
+
+  > .container {
+    position: relative;
+    z-index: var(--z-content);
+  }
+
+  h1 {
+    max-width: 73rem;
+    margin: 0 0 0 var(--page-hero-title-shift);
+    color: var(--color-white);
+  }
+
+  // Title left, optional contact lines right, sharing a baseline
+  &__row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-3) var(--space-5);
+  }
+
+  // Enrolment: two right-aligned contact lines ending at x 1406, icons in a 29 column to x 1444
+  &__aside {
+    .reset-list();
+    display: flex;
+    flex-direction: column;
+    gap: 0.225rem; // 3.6
+    font-size: var(--font-size-base);
+    &:empty { display: none; }
+    @media (min-width: @bp-lg) {
+      align-items: flex-end;
+      margin: 0 -0.25rem 0.125rem 0;
+      text-align: right;
+    }
+    li {
+      display: flex;
+      align-items: center;
+      gap: 0.5625rem; // 9
+      line-height: 1.96; // 29.4
+      @media (min-width: @bp-lg) { flex-direction: row-reverse; }
+      + li { line-height: var(--line-height-body); }
+    }
+    a {
+      color: var(--color-white);
+      font-family: var(--font-ui);
+      font-weight: var(--font-weight-semibold);
+      letter-spacing: var(--letter-spacing-ui);
+      &:hover { color: var(--color-secondary); }
+    }
+    .icon {
+      width: 1.4375rem;  // 23 glyph centred in the 29 column
+      height: 1.4375rem;
+      margin-inline: 0.1875rem;
+    }
+  }
+
+  &__subnav {
+    display: none;
+    @media (min-width: @bp-lg) { display: block; }
+    .subnav-dock(var(--page-hero-subnav-top));
+  }
+
+  // No photo: solid dark green, 564 tall (news article); title box ends 63 above the edge
+  &--plain {
+    background: var(--color-primary-dark);
+    @media (min-width: @bp-md) { --page-hero-height: 28rem; }
+    @media (min-width: @bp-lg) {
+      --page-hero-height: ~"clamp(26rem, 34.4vw, 35.25rem)";
+      --page-hero-pad-bottom: 3.95rem;
+    }
+  }
+}

@@ -1,0 +1,119 @@
+<!-- @wagtail-block: tabbed_hotspots
+     tabs: ListBlock(StructBlock(
+       label:    CharBlock(required)
+       title:    CharBlock
+       image:    ImageChooserBlock
+       hotspots: ListBlock(StructBlock(x:DecimalBlock, y:DecimalBlock, title:CharBlock, text:TextBlock))
+     ))
+     Marker positions render as --x / --y custom properties (modifier classes here; inline vars in Wagtail).
+     ASSUMPTION: Figma designs only the first tab's panel and only the first hotspot's copy. Tabs 2–4
+     reuse the same image, and hotspots 2–6 carry placeholder copy to be replaced by the client. -->
+<section class="approach bg-light" aria-label="Our approach" data-tabs>
+  <div class="container">
+    <div class="approach__bar" data-anim="reveal" data-anim-type="fade">
+      <div class="approach__tabs" role="tablist" aria-label="Approach topics">
+        <button class="btn btn-outline-primary approach__tab active" type="button" role="tab" id="tab-teaching" data-bs-toggle="tab" data-bs-target="#pane-teaching" aria-controls="pane-teaching" aria-selected="true">Our teaching approach</button>
+        <button class="btn btn-outline-primary approach__tab" type="button" role="tab" id="tab-future" data-bs-toggle="tab" data-bs-target="#pane-future" aria-controls="pane-future" aria-selected="false">Future-ready children</button>
+        <button class="btn btn-outline-primary approach__tab" type="button" role="tab" id="tab-wellbeing" data-bs-toggle="tab" data-bs-target="#pane-wellbeing" aria-controls="pane-wellbeing" aria-selected="false">Wellbeing is priority</button>
+        <button class="btn btn-outline-primary approach__tab" type="button" role="tab" id="tab-community" data-bs-toggle="tab" data-bs-target="#pane-community" aria-controls="pane-community" aria-selected="false">Community minded</button>
+      </div>
+      <div class="approach__arrows arrow-group">
+        <button class="arrow-btn arrow-btn--prev" type="button" aria-label="Previous topic" data-tabs-prev><svg class="icon"><use href="#icon-arrow-right"></use></svg></button>
+        <button class="arrow-btn arrow-btn--next" type="button" aria-label="Next topic" data-tabs-next><svg class="icon"><use href="#icon-arrow-right"></use></svg></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-content" data-anim="reveal" data-anim-type="fade">
+    <!-- Tab 1 -->
+    <div class="tab-pane fade show active" id="pane-teaching" role="tabpanel" aria-labelledby="tab-teaching" tabindex="0">
+      <div class="approach__panel">
+        <div class="approach__media">
+          <img src="assets/images/home/teaching-approach.webp" alt="Students reading in a green pod library nook while a teacher talks with classmates" width="1226" height="511">
+        </div>
+        <div class="approach__overlay">
+          <div class="container">
+            <h2>Our teaching approach</h2>
+          </div>
+          <ol class="hotspots" data-hotspots>
+            <li class="hotspot hotspot--1 is-open" data-hotspot>
+              <button class="hotspot__marker" type="button" aria-expanded="true" aria-controls="hotspot-1" data-hotspot-toggle><span class="visually-hidden">Research informed practices</span></button>
+              <div class="hotspot__card" id="hotspot-1">
+                <h3 class="hotspot__title">Research informed practices</h3>
+                <p class="hotspot__text">Our approach to educational innovation is grounded in research-informed practices to ensure we offer the best environment for students to learn. We’re not beholden to legacy systems, frameworks or thinking. We don’t just encourage our students to learn, we’re open to learning ourselves.</p>
+              </div>
+            </li>
+            <!-- Placeholder copy below: not in the Figma file -->
+            <li class="hotspot hotspot--2" data-hotspot>
+              <button class="hotspot__marker" type="button" aria-expanded="false" aria-controls="hotspot-2" data-hotspot-toggle><span class="visually-hidden">Flexible learning spaces</span></button>
+              <div class="hotspot__card" id="hotspot-2">
+                <h3 class="hotspot__title">Flexible learning spaces</h3>
+                <p class="hotspot__text">Placeholder copy. Describe how the space supports different ways of learning.</p>
+              </div>
+            </li>
+            <li class="hotspot hotspot--3" data-hotspot>
+              <button class="hotspot__marker" type="button" aria-expanded="false" aria-controls="hotspot-3" data-hotspot-toggle><span class="visually-hidden">Reading nooks</span></button>
+              <div class="hotspot__card" id="hotspot-3">
+                <h3 class="hotspot__title">Reading nooks</h3>
+                <p class="hotspot__text">Placeholder copy. Quiet corners for independent and paired reading.</p>
+              </div>
+            </li>
+            <li class="hotspot hotspot--4 hotspot--flip" data-hotspot>
+              <button class="hotspot__marker" type="button" aria-expanded="false" aria-controls="hotspot-4" data-hotspot-toggle><span class="visually-hidden">Teachers who know every child</span></button>
+              <div class="hotspot__card" id="hotspot-4">
+                <h3 class="hotspot__title">Teachers who know every child</h3>
+                <p class="hotspot__text">Placeholder copy. Small classes mean every teacher knows every name.</p>
+              </div>
+            </li>
+            <li class="hotspot hotspot--5" data-hotspot>
+              <button class="hotspot__marker" type="button" aria-expanded="false" aria-controls="hotspot-5" data-hotspot-toggle><span class="visually-hidden">Collaborative learning</span></button>
+              <div class="hotspot__card" id="hotspot-5">
+                <h3 class="hotspot__title">Collaborative learning</h3>
+                <p class="hotspot__text">Placeholder copy. Shared tables and open floor space for group work.</p>
+              </div>
+            </li>
+            <li class="hotspot hotspot--6 hotspot--flip" data-hotspot>
+              <button class="hotspot__marker" type="button" aria-expanded="false" aria-controls="hotspot-6" data-hotspot-toggle><span class="visually-hidden">Connected classrooms</span></button>
+              <div class="hotspot__card" id="hotspot-6">
+                <h3 class="hotspot__title">Connected classrooms</h3>
+                <p class="hotspot__text">Placeholder copy. Glass walls keep learning visible and connected.</p>
+              </div>
+            </li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabs 2–4: same panel structure; image and hotspots to be supplied per tab -->
+    <div class="tab-pane fade" id="pane-future" role="tabpanel" aria-labelledby="tab-future" tabindex="0">
+      <div class="approach__panel">
+        <div class="approach__media">
+          <img src="assets/images/home/teaching-approach.webp" alt="" width="1226" height="511">
+        </div>
+        <div class="approach__overlay">
+          <div class="container"><h2>Future-ready children</h2></div>
+        </div>
+      </div>
+    </div>
+    <div class="tab-pane fade" id="pane-wellbeing" role="tabpanel" aria-labelledby="tab-wellbeing" tabindex="0">
+      <div class="approach__panel">
+        <div class="approach__media">
+          <img src="assets/images/home/teaching-approach.webp" alt="" width="1226" height="511">
+        </div>
+        <div class="approach__overlay">
+          <div class="container"><h2>Wellbeing is priority</h2></div>
+        </div>
+      </div>
+    </div>
+    <div class="tab-pane fade" id="pane-community" role="tabpanel" aria-labelledby="tab-community" tabindex="0">
+      <div class="approach__panel">
+        <div class="approach__media">
+          <img src="assets/images/home/teaching-approach.webp" alt="" width="1226" height="511">
+        </div>
+        <div class="approach__overlay">
+          <div class="container"><h2>Community minded</h2></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

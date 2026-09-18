@@ -1,0 +1,38 @@
+// =====================================================================
+// 06-animation/_animation.less — styles the `anim` system needs.
+// Values that define the MOTION live in anim.js; this file only handles
+// initial visibility (FOUC guard), the clip variant, and Lenis plumbing.
+// =====================================================================
+
+// --- FOUC guard -----------------------------------------------------
+// Hide reveal/split targets only while JS-driven animation is active.
+// If JS never runs, or reduced-motion is on, nothing is hidden.
+html.anim-ready:not(.anim-reduced) {
+  [data-anim="reveal"],
+  [data-anim="split"] {
+    visibility: hidden;
+  }
+}
+
+// --- clip reveal ----------------------------------------------------
+[data-anim="reveal"][data-anim-type="clip"] {
+  --anim-clip: 0%;
+  clip-path: inset(0 0 var(--anim-clip) 0);
+}
+
+// Split-text: masked lines wrapper (SplitText adds .anim-line / .anim-char)
+.anim-line { display: block; }
+.anim-char { display: inline-block; }
+
+// --- Lenis (window-native smooth scroll) ----------------------------
+html.lenis,
+html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: clip; }
+.lenis.lenis-smooth iframe { pointer-events: none; }
+
+// --- Reduced motion safety net --------------------------------------
+@media (prefers-reduced-motion: reduce) {
+  [data-anim] { visibility: visible !important; }
+}

@@ -1,0 +1,52 @@
+<!-- @wagtail-partial: header — site settings: logo:ImageChooserBlock, nav:ListBlock(StructBlock(label:CharBlock, page:PageChooserBlock)) -->
+<header class="site-header">
+  <div class="container-fluid container-edge">
+    <div class="site-header__inner">
+      <a class="site-header__logo" href="index.html">
+        <img src="assets/images/logo.webp" alt="Claremont College — An Anglican Co-Educational Primary School" width="1089" height="270">
+      </a>
+
+      <div class="site-header__right">
+        <nav class="site-header__nav" aria-label="Primary" data-nav>
+          <a class="site-header__link" href="welcome.html">Welcome from Claremont</a>
+          <a class="site-header__link" href="preparatory-program.html">Preparatory Program</a>
+          <a class="site-header__link" href="k-6-primary.html">K–6 Primary</a>
+          <a class="site-header__link" href="extra-curricular.html">Extra Curricular</a>
+        </nav>
+
+        <div class="site-header__tools">
+          <button class="site-header__tool" type="button" aria-label="Search">
+            <svg class="icon"><use href="#icon-search"></use></svg>
+          </button>
+          <a class="site-header__tool site-header__tool--secondary" href="contact-us.html" aria-label="Find us">
+            <svg class="icon"><use href="#icon-location"></use></svg>
+          </a>
+          <button class="site-header__toggle" type="button" data-bs-toggle="offcanvas" data-bs-target="#site-menu" aria-controls="site-menu" aria-label="Open menu">
+            <span></span><span></span><span></span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Mobile menu -->
+<div class="offcanvas offcanvas-end site-menu" tabindex="-1" id="site-menu" aria-label="Menu">
+  <div class="offcanvas-header">
+    <a class="site-header__logo" href="index.html">
+      <img src="assets/images/logo.webp" alt="Claremont College" width="1089" height="270">
+    </a>
+    <button class="btn-close btn-close-white" type="button" data-bs-dismiss="offcanvas" aria-label="Close menu"></button>
+  </div>
+  <div class="offcanvas-body">
+    <nav class="site-menu__nav" aria-label="Mobile" data-nav>
+      <a class="site-menu__link" href="welcome.html">Welcome from Claremont</a>
+      <a class="site-menu__link" href="preparatory-program.html">Preparatory Program</a>
+      <a class="site-menu__link" href="k-6-primary.html">K–6 Primary</a>
+      <a class="site-menu__link" href="extra-curricular.html">Extra Curricular</a>
+      <a class="site-menu__link" href="news.html">Community and news</a>
+      <a class="site-menu__link" href="policies.html">Our policies</a>
+    </nav>
+    <include src="partials/subnav.html"></include>
+  </div>
+</div>

@@ -1,0 +1,215 @@
+// =====================================================================
+// 05-components/_approach.less — tabbed full-bleed panel with hotspots (854 tall at 1640).
+// Tabs + arrows at 69, panel (1640 × 684) from 170, panel title 57 down.
+// =====================================================================
+
+.approach {
+  --approach-pad-top: 4.3125rem;     // 69
+  --approach-bar-gap: 3.3125rem;     // 53
+  --approach-title-top: 3.5625rem;   // 57
+  --approach-card-width: 22.0625rem; // 353
+
+  padding-top: var(--approach-pad-top);
+
+  &__bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    margin-bottom: var(--approach-bar-gap);
+  }
+
+  // 2 of padding keeps focus rings inside the scroll box; the negative margin gives it back
+  &__tabs {
+    .hide-scrollbar();
+    display: flex;
+    flex: 1 1 auto;
+    gap: var(--space-2);
+    min-width: 0;
+    margin-block: -0.125rem;
+    padding-block: 0.125rem;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+  }
+
+  &__tab {
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+    --bs-btn-hover-color: var(--color-primary);
+    --bs-btn-hover-bg: var(--color-background-alt);
+    --bs-btn-hover-border-color: var(--color-primary);
+  }
+
+  &__arrows {
+    display: none;
+    @media (min-width: @bp-md) { display: flex; }
+  }
+
+  &__panel {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: var(--color-primary);
+    color: var(--color-white);
+    @media (min-width: @bp-lg) { aspect-ratio: 1640 / 684; }
+  }
+
+  &__media {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    @media (min-width: @bp-md) { aspect-ratio: 16 / 9; }
+    @media (min-width: @bp-lg) {
+      .cover();
+      z-index: var(--z-behind);
+      aspect-ratio: auto;
+    }
+    img {
+      .img-cover();
+      object-position: 30% 50%;
+      @media (min-width: @bp-lg) { object-position: 50% 50%; }
+    }
+    &::after {
+      content: "";
+      .cover();
+      background:
+        linear-gradient(180deg, rgba(0, 0, 0, 0.5) 5%, rgba(102, 102, 102, 0) 40%),
+        var(--color-overlay);
+    }
+  }
+
+  &__overlay {
+    position: relative;
+    z-index: var(--z-content);
+    padding-block: var(--space-4) var(--space-5);
+    @media (min-width: @bp-lg) {
+      .cover();
+      padding-block: var(--approach-title-top) 0;
+    }
+    h2 {
+      margin: 0;
+      color: var(--color-white);
+      @media (min-width: @bp-lg) { max-width: 60.125rem; } // 962
+    }
+  }
+}
+
+// --- Hotspots -------------------------------------------------------
+// Below lg the list flows as stacked cards under the image (markers hidden);
+// from lg each item is absolutely positioned by its --x / --y modifier.
+.hotspots {
+  .reset-list();
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+  padding-inline: var(--container-gutter);
+  @media (min-width: @bp-lg) {
+    .cover();
+    display: block;
+    margin: 0;
+    padding: 0;
+  }
+}
+
+.hotspot {
+  @media (min-width: @bp-lg) {
+    position: absolute;
+    left: var(--x);
+    top: var(--y);
+    width: var(--marker-size);
+    height: var(--marker-size);
+    transform: translate(-50%, -50%);
+    z-index: var(--z-content);
+    &.is-open { z-index: var(--z-raised); }
+  }
+
+  &__marker {
+    display: none;
+    @media (min-width: @bp-lg) {
+      position: relative;
+      display: block;
+      width: var(--marker-size);
+      height: var(--marker-size);
+      padding: 0;
+      border: 0;
+      border-radius: var(--radius-full);
+      background: var(--color-accent);
+      box-shadow: var(--shadow-marker);
+      cursor: pointer;
+      transition: transform var(--duration-base) var(--ease-out), background-color var(--duration-fast) ease;
+
+      &::before,
+      &::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 0.65625rem; // 10.5
+        height: var(--border-width-rule);
+        background: var(--color-primary);
+        transform: translate(-50%, -50%);
+        transition: transform var(--duration-base) var(--ease-out);
+      }
+      &::after { transform: translate(-50%, -50%) rotate(90deg); }
+
+      &:hover,
+      &:focus-visible { transform: scale(1.15); background: var(--color-yellow-hover); }
+    }
+  }
+  &.is-open &__marker::after { transform: translate(-50%, -50%) rotate(0deg); }
+
+  // Card text starts 34 right of the marker's left edge and 1 below its top
+  &__card {
+    max-width: var(--approach-card-width);
+    @media (min-width: @bp-lg) {
+      position: absolute;
+      top: 0.0625rem;
+      left: calc(100% + 0.5625rem);
+      width: var(--approach-card-width);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(var(--space-1));
+      transition:
+        opacity var(--duration-base) var(--ease-out),
+        transform var(--duration-base) var(--ease-out),
+        visibility 0s linear var(--duration-base);
+    }
+  }
+  &--flip &__card {
+    @media (min-width: @bp-lg) {
+      left: auto;
+      right: calc(100% + 0.5625rem);
+    }
+  }
+  &.is-open &__card {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition-delay: 0s;
+  }
+
+  &__title {
+    margin: 0 0 1.03125rem; // copy starts 39 under the title top
+    font-family: var(--font-ui);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-body);
+    letter-spacing: var(--letter-spacing-ui);
+    color: var(--color-white);
+  }
+  &__text {
+    margin: 0;
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-body);
+  }
+
+  // Marker centres from Figma (panel 1640 × 684)
+  &--1 { --x: 13.02%; --y: 46.71%; }
+  &--2 { --x: 48.75%; --y: 11.92%; }
+  &--3 { --x: 31.07%; --y: 32.24%; }
+  &--4 { --x: 72.47%; --y: 63.67%; }
+  &--5 { --x: 45.27%; --y: 67.76%; }
+  &--6 { --x: 63.20%; --y: 32.24%; }
+}

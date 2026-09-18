@@ -1,0 +1,87 @@
+<!doctype html>
+<!-- Source template: partials resolve at build time. Preview dist/k-6-primary.html (npm run build) or run npm run dev. -->
+<html lang="en">
+<head>
+  <include src="partials/head.html" locals='{
+    "title": "K-6 Primary | Claremont College",
+    "description": "How Claremont College makes progress personal from Kindergarten to Year 6: collaborative co-teaching teams, academic extension and the Claremont art of teaching."
+  }'></include>
+</head>
+<body>
+  <include src="partials/icons.html"></include>
+  <a class="visually-hidden-focusable" href="#main">Skip to content</a>
+
+  <include src="partials/header.html"></include>
+
+  <main id="main">
+    <!-- Hero -->
+    <include src="sections/page-hero.html" locals='{
+      "aside": "",
+      "title": "K-6 Primary",
+      "image": "assets/images/shared/inner-hero.webp",
+      "width": "1840",
+      "height": "1090"
+    }'></include>
+
+    <!-- Green intro band -->
+    <include src="sections/intro-split.html" locals='{
+      "actions": "",
+      "theme": "intro-split--dark intro-split--lg",
+      "lead": "How we make<br>progress <em>personal.</em>",
+      "body": "<p>Every child is on a different learning journey. So why should every child receive the same teaching from the same teacher? To find a better way forward, Claremont College became early pioneers of ‘co-teaching’. A model that brings two or more educators together in every learning space to support each child’s individual needs.</p><p>Our teachers researched and refined our co-teaching practice, to keep improving outcomes for children. That’s why every Claremont learning space brings multiple teachers together, so your child is guided by the team to improve outcomes.</p>"
+    }'></include>
+
+    <!-- Collaborative teaching teams: photo + three link columns -->
+    <include src="sections/k-6-primary/teaching-teams.html"></include>
+
+    <!-- Academic excellence link list -->
+    <include src="sections/k-6-primary/academic-excellence.html"></include>
+
+    <!-- Thinking and learning dispositions -->
+    <include src="sections/k-6-primary/dispositions.html"></include>
+
+    <!-- Sport banner -->
+    <include src="sections/feature-banner.html" locals='{
+      "actions": "",
+      "id": "sport-title",
+      "modifier": "feature-banner--y168",
+      "title": "Part of the curriculum",
+      "text": "There’s far more to sport than the final score. Learning to move, compete and play as part of a team teaches children vital life lessons, like how to win gracefully, collaborate selflessly and lose a game without losing morale. That’s why sport runs right through the school day at Claremont College, with everything from swimming, tennis and gymnastics to futsal, water polo, athletics and surfing. Because a child who learns to keep going on the field carries that resilience into everything else.",
+      "image": "assets/images/k-6-primary/banner.webp",
+      "width": "1840",
+      "height": "689"
+    }'></include>
+
+    <!-- The Claremont art of teaching mosaic -->
+    <include src="sections/k-6-primary/art-of-teaching.html"></include>
+
+    <!-- Music banner -->
+    <include src="sections/feature-banner.html" locals='{
+      "actions": "",
+      "id": "music-title",
+      "modifier": "feature-banner--y237",
+      "title": "Learning <em>music</em>",
+      "text": "Learning to love music (not only as a listener, but as a practitioner) has a profound impact upon children, which extends far beyond a simple appreciation of the arts. Studies have shown that music education deepens concentration and sharpens memory in both visual and verbal skills. That’s why music is woven throughout life at Claremont College, with tuition from Prep to Year 6 and a range of ensembles where children gain real performance experience. Because when a child discovers what they can do, the confidence follows them everywhere.",
+      "image": "assets/images/k-6-primary/banner.webp",
+      "width": "1840",
+      "height": "689"
+    }'></include>
+
+    <!-- Closing call to action -->
+    <include src="sections/cta-row.html" locals='{
+      "id": "k6-cta-title",
+      "primary_modifier": "",
+      "title": "Where their school<br>story begins.",
+      "body": "<p>Learn more about Claremont and our commitment to nurturing a lifelong love of learning in every child.</p>",
+      "secondary_text": "Tuition fees",
+      "secondary_url": "enrolment.html",
+      "primary_text": "Enquire now",
+      "primary_url": "contact-us.html"
+    }'></include>
+  </main>
+
+  <include src="partials/footer.html"></include>
+
+  <script src="assets/js/main.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+<!-- @wagtail-block: scroller (link cards)
+     title: CharBlock(required)
+     cards: ListBlock(StructBlock(title:CharBlock, page:PageChooserBlock)) -->
+<section class="scroller" aria-labelledby="activities-title" data-scroller>
+  <div class="container">
+    <div class="scroller__header">
+      <h2 id="activities-title" data-anim="reveal">From the arts, to tech, to games of strategy, our activities develop skills beyond the curriculum.</h2>
+      <div class="arrow-group" data-anim="reveal" data-anim-type="fade" data-anim-order="1">
+        <button class="arrow-btn arrow-btn--prev" type="button" aria-label="Previous activities" data-scroller-prev><svg class="icon"><use href="#icon-arrow-right"></use></svg></button>
+        <button class="arrow-btn arrow-btn--next" type="button" aria-label="Next activities" data-scroller-next><svg class="icon"><use href="#icon-arrow-right"></use></svg></button>
+      </div>
+    </div>
+  </div>
+
+  <ul class="scroller__track" data-scroller-track data-scroller-dim data-anim-group="fade-up">
+    <li class="scroller__card"><a class="scroller__link" href="#"><h3>Kickstart their day</h3><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+    <li class="scroller__card"><a class="scroller__link" href="#"><h3>Creative and performing arts</h3><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+    <li class="scroller__card"><a class="scroller__link" href="#"><h3>Coding camp</h3><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+    <li class="scroller__card"><a class="scroller__link" href="#"><h3>Chess club</h3><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+    <li class="scroller__card"><a class="scroller__link" href="#"><h3>Debating</h3><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+  </ul>
+</section>

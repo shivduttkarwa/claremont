@@ -1,0 +1,40 @@
+<!-- @wagtail-page: NewsArticlePage
+     standfirst: CharBlock
+     image:      ImageChooserBlock
+     body:       RichTextBlock
+     previous / next: sibling pages -->
+<article class="article">
+  <div class="container">
+    <div class="row g-4 g-lg-0">
+      <div class="col-lg-5">
+        <h2 data-anim="reveal">Lorem ipsum dolor sit amet, consectetur adipiscing elit</h2>
+        <a class="btn btn-primary btn-primary--deep article__back" href="news.html" data-anim="reveal" data-anim-order="1">Back to news</a>
+      </div>
+      <div class="col-lg-7">
+        <div class="article__main">
+        <figure class="article__media" data-anim="reveal" data-anim-type="fade">
+          <img src="assets/images/news/article.webp" alt="Two Claremont students in green hats and cardigans standing in the school garden" width="1424" height="776">
+        </figure>
+        <div class="article__body rich-text" data-anim="reveal">
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin id est eget est imperdiet consequat. Nam venenatis erat sed viverra tempor. In eu porta magna. Proin vestibulum nisl ut facilisis viverra. Proin non leo ex. Quisque gravida tincidunt auctor. Morbi ac tellus mi. Proin tempus, nunc et ultrices eleifend, augue est sagittis dolor, ac aliquam odio lectus et dolor. Morbi nec eros maximus, volutpat lorem sollicitudin, blandit nulla. Fusce scelerisque erat sem, et eleifend neque posuere ac. Mauris sollicitudin suscipit diam, sit amet gravida ex auctor at. Fusce laoreet eros enim, at rhoncus ante tempor eget. Curabitur lorem orci, consectetur quis orci id, varius mollis elit. Sed dictum nisl et interdum elementum. Sed quis elementum turpis. Duis eu erat odio.</p>
+          <p>In hac habitasse platea dictumst. Phasellus at pretium augue. Vestibulum non neque nec enim ornare elementum rhoncus eget lacus. Sed lacinia lacus ante. Sed ac tempus nisi, vel suscipit sapien. Sed varius ut erat et elementum. Proin tempus diam porta justo placerat, in vehicula ligula sodales. Vivamus vitae tincidunt metus. Aenean at condimentum ante, a varius est. Proin dignissim in arcu id cursus. Etiam quis erat gravida nibh euismod luctus non ac magna. Nullam aliquam massa a lacinia lacinia. Fusce ac pharetra lacus, interdum dapibus elit.</p>
+          <p>Aenean pharetra magna orci, sit amet tempor dui convallis vitae. Morbi malesuada placerat bibendum. Etiam commodo velit sed sem congue efficitur. Cras ac dolor aliquam, finibus nunc sit amet, porta erat. Nunc vel velit id ante consequat cursus. Mauris in porta ex. Nunc finibus urna in sagittis elementum. Vestibulum ac eleifend diam. Aenean nec est vehicula, suscipit mi quis, ornare ex. Sed ex turpis, pellentesque a pharetra molestie, sagittis tristique tellus. Curabitur porta rutrum orci quis imperdiet.</p>
+          <p>Cras imperdiet massa nec nibh ornare, sed dapibus metus sagittis. Donec lacinia eleifend mi ac cursus. Nulla id sapien id nisl sodales fermentum. Suspendisse malesuada mi nec neque luctus, nec aliquet orci mattis. Ut ultrices augue vitae odio iaculis vestibulum. Vestibulum diam nisi, egestas ac dui id, consectetur tempus risus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Pellentesque ut est eu quam facilisis molestie. Cras at lorem id ex accumsan sollicitudin. Duis hendrerit ac tellus id vestibulum. Nullam luctus vulputate pulvinar.</p>
+          <p>Curabitur in convallis arcu, non commodo odio. Phasellus ornare tortor eget elementum ultrices. Proin sollicitudin orci id ex blandit, vitae maximus quam ultricies. Phasellus sollicitudin eget velit quis viverra. Pellentesque maximus lorem in elementum blandit. Nunc sed dui feugiat, viverra turpis ac, ultrices lectus. Curabitur feugiat elit vel lorem efficitur laoreet et sed nisi. Maecenas consequat lorem ac turpis tincidunt, eget aliquam velit pellentesque. Duis ut vehicula est. Sed lobortis efficitur nulla, et semper massa viverra id. Nullam at est nec augue pharetra scelerisque. Vestibulum vehicula orci ac ante iaculis feugiat.</p>
+        </div>
+
+        <nav class="article__nav" aria-label="More articles">
+          <a class="article__nav-link" href="news-article.html">
+            <span class="arrow-btn arrow-btn--prev" aria-hidden="true"><svg class="icon"><use href="#icon-arrow-right"></use></svg></span>
+            <span class="article__nav-label"><span>Previous</span><span>Article name here</span></span>
+          </a>
+          <a class="article__nav-link article__nav-link--next" href="news-article.html">
+            <span class="article__nav-label"><span>Next</span><span>Article name here</span></span>
+            <span class="arrow-btn arrow-btn--next" aria-hidden="true"><svg class="icon"><use href="#icon-arrow-right"></use></svg></span>
+          </a>
+        </nav>
+        </div>
+      </div>
+    </div>
+  </div>
+</article>

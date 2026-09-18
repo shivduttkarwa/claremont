@@ -1,0 +1,41 @@
+// =====================================================================
+// 05-components/_subnav.less — yellow quick-link stack (Book / Enrol / Contact)
+// =====================================================================
+
+.subnav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+
+  @media (min-width: @bp-sm) and (max-width: (@bp-lg - 0.02em)) {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  &__link {
+    display: flex;
+    flex: 1 1 auto;
+    align-items: center;
+    gap: var(--space-2); // icon 1470 → 1490, label at 1506
+    height: var(--control-height);
+    padding-inline: 1.125rem var(--space-2);
+    background: var(--color-accent);
+    color: var(--color-primary-dark);
+    font-family: var(--font-ui);
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--line-height-ui);
+    letter-spacing: var(--letter-spacing-ui);
+    white-space: nowrap;
+    transition: background-color var(--duration-fast) ease, transform var(--duration-base) var(--ease-out);
+
+    .icon { width: 1.25rem; height: 1.25rem; }
+
+    &:hover,
+    &:focus-visible {
+      background: var(--color-yellow-hover);
+      color: var(--color-primary-dark);
+      @media (min-width: @bp-lg) { transform: translateX(-0.375rem); }
+    }
+  }
+}

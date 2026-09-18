@@ -1,0 +1,30 @@
+<!doctype html>
+<!-- Source template: partials resolve at build time. Preview dist/news-article.html (npm run build) or run npm run dev. -->
+<html lang="en">
+<head>
+  <include src="partials/head.html" locals='{
+    "title": "Article name written here | Claremont College",
+    "description": "News from the Claremont College community."
+  }'></include>
+</head>
+<body>
+  <include src="partials/icons.html"></include>
+  <a class="visually-hidden-focusable" href="#main">Skip to content</a>
+
+  <include src="partials/header.html"></include>
+
+  <main id="main">
+    <!-- Hero (solid green, no photo) -->
+    <include src="sections/page-hero-plain.html" locals='{
+      "title": "Article name written here"
+    }'></include>
+
+    <!-- Article -->
+    <include src="sections/news/article-body.html"></include>
+  </main>
+
+  <include src="partials/footer.html"></include>
+
+  <script src="assets/js/main.js" defer></script>
+</body>
+</html>

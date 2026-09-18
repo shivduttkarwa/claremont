@@ -1,0 +1,49 @@
+<!doctype html>
+<!-- Source template: partials resolve at build time. Preview dist/index.html (npm run build) or run npm run dev. -->
+<html lang="en">
+<head>
+  <include src="partials/head.html" locals='{
+    "title": "Claremont College | An Anglican Co-Educational Primary School, Randwick",
+    "description": "Claremont College is an intentionally small Anglican co-educational primary school in Randwick, where progress is personal."
+  }'></include>
+</head>
+<body>
+  <include src="partials/icons.html"></include>
+  <a class="visually-hidden-focusable" href="#main">Skip to content</a>
+
+  <include src="partials/header.html"></include>
+
+  <main id="main">
+    <!-- Hero -->
+    <include src="sections/home-hero.html"></include>
+
+    <!-- Tabbed approach panel with hotspots -->
+    <include src="sections/teaching-approach.html"></include>
+
+    <!-- Mission / vision / values -->
+    <include src="sections/pillars.html"></include>
+
+    <!-- Testimonial carousel -->
+    <include src="sections/testimonials.html"></include>
+
+    <!-- Faith banner -->
+    <include src="sections/feature-banner.html" locals='{
+      "actions": "",
+      "id": "faith-title",
+      "modifier": "",
+      "title": "Our Christian faith is the <em>key foundation</em> of everything we do.",
+      "text": "We value every child as a unique individual. We prepare each child to live with purpose, compassion, and confidence as they navigate the opportunities and challenges of an ever-changing world, guided by the Gospel of Jesus.",
+      "image": "assets/images/home/faith.webp",
+      "width": "2205",
+      "height": "834"
+    }'></include>
+
+    <!-- Where to start CTA -->
+    <include src="sections/cta-links.html"></include>
+  </main>
+
+  <include src="partials/footer.html"></include>
+
+  <script src="assets/js/main.js" defer></script>
+</body>
+</html>

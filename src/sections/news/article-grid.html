@@ -1,0 +1,54 @@
+<!-- @wagtail-block: article_grid (news index listing; 8 per page)
+     articles: query of NewsArticlePage — photo:ImageChooserBlock, title, date
+     pager:    previous / next page links
+     Figma uses one placeholder photo, headline and date for every card. -->
+<section class="article-grid" aria-label="Latest news">
+  <div class="container">
+    <ul class="article-grid__grid" data-anim-group="fade-up">
+      <li><a class="article-grid__card" href="news-article.html">
+        <div class="article-grid__media"><img src="assets/images/news/card.webp" alt="" width="605" height="603" loading="lazy"></div>
+        <h3>Article headline written here</h3>
+        <div class="article-grid__meta"><span>Date published written here</span><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></div>
+      </a></li>
+      <li><a class="article-grid__card" href="news-article.html">
+        <div class="article-grid__media"><img src="assets/images/news/card.webp" alt="" width="605" height="603" loading="lazy"></div>
+        <h3>Article headline written here</h3>
+        <div class="article-grid__meta"><span>Date published written here</span><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></div>
+      </a></li>
+      <li><a class="article-grid__card" href="news-article.html">
+        <div class="article-grid__media"><img src="assets/images/news/card.webp" alt="" width="605" height="603" loading="lazy"></div>
+        <h3>Article headline written here</h3>
+        <div class="article-grid__meta"><span>Date published written here</span><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></div>
+      </a></li>
+      <li><a class="article-grid__card" href="news-article.html">
+        <div class="article-grid__media"><img src="assets/images/news/card.webp" alt="" width="605" height="603" loading="lazy"></div>
+        <h3>Article headline written here</h3>
+        <div class="article-grid__meta"><span>Date published written here</span><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></div>
+      </a></li>
+      <li><a class="article-grid__card" href="news-article.html">
+        <div class="article-grid__media"><img src="assets/images/news/card.webp" alt="" width="605" height="603" loading="lazy"></div>
+        <h3>Article headline written here</h3>
+        <div class="article-grid__meta"><span>Date published written here</span><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></div>
+      </a></li>
+      <li><a class="article-grid__card" href="news-article.html">
+        <div class="article-grid__media"><img src="assets/images/news/card.webp" alt="" width="605" height="603" loading="lazy"></div>
+        <h3>Article headline written here</h3>
+        <div class="article-grid__meta"><span>Date published written here</span><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></div>
+      </a></li>
+      <li><a class="article-grid__card" href="news-article.html">
+        <div class="article-grid__media"><img src="assets/images/news/card.webp" alt="" width="605" height="603" loading="lazy"></div>
+        <h3>Article headline written here</h3>
+        <div class="article-grid__meta"><span>Date published written here</span><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></div>
+      </a></li>
+      <li><a class="article-grid__card" href="news-article.html">
+        <div class="article-grid__media"><img src="assets/images/news/card.webp" alt="" width="605" height="603" loading="lazy"></div>
+        <h3>Article headline written here</h3>
+        <div class="article-grid__meta"><span>Date published written here</span><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></div>
+      </a></li>
+    </ul>
+
+    <nav class="article-grid__pager" aria-label="News pages" data-anim="reveal" data-anim-type="fade">
+      <a class="arrow-btn arrow-btn--next" href="news.html?page=2" aria-label="Next page"><svg class="icon"><use href="#icon-arrow-right"></use></svg></a>
+    </nav>
+  </div>
+</section>

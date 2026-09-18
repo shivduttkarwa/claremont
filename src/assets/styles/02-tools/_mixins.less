@@ -1,0 +1,60 @@
+// =====================================================================
+// 02-tools/_mixins.less — reusable mixins (no output on their own)
+// =====================================================================
+
+.cover() {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.img-cover() {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+// Oversize a parallax image by its travel so the scrub never exposes the section behind it.
+.parallax-media(@travel) {
+  position: absolute;
+  top: -@travel;
+  left: 0;
+  width: 100%;
+  height: 100% + @travel;
+  object-fit: cover;
+}
+
+// Dock the quick-link subnav to the screen edge of a hero (from lg).
+.subnav-dock(@top) {
+  @media (min-width: @bp-lg) {
+    position: absolute;
+    top: @top;
+    right: 0;
+    z-index: var(--z-raised);
+    width: 11.75rem;
+    margin-top: 0;
+  }
+}
+
+// Zigzag timeline: item n starts on row n and spans two rows.
+.timeline-rows(@n, @i: 1) when (@i =< @n) {
+  &:nth-child(@{i}) { grid-row: ~"@{i} / span 2"; }
+  .timeline-rows(@n, (@i + 1));
+}
+
+.reset-list() {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.hide-scrollbar() {
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+}
+
+.last-mb-0() {
+  > *:last-child { margin-bottom: 0; }
+}

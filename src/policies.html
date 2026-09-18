@@ -1,0 +1,49 @@
+<!doctype html>
+<!-- Source template: partials resolve at build time. Preview dist/policies.html (npm run build) or run npm run dev. -->
+<html lang="en">
+<head>
+  <include src="partials/head.html" locals='{
+    "title": "Policies, procedures and publications | Claremont College",
+    "description": "Claremont College policies, procedures and publications, the School Annual Report and our strategic plan."
+  }'></include>
+</head>
+<body>
+  <include src="partials/icons.html"></include>
+  <a class="visually-hidden-focusable" href="#main">Skip to content</a>
+
+  <include src="partials/header.html"></include>
+
+  <main id="main">
+    <!-- Hero -->
+    <include src="sections/page-hero.html" locals='{
+      "title": "Policies, procedures and publications",
+      "aside": "",
+      "image": "assets/images/shared/inner-hero.webp",
+      "width": "1840",
+      "height": "1090"
+    }'></include>
+
+    <!-- Policy documents -->
+    <include src="sections/policies/policy-grid.html"></include>
+
+    <!-- Annual report banner -->
+    <include src="sections/feature-banner.html" locals='{
+      "id": "report-title",
+      "modifier": "feature-banner--y237",
+      "title": "School Annual Report 2025",
+      "text": "A full and open account of our results, our progress, and where we’re headed next.",
+      "actions": "<a class=\"btn btn-primary btn-primary--ink btn-icon\" href=\"#\">Download<svg class=\"icon\" aria-hidden=\"true\"><use href=\"#icon-download\"></use></svg></a>",
+      "image": "assets/images/policies/banner.webp",
+      "width": "1840",
+      "height": "689"
+    }'></include>
+
+    <!-- Strategy links -->
+    <include src="sections/policies/strategy-links.html"></include>
+  </main>
+
+  <include src="partials/footer.html"></include>
+
+  <script src="assets/js/main.js" defer></script>
+</body>
+</html>

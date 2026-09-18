@@ -1,0 +1,75 @@
+// =====================================================================
+// 03-base/_typography.less
+// h1–h6 styled GLOBALLY. No classes on heading tags — style through the
+// parent block class when a section needs a different look.
+// =====================================================================
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0 0 0.5em;
+  color: var(--color-heading);
+  font-weight: var(--font-weight-regular);
+  letter-spacing: var(--letter-spacing-body);
+}
+
+h1 {
+  font-family: var(--font-display);
+  font-size: var(--font-size-display-inner);
+  line-height: var(--line-height-hero);
+}
+h2 {
+  font-family: var(--font-body);
+  font-size: var(--font-size-h2);
+  line-height: var(--line-height-heading);
+}
+h3 {
+  font-family: var(--font-body);
+  font-size: var(--font-size-xl);
+  line-height: var(--line-height-snug);
+}
+h4 {
+  font-family: var(--font-ui);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-ui);
+  letter-spacing: var(--letter-spacing-ui);
+}
+h5 {
+  font-family: var(--font-ui);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-body);
+  letter-spacing: var(--letter-spacing-ui);
+}
+h6 {
+  font-family: var(--font-ui);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-ui);
+  letter-spacing: var(--letter-spacing-ui);
+}
+
+p {
+  margin: 0 0 var(--space-2);
+  &:last-child { margin-bottom: 0; }
+}
+
+strong, b { font-weight: var(--font-weight-bold); }
+
+// Display serif (statements, quotes, callouts) — italic runs use the italic face.
+.text-display {
+  font-family: var(--font-display);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-tight);
+  letter-spacing: var(--letter-spacing-body);
+}
+
+.lead {
+  font-size: var(--font-size-lg);
+  line-height: var(--line-height-relaxed);
+}
+
+.rich-text {
+  .last-mb-0();
+  h2, h3, h4 { margin-top: 1.5em; }
+  ul, ol { margin: 0 0 var(--space-2); padding-left: var(--space-3); }
+}

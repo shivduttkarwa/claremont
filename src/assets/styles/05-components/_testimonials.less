@@ -1,0 +1,94 @@
+// =====================================================================
+// 05-components/_testimonials.less — intro + edge-to-edge snap carousel (848 tall at 1640).
+// Heading at 107, copy at 207, arrows ending level with the copy, 412 square cards from 341, 95 below.
+// =====================================================================
+
+.testimonials {
+  --testimonials-pad-top: 6.6875rem;     // 107
+  --testimonials-pad-bottom: 5.9375rem;  // 95
+  --testimonials-title-gap: 1.65625rem;  // heading box ends 180.5, copy at 207
+  --testimonials-track-gap: 2.75rem;     // copy ends 297, cards at 341
+  --testimonials-card: 25.75rem;         // 412
+  --testimonials-fade: 0.45;
+
+  padding-block: var(--space-8);
+  @media (min-width: @bp-lg) { padding-block: var(--testimonials-pad-top) var(--testimonials-pad-bottom); }
+
+  &__header {
+    display: grid;
+    gap: var(--space-3);
+    align-items: end;
+    @media (min-width: @bp-md) { grid-template-columns: 1fr auto; }
+    .arrow-group {
+      @media (min-width: @bp-lg) { margin-bottom: 0.0625rem; } // arrows end at 296
+    }
+  }
+
+  &__intro {
+    max-width: 37.5625rem; // 601
+    h2 {
+      max-width: 34.625rem; // 554
+      margin-bottom: var(--testimonials-title-gap);
+    }
+    p { margin: 0; }
+  }
+
+  // --offset = the .container left edge, so the active card lines up with the copy above it.
+  &__track {
+    --offset: ~"max(var(--container-gutter), calc((100% - var(--container-content)) / 2))";
+    .reset-list();
+    .hide-scrollbar();
+    display: flex;
+    margin-top: var(--testimonials-track-gap);
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline-start: var(--offset);
+    mask-image: linear-gradient(
+      90deg,
+      rgba(0, 0, 0, var(--testimonials-fade)) 0,
+      rgba(0, 0, 0, var(--testimonials-fade)) var(--offset),
+      #000 var(--offset),
+      #000 calc(100% - var(--offset)),
+      rgba(0, 0, 0, var(--testimonials-fade)) calc(100% - var(--offset)),
+      rgba(0, 0, 0, var(--testimonials-fade)) 100%
+    );
+  }
+
+  &__card {
+    position: relative;
+    flex: 0 0 auto;
+    width: ~"min(var(--testimonials-card), 80vw)";
+    aspect-ratio: 1;
+    overflow: hidden;
+    scroll-snap-align: start;
+    background: var(--color-secondary);
+    img { .img-cover(); }
+
+    // Quote starts 25 in and 31 down
+    &--quote {
+      display: flex;
+      align-items: flex-start;
+      padding: 1.9375rem 1.5625rem;
+      &::after {
+        content: "";
+        .cover();
+        background: var(--color-secondary);
+        opacity: 0.95;
+      }
+      img { .cover(); }
+    }
+  }
+
+  &__quote {
+    position: relative;
+    z-index: var(--z-content);
+    max-width: 19.625rem; // 314
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: var(--font-size-quote);
+    line-height: var(--line-height-tight);
+    letter-spacing: var(--letter-spacing-body);
+    color: var(--color-heading);
+  }
+}

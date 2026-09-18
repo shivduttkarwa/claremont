@@ -1,0 +1,39 @@
+<!doctype html>
+<!-- Source template: partials resolve at build time. Preview dist/contact-us.html (npm run build) or run npm run dev. -->
+<html lang="en">
+<head>
+  <include src="partials/head.html" locals='{
+    "title": "Contact us | Claremont College",
+    "description": "Contact Claremont College, 30 Coogee Bay Rd, Randwick NSW 2031. Office and enrolment enquiries."
+  }'></include>
+</head>
+<body>
+  <include src="partials/icons.html"></include>
+  <a class="visually-hidden-focusable" href="#main">Skip to content</a>
+
+  <include src="partials/header.html"></include>
+
+  <main id="main">
+    <!-- Hero -->
+    <include src="sections/page-hero.html" locals='{
+      "title": "Contact us",
+      "aside": "",
+      "image": "assets/images/shared/inner-hero.webp",
+      "width": "1840",
+      "height": "1090"
+    }'></include>
+
+    <!-- Details + enquiry form -->
+    <include src="sections/contact/details-form.html"></include>
+
+    <!-- Map: static greyscale image as designed; swap for a Google Maps embed in production if wanted -->
+    <a class="map-banner" href="https://www.google.com/maps/search/?api=1&query=30+Coogee+Bay+Rd+Randwick+NSW+2031" target="_blank" rel="noopener" aria-label="Open 30 Coogee Bay Rd, Randwick in Google Maps">
+      <img src="assets/images/contact/map.webp" alt="Map showing Claremont College at 30 Coogee Bay Rd, Randwick" width="2460" height="650" loading="lazy">
+    </a>
+  </main>
+
+  <include src="partials/footer.html"></include>
+
+  <script src="assets/js/main.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,64 @@
+// =====================================================================
+// 01-settings/_bootstrap-vars.less
+// Re-theme Bootstrap 5.3 THROUGH its CSS variables. Never touch BS Sass.
+// =====================================================================
+
+:root {
+  --bs-primary: var(--color-primary);
+  --bs-primary-rgb: 13, 71, 73;
+  --bs-secondary: var(--color-secondary);
+  --bs-secondary-rgb: 194, 225, 255;
+  --bs-light: var(--color-background-alt);
+  --bs-light-rgb: 244, 250, 255;
+  --bs-dark: var(--color-primary-dark);
+  --bs-dark-rgb: 5, 51, 51;
+  --bs-white-rgb: 255, 255, 255;
+
+  --bs-body-color: var(--color-text);
+  --bs-body-color-rgb: 43, 43, 43;
+  --bs-body-bg: var(--color-background);
+  --bs-body-bg-rgb: 255, 255, 255;
+  --bs-body-font-family: var(--font-body);
+  --bs-body-font-size: var(--font-size-base);
+  --bs-body-line-height: var(--line-height-body);
+  --bs-heading-color: var(--color-heading);
+  --bs-emphasis-color: var(--color-heading);
+  --bs-secondary-color: var(--color-muted);
+
+  --bs-link-color: var(--color-primary);
+  --bs-link-color-rgb: 13, 71, 73;
+  --bs-link-hover-color: var(--color-green-hover);
+  --bs-link-hover-color-rgb: 10, 58, 60;
+  --bs-link-decoration: none;
+
+  --bs-border-width: var(--border-width);
+  --bs-border-color: var(--color-line);
+  --bs-border-radius: var(--radius-none);
+  --bs-border-radius-sm: var(--radius-none);
+  --bs-border-radius-lg: var(--radius-none);
+  --bs-border-radius-xl: var(--radius-none);
+
+  --bs-focus-ring-color: rgba(194, 225, 255, 0.6);
+}
+
+// Containers: 1240 content width at xxl, 20px gutters; header/footer use the wider edge gutter.
+.container,
+.container-fluid {
+  --bs-gutter-x: calc(var(--container-gutter) * 2);
+}
+.container {
+  @media (min-width: @bp-xxl) { max-width: var(--container-max); }
+}
+.container-edge {
+  --bs-gutter-x: calc(var(--edge-gutter) * 2);
+}
+
+// Offcanvas (mobile menu)
+.offcanvas {
+  --bs-offcanvas-bg: var(--color-primary);
+  --bs-offcanvas-color: var(--color-white);
+  --bs-offcanvas-width: ~"min(100%, 22rem)";
+  --bs-offcanvas-padding-x: var(--space-3);
+  --bs-offcanvas-padding-y: var(--space-3);
+  --bs-offcanvas-border-width: 0;
+}

@@ -1,0 +1,79 @@
+// =====================================================================
+// 05-components/_article.less — news article body (1496 tall at 1640).
+// Standfirst at (198, 99) with the back button at 217; photo (724, 114) 712 × 388; copy from 542, 700 wide;
+// previous / next at 1348; 102 below.
+// =====================================================================
+
+.article {
+  --article-pad-top: 6.1875rem;      // 99
+  --article-pad-bottom: 6.375rem;    // 102
+  --article-lead-width: 31.875rem;   // 510
+  --article-media-width: 44.5rem;    // 712
+  --article-body-width: 43.75rem;    // 700
+
+  padding-block: var(--space-8);
+  @media (min-width: @bp-lg) { padding-block: var(--article-pad-top) var(--article-pad-bottom); }
+
+  h2 {
+    max-width: var(--article-lead-width);
+    margin: 0 0 2.78125rem; // standfirst box ends 172.5, button at 217
+    @media (min-width: @bp-xxl) { margin-left: -0.125rem; } // x 198
+  }
+
+  &__back {
+    @media (min-width: @bp-xxl) { margin-left: -0.125rem; }
+  }
+
+  &__main {
+    @media (min-width: @bp-lg) { margin-left: 0.45rem; } // x 724
+  }
+
+  &__media {
+    max-width: var(--article-media-width);
+    margin: 0 0 var(--space-5); // 40
+    @media (min-width: @bp-lg) { margin-top: 0.9375rem; } // photo starts 15 below the standfirst
+    img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+  }
+
+  &__body { max-width: var(--article-body-width); }
+
+  // Previous / next article
+  &__nav {
+    display: grid;
+    gap: var(--space-3);
+    max-width: var(--article-media-width);
+    margin-top: var(--space-6);
+    @media (min-width: @bp-sm) { grid-template-columns: 1fr 1fr; }
+  }
+
+  &__nav-link {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.1875rem; // 19
+    color: var(--color-text);
+    &--next {
+      justify-content: flex-end;
+      gap: 1.375rem; // 22
+      text-align: right;
+    }
+    &:hover,
+    &:focus-visible {
+      color: var(--color-text);
+      .arrow-btn {
+        background: var(--color-primary);
+        color: var(--color-white);
+      }
+    }
+    .arrow-btn {
+      flex: 0 0 auto;
+      width: 2.875rem; // 46
+      height: 2.875rem;
+    }
+  }
+
+  &__nav-label span { display: block; }
+}

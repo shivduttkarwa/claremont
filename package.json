@@ -1,0 +1,25 @@
+{
+  "name": "figma-cutup-html-starter",
+  "version": "1.0.0",
+  "description": "Plain HTML + JS + LESS Figma→HTML cutup starter — Bootstrap 5.3 + LESS (ITCSS/BEM) + anim system, build-time HTML partial includes.",
+  "type": "module",
+  "scripts": {
+    "dev": "node build.mjs --dev",
+    "build": "node build.mjs"
+  },
+  "dependencies": {
+    "bootstrap": "^5.3.8",
+    "gsap": "^3.13.0",
+    "lenis": "^1.1.18"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.20",
+    "browser-sync": "^3.0.3",
+    "chokidar": "^4.0.1",
+    "esbuild": "^0.24.0",
+    "less": "^4.2.1",
+    "posthtml": "^0.16.6",
+    "posthtml-include": "^2.0.1",
+    "postcss": "^8.4.49"
+  }
+}

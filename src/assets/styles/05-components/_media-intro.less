@@ -1,0 +1,33 @@
+// =====================================================================
+// 05-components/_media-intro.less — contained wide photo with a heading + copy row beneath (686 tall).
+// Photo (198, 52) 1242 × 371; heading at (198, 477); copy at (722, 474), 718 wide; 28 below.
+// =====================================================================
+
+.media-intro {
+  --media-intro-pad-top: 3.25rem;    // 52
+  --media-intro-pad-bottom: 2rem;    // copy (8 lines) ends 654
+  --media-intro-gap: 3.1875rem;      // photo ends 423, copy starts 474
+
+  padding-block: var(--space-6) var(--space-6);
+  @media (min-width: @bp-lg) { padding-block: var(--media-intro-pad-top) var(--media-intro-pad-bottom); }
+
+  &__media {
+    margin: 0 0 var(--space-5);
+    overflow: hidden;
+    aspect-ratio: 1242 / 371;
+    @media (min-width: @bp-lg) { margin-bottom: var(--media-intro-gap); }
+    @media (min-width: @bp-xxl) { margin-inline: -0.125rem 0; } // x 198 → 1440
+    img { .img-cover(); }
+  }
+
+  h2 {
+    margin: 0 0 var(--space-3);
+    @media (min-width: @bp-lg) { margin: 0.1875rem 0 0 -0.125rem; } // (198, 477)
+  }
+
+  p {
+    max-width: 44.875rem; // 718
+    margin: 0;
+    @media (min-width: @bp-lg) { margin-left: 0.3125rem; } // x 722
+  }
+}

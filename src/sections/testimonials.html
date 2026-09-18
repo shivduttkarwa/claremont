@@ -1,0 +1,37 @@
+<!-- @wagtail-block: testimonials
+     title:  CharBlock(required)
+     intro:  TextBlock
+     slides: ListBlock(StructBlock(kind:ChoiceBlock(image|quote), image:ImageChooserBlock, quote:TextBlock, alt:CharBlock)) -->
+<section class="testimonials" aria-labelledby="testimonials-title" data-scroller>
+  <div class="container">
+    <div class="testimonials__header">
+      <div class="testimonials__intro">
+        <h2 id="testimonials-title" data-anim="reveal">See what our biggest and littlest fans have to say about us.</h2>
+        <p data-anim="reveal" data-anim-order="1">We are proud that parents, children and our staff work together to create a supportive, nurturing and inclusive community in and around Claremont College. Together we share a commitment to enhancing children's education and their school experience, in a place that makes every child feel they belong.</p>
+      </div>
+      <div class="arrow-group" data-anim="reveal" data-anim-type="fade" data-anim-order="2">
+        <button class="arrow-btn arrow-btn--prev" type="button" aria-label="Previous" data-scroller-prev><svg class="icon"><use href="#icon-arrow-right"></use></svg></button>
+        <button class="arrow-btn arrow-btn--next" type="button" aria-label="Next" data-scroller-next><svg class="icon"><use href="#icon-arrow-right"></use></svg></button>
+      </div>
+    </div>
+  </div>
+
+  <ul class="testimonials__track" data-scroller-track data-scroller-start="1" data-anim-group="fade-up">
+    <li class="testimonials__card">
+      <img src="assets/images/home/testimonial-girl.webp" alt="A smiling student with plaits in her school uniform" width="539" height="539" loading="lazy">
+    </li>
+    <li class="testimonials__card testimonials__card--quote">
+      <img src="assets/images/home/testimonial-quote-bg.webp" alt="" width="345" height="345" loading="lazy">
+      <blockquote class="testimonials__quote">“Music is my favourite lesson because it's where I can be myself. I always leave class feeling happy.”</blockquote>
+    </li>
+    <li class="testimonials__card">
+      <img src="assets/images/home/testimonial-boy.webp" alt="A smiling student in blazer and striped tie" width="824" height="824" loading="lazy">
+    </li>
+    <li class="testimonials__card">
+      <img src="assets/images/home/testimonial-girl.webp" alt="A smiling student with plaits in her school uniform" width="539" height="539" loading="lazy">
+    </li>
+    <li class="testimonials__card">
+      <img src="assets/images/home/testimonial-girl.webp" alt="A smiling student with plaits in her school uniform" width="539" height="539" loading="lazy">
+    </li>
+  </ul>
+</section>

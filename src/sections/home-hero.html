@@ -1,0 +1,44 @@
+<!-- @wagtail-block: home_hero
+     title:      RichTextBlock (two lines, second italic)
+     subtitle:   RichTextBlock (italic run)
+     body:       RichTextBlock
+     cta:        StructBlock(text:CharBlock, url:URLBlock)
+     background: ImageChooserBlock
+     quick links come from the subnav site setting (partials/subnav.html) -->
+<section class="hero" aria-labelledby="hero-title" data-anim-parallax-trigger>
+  <div class="hero__media" aria-hidden="true">
+    <img class="hero__img" src="assets/images/home/hero.webp" alt="" width="1842" height="1650"
+         data-anim="parallax" data-anim-axis="y" data-anim-speed="12" data-anim-reverse data-anim-start="top top" data-anim-disable-mobile>
+  </div>
+
+  <div class="container">
+    <div class="hero__content">
+      <h1 id="hero-title" data-anim="reveal" data-anim-tier="hero" data-anim-order="0">
+        <span class="hero__title-line">Welcome to</span>
+        <em class="hero__title-line hero__title-line--indent">Claremont College.</em>
+      </h1>
+
+      <p class="hero__subtitle" data-anim="reveal" data-anim-tier="hero" data-anim-order="1">Where progress is <em>personal.</em></p>
+
+      <div class="hero__body" data-anim="reveal" data-anim-tier="hero" data-anim-order="2">
+        <p>Where we don’t take the trust you instill in us for granted.</p>
+        <p>Where a love of what we do seeps into everything we do.</p>
+        <p>We are intentionally small.</p>
+        <p>A place where your child can feel like somebody.</p>
+        <p>A place where every teacher knows their name.</p>
+        <p>Teachers who nurture and reward children at their pace.</p>
+        <p>With faith as a key foundation to their education.</p>
+        <p>With everything grounded in our Christian values.</p>
+        <p><strong>This is Claremont College. Where progress is personal.</strong></p>
+      </div>
+
+      <div class="hero__actions" data-anim="reveal" data-anim-tier="hero" data-anim-order="3">
+        <a class="btn btn-primary" href="welcome.html">Welcome from Claremont</a>
+      </div>
+    </div>
+
+    <div class="hero__subnav" data-anim="reveal" data-anim-type="from-right" data-anim-tier="hero" data-anim-order="2">
+      <include src="partials/subnav.html"></include>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,50 @@
+<!-- @wagtail-block: contact (details from site settings + a Wagtail FormPage)
+     address, office phone/email, enrolment phone/email: site settings
+     form fields: first_name, last_name, email, message -->
+<section class="contact bg-light" id="book-a-tour" aria-label="Contact details and enquiry form">
+  <div class="container">
+    <div class="row g-4 g-lg-0">
+      <div class="col-lg-6" data-anim="reveal">
+        <ul class="contact__details">
+          <li class="contact__item"><svg class="icon" aria-hidden="true"><use href="#icon-contact-pin"></use></svg><span>30 Coogee Bay Rd, Randwick NSW 2031</span></li>
+        </ul>
+
+        <p class="contact__group-title">Office:</p>
+        <ul class="contact__details">
+          <li class="contact__item"><svg class="icon" aria-hidden="true"><use href="#icon-contact-phone"></use></svg><a href="tel:+61293993217">02 9399 3217</a></li>
+          <li class="contact__item"><svg class="icon" aria-hidden="true"><use href="#icon-contact-mail"></use></svg><a href="mailto:office@claremont.nsw.edu.au">office@claremont.nsw.edu.au</a></li>
+        </ul>
+
+        <p class="contact__group-title contact__group-title--second">Enrolment enquiries</p>
+        <ul class="contact__details">
+          <li class="contact__item"><svg class="icon" aria-hidden="true"><use href="#icon-contact-phone"></use></svg><a href="tel:+61292130733">02 9213 0733</a></li>
+          <li class="contact__item"><svg class="icon" aria-hidden="true"><use href="#icon-contact-mail"></use></svg><a href="mailto:enrolments@claremont.nsw.edu.au">enrolments@claremont.nsw.edu.au</a></li>
+        </ul>
+      </div>
+
+      <div class="col-lg-6" data-anim="reveal" data-anim-order="1">
+        <form class="contact__form" action="#" method="post">
+          <div>
+            <label class="form-label" for="contact-first-name">First Name</label>
+            <input class="form-control" id="contact-first-name" name="first_name" type="text" placeholder="Jane" autocomplete="given-name" required>
+          </div>
+          <div>
+            <label class="form-label" for="contact-last-name">Last Name</label>
+            <input class="form-control" id="contact-last-name" name="last_name" type="text" placeholder="Doe" autocomplete="family-name" required>
+          </div>
+          <div class="contact__field--wide">
+            <label class="form-label" for="contact-email">Email</label>
+            <input class="form-control" id="contact-email" name="email" type="email" placeholder="jane.doe@gmail.com" autocomplete="email" required>
+          </div>
+          <div class="contact__field--wide">
+            <label class="form-label" for="contact-message">Message</label>
+            <textarea class="form-control" id="contact-message" name="message" placeholder="Write your message" rows="4" required></textarea>
+          </div>
+          <div class="contact__actions">
+            <button class="btn btn-primary btn-primary--ink" type="submit">Submit</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>

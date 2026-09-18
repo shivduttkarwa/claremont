@@ -1,0 +1,75 @@
+<!-- @wagtail-partial: footer — site settings:
+     about:        RichTextBlock
+     ctas:         ListBlock(StructBlock(text:CharBlock, url:URLBlock, style:ChoiceBlock))
+     socials:      ListBlock(StructBlock(network:ChoiceBlock, url:URLBlock))
+     term_dates:   ListBlock(StructBlock(label:CharBlock, dates:CharBlock))
+     quick_links:  ListBlock(StructBlock(label:CharBlock, page:PageChooserBlock))
+     phone / emails / address: CharBlock
+     acknowledgement, copyright: RichTextBlock -->
+<footer class="site-footer">
+  <div class="container-fluid container-edge">
+    <div class="site-footer__columns" data-anim-group="fade-up">
+      <div class="site-footer__about">
+        <a class="site-footer__logo" href="index.html">
+          <img src="assets/images/logo.webp" alt="Claremont College — An Anglican Co-Educational Primary School" width="1089" height="270">
+        </a>
+        <p>Claremont College is a member of The Anglican Schools Corporation. Our school nurtures and educates young people in accordance with the doctrines, tenets, beliefs and teachings of the Anglican Church Diocese of Sydney.</p>
+        <div class="site-footer__actions">
+          <a class="btn btn-outline-light" href="contact-us.html#book-a-tour">Book a tour</a>
+          <a class="btn btn-primary" href="enrolment.html">How to enrol</a>
+        </div>
+        <ul class="site-footer__social">
+          <li><a href="https://www.facebook.com/" aria-label="Claremont College on Facebook"><svg class="icon"><use href="#icon-facebook"></use></svg></a></li>
+          <li><a href="https://www.instagram.com/" aria-label="Claremont College on Instagram"><svg class="icon"><use href="#icon-instagram"></use></svg></a></li>
+          <li><a href="https://www.linkedin.com/" aria-label="Claremont College on LinkedIn"><svg class="icon"><use href="#icon-linkedin"></use></svg></a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h2>2026 Term Dates</h2>
+        <ul class="site-footer__list">
+          <li><span class="site-footer__label">Term 1</span><p>Monday 1 February to Friday 9 April</p></li>
+          <li><span class="site-footer__label">Term 2</span><p>Wednesday 28 April to Friday 25 June</p></li>
+          <li><span class="site-footer__label">Term 3</span><p>Monday 20 July to Friday 24 September</p></li>
+          <li><span class="site-footer__label">Term 4</span><p>Tuesday 12 October to Wednesday 1 December</p></li>
+        </ul>
+      </div>
+
+      <div>
+        <h2>Quick Links</h2>
+        <ul class="site-footer__links">
+          <li><a href="index.html"><svg class="icon"><use href="#icon-chevron-right"></use></svg><span>Home page</span></a></li>
+          <li><a href="policies.html"><svg class="icon"><use href="#icon-chevron-right"></use></svg><span>Our policies</span></a></li>
+          <li><a href="news.html"><svg class="icon"><use href="#icon-chevron-right"></use></svg><span>Community and news</span></a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h2>Contact Us</h2>
+        <ul class="site-footer__list site-footer__contact">
+          <li>
+            <svg class="icon"><use href="#icon-phone"></use></svg>
+            <div><span class="site-footer__label">Phone</span><p><a href="tel:+61293993217">02 9399 3217</a></p></div>
+          </li>
+          <li>
+            <svg class="icon"><use href="#icon-mail-sm"></use></svg>
+            <div>
+              <span class="site-footer__label">Email</span>
+              <p><a href="mailto:office@claremont.nsw.edu.au">office@claremont.nsw.edu.au</a></p>
+              <p><a href="mailto:enrolments@claremont.nsw.edu.au">enrolments@claremont.nsw.edu.au</a></p>
+            </div>
+          </li>
+          <li>
+            <svg class="icon"><use href="#icon-map-pin"></use></svg>
+            <div><span class="site-footer__label">Address</span><p>30 Coogee Bay Rd, Randwick NSW 2031</p></div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="site-footer__bottom" data-anim="reveal" data-anim-type="fade" data-anim-tier="secondary">
+      <p class="site-footer__ack">Claremont College acknowledges the Mura Ora Dial and Dharawal peoples, the traditional custodians of the land on which we are located. We respect their elders, past, present and emerging, and we are grateful to learn from their stories, traditions and knowledge. We recognise their contribution to the education of all children. We respect the land, the sea and sky, and the creatures that call this land home.</p>
+      <p class="site-footer__copy">© 2026 Claremont College. All Rights Reserved. A member of The Anglican Schools Corporation</p>
+    </div>
+  </div>
+</footer>

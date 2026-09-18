@@ -1,0 +1,24 @@
+<!-- @wagtail-block: scroller (photo cards)
+     title: CharBlock(required)
+     cards: ListBlock(StructBlock(photo:ImageChooserBlock, name:CharBlock, page:PageChooserBlock))
+     Figma repeats one placeholder portrait and gives no names, so the link labels are generic. -->
+<section class="scroller scroller--photos" aria-labelledby="educators-title" data-scroller>
+  <div class="container">
+    <div class="scroller__header">
+      <h2 id="educators-title" data-anim="reveal">Our team of educators who inspire</h2>
+      <div class="arrow-group" data-anim="reveal" data-anim-type="fade" data-anim-order="1">
+        <button class="arrow-btn arrow-btn--prev" type="button" aria-label="Previous educators" data-scroller-prev><svg class="icon"><use href="#icon-arrow-right"></use></svg></button>
+        <button class="arrow-btn arrow-btn--next" type="button" aria-label="Next educators" data-scroller-next><svg class="icon"><use href="#icon-arrow-right"></use></svg></button>
+      </div>
+    </div>
+  </div>
+
+  <ul class="scroller__track" data-scroller-track data-scroller-dim data-anim-group="fade-up">
+    <li class="scroller__card"><a class="scroller__photo" href="#" aria-label="Meet this educator"><img src="assets/images/welcome/educator.webp" alt="" width="714" height="712" loading="lazy"><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+    <li class="scroller__card"><a class="scroller__photo" href="#" aria-label="Meet this educator"><img src="assets/images/welcome/educator.webp" alt="" width="714" height="712" loading="lazy"><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+    <li class="scroller__card"><a class="scroller__photo" href="#" aria-label="Meet this educator"><img src="assets/images/welcome/educator.webp" alt="" width="714" height="712" loading="lazy"><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+    <li class="scroller__card"><a class="scroller__photo" href="#" aria-label="Meet this educator"><img src="assets/images/welcome/educator.webp" alt="" width="714" height="712" loading="lazy"><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+    <li class="scroller__card"><a class="scroller__photo" href="#" aria-label="Meet this educator"><img src="assets/images/welcome/educator.webp" alt="" width="714" height="712" loading="lazy"><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+    <li class="scroller__card"><a class="scroller__photo" href="#" aria-label="Meet this educator"><img src="assets/images/welcome/educator.webp" alt="" width="714" height="712" loading="lazy"><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+  </ul>
+</section>

@@ -1,0 +1,19 @@
+<!-- @wagtail-block: feature_banner
+     title: RichTextBlock (italic run)
+     text:  TextBlock
+     image: ImageChooserBlock
+     cta:   StructBlock(text:CharBlock, url:URLBlock / document:DocumentChooserBlock) — optional
+     locals: id, title, text, image, width, height, modifier, actions (HTML buttons, or empty) -->
+<section class="feature-banner {{ modifier }}" aria-labelledby="{{ id }}" data-anim-parallax-trigger>
+  <div class="feature-banner__media" aria-hidden="true">
+    <img src="{{ image }}" alt="" width="{{ width }}" height="{{ height }}" loading="lazy"
+         data-anim="reveal" data-anim-type="scale">
+  </div>
+  <div class="container">
+    <div class="feature-banner__content" data-anim="reveal" data-anim-type="from-left">
+      <h2 id="{{ id }}">{{{ title }}}</h2>
+      <p class="feature-banner__text">{{ text }}</p>
+      <div class="feature-banner__actions">{{{ actions }}}</div>
+    </div>
+  </div>
+</section>

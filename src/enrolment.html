@@ -1,0 +1,53 @@
+<!doctype html>
+<!-- Source template: partials resolve at build time. Preview dist/enrolment.html (npm run build) or run npm run dev. -->
+<html lang="en">
+<head>
+  <include src="partials/head.html" locals='{
+    "title": "Enrolment | Claremont College",
+    "description": "How to enrol at Claremont College: the five-step enrolment journey, fees and term dates, and how to reach our Registrar."
+  }'></include>
+</head>
+<body>
+  <include src="partials/icons.html"></include>
+  <a class="visually-hidden-focusable" href="#main">Skip to content</a>
+
+  <include src="partials/header.html"></include>
+
+  <main id="main">
+    <!-- Hero with the Registrar’s contact lines -->
+    <include src="sections/page-hero.html" locals='{
+      "title": "Enrolment",
+      "aside": "<li><svg class=\"icon\" aria-hidden=\"true\"><use href=\"#icon-contact-phone\"></use></svg><span>Direct line 8am-4pm: <a href=\"tel:+61292130733\">(02) 9213 0733</a></span></li><li><svg class=\"icon\" aria-hidden=\"true\"><use href=\"#icon-contact-mail\"></use></svg><a href=\"mailto:enrolments@claremont.nsw.edu.au\">enrolments@claremont.nsw.edu.au</a></li>",
+      "image": "assets/images/shared/inner-hero.webp",
+      "width": "1840",
+      "height": "1090"
+    }'></include>
+
+    <!-- Green intro band with buttons -->
+    <include src="sections/intro-split.html" locals='{
+      "theme": "intro-split--dark intro-split--lg intro-split--tight-paragraphs",
+      "lead": "It all starts <em>here.</em>",
+      "actions": "<a class=\"btn btn-outline-light\" href=\"contact-us.html#book-a-tour\">Book a tour</a><a class=\"btn btn-primary btn-primary--ink\" href=\"#apply\">Apply to enrol</a>",
+      "body": "<p>We warmly welcome all new families to Claremont College, and we look forward to meeting yours. Our annual intake years are Preparatory, Kindergarten, Year 3 and Year 5, with enrolment in other year groups offered subject to availability. Because interviews are usually held 12–18 months before a child starts, we encourage families to apply well ahead of time.</p><p>From your first enquiry to your child’s first day, our Registrar will guide you through every step: from answering questions, to detailing school policies to ensuring the enrolment process is as smooth as possible. To experience our college and community for yourself, book a school tour today.</p>"
+    }'></include>
+
+    <!-- The enrolment journey -->
+    <include src="sections/enrolment/journey.html"></include>
+
+    <!-- Photo banner -->
+    <include src="sections/image-banner.html" locals='{
+      "image": "assets/images/enrolment/banner.webp",
+      "alt": "Two Claremont students in green hats and cardigans, arm in arm and laughing",
+      "width": "1840",
+      "height": "689"
+    }'></include>
+
+    <!-- Fees and dates -->
+    <include src="sections/enrolment/fees-links.html"></include>
+  </main>
+
+  <include src="partials/footer.html"></include>
+
+  <script src="assets/js/main.js" defer></script>
+</body>
+</html>

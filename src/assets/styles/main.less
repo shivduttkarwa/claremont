@@ -1,0 +1,54 @@
+// =====================================================================
+// main.less — import manifest ONLY (no rules here). ITCSS order.
+// Bootstrap 5.3 is included as compiled CSS, then re-themed via CSS vars.
+// =====================================================================
+
+// Framework (compiled CSS, included verbatim)
+@import (inline) "bootstrap/dist/css/bootstrap.min.css";
+
+// 01 Settings — tokens + Bootstrap CSS-variable overrides
+@import "01-settings/_tokens.less";
+@import "01-settings/_bootstrap-vars.less";
+
+// 02 Tools — mixins (no output)
+@import "02-tools/_mixins.less";
+
+// 03 Base — fonts + element defaults
+@import "03-base/_fonts.less";
+@import "03-base/_base.less";
+@import "03-base/_typography.less";
+
+// 04 Layout — page regions
+@import "04-layout/_header.less";
+@import "04-layout/_footer.less";
+
+// 05 Components — BEM blocks
+@import "05-components/_icon.less";
+@import "05-components/_buttons.less";
+@import "05-components/_subnav.less";
+@import "05-components/_hero.less";
+@import "05-components/_approach.less";
+@import "05-components/_pillars.less";
+@import "05-components/_testimonials.less";
+@import "05-components/_feature-banner.less";
+@import "05-components/_cta-links.less";
+@import "05-components/_page-hero.less";
+@import "05-components/_intro-split.less";
+@import "05-components/_link-columns.less";
+@import "05-components/_timeline.less";
+@import "05-components/_split-feature.less";
+@import "05-components/_cta-row.less";
+@import "05-components/_link-grid.less";
+@import "05-components/_mosaic.less";
+@import "05-components/_scroller.less";
+@import "05-components/_staff-grid.less";
+@import "05-components/_media-intro.less";
+@import "05-components/_article-grid.less";
+@import "05-components/_article.less";
+@import "05-components/_contact.less";
+
+// 06 Animation — anim system styles + FOUC guard
+@import "06-animation/_animation.less";
+
+// 07 Utilities
+@import "07-utilities/_utilities.less";

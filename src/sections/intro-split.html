@@ -1,0 +1,19 @@
+<!-- @wagtail-block: intro_split
+     lead:    RichTextBlock (display-serif statement, italic run)
+     body:    RichTextBlock
+     ctas:    ListBlock(StructBlock(text:CharBlock, url:URLBlock, style:ChoiceBlock)) — optional, under the lead
+     theme:   ChoiceBlock(intro-split--dark | bg-light | none)
+     locals: lead, body, theme, actions (HTML buttons, or empty) -->
+<section class="intro-split {{ theme }}">
+  <div class="container">
+    <div class="row g-4 g-lg-0">
+      <div class="col-lg-6">
+        <h2 data-anim="reveal">{{{ lead }}}</h2>
+        <div class="intro-split__actions" data-anim="reveal" data-anim-order="1">{{{ actions }}}</div>
+      </div>
+      <div class="col-lg-6">
+        <div class="intro-split__body rich-text" data-anim="reveal" data-anim-order="1">{{{ body }}}</div>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,41 @@
+<!-- @wagtail-block: link_columns
+     title: CharBlock(required)
+     intro: TextBlock (optional, shown right of the title)
+     items: ListBlock(StructBlock(title:CharBlock, page:PageChooserBlock, image:ImageChooserBlock(optional, photo column))) -->
+<section class="link-columns bg-light" aria-labelledby="teams-title">
+  <div class="container">
+    <div class="link-columns__header link-columns__header--split">
+      <div class="row g-4 g-lg-0">
+        <div class="col-lg-6">
+          <h2 id="teams-title" data-anim="reveal">Collaborative teaching teams</h2>
+        </div>
+        <div class="col-lg-6">
+          <p data-anim="reveal" data-anim-order="1">Comprised of three to four educators (including classroom teachers, learning enrichment teachers and teaching and learning assistants), our teams work together to provide a tailored, holistic response to each child’s educational and emotional needs. By sharing their unique expertise and combining their diverse perspectives, our collaborative teaching teams are able to ensure that all students are seen, every child is supported, and no child is overlooked.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="link-columns__grid" data-anim-group="fade-up">
+    <div class="link-columns__item link-columns__item--media">
+      <img src="assets/images/k-6-primary/team.webp" alt="Two Claremont students in green hats and cardigans, arm in arm and laughing" width="820" height="1120" loading="lazy">
+    </div>
+    <a class="link-columns__item" href="#">
+      <div class="link-columns__head">
+        <h3>Classroom teachers</h3>
+        <svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+      </div>
+    </a>
+    <a class="link-columns__item" href="#">
+      <div class="link-columns__head">
+        <h3>Learning enrichment teachers</h3>
+        <svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+      </div>
+    </a>
+    <a class="link-columns__item" href="#">
+      <div class="link-columns__head">
+        <h3>Teachers and learning assistants</h3>
+        <svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+      </div>
+    </a>
+  </div>
+</section>

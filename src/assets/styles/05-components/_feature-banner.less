@@ -1,0 +1,92 @@
+// =====================================================================
+// 05-components/_feature-banner.less — full-bleed photo (614 tall at 1640), optionally with a callout.
+// Figma places each callout by hand, so the offset, gap and measure are per-instance properties.
+// =====================================================================
+
+.feature-banner {
+  --banner-height: ~"clamp(30rem, 37.44vw, 38.375rem)";
+  --banner-top: 13.0625rem;            // 209 (homepage)
+  --banner-content-width: 33rem;       // 528
+  --banner-title-gap: 1.96875rem;      // 31.5 (homepage: 5 + a 15px blank line + 10)
+  --banner-actions-gap: 2.28125rem;    // 36.5
+
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  min-height: 24rem;
+  padding-block: var(--space-10);
+  background: var(--color-primary);
+  color: var(--color-white);
+  @media (min-width: @bp-lg) {
+    align-items: flex-start;
+    min-height: var(--banner-height);
+    padding-block: var(--banner-top) var(--space-6);
+  }
+
+  // Inner pages: a 45px title, one blank 32 / 1.1 line, then the copy
+  &--y168 { --banner-top: 10.5rem;    --banner-title-gap: 2.2rem; --banner-content-width: 31.0625rem; } // 168, 497 wide
+  &--y237 { --banner-top: 14.8125rem; --banner-title-gap: 2.2rem; }                                      // 237
+
+  > .container { width: 100%; }
+
+  &__media {
+    .cover();
+    z-index: var(--z-behind);
+    overflow: hidden;
+    img {
+      .img-cover();
+      object-position: 70% 50%;
+      @media (min-width: @bp-lg) { object-position: 50% 50%; }
+    }
+    &::after {
+      content: "";
+      .cover();
+      background: rgba(5, 51, 51, 0.62);
+      @media (min-width: @bp-md) { background: linear-gradient(90deg, rgba(5, 51, 51, 0.7) 0%, rgba(5, 51, 51, 0) 75%); }
+      @media (min-width: @bp-lg) { background: none; }
+    }
+  }
+
+  &__content {
+    position: relative;
+    z-index: var(--z-content);
+    max-width: var(--banner-content-width);
+    @media (min-width: @bp-xxl) { margin-left: -0.1875rem; } // x 197 on every banner
+  }
+
+  h2 {
+    margin-bottom: var(--banner-title-gap);
+    font-family: var(--font-display);
+    font-size: var(--font-size-callout);
+    line-height: var(--line-height-tight);
+    color: var(--color-white);
+  }
+
+  &__text { margin: 0; }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-top: var(--banner-actions-gap);
+    &:empty { display: none; }
+    @media (min-width: @bp-xxl) { margin-left: 0.3125rem; } // button at x 202
+  }
+
+  // Photo only, no copy
+  &--media-only {
+    display: block;
+    min-height: 0;
+    margin: 0;
+    padding-block: 0;
+    aspect-ratio: 16 / 10;
+    @media (min-width: @bp-lg) {
+      min-height: 0;
+      padding-block: 0;
+      aspect-ratio: 1640 / 614;
+    }
+    .feature-banner__media::after { background: none; }
+  }
+}

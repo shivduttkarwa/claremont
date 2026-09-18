@@ -1,0 +1,44 @@
+// =====================================================================
+// 05-components/_cta-row.less — closing green band, 368 tall at 1640:
+// heading at (196, 98), copy at (823, 104), buttons at y 222, 98 of air below.
+// =====================================================================
+
+.cta-row {
+  --cta-row-pad-y: 6.125rem;         // 98
+  --cta-row-title-width: 27.8125rem; // 445
+  --cta-row-body-width: 38.25rem;    // 612
+  --cta-row-body-height: 4.5rem;     // 72: three lines, keeps the buttons at y 222 on every page
+  --cta-row-actions-gap: 2.875rem;   // 46
+
+  padding-block: var(--space-8);
+  background: var(--color-primary);
+  color: var(--color-white);
+  @media (min-width: @bp-lg) { padding-block: var(--cta-row-pad-y); }
+
+  h2 {
+    max-width: var(--cta-row-title-width);
+    margin: 0;
+    color: var(--color-white);
+    @media (min-width: @bp-xxl) { margin-left: -0.25rem; } // x 196
+  }
+
+  &__aside {
+    @media (min-width: @bp-lg) { margin: 0.375rem 0 0 0.1875rem; } // copy at (823, 104)
+  }
+
+  &__body {
+    max-width: var(--cta-row-body-width);
+    font-family: var(--font-ui);
+    font-size: var(--font-size-md);
+    letter-spacing: var(--letter-spacing-ui);
+    @media (min-width: @bp-lg) { min-height: var(--cta-row-body-height); }
+  }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-top: var(--space-5);
+    @media (min-width: @bp-lg) { margin-top: var(--cta-row-actions-gap); }
+  }
+}

@@ -1,0 +1,76 @@
+<!doctype html>
+<!-- Source template: partials resolve at build time. Preview dist/preparatory-program.html (npm run build) or run npm run dev. -->
+<html lang="en">
+<head>
+  <include src="partials/head.html" locals='{
+    "title": "Preparatory Program | Claremont College",
+    "description": "Wylie Cottage Preparatory at Claremont College helps 4-5 year-olds develop school readiness before Kindergarten begins."
+  }'></include>
+</head>
+<body>
+  <include src="partials/icons.html"></include>
+  <a class="visually-hidden-focusable" href="#main">Skip to content</a>
+
+  <include src="partials/header.html"></include>
+
+  <main id="main">
+    <!-- Hero -->
+    <include src="sections/page-hero.html" locals='{
+      "aside": "",
+      "title": "Welcome to Wylie Cottage",
+      "image": "assets/images/shared/inner-hero.webp",
+      "width": "1840",
+      "height": "1090"
+    }'></include>
+
+    <!-- Green intro band -->
+    <include src="sections/intro-split.html" locals='{
+      "actions": "",
+      "theme": "intro-split--dark intro-split--sm",
+      "lead": "Where little ones prepare for <em>big school.</em>",
+      "body": "<p>The first day of school is a big moment. That’s why our Preparatory Program is specifically designed to help 4-5 year-olds develop ‘school readiness’ before Kindergarten begins. By acquiring early access to learning experiences and nurturing relationships, children gain the confidence, social skills and foundational knowledge they need to truly thrive as they begin their formal education journey.</p>"
+    }'></include>
+
+    <!-- Our teaching approach: four link columns -->
+    <include src="sections/preparatory-program/teaching-approach.html"></include>
+
+    <!-- Photo banner -->
+    <include src="sections/image-banner.html" locals='{
+      "image": "assets/images/preparatory-program/banner.webp",
+      "alt": "Two Preparatory students in green hats and cardigans, arm in arm and laughing",
+      "width": "1840",
+      "height": "689"
+    }'></include>
+
+    <!-- A day in the life -->
+    <include src="sections/preparatory-program/timeline.html"></include>
+
+    <!-- Mina Wylie’s legacy -->
+    <include src="sections/preparatory-program/mina-wylie.html"></include>
+
+    <!-- Photo banner -->
+    <include src="sections/image-banner.html" locals='{
+      "image": "assets/images/preparatory-program/banner.webp",
+      "alt": "Two Preparatory students in green hats and cardigans, arm in arm and laughing",
+      "width": "1840",
+      "height": "689"
+    }'></include>
+
+    <!-- Closing call to action -->
+    <include src="sections/cta-row.html" locals='{
+      "id": "prep-cta-title",
+      "primary_modifier": "btn-primary--ink",
+      "title": "The first chapter of their school story.",
+      "body": "<p>Speak to us to discover all you need to know about Wylie Cottage and why it’s the right place to start your child’s love of learning. You can take a tour of the new state-of-the-art facility built to nurture creativity, exploration and growth in every child.</p>",
+      "secondary_text": "Tuition fees",
+      "secondary_url": "enrolment.html",
+      "primary_text": "Enquire now",
+      "primary_url": "contact-us.html"
+    }'></include>
+  </main>
+
+  <include src="partials/footer.html"></include>
+
+  <script src="assets/js/main.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,59 @@
+// =====================================================================
+// 05-components/_split-feature.less — callout + copy beside a tilted archival photo (614 tall).
+// Copy at (197, 188): a 45px title, one blank 32 / 1.1 line, then paragraphs 10 apart.
+// The photo export already carries its tilt, deckled edge and glow; its frame sits at (781, 5), 696 wide.
+// =====================================================================
+
+.split-feature {
+  --split-height: ~"clamp(30rem, 37.44vw, 38.375rem)"; // 614 at 1640
+  --split-top: 11.75rem;                               // 188
+  --split-title-gap: 2.2rem;                           // 35.2
+  --split-content-width: 33rem;                        // 528
+  --split-paragraph-gap: 0.625rem;                     // 10
+  --split-media-left: 47.62%;                          // 781 / 1640
+  --split-media-width: 42.44%;                         // 696 / 1640
+
+  position: relative;
+  overflow: hidden;
+  padding-top: var(--space-8);
+  background: var(--color-background-alt);
+  color: var(--color-heading);
+
+  @media (min-width: @bp-lg) {
+    min-height: var(--split-height);
+    padding-block: var(--split-top) var(--space-6);
+  }
+
+  h2 {
+    margin-bottom: var(--split-title-gap);
+    font-family: var(--font-display);
+    font-size: var(--font-size-callout);
+    line-height: var(--line-height-tight);
+  }
+
+  &__content {
+    position: relative;
+    z-index: var(--z-content);
+    max-width: var(--split-content-width);
+    @media (min-width: @bp-xxl) { margin-left: -0.1875rem; } // x 197
+    p { margin-bottom: var(--split-paragraph-gap); }
+  }
+
+  &__media {
+    max-width: 28rem;
+    margin: var(--space-4) auto 0;
+    img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+    @media (min-width: @bp-lg) {
+      position: absolute;
+      top: 0.3125rem;
+      left: var(--split-media-left);
+      width: var(--split-media-width);
+      max-width: none;
+      margin: 0;
+    }
+  }
+}

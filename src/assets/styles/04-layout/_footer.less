@@ -1,0 +1,161 @@
+// =====================================================================
+// 04-layout/_footer.less — 536 tall at 1640. Columns sit at x 60 / 623 / 999 / 1263.
+// =====================================================================
+
+.site-footer {
+  --footer-pad-top: 5rem;            // 80
+  --footer-pad-bottom: 3.28125rem;   // 52.5
+  --footer-col-gap: 4.75rem;         // 76
+  --footer-heading-gap: 1.5rem;      // 24
+  --footer-bottom-gap: 2.41875rem;   // 38.7 from the social row to the acknowledgement
+  --footer-leading: 1.21;            // Inter "normal": 13 → 15.7, 12 → 14.5
+
+  background: var(--color-primary-dark);
+  color: var(--color-muted);
+  font-family: var(--font-ui);
+  font-size: var(--font-size-sm);
+  line-height: var(--footer-leading);
+  letter-spacing: 0;
+  padding-block: var(--space-8) var(--space-6);
+  @media (min-width: @bp-xl) { padding-block: var(--footer-pad-top) var(--footer-pad-bottom); }
+
+  a:not(.btn) {
+    color: inherit;
+    &:hover { color: var(--color-white); }
+  }
+
+  h2 {
+    margin: 0 0 var(--footer-heading-gap);
+    font-family: var(--font-ui);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--footer-leading);
+    letter-spacing: 0;
+    color: var(--color-white);
+  }
+
+  &__columns {
+    display: grid;
+    gap: var(--space-6) var(--space-4);
+    @media (min-width: @bp-md) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    @media (min-width: @bp-xl) {
+      grid-template-columns: 30.4375rem 18.75rem 11.75rem minmax(0, 1fr); // 487 / 300 / 188 / rest
+      gap: 0 var(--footer-col-gap);
+    }
+  }
+
+  &__logo {
+    display: block;
+    max-width: 23.375rem; // 374: the 389 frame shows the artwork at 96.11%
+    min-height: 5.75rem;  // 92
+    margin-bottom: var(--footer-heading-gap);
+    img { display: block; width: 100%; height: auto; }
+  }
+
+  &__about p {
+    margin-bottom: var(--footer-heading-gap);
+    line-height: 1.25rem; // 20
+  }
+
+  // The footer uses the button component scaled to 41.3 tall (13.77 type)
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8609rem; // 13.77
+    margin-bottom: var(--footer-heading-gap);
+    .btn {
+      --bs-btn-font-size: 0.8606rem;
+      --bs-btn-padding-x: 1.2913rem;
+      --bs-btn-padding-y: calc((2.5825rem - 1.2em - var(--border-width) * 2) / 2);
+    }
+    .btn-primary {
+      --bs-btn-font-family: var(--font-ui);
+      letter-spacing: var(--letter-spacing-ui);
+    }
+  }
+
+  &__social {
+    .reset-list();
+    display: flex;
+    gap: var(--space-1);
+    a:not(.btn) {
+      display: inline-flex;
+      width: 2rem;
+      height: 2rem;
+      color: var(--color-white);
+      transition: transform var(--duration-fast) var(--ease-out), color var(--duration-fast) ease;
+      &:hover { color: var(--color-secondary); transform: translateY(-0.125rem); }
+    }
+    .icon { width: 100%; height: 100%; }
+  }
+
+  &__list {
+    .reset-list();
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2); // 16
+    p { margin: 0; }
+  }
+
+  &__label {
+    display: block;
+    margin-bottom: 0.25rem; // 4
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-white);
+  }
+
+  &__links {
+    .reset-list();
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem; // 12
+    a:not(.btn) {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-1); // 8
+      .icon {
+        width: 0.75rem;
+        height: 0.75rem;
+        transition: transform var(--duration-fast) var(--ease-out);
+      }
+      &:hover .icon { transform: translateX(0.1875rem); }
+    }
+  }
+
+  &__contact li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem; // 12
+    .icon {
+      flex: 0 0 auto;
+      width: 1rem;
+      height: 1rem;
+      color: var(--color-white);
+    }
+  }
+
+  &__bottom {
+    display: grid;
+    gap: var(--space-3);
+    margin-top: var(--space-6);
+    @media (min-width: @bp-xl) {
+      grid-template-columns: 55.5625rem minmax(0, 1fr); // 889, copyright starts at x 1003
+      gap: 3.375rem;                                     // 54
+      margin-top: var(--footer-bottom-gap);
+    }
+  }
+
+  &__ack {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-body);
+    letter-spacing: var(--letter-spacing-body);
+  }
+
+  &__copy {
+    margin: 0;
+    font-size: var(--font-size-xs);
+  }
+}

@@ -1,0 +1,129 @@
+// =====================================================================
+// 05-components/_buttons.less — Bootstrap buttons re-themed via --bs-btn-*
+// Figma: square, 48 tall, 24 side padding, Instrument Sans Medium 16 / 1.2.
+// Figma strokes sit inside the box, so the border is taken off the padding.
+// =====================================================================
+
+.btn {
+  --bs-btn-font-family: var(--font-body);
+  --bs-btn-font-size: var(--font-size-md);
+  --bs-btn-font-weight: var(--font-weight-medium);
+  --bs-btn-line-height: var(--line-height-ui);
+  --bs-btn-border-width: var(--border-width-rule);
+  --bs-btn-padding-x: calc(1.5rem - var(--bs-btn-border-width));
+  --bs-btn-padding-y: calc((var(--control-height) - 1.2em - var(--bs-btn-border-width) * 2) / 2);
+  --bs-btn-border-radius: var(--radius-none);
+  --bs-btn-focus-box-shadow: 0 0 0 0.25rem var(--bs-focus-ring-color);
+  letter-spacing: var(--letter-spacing-body);
+  white-space: nowrap;
+  transition:
+    color var(--duration-fast) ease,
+    background-color var(--duration-fast) ease,
+    border-color var(--duration-fast) ease,
+    transform var(--duration-fast) var(--ease-out);
+  &:active { transform: translateY(0.0625rem); }
+}
+
+.btn-primary {
+  --bs-btn-color: var(--color-primary);
+  --bs-btn-bg: var(--color-secondary);
+  --bs-btn-border-color: var(--color-secondary);
+  --bs-btn-hover-color: var(--color-primary);
+  --bs-btn-hover-bg: var(--color-blue-hover);
+  --bs-btn-hover-border-color: var(--color-blue-hover);
+  --bs-btn-active-color: var(--color-primary);
+  --bs-btn-active-bg: var(--color-blue-hover);
+  --bs-btn-active-border-color: var(--color-blue-hover);
+}
+
+// Several Figma instances set the primary label in Near Black instead of Green
+.btn-primary--ink {
+  --bs-btn-color: var(--color-text);
+  --bs-btn-hover-color: var(--color-text);
+  --bs-btn-active-color: var(--color-text);
+}
+
+// "Back to news" is labelled in Dark Green
+.btn-primary--deep {
+  --bs-btn-color: var(--color-primary-dark);
+  --bs-btn-hover-color: var(--color-primary-dark);
+  --bs-btn-active-color: var(--color-primary-dark);
+}
+
+.btn-outline-primary {
+  --bs-btn-color: var(--color-primary);
+  --bs-btn-border-color: var(--color-primary);
+  --bs-btn-hover-color: var(--color-white);
+  --bs-btn-hover-bg: var(--color-primary);
+  --bs-btn-hover-border-color: var(--color-primary);
+  --bs-btn-active-color: var(--color-primary);
+  --bs-btn-active-bg: var(--color-secondary);
+  --bs-btn-active-border-color: var(--color-secondary);
+}
+
+.btn-outline-light {
+  --bs-btn-color: var(--color-white);
+  --bs-btn-border-color: var(--color-white);
+  --bs-btn-hover-color: var(--color-primary);
+  --bs-btn-hover-bg: var(--color-white);
+  --bs-btn-hover-border-color: var(--color-white);
+  --bs-btn-active-color: var(--color-primary);
+  --bs-btn-active-bg: var(--color-white);
+  --bs-btn-active-border-color: var(--color-white);
+}
+
+// Label + trailing icon (Download): 158 wide = 24 + label + 9 + 36 icon frame + 14
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 1.1875rem;
+  padding-right: calc(1.5rem - 0.0625rem);
+  .icon {
+    width: 1rem;
+    height: 1rem;
+    transition: transform var(--duration-base) var(--ease-out);
+  }
+  &:hover .icon { transform: translateY(0.125rem); }
+}
+
+// Square arrow buttons (carousel / tab navigation)
+.arrow-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--control-height);
+  height: var(--control-height);
+  padding: 0;
+  border: 0;
+  background: var(--color-secondary);
+  color: var(--color-primary);
+  cursor: pointer;
+  transition: background-color var(--duration-fast) ease, color var(--duration-fast) ease;
+
+  .icon {
+    width: 1.125rem;
+    height: 1.125rem;
+    transition: transform var(--duration-base) var(--ease-out);
+  }
+  &--prev .icon { transform: rotate(180deg); }
+
+  &:hover,
+  &:focus-visible {
+    background: var(--color-primary);
+    color: var(--color-white);
+  }
+  &--next:hover .icon { transform: translateX(0.1875rem); }
+  &--prev:hover .icon { transform: rotate(180deg) translateX(0.1875rem); }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
+}
+
+// Pair of arrows: 18 apart, and 3 past the content edge (x 1329 → 1443)
+.arrow-group {
+  display: flex;
+  gap: 1.125rem;
+  @media (min-width: @bp-xxl) { margin-right: -0.1875rem; }
+}

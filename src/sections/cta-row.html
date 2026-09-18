@@ -1,0 +1,23 @@
+<!-- @wagtail-block: cta_row
+     title: RichTextBlock (may carry a line break)
+     body:  RichTextBlock
+     ctas:  ListBlock(StructBlock(text:CharBlock, url:URLBlock, style:ChoiceBlock)) — outline then primary
+     locals: id, title, body, secondary_text, secondary_url, primary_text, primary_url, primary_modifier -->
+<section class="cta-row" aria-labelledby="{{ id }}">
+  <div class="container">
+    <div class="row g-4 g-lg-0">
+      <div class="col-lg-6">
+        <h2 id="{{ id }}" data-anim="reveal">{{{ title }}}</h2>
+      </div>
+      <div class="col-lg-6">
+        <div class="cta-row__aside">
+        <div class="cta-row__body rich-text" data-anim="reveal" data-anim-order="1">{{{ body }}}</div>
+        <div class="cta-row__actions" data-anim="reveal" data-anim-order="2">
+          <a class="btn btn-outline-light" href="{{ secondary_url }}">{{ secondary_text }}</a>
+          <a class="btn btn-primary {{ primary_modifier }}" href="{{ primary_url }}">{{ primary_text }}</a>
+        </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

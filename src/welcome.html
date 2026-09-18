@@ -1,0 +1,57 @@
+<!doctype html>
+<!-- Source template: partials resolve at build time. Preview dist/welcome.html (npm run build) or run npm run dev. -->
+<html lang="en">
+<head>
+  <include src="partials/head.html" locals='{
+    "title": "Welcome from Claremont | Claremont College",
+    "description": "Passionate about education since 1882: meet the Claremont College executive team and the educators who know every child."
+  }'></include>
+</head>
+<body>
+  <include src="partials/icons.html"></include>
+  <a class="visually-hidden-focusable" href="#main">Skip to content</a>
+
+  <include src="partials/header.html"></include>
+
+  <main id="main">
+    <!-- Hero -->
+    <include src="sections/page-hero.html" locals='{
+      "title": "Passionate about education<br>since 1882",
+      "aside": "",
+      "image": "assets/images/shared/inner-hero.webp",
+      "width": "1840",
+      "height": "1090"
+    }'></include>
+
+    <!-- Green intro band -->
+    <include src="sections/intro-split.html" locals='{
+      "theme": "intro-split--dark intro-split--lg",
+      "actions": "",
+      "lead": "It is with great pleasure that we welcome you to <em>Claremont College.</em>",
+      "body": "<p>With a proud history spanning more than 140 years, we are a highly regarded co-educational primary school committed to academic excellence, wellbeing, Christian values and the development of the whole child. Our students are at the heart of everything we do, and our dedicated teachers work closely with families to create a happy, safe and nurturing environment where every child is known, supported and challenged to reach their potential. Beyond our strong academic outcomes, Claremont is a warm and connected community built on collaboration, innovation, compassion and genuine care. We look forward to welcoming you and your family to our community.</p>"
+    }'></include>
+
+    <!-- Executive team -->
+    <include src="sections/welcome/executives.html"></include>
+
+    <!-- Educators carousel -->
+    <include src="sections/welcome/educators.html"></include>
+
+    <!-- Closing call to action -->
+    <include src="sections/cta-row.html" locals='{
+      "id": "welcome-cta-title",
+      "primary_modifier": "",
+      "title": "At Claremont, every educator knows every child.",
+      "body": "<p>These are the people who will spend every day with your child, who will remember what they were struggling with last term, and who will still recall their name years after they’ve left. Come see what a difference being known can make.</p>",
+      "secondary_text": "Preparatory Program",
+      "secondary_url": "preparatory-program.html",
+      "primary_text": "K-6 Primary",
+      "primary_url": "k-6-primary.html"
+    }'></include>
+  </main>
+
+  <include src="partials/footer.html"></include>
+
+  <script src="assets/js/main.js" defer></script>
+</body>
+</html>

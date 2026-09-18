@@ -1,0 +1,10 @@
+<!-- @wagtail-block: image_banner
+     image: ImageChooserBlock
+     alt:   CharBlock
+     locals: image, alt, width, height -->
+<figure class="feature-banner feature-banner--media-only" data-anim-parallax-trigger>
+  <div class="feature-banner__media">
+    <img src="{{ image }}" alt="{{ alt }}" width="{{ width }}" height="{{ height }}" loading="lazy"
+         data-anim="reveal" data-anim-type="scale">
+  </div>
+</figure>

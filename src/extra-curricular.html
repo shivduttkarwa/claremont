@@ -1,0 +1,57 @@
+<!doctype html>
+<!-- Source template: partials resolve at build time. Preview dist/extra-curricular.html (npm run build) or run npm run dev. -->
+<html lang="en">
+<head>
+  <include src="partials/head.html" locals='{
+    "title": "Extra Curricular | Claremont College",
+    "description": "From sports and performing arts to music, coding, chess and debating: Claremont College extra curricular activities, before and after school."
+  }'></include>
+</head>
+<body>
+  <include src="partials/icons.html"></include>
+  <a class="visually-hidden-focusable" href="#main">Skip to content</a>
+
+  <include src="partials/header.html"></include>
+
+  <main id="main">
+    <!-- Hero -->
+    <include src="sections/page-hero.html" locals='{
+      "title": "Extra Curricular",
+      "aside": "",
+      "image": "assets/images/shared/inner-hero.webp",
+      "width": "1840",
+      "height": "1090"
+    }'></include>
+
+    <!-- Green intro band -->
+    <include src="sections/intro-split.html" locals='{
+      "theme": "intro-split--dark intro-split--lg",
+      "actions": "",
+      "lead": "Where learning extends <em>beyond the classroom.</em>",
+      "body": "<p>Our extensive Extra Curricular Program provides a wide range of opportunities for every child to explore their curiosity and creativity. From sports and performing arts to music and academic enrichment activities, held both before and after-school. Our experiences are designed to not only challenge children, but inspire them to try new things.</p>"
+    }'></include>
+
+    <!-- Activities carousel -->
+    <include src="sections/extra-curricular/activities.html"></include>
+
+    <!-- Learning music -->
+    <include src="sections/extra-curricular/learning-music.html"></include>
+
+    <!-- Closing call to action -->
+    <include src="sections/cta-row.html" locals='{
+      "id": "extra-cta-title",
+      "primary_modifier": "btn-primary--ink",
+      "title": "Somewhere in here is your child’s new favourite interest.",
+      "body": "<p>At Claremont, music, sport, art, chess and drama aren’t ‘add-ons’, they’re an integral part of every student’s week; because every opportunity to try something new is an opportunity to grow in confidence and curiosity.</p>",
+      "secondary_text": "Preparatory Program",
+      "secondary_url": "preparatory-program.html",
+      "primary_text": "K-6 Primary",
+      "primary_url": "k-6-primary.html"
+    }'></include>
+  </main>
+
+  <include src="partials/footer.html"></include>
+
+  <script src="assets/js/main.js" defer></script>
+</body>
+</html>

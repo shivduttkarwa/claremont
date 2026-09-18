@@ -1,0 +1,170 @@
+// =====================================================================
+// 04-layout/_header.less — transparent header over hero imagery.
+// From xxl the nav, tools and logo sit on Figma's exact coordinates (1640 frame, 110 tall).
+// =====================================================================
+
+.site-header {
+  --header-logo-width: 11rem;
+  --header-logo-top: 0;
+  --header-right-top: 0;
+  --header-nav-gap: var(--space-4);
+  --header-tools-gap: var(--space-1);
+  --header-tool-size: 2.5rem; // 40 hit area around each icon
+
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: var(--z-header);
+  color: var(--color-white);
+
+  @media (min-width: @bp-sm) { --header-logo-width: 13.5rem; --header-tools-gap: var(--space-2); }
+  @media (min-width: @bp-lg) { --header-logo-width: 15rem; --header-nav-gap: 1.75rem; }
+  @media (min-width: @bp-xl) { --header-logo-width: 17rem; --header-nav-gap: 2.25rem; }
+  @media (min-width: @bp-xxl) {
+    --header-logo-width: 20.0625rem; // 321: the 334 frame shows the artwork at 96.11%
+    --header-logo-top: 1.75rem;      // 28
+    --header-right-top: 2.5625rem;   // 41: icon boxes centred on y 61
+    --header-nav-gap: 2.625rem;      // 42
+    --header-tools-gap: 0.375rem;    // 6 between the 40px hit areas → 29 between glyphs
+  }
+
+  &__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+    min-height: var(--header-height);
+    @media (min-width: @bp-sm) { gap: var(--space-4); }
+    @media (min-width: @bp-xxl) { align-items: flex-start; }
+  }
+
+  &__logo {
+    display: block;
+    flex: 0 0 auto;
+    width: var(--header-logo-width);
+    margin-top: var(--header-logo-top);
+    transition: opacity var(--duration-fast) ease;
+    &:hover { opacity: 0.85; }
+    img { display: block; width: 100%; height: auto; }
+    @media (min-width: @bp-xxl) { margin-left: -0.0625rem; } // frame starts at 59
+  }
+
+  &__right {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    margin-top: var(--header-right-top);
+    @media (min-width: @bp-xxl) { gap: 1.625rem; } // 26 from the last link to the search hit area
+  }
+
+  &__nav {
+    display: none;
+    @media (min-width: @bp-lg) {
+      display: flex;
+      align-items: center;
+      gap: var(--header-nav-gap);
+    }
+  }
+
+  &__link {
+    position: relative;
+    padding-block: 0.25rem;
+    font-family: var(--font-ui);
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--line-height-ui);
+    letter-spacing: var(--letter-spacing-ui);
+    color: var(--color-white);
+    white-space: nowrap;
+
+    // Figma spaces the links 42 / 41 / 34
+    @media (min-width: @bp-xxl) {
+      &:nth-child(3) { margin-left: -0.0625rem; }
+      &:nth-child(4) { margin-left: -0.5rem; }
+    }
+
+    &::after {
+      content: "";
+      position: absolute;
+      inset: auto 0 0;
+      height: var(--border-width);
+      background: currentColor;
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform var(--duration-base) var(--ease-out);
+    }
+    &:hover,
+    &:focus-visible {
+      color: var(--color-white);
+      &::after { transform: scaleX(1); }
+    }
+  }
+
+  &__tools {
+    display: flex;
+    align-items: center;
+    gap: var(--header-tools-gap);
+  }
+
+  &__tool {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--header-tool-size);
+    height: var(--header-tool-size);
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--color-white);
+    transition: transform var(--duration-fast) var(--ease-out), color var(--duration-fast) ease;
+    .icon { width: 1.25rem; height: 1.25rem; }          // search 20 × 20
+    &--secondary .icon { width: 1.125rem; height: 1.375rem; } // pin 18 × 22
+    &:hover { color: var(--color-secondary); transform: translateY(-0.125rem); }
+  }
+
+  &__tool--secondary {
+    display: none;
+    @media (min-width: @bp-sm) { display: inline-flex; }
+  }
+
+  // Hamburger (three bars)
+  &__toggle {
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.3125rem;
+    width: var(--header-tool-size);
+    height: var(--header-tool-size);
+    padding: 0;
+    border: 0;
+    background: none;
+    span {
+      display: block;
+      width: 1.5rem;
+      height: var(--border-width-thick);
+      margin-inline: auto;
+      background: var(--color-white);
+      transition: transform var(--duration-fast) ease;
+    }
+    &:hover span:first-child { transform: translateX(-0.125rem); }
+    &:hover span:last-child { transform: translateX(0.125rem); }
+    @media (min-width: @bp-lg) { display: none; }
+  }
+}
+
+// Mobile menu (Bootstrap offcanvas, themed via --bs-offcanvas-* in 01-settings)
+.site-menu {
+  &__nav {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    margin-bottom: var(--space-6);
+  }
+  &__link {
+    font-size: var(--font-size-xl);
+    line-height: var(--line-height-snug);
+    color: var(--color-white);
+    transition: color var(--duration-fast) ease, padding-inline-start var(--duration-base) var(--ease-out);
+    &:hover,
+    &[aria-current="page"] { color: var(--color-secondary); padding-inline-start: var(--space-1); }
+  }
+}

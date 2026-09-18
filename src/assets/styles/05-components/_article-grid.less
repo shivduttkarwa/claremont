@@ -1,0 +1,102 @@
+// =====================================================================
+// 05-components/_article-grid.less — news listing (1341 tall at 1640).
+// Cards 302 wide on a 312 pitch from y 146, 475 tall, rows 19 apart; a 470 rule 5.6 right of each card;
+// pager arrow 70 below the grid, 108 of air under it.
+// =====================================================================
+
+.article-grid {
+  --articles-pad-top: 9.125rem;      // 146
+  --articles-pad-bottom: 6.75rem;    // 108
+  --articles-gap-x: 0.625rem;        // 10
+  --articles-gap-y: 1.1875rem;       // 19
+  --articles-card-height: 29.6875rem; // 475
+  --articles-text-inset: 0.5rem;     // 8
+  --articles-pager-gap: 4.375rem;    // 70
+
+  padding-block: var(--space-8);
+  @media (min-width: @bp-lg) { padding-block: var(--articles-pad-top) var(--articles-pad-bottom); }
+
+  &__grid {
+    .reset-list();
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-5) var(--articles-gap-x);
+    @media (min-width: @bp-sm) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    @media (min-width: @bp-lg) {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      row-gap: var(--articles-gap-y);
+    }
+    @media (min-width: @bp-xxl) { margin-right: 0.125rem; } // last card ends at x 1438
+  }
+
+  &__card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    color: var(--color-text);
+    @media (min-width: @bp-lg) { min-height: var(--articles-card-height); }
+
+    // Rule in the gutter to the right of each card, 5 short of the card's foot
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0 -0.35rem 0.3125rem auto;
+      width: var(--border-width);
+      background: var(--color-text);
+    }
+
+    h3 {
+      margin: 0.875rem 0 var(--space-3); // 14 under the photo
+      padding-inline: var(--articles-text-inset);
+      transition: color var(--duration-fast) ease;
+    }
+
+    &:hover,
+    &:focus-visible {
+      color: var(--color-text);
+      h3 { color: var(--color-green-hover); }
+      img { transform: scale(1.04); }
+      .icon { transform: translate(0.25rem, -0.25rem); }
+    }
+  }
+  li:last-child &__card::after { display: none; }
+  @media (min-width: @bp-lg) {
+    li:nth-child(4n) &__card::after { display: none; }
+  }
+
+  &__media {
+    overflow: hidden;
+    aspect-ratio: 1;
+    img {
+      .img-cover();
+      transition: transform var(--duration-slow) var(--ease-out);
+    }
+  }
+
+  // Date on the card's foot; arrow frame ends 3.6 inside the photo edge and 5.6 above the foot
+  &__meta {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-2);
+    margin-top: auto;
+    padding-inline: var(--articles-text-inset) 0.225rem;
+    color: var(--color-text);
+    .icon {
+      width: 2rem;
+      height: 1.625rem;
+      margin: 0 -0.375rem 0.35rem 0;
+      color: var(--color-heading);
+      transition: transform var(--duration-base) var(--ease-out);
+    }
+  }
+
+  &__pager {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1.125rem;
+    margin-top: var(--articles-pager-gap);
+    @media (min-width: @bp-xxl) { margin-right: 0.0625rem; } // arrow at x 1391 → 1439
+  }
+}

@@ -1,0 +1,187 @@
+// =====================================================================
+// 05-components/_timeline.less — labelled steps zigzagging down a dotted centre line.
+// Figma: heading at 85, first step at 237, steps 1030 wide (x 305 → 1335), marker on the line at x 819.
+// Each step: label (28) on the rule, title 27 below it. Row rhythm is hand-set per page in Figma,
+// so each variant carries its own row template. Below lg: one column, line on the left.
+// =====================================================================
+
+.timeline {
+  --timeline-pad-top: 5.3125rem;      // 85
+  --timeline-pad-bottom: 5.3125rem;   // 85
+  --timeline-header-gap: 2.21875rem;  // copy ends 201.5, first step 237
+  --timeline-width: 64.375rem;        // 1030
+  --timeline-rows: none;
+  --timeline-row: 9.875rem;           // fallback rhythm
+  --timeline-marker: 3rem;            // 48
+  --timeline-rule: 0.09375rem;        // 1.5
+  --timeline-dash: 0.125rem;          // 2 on, 2 off
+  --timeline-text-width: 19rem;       // 304
+  --timeline-title-width: 19.5rem;    // 305 box, a little slack for the stand-in serif
+  --timeline-title-gap: 1.1875rem;    // 19
+  --timeline-dots-x: repeating-linear-gradient(90deg, var(--color-primary) 0, var(--color-primary) var(--timeline-dash), transparent var(--timeline-dash), transparent calc(var(--timeline-dash) * 2));
+  --timeline-dots-y: repeating-linear-gradient(180deg, var(--color-primary) 0, var(--color-primary) var(--timeline-dash), transparent var(--timeline-dash), transparent calc(var(--timeline-dash) * 2));
+
+  position: relative;
+  padding-block: var(--space-8);
+
+  @media (min-width: @bp-lg) {
+    padding-block: var(--timeline-pad-top) var(--timeline-pad-bottom);
+    // Centre line (x 819 → 820.5) runs the full height of the section
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 calc(50% - 0.0625rem);
+      width: var(--timeline-rule);
+      background: var(--timeline-dots-y);
+    }
+  }
+
+  &__header {
+    position: relative;
+    margin-bottom: var(--space-6);
+    @media (min-width: @bp-lg) { margin-bottom: var(--timeline-header-gap); }
+    h2 {
+      margin: 0 0 var(--space-3);
+      @media (min-width: @bp-lg) { margin: 0; }
+    }
+    p {
+      max-width: 31.875rem;
+      margin: 0;
+      @media (min-width: @bp-lg) { margin: 0.25rem 0 0 0.25rem; } // (927, 89)
+    }
+  }
+
+  &__list {
+    .reset-list();
+    position: relative;
+    display: grid;
+    gap: var(--space-6);
+
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 calc(var(--timeline-marker) / 2);
+      width: var(--timeline-rule);
+      background: var(--timeline-dots-y);
+    }
+
+    @media (min-width: @bp-lg) {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-rows: var(--timeline-rows);
+      grid-auto-rows: minmax(var(--timeline-row), auto);
+      gap: 0;
+      max-width: var(--timeline-width);
+      margin-inline: auto;
+      &::before { display: none; }
+    }
+  }
+
+  &__item {
+    position: relative;
+    padding-inline-start: calc(var(--timeline-marker) + var(--space-3));
+
+    @media (min-width: @bp-lg) {
+      grid-column: 1;
+      padding-inline-start: 0;
+      &:nth-child(even) {
+        grid-column: 2;
+        text-align: right;
+      }
+      .timeline-rows(12);
+    }
+  }
+
+  &__time {
+    min-height: 1.75rem; // 28: label sits directly on the rule
+    margin: 0;
+    font-family: var(--font-ui);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-body);
+    letter-spacing: var(--letter-spacing-ui);
+    color: var(--color-heading);
+  }
+
+  // Dotted rule across the top; the marker is centred on it, over the centre line.
+  &__body {
+    position: relative;
+    padding-top: 1.6875rem; // 27
+
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto;
+      height: var(--timeline-rule);
+      background: var(--timeline-dots-x);
+    }
+
+    h3 {
+      max-width: var(--timeline-title-width);
+      margin: 0 0 var(--timeline-title-gap);
+      font-family: var(--font-display);
+      font-size: var(--font-size-callout);
+      line-height: var(--line-height-tight);
+    }
+
+    p {
+      max-width: var(--timeline-text-width);
+      margin: 0;
+    }
+  }
+  &__item:nth-child(even) &__body {
+    @media (min-width: @bp-lg) {
+      h3,
+      p { margin-inline-start: auto; }
+    }
+  }
+
+  &__marker {
+    position: absolute;
+    top: calc(var(--timeline-marker) / -2);
+    left: calc(-1 * (var(--timeline-marker) + var(--space-3)));
+    z-index: var(--z-content);
+    display: grid;
+    place-items: center;
+    width: var(--timeline-marker);
+    height: var(--timeline-marker);
+    border-radius: var(--radius-full);
+    background: var(--color-secondary);
+    color: var(--color-primary);
+
+    .icon {
+      width: 100%;
+      height: 100%;
+    }
+
+    @media (min-width: @bp-lg) {
+      left: auto;
+      right: calc(var(--timeline-marker) / -2);
+    }
+  }
+  &__item:nth-child(even) &__marker {
+    @media (min-width: @bp-lg) {
+      right: auto;
+      left: calc(var(--timeline-marker) / -2);
+    }
+  }
+
+  // Preparatory "A day in the life": steps at 237, 393, 553, 709, 872, 1028, 1187, 1343, 1504, 1688
+  &--day {
+    @media (min-width: @bp-xxl) {
+      --timeline-rows: 9.75rem 10rem 9.75rem 10.1875rem 9.75rem 9.9375rem 9.75rem 10.0625rem 11.5rem auto;
+    }
+  }
+
+  // Enrolment journey: heading only (first step 115 below it); steps at 237, 416, 600, 785, 972; 154 below
+  &--steps {
+    --timeline-text-width: 21rem; // 335
+    @media (min-width: @bp-lg) {
+      --timeline-row: 11.375rem;
+      --timeline-header-gap: 7.203125rem;
+      --timeline-pad-bottom: 9.625rem;
+    }
+    @media (min-width: @bp-xxl) {
+      --timeline-rows: 11.1875rem 11.5rem 11.5625rem 11.6875rem auto;
+    }
+  }
+}

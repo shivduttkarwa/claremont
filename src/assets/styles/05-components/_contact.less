@@ -1,0 +1,132 @@
+// =====================================================================
+// 05-components/_contact.less — contact details + enquiry form (657 tall at 1640), and the map (433).
+// Details: text at x 235, rows 35 apart. Form from x 824: label, value 24 below it, rule 31 below that;
+// fields 31 apart; message placeholder on its last line; Submit 44 under the rule, ending at x 1413.
+// =====================================================================
+
+.contact {
+  --contact-pad-top: 7.8125rem;     // 125
+  --contact-pad-bottom: 7.75rem;    // 124
+  --contact-icon-col: 2.1875rem;    // 35
+  --contact-row: 2.1875rem;         // 35 between detail rows
+  --contact-field-gap: 1.9375rem;   // 31
+  --contact-rule: var(--color-text);
+
+  padding-block: var(--space-8);
+  @media (min-width: @bp-lg) { padding-block: var(--contact-pad-top) var(--contact-pad-bottom); }
+
+  // --- Details ---
+  &__details {
+    .reset-list();
+    margin-top: 0.0625rem; // address line at 126
+    margin-bottom: var(--space-6);
+    @media (min-width: @bp-lg) { margin-bottom: 0; }
+  }
+
+  &__group {
+    .reset-list();
+  }
+
+  // "Office:" at 180 (31.5 under the address line), first row 13.5 under it; second group 24.5 / 16.5
+  &__group-title {
+    margin: 1.96875rem 0 0.84375rem;
+    font-family: var(--font-ui);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-body);
+    letter-spacing: var(--letter-spacing-ui);
+    color: var(--color-text);
+    &--second { margin: 0.75rem 0 1.03125rem; }
+  }
+
+  &__item {
+    display: flex;
+    align-items: flex-start;
+    min-height: var(--contact-row);
+    color: var(--color-text);
+    .icon {
+      width: 1.375rem;
+      height: 1.375rem;
+      margin-right: calc(var(--contact-icon-col) - 1.375rem);
+      color: var(--color-heading);
+    }
+    a {
+      color: inherit;
+      &:hover { color: var(--color-heading); }
+    }
+  }
+  &__item--last { min-height: 0; }
+
+  // --- Form: underlined fields (Bootstrap controls, restyled) ---
+  &__form {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--contact-field-gap) 0.4375rem; // 7 between the name fields
+    @media (min-width: @bp-sm) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    @media (min-width: @bp-lg) { margin-left: 0.25rem; } // x 824
+
+    .form-label {
+      display: block;
+      margin-bottom: 0.09375rem; // value starts 24 under the label top
+      font-family: var(--font-ui);
+      font-weight: var(--font-weight-semibold);
+      line-height: var(--line-height-body);
+      letter-spacing: var(--letter-spacing-ui);
+      color: var(--color-text);
+    }
+
+    .form-control {
+      padding: 0 0 0.46875rem; // rule 31 under the value top
+      border-width: 0 0 var(--border-width);
+      border-color: var(--contact-rule);
+      border-radius: var(--radius-none);
+      background: transparent;
+      font-size: var(--font-size-base);
+      line-height: var(--line-height-body);
+      letter-spacing: var(--letter-spacing-body);
+      color: var(--color-text);
+      transition: border-color var(--duration-fast) ease;
+      &::placeholder { color: var(--color-muted); }
+      &:focus {
+        border-color: var(--color-primary);
+        box-shadow: 0 var(--border-width) 0 0 var(--color-primary);
+      }
+    }
+
+    textarea.form-control {
+      min-height: 7.46875rem; // 119.5: placeholder sits on the last line, as designed
+      padding-top: 5.5625rem;
+      resize: vertical;
+      &:focus,
+      &:not(:placeholder-shown) { padding-top: 0.5rem; }
+    }
+  }
+
+  &__field--wide {
+    @media (min-width: @bp-sm) { grid-column: 1 / -1; }
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 0.8125rem; // 44 below the message rule
+    @media (min-width: @bp-sm) { grid-column: 1 / -1; }
+    @media (min-width: @bp-lg) { padding-right: 1.9375rem; } // button ends at x 1413
+  }
+}
+
+// Full-width greyscale map (static image linking out to Google Maps)
+.map-banner {
+  display: block;
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  @media (min-width: @bp-md) { aspect-ratio: 1640 / 433; }
+  // Figma desaturates the map fill; the filter keeps the source screenshot untouched
+  img {
+    .img-cover();
+    filter: grayscale(1);
+    transition: transform var(--duration-slow) var(--ease-out);
+  }
+  &:hover img,
+  &:focus-visible img { transform: scale(1.02); }
+}

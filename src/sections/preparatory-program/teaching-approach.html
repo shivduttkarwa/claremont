@@ -1,0 +1,37 @@
+<!-- @wagtail-block: link_columns
+     title: CharBlock(required)
+     intro: TextBlock (optional, shown right of the title)
+     items: ListBlock(StructBlock(title:CharBlock, page:PageChooserBlock, image:ImageChooserBlock(optional, photo column))) -->
+<section class="link-columns bg-light" aria-labelledby="prep-approach-title">
+  <div class="container">
+    <div class="link-columns__header">
+      <h2 id="prep-approach-title" data-anim="reveal">Our teaching approach</h2>
+    </div>
+  </div>
+  <div class="link-columns__grid" data-anim-group="fade-up">
+    <a class="link-columns__item" href="#">
+      <div class="link-columns__head">
+        <h3>Wellbeing</h3>
+        <svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+      </div>
+    </a>
+    <a class="link-columns__item" href="#">
+      <div class="link-columns__head">
+        <h3>Program</h3>
+        <svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+      </div>
+    </a>
+    <a class="link-columns__item" href="#">
+      <div class="link-columns__head">
+        <h3>Specialist teachers</h3>
+        <svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+      </div>
+    </a>
+    <a class="link-columns__item" href="#">
+      <div class="link-columns__head">
+        <h3>School Hours and Extended Care</h3>
+        <svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+      </div>
+    </a>
+  </div>
+</section>

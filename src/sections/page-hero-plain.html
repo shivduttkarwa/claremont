@@ -1,0 +1,12 @@
+<!-- @wagtail-block: page_hero_plain (news article: solid green, no photo)
+     title: CharBlock(required)
+     locals: title -->
+<section class="page-hero page-hero--plain" aria-labelledby="page-title">
+  <div class="container">
+    <h1 id="page-title" data-anim="reveal" data-anim-tier="hero">{{ title }}</h1>
+  </div>
+
+  <div class="page-hero__subnav" data-anim="reveal" data-anim-type="from-right" data-anim-tier="hero" data-anim-order="1">
+    <include src="partials/subnav.html"></include>
+  </div>
+</section>

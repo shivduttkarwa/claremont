@@ -1,0 +1,43 @@
+<!-- @wagtail-block: staff_grid
+     title:  CharBlock(required)
+     people: ListBlock(StructBlock(photo:ImageChooserBlock, name:CharBlock, role:CharBlock, bio:TextBlock))
+     Figma uses one placeholder portrait and lorem ipsum bios for every person. -->
+<section class="staff-grid" aria-labelledby="executives-title">
+  <div class="container">
+    <div class="staff-grid__header">
+      <h2 id="executives-title" data-anim="reveal">Our passionate educational executives</h2>
+    </div>
+    <ul class="staff-grid__grid" data-anim-group="fade-up">
+      <li class="staff-grid__card">
+        <img class="staff-grid__photo" src="assets/images/welcome/staff.webp" alt="Portrait of Alana Koch" width="806" height="806" loading="lazy">
+        <h3>Alana Koch</h3>
+        <p class="staff-grid__role">Principal</p>
+        <p class="staff-grid__bio">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec nunc congue, ultricies felis at, malesuada erat. Morbi nisi nulla, blandit eget dolor id, aliquam vehicula dolor sagittis eleifend.</p>
+      </li>
+      <li class="staff-grid__card">
+        <img class="staff-grid__photo" src="assets/images/welcome/staff.webp" alt="Portrait of Janelle Ford" width="806" height="806" loading="lazy">
+        <h3>Janelle Ford</h3>
+        <p class="staff-grid__role">Deputy Principal</p>
+        <p class="staff-grid__bio">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec nunc congue, ultricies felis at, malesuada erat. Morbi nisi nulla, blandit eget dolor id, aliquam vehicula dolor sagittis eleifend.</p>
+      </li>
+      <li class="staff-grid__card">
+        <img class="staff-grid__photo" src="assets/images/welcome/staff.webp" alt="Portrait of Renee De Rossi" width="806" height="806" loading="lazy">
+        <h3>Renee De Rossi</h3>
+        <p class="staff-grid__role">Head of Inclusive Learning</p>
+        <p class="staff-grid__bio">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec nunc congue, ultricies felis at, malesuada erat. Morbi nisi nulla, blandit eget dolor id, aliquam vehicula dolor sagittis eleifend.</p>
+      </li>
+      <li class="staff-grid__card">
+        <img class="staff-grid__photo" src="assets/images/welcome/staff.webp" alt="Portrait of Emily Eu" width="806" height="806" loading="lazy">
+        <h3>Emily Eu</h3>
+        <p class="staff-grid__role">Head of Primary</p>
+        <p class="staff-grid__bio">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec nunc congue, ultricies felis at, malesuada erat. Morbi nisi nulla, blandit eget dolor id, aliquam vehicula dolor sagittis eleifend.</p>
+      </li>
+      <li class="staff-grid__card">
+        <img class="staff-grid__photo" src="assets/images/welcome/staff.webp" alt="Portrait of Hannah Davis" width="806" height="806" loading="lazy">
+        <h3>Hannah Davis</h3>
+        <p class="staff-grid__role">Head of Infants</p>
+        <p class="staff-grid__bio">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec nunc congue, ultricies felis at, malesuada erat. Morbi nisi nulla, blandit eget dolor id, aliquam vehicula dolor sagittis eleifend.</p>
+      </li>
+    </ul>
+  </div>
+</section>
