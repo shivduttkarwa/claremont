@@ -1,14 +1,18 @@
 // 01-settings/_tokens.less — single source of truth
 
-// LESS-only breakpoints (CSS vars cannot be used in media queries). Bootstrap 5.3 grid, in em.
-@bp-sm: 36em;    // 576
-@bp-md: 48em;    // 768
-@bp-lg: 62em;    // 992
-@bp-xl: 75em;    // 1200
-@bp-xxl: 87.5em; // 1400
+// LESS-only breakpoints (CSS vars cannot be used in media queries). The Bootstrap 5.3 grid, in px to match
+// it exactly: the bundled bootstrap.min.css is entirely px, so in em these drift apart from the grid as soon
+// as a reader enlarges their browser font, and the columns split while the component styles stay stacked.
+@bp-sm: 576px;
+@bp-md: 768px;
+@bp-lg: 992px;
+@bp-xl: 1200px;
+@bp-xxl: 1400px;
 // Compact Figma hit areas only apply to a mouse at desktop widths; touch screens keep 44px targets
-@fine-lg: ~"(min-width: 62em) and (hover: hover) and (pointer: fine)";
-@fine-xl: ~"(min-width: 75em) and (hover: hover) and (pointer: fine)";
+@fine-lg: ~"(min-width: 992px) and (hover: hover) and (pointer: fine)";
+@fine-xl: ~"(min-width: 1200px) and (hover: hover) and (pointer: fine)";
+
+// The root font size per breakpoint is the one place px is allowed: see `html` in 03-base/_base.less.
 
 :root {
   /* Colours — named as in Figma */
@@ -20,7 +24,6 @@
   --color-white: #ffffff;
   --color-near-black: #2b2b2b;
   --color-grey: #a3a3a3;
-  --color-ink: #111125;          /* contact group titles */
 
   /* Semantic aliases */
   --color-primary: var(--color-green);
@@ -42,7 +45,7 @@
   --color-overlay: rgba(0, 0, 0, 0.36);
 
   /* Typography */
-  --font-display: "Argent CF", "Instrument Serif", Georgia, "Times New Roman", serif;
+  --font-display: "Argent CF", Georgia, "Times New Roman", serif;
   --font-body: "Instrument Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --font-ui: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 

@@ -64,13 +64,14 @@
     }
   }
 
-  // 45 / 0.95 with the italic run at 48 / 1.1 → a 52.8 line box, body 23.2 below it
+  // Matching line boxes: the taller italic run would otherwise half-lead the baseline 5 below Figma
   &__subtitle {
+    --hero-subtitle-lh: 1.17333; // 52.8 on 45
     max-width: 33.625rem;
     margin-bottom: 1.45rem;
     font-family: var(--font-display);
     font-size: var(--font-size-callout);
-    line-height: var(--line-height-tight);
+    line-height: var(--hero-subtitle-lh);
     em {
       font-size: 1.0667em;
       line-height: var(--line-height-snug);

@@ -1,9 +1,29 @@
 // 03-base/_base.less — element defaults on top of Bootstrap Reboot
 
+// ---------------------------------------------------------------------
+// Root font size — every rem in the project resolves against it, so it is the one place px is allowed.
+// Adjust the sizes here; they are the whole table.
+//
+// 16 is load-bearing up to the 1640 design width: the Figma match, the 44 tap targets (2.75rem), the 16
+// form controls and the 12 text floor are all rem and verified at 16. Raise or lower a value below 1640
+// and those break. Past the design width the whole page steps up together, so a wide screen shows the
+// design at its proportions instead of a small island.
+// ---------------------------------------------------------------------
 html {
+  font-size: 16px;
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
 }
+
+@media (min-width: @bp-sm)  { html { font-size: 16px; } } // 576
+@media (min-width: @bp-md)  { html { font-size: 16px; } } // 768
+@media (min-width: @bp-lg)  { html { font-size: 16px; } } // 992
+@media (min-width: @bp-xl)  { html { font-size: 16px; } } // 1200
+@media (min-width: @bp-xxl) { html { font-size: 16px; } } // 1400
+@media (min-width: 1640px)  { html { font-size: 16px; } } // the Figma frame — must stay 16
+@media (min-width: 1920px)  { html { font-size: 18px; } } // 1.125×
+@media (min-width: 2200px)  { html { font-size: 21px; } } // 1.3125×
+@media (min-width: 2560px)  { html { font-size: 24px; } } // 1.5×
 
 body {
   background: var(--color-background);

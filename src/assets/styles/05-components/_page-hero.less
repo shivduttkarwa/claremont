@@ -119,9 +119,14 @@
     .subnav-dock(var(--page-hero-subnav-top));
   }
 
-  // Welcome: the two-line title box ends at 755.6
+  // Figma sets the title box per page and the box is what drives the wrap: 1169 default, 1005 here, 1403 on policies
   &--low-title {
     @media (min-width: @bp-lg) { --page-hero-pad-bottom: 1.775rem; }
+    h1 { max-width: 62.8125rem; } // 1005 — breaks after "education"
+  }
+
+  &--title-wide {
+    h1 { max-width: 87.6875rem; } // 1403 — keeps the long title on one line
   }
 
   // No photo: solid dark green, 564 tall (news article); title box ends 63 above the edge

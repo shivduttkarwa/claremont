@@ -57,7 +57,8 @@ src/
 ## Design system
 
 - **Colours:** Green `#0d4749`, Dark Green `#053333`, Blue `#c2e1ff`, Light Blue `#f4faff`, Yellow `#ffec60`, Near Black `#2b2b2b`, Grey `#a3a3a3`.
-- **Type:** Instrument Sans (body, outline buttons, subheadings), Inter (nav, footer, labels, primary buttons), Argent CF Thin for display (see note below). Sizes are fluid `clamp()` tokens; 1rem = 16px; everything in rem.
+- **Type:** Instrument Sans (body, outline buttons, subheadings), Inter (nav, footer, labels, primary buttons), Argent CF Thin for display (see note below). Sizes are fluid `clamp()` tokens and everything is in rem — there is not a single `px` in the stylesheets.
+- **Root size:** set per breakpoint at the top of `03-base/_base.less` — the only px in the stylesheets, since every rem resolves against it. It is 16px from phones through the 1640 design width (where the Figma match, the 44px tap targets and the 16px form controls are all verified), then steps up — 18px at 1920, 21px at 2200, 24px at 2560 — so a large monitor shows the design at its proportions instead of a small island. Adjust the numbers in that block; values at or below 1640 should stay 16.
 - **Spacing:** 8px system, `--space-1` (0.5rem) … `--space-26` (13rem), used for the mobile and tablet rhythm. At the design width each component carries the exact Figma value in rem, with the px figure in a trailing comment, because Figma is not on an 8px grid (hand-placed values such as 85, 99, 115, 237).
 - **Buttons:** square, 48px tall. `.btn-primary` (blue), `.btn-outline-primary` (green outline), `.btn-outline-light` (white outline), `.btn-sm` (footer), `.btn-icon` (label + icon).
 
@@ -67,7 +68,7 @@ Desktop is verified by measurement, not by eye. `bash .qa/audit.sh summary` buil
 
 Known, deliberate differences:
 
-- **Argent CF** (below) is the one blocker to a literal match: display headings use a stand-in face, so glyph shapes and some line breaks differ even though their boxes are in position.
+- **Argent CF** is installed (Thin + Thin Italic, licensed webfonts), so display headings now use the designed face. The audit still reports `weight 400 vs 100` on three of them: Figma records the Thin face as weight 100/250, while the CSS asks for 400 and the `@font-face` weight range maps that onto Thin. The rendered face is correct; only the metadata differs.
 - Figma places a few items by hand with 2 to 4px of scatter that does not repeat between pages (link-column headings at 34 / 35 / 38 / 41 inside their columns, one list label 21 instead of 18 below its rule, one form label in `#000` beside three in `#2b2b2b`). Those are normalised to one value.
 - Hand-placed Figma values that are consistent are kept, through modifiers: `page-hero--low-title` (Welcome), `timeline__item--tight`, `feature-banner--y168` / `--y237`, `btn-primary--sans` (the homepage hero button is the only primary not set in Inter), `btn-primary--ink` / `--deep` (label colour).
 
@@ -86,7 +87,7 @@ Figma has no mobile or tablet frames, so these layouts follow common practice an
 
 ## Assumptions / to confirm with the client
 
-1. **Argent CF** is a licensed font and was not supplied. `Instrument Serif` stands in, so display headings are narrower than in Figma and some wrap differently. Drop `ArgentCF-Thin.woff2` / `ArgentCF-ThinItalic.woff2` into `src/assets/fonts/` and uncomment the two `@font-face` rules in `03-base/_fonts.less`; the `--font-display` stack already lists it first.
+1. **Argent CF** was supplied by the client and is installed as `argent-cf-thin.woff2` / `argent-cf-thin-italic.woff2`. Only those two styles are used anywhere in the design. The supplied archive (desktop `.otf`, `.eot`, `.svg`, `.ttf` and the other eleven weights) is kept in the git-ignored `fonts-source/` and is deliberately **not** in `src/assets/fonts/`, because `build.mjs` copies that folder verbatim into `dist/` and desktop font files must not be published.
 2. Figma only designs desktop (1640px). Tablet and mobile behaviour is a mobile-first interpretation using Bootstrap breakpoints.
 3. Homepage: teaching-approach tabs 2–4 reuse the first tab's image, and hotspots 2–6 carry placeholder copy — only the first tab and hotspot have designed content. That source image is 1376px wide in Figma; request a higher-resolution original.
 4. Figma itself uses one placeholder photo of two students across most slots, one placeholder staff portrait, lorem ipsum bios and "Article headline written here" cards. Those are reproduced as designed.
