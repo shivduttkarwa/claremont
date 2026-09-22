@@ -1,0 +1,43 @@
+<!-- @wagtail-partial: search — site search over the build-time index.
+     No Figma design exists for this; it reuses the site's display serif and green. -->
+<div class="search" id="site-search" role="dialog" aria-modal="true" aria-labelledby="search-title" data-search hidden>
+  <div class="search__bar">
+    <p class="search__eyebrow" id="search-title">Search Claremont College</p>
+    <button class="search__close" type="button" data-search-close aria-label="Close search">
+      <span>Close</span>
+      <svg class="icon" aria-hidden="true"><use href="#icon-close"></use></svg>
+    </button>
+  </div>
+
+  <div class="search__inner">
+    <label class="search__eyebrow search__label" for="search-input">Searching for</label>
+    <input class="search__input" id="search-input" type="search" data-search-input
+           placeholder="Type a word" aria-label="Search the site"
+           autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+           role="combobox" aria-expanded="false" aria-controls="search-results" aria-autocomplete="list">
+
+    <p class="search__meta" data-search-meta aria-hidden="true"></p>
+
+    <ol class="search__results" id="search-results" role="listbox" aria-label="Search results" data-search-results hidden></ol>
+
+    <div class="search__empty" data-search-empty>
+      <p class="search__eyebrow">Popular</p>
+      <ul class="search__suggestions">
+        <li><a href="welcome.html">Welcome from Claremont</a></li>
+        <li><a href="preparatory-program.html">Preparatory Program</a></li>
+        <li><a href="k-6-primary.html">K–6 Primary</a></li>
+        <li><a href="extra-curricular.html">Extra Curricular</a></li>
+        <li><a href="enrolment.html">Enrolment</a></li>
+        <li><a href="contact-us.html">Contact us</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <p class="search__hints" aria-hidden="true">
+    <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
+    <span><kbd>↵</kbd> open</span>
+    <span><kbd>esc</kbd> close</span>
+  </p>
+
+  <p class="visually-hidden" role="status" aria-live="polite" data-search-status></p>
+</div>

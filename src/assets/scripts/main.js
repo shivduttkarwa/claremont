@@ -4,6 +4,7 @@
 import "bootstrap/js/dist/offcanvas";
 import { Anim } from "./anim.js";
 import { initCurrentNav, initHotspots, initScrollers, initTabArrows } from "./ui.js";
+import { initSearch } from "./search.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   Anim.init();
@@ -11,4 +12,5 @@ document.addEventListener("DOMContentLoaded", () => {
   initHotspots();
   initScrollers();
   initTabArrows();
+  initSearch();
 });
