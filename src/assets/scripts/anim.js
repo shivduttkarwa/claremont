@@ -31,6 +31,7 @@ const REVEAL = {
   "from-right": { from: { x: "15%", autoAlpha: 0 },             to: { x: "0%", autoAlpha: 1 } },
   "enter-right": { from: { x: "110%", autoAlpha: 0 },           to: { x: "0%", autoAlpha: 1, duration: 0.9, ease: "expo.out" } },
   "nudge-right": { from: { x: 40, autoAlpha: 0 },               to: { x: 0, autoAlpha: 1 } },
+  "swing-in":   { from: { xPercent: 92, yPercent: -145, rotation: 90, autoAlpha: 0 }, to: { xPercent: 0, yPercent: 0, rotation: 0, autoAlpha: 1, duration: 1.2, ease: "power3.out" } },
   "drop":       { from: { y: -48, autoAlpha: 0 },               to: { y: 0, autoAlpha: 1, duration: 0.6, ease: "back.out(1.4)" } },
   "pop":        { from: { scale: 0, autoAlpha: 0 },             to: { scale: 1, autoAlpha: 1, duration: 0.6, ease: "back.out(2)" } },
   "wipe-right": { from: { clipPath: "inset(0% 100% 0% 0%)", x: -12, autoAlpha: 0 }, to: { clipPath: "inset(0% 0% 0% 0%)", x: 0, autoAlpha: 1, duration: 0.9, ease: "power3.out" } },
@@ -173,7 +174,26 @@ function setupReveals(root, entrance) {
   const byTier = {};
   scoped(root, '[data-anim="reveal"]').forEach((el) => {
     bind(el);
-    gsap.set(el, presetOf(el).from);
+    const preset = presetOf(el);
+    gsap.set(el, preset.from);
+
+    // data-anim-scrub hands the reveal to the scroll position. The trigger is an untransformed
+    // ancestor, because the preset's start state has already moved the element's own box.
+    if (el.hasAttribute("data-anim-scrub")) {
+      const { delay, ...vars } = toVars(preset, el);
+      const tween = gsap.to(el, {
+        ...vars,
+        scrollTrigger: {
+          trigger: el.closest("[data-anim-trigger]") || el.parentElement || el,
+          start: attr(el, "data-anim-start", "top 85%"),
+          end: attr(el, "data-anim-end", "top 35%"),
+          scrub: number(el, "data-anim-scrub", 1),
+        },
+      });
+      if (tween.scrollTrigger) triggers.set(el, tween.scrollTrigger);
+      return;
+    }
+
     const tier = tierOf(el);
     // a custom start point needs its own trigger; the rest batch per tier
     if (tier === HERO || immediate || el.hasAttribute("data-anim-start")) play(el, revealStep(el), entrance);
