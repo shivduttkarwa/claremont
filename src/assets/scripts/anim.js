@@ -31,21 +31,27 @@ const REVEAL = {
   "from-right": { from: { x: "15%", autoAlpha: 0 },             to: { x: "0%", autoAlpha: 1 } },
   "enter-right": { from: { x: "110%", autoAlpha: 0 },           to: { x: "0%", autoAlpha: 1, duration: 0.9, ease: "expo.out" } },
   "drop":       { from: { y: -48, autoAlpha: 0 },               to: { y: 0, autoAlpha: 1, duration: 0.6, ease: "back.out(1.4)" } },
+  "pop":        { from: { scale: 0, autoAlpha: 0 },             to: { scale: 1, autoAlpha: 1, duration: 0.6, ease: "back.out(2)" } },
+  "wipe-right": { from: { clipPath: "inset(0% 100% 0% 0%)", x: -12, autoAlpha: 0 }, to: { clipPath: "inset(0% 0% 0% 0%)", x: 0, autoAlpha: 1, duration: 0.9, ease: "power3.out" } },
   "scale":      { from: { scale: 1.12, autoAlpha: 0 },          to: { scale: 1, autoAlpha: 1, duration: 1.1, ease: "power4.out" } },
   "scale-x":    { from: { scaleX: 0, autoAlpha: 0 },            to: { scaleX: 1, autoAlpha: 1, duration: 1.2, ease: "power4.inOut" } },
   "scale-y":    { from: { scaleY: 0, autoAlpha: 0 },            to: { scaleY: 1, autoAlpha: 1, duration: 1.2, ease: "power4.inOut" } },
   "clip":       { from: { "--anim-clip": "100%", autoAlpha: 0 }, to: { "--anim-clip": "0%", autoAlpha: 1, duration: 1.1, ease: "power3.out" } },
 };
 
-// Split text: characters slide up one after another; lines rise out of a mask.
+// Split text: characters slide up one after another; lines rise out of a mask. `spread` caps how
+// long the stagger may run in total, so a long title tightens its stagger instead of dragging on.
 const SPLIT = {
-  chars: { from: { y: 50, autoAlpha: 0 }, to: { y: 0, autoAlpha: 1, duration: 0.3, ease: "power1.inOut", stagger: 0.03 } },
-  lines: { from: { y: 30, autoAlpha: 0 }, to: { y: 0, autoAlpha: 1, duration: 0.6, ease: "power1.out", stagger: 0.1 } },
+  "chars":      { from: { y: 50, autoAlpha: 0 }, to: { y: 0, autoAlpha: 1, duration: 0.3, ease: "power1.inOut", stagger: 0.03 }, spread: 0.9 }, // hero titles
+  "chars-soft": { from: { y: 14, autoAlpha: 0 }, to: { y: 0, autoAlpha: 1, duration: 0.25, ease: "power1.inOut", stagger: 0.02 }, spread: 0.5 }, // section titles
+  "lines":      { from: { y: 30, autoAlpha: 0 }, to: { y: 0, autoAlpha: 1, duration: 0.6, ease: "power1.out", stagger: 0.1 } },
 };
 
+// Scroll tiers play once the element's top is this far up the viewport; data-anim-start overrides it
+// (ScrollTrigger syntax, e.g. "top 45%" for a tall block whose pieces sit low).
 const TIER_START = {
-  default: "top bottom-=100",
-  secondary: "top bottom-=50",
+  default: "top 85%",
+  secondary: "top 90%",
 };
 const HERO = "hero";
 
@@ -63,9 +69,16 @@ const number = (el, name, fallback) => {
 };
 
 const tierOf = (el) => attr(el, "data-anim-tier", "default");
+const startOf = (el) => attr(el, "data-anim-start", TIER_START[tierOf(el)] || TIER_START.default);
 const orderOf = (el, fallback = 0) => number(el, "data-anim-order", fallback);
 const leadOf = (el) => number(el, "data-anim-lead", DEFAULTS.entranceLead);
 const presetOf = (el) => REVEAL[attr(el, "data-anim-type", "fade-up")] || REVEAL["fade-up"];
+
+const toVars = (preset) => ({
+  ...preset.to,
+  duration: preset.to.duration || DEFAULTS.duration,
+  ease: preset.to.ease || DEFAULTS.ease,
+});
 
 // Collect matching elements under `root` (incl. root itself) that aren't bound yet.
 function scoped(root, selector) {
@@ -85,9 +98,8 @@ function initScroll(opts) {
   gsap.ticker.lagSmoothing(0);
 }
 
-// A step is { targets, vars } ready to tween, or { build, duration } when it can only be
-// prepared at play time (text splits, which need the final font on screen).
-const tweenOf = (step) => (step.build ? step.build() : step);
+// A step is { animation } — a factory that creates and starts its tween or timeline — plus
+// { deferred: true, duration } when it can only be built at play time (text splits need the final font).
 
 // Hero-tier steps join the entrance timeline; the rest play once they scroll into view.
 function play(el, step, entrance) {
@@ -97,12 +109,9 @@ function play(el, step, entrance) {
   }
   ScrollTrigger.create({
     trigger: el,
-    start: TIER_START[tierOf(el)] || TIER_START.default,
+    start: startOf(el),
     once: true,
-    onEnter: () => {
-      const { targets, vars } = tweenOf(step);
-      gsap.to(targets, { ...vars, delay: orderOf(el) * DEFAULTS.stagger });
-    },
+    onEnter: () => step.animation().delay(orderOf(el) * DEFAULTS.stagger),
   });
 }
 
@@ -116,14 +125,11 @@ function playEntrance(steps) {
       const lead = Math.max(...group.map((step) => step.lead));
       const at = i ? Math.max(0, tl.duration() - lead) : 0;
       group.forEach((step) => {
-        if (!step.build) {
-          tl.to(step.targets, step.vars, at);
+        if (!step.deferred) {
+          tl.add(step.animation(), at);
           return;
         }
-        tl.call(() => {
-          const { targets, vars } = step.build();
-          gsap.to(targets, vars);
-        }, [], at);
+        tl.call(() => step.animation(), [], at);
         tl.to({}, { duration: step.duration }, at); // holds the slot so the next step waits for it
       });
     });
@@ -144,18 +150,9 @@ function expandGroups(root) {
   });
 }
 
-function revealStep(el) {
-  const preset = presetOf(el);
-  return {
-    targets: el,
-    vars: {
-      ...preset.to,
-      duration: preset.to.duration || DEFAULTS.duration,
-      ease: preset.to.ease || DEFAULTS.ease,
-      onComplete: () => el.classList.add("is-revealed"),
-    },
-  };
-}
+const revealStep = (el) => ({
+  animation: () => gsap.to(el, { ...toVars(presetOf(el)), onComplete: () => el.classList.add("is-revealed") }),
+});
 
 function setupReveals(root, entrance) {
   const byTier = {};
@@ -163,7 +160,8 @@ function setupReveals(root, entrance) {
     bind(el);
     gsap.set(el, presetOf(el).from);
     const tier = tierOf(el);
-    if (tier === HERO) play(el, revealStep(el), entrance);
+    // a custom start point needs its own trigger; the rest batch per tier
+    if (tier === HERO || el.hasAttribute("data-anim-start")) play(el, revealStep(el), entrance);
     else (byTier[tier] ||= []).push(el);
   });
   Object.entries(byTier).forEach(([tier, group]) => {
@@ -171,10 +169,7 @@ function setupReveals(root, entrance) {
       start: TIER_START[tier] || TIER_START.default,
       once: true,
       onEnter: (batch) =>
-        batch.forEach((el, i) => {
-          const step = revealStep(el);
-          gsap.to(step.targets, { ...step.vars, delay: orderOf(el, i) * DEFAULTS.stagger });
-        }),
+        batch.forEach((el, i) => revealStep(el).animation().delay(orderOf(el, i) * DEFAULTS.stagger)),
     });
   });
 }
@@ -208,65 +203,68 @@ function keepKerning(chars, lefts) {
 function setupSplits(root, entrance) {
   scoped(root, '[data-anim="split"]').forEach((el) => {
     bind(el);
-    const isChars = attr(el, "data-anim-type", "lines") === "chars";
-    const preset = isChars ? SPLIT.chars : SPLIT.lines;
+    const type = attr(el, "data-anim-type", "lines");
+    const preset = SPLIT[type] || SPLIT.lines;
+    const isChars = preset !== SPLIT.lines;
     const count = isChars
       ? el.textContent.replace(/\s/g, "").length
       : Math.max(1, Math.round(el.getBoundingClientRect().height / parseFloat(getComputedStyle(el).lineHeight)) || 1);
+    const stagger = preset.spread ? Math.min(preset.to.stagger, preset.spread / Math.max(1, count)) : preset.to.stagger;
     play(el, {
-      duration: preset.to.duration + preset.to.stagger * Math.max(0, count - 1),
-      build: () => {
+      deferred: true,
+      duration: preset.to.duration + stagger * Math.max(0, count - 1),
+      animation: () => {
         const lefts = isChars ? glyphLefts(el) : null;
+        // words are boxed too, so a wrapping title still breaks between words and not inside one
         const split = new SplitText(
           el,
           isChars
-            ? { type: "chars", charsClass: "anim-char" }
+            ? { type: "words,chars", charsClass: "anim-char" }
             : { type: "lines", linesClass: "anim-line", mask: "lines", tag: "span" }
         );
         const targets = isChars ? split.chars : split.lines;
         if (lefts) keepKerning(targets, lefts);
         gsap.set(el, { autoAlpha: 1 }); // the container shows; its pieces carry the hidden state
         gsap.set(targets, preset.from);
-        return {
-          targets,
-          vars: {
-            ...preset.to,
-            // the original markup comes back once it has played, so the audited layout is untouched
-            onComplete: () => {
-              el.classList.add("is-revealed");
-              split.revert();
-            },
+        return gsap.to(targets, {
+          ...preset.to,
+          stagger,
+          // the original markup comes back once it has played, so the audited layout is untouched
+          onComplete: () => {
+            el.classList.add("is-revealed");
+            split.revert();
           },
-        };
+        });
       },
     }, entrance);
   });
 }
 
-// data-anim="sequence": one tween over the marked descendants (data-anim-item), staggered in DOM order.
+// data-anim="sequence": one timeline over the marked descendants, staggered in DOM order. An item
+// inherits the container's data-anim-type unless data-anim-item names a preset of its own.
 // Items are cleared on completion so their own hover transitions keep working afterwards.
 function setupSequences(root, entrance) {
   scoped(root, '[data-anim="sequence"]').forEach((el) => {
     bind(el);
     const items = Array.from(el.querySelectorAll("[data-anim-item]")).filter((item) => item.getClientRects().length);
-    if (!items.length) {
+    if (!items.length || (el.hasAttribute("data-anim-disable-mobile") && window.innerWidth < 992)) {
       el.classList.add("is-revealed");
       return;
     }
-    const preset = presetOf(el);
+    const presetFor = (item) => REVEAL[item.getAttribute("data-anim-item")] || presetOf(el);
+    const stagger = number(el, "data-anim-stagger", 0) || DEFAULTS.stagger;
     // a CSS transition on an item would smear every frame of the tween, so it is paused until the end
-    gsap.set(items, { ...preset.from, transition: "none" });
+    items.forEach((item) => gsap.set(item, { ...presetFor(item).from, transition: "none" }));
     play(el, {
-      targets: items,
-      vars: {
-        ...preset.to,
-        duration: preset.to.duration || DEFAULTS.duration,
-        ease: preset.to.ease || DEFAULTS.ease,
-        stagger: number(el, "data-anim-stagger", 0) || DEFAULTS.stagger,
-        onComplete: () => {
-          el.classList.add("is-revealed");
-          gsap.set(items, { clearProps: "all" });
-        },
+      animation: () => {
+        const tl = gsap.timeline({
+          onComplete: () => {
+            el.classList.add("is-revealed");
+            gsap.set(items, { clearProps: "all" });
+          },
+        });
+        items.forEach((item, i) => tl.to(item, toVars(presetFor(item)), i * stagger));
+        return tl;
       },
     }, entrance);
   });
