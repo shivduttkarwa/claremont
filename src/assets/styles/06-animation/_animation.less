@@ -15,6 +15,12 @@ html.anim-ready:not(.anim-reduced) {
   }
 }
 
+// --- scroll progress ------------------------------------------------
+// data-anim="progress" scrubs --anim-progress 0 -> 1 down the block. Without JS, or with reduced
+// motion, it stays at 1, so whatever hangs off it is simply drawn.
+[data-anim="progress"] { --anim-progress: 1; }
+html.anim-ready:not(.anim-reduced) [data-anim="progress"] { --anim-progress: 0; }
+
 // --- clip reveal ----------------------------------------------------
 [data-anim="reveal"][data-anim-type="clip"] {
   --anim-clip: 0%;

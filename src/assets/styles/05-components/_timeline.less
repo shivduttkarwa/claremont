@@ -1,5 +1,11 @@
 // 05-components/_timeline.less — labelled steps zigzagging down a dotted centre line
 
+// Every step scrubs --anim-progress 0 -> 1 as it comes up the screen; each piece takes a slice of
+// that range, so label, icon, rule and copy are all tied to the scroll rather than to a clock.
+.timeline-phase(@from, @span) {
+  --t: ~"clamp(0, (var(--anim-progress, 1) - @{from}) / @{span}, 1)";
+}
+
 .timeline {
   --timeline-pad-top: 5.3125rem;      // 85
   --timeline-pad-bottom: 5.46875rem;  // 87.5
@@ -8,6 +14,9 @@
   --timeline-rows: none;
   --timeline-row: 9.875rem;           // fallback rhythm
   --timeline-marker: 3rem;            // 48
+  --timeline-time-height: 1.75rem;    // 28: the label the rule sits under
+  --timeline-slide: -10%;              // the copy arrives from its own side of the line
+  --timeline-item-pad: calc(var(--timeline-marker) + var(--space-3));
   --timeline-rule: 0.09375rem;        // 1.5
   --timeline-dash: 0.125rem;          // 2 on, 2 off
   --timeline-text-width: 34rem;       // single column below lg: a comfortable measure
@@ -22,14 +31,17 @@
 
   @media (min-width: @bp-lg) {
     --timeline-text-width: 19rem;    // 304
+    --timeline-item-pad: 0rem;
     --timeline-title-width: 20rem;   // 320: Figma boxes run 302-376; the widest single-line title needs 313
     padding-block: var(--timeline-pad-top) var(--timeline-pad-bottom);
-    // Centre line (x 819 → 820.5) runs the full height of the section
+    // Centre line (x 819 → 820.5) runs the full height of the section, drawn as you scroll
     &::before {
       content: "";
       position: absolute;
-      inset: 0 auto 0 calc(50% - 0.0625rem);
+      top: 0;
+      left: calc(50% - 0.0625rem);
       width: var(--timeline-rule);
+      height: calc(var(--anim-progress, 1) * 100%);
       background: var(--timeline-dots-y);
     }
   }
@@ -62,8 +74,10 @@
     &::before {
       content: "";
       position: absolute;
-      inset: 0 auto 0 calc(var(--timeline-marker) / 2);
+      top: 0;
+      left: calc(var(--timeline-marker) / 2);
       width: var(--timeline-rule);
+      height: calc(var(--anim-progress, 1) * 100%);
       background: var(--timeline-dots-y);
     }
 
@@ -80,7 +94,20 @@
 
   &__item {
     position: relative;
-    padding-inline-start: calc(var(--timeline-marker) + var(--space-3));
+    padding-inline-start: var(--timeline-item-pad);
+
+    // Dotted rule across the top, held outside the sliding content so it can grow from the line
+    &::before {
+      content: "";
+      position: absolute;
+      top: var(--timeline-time-height);
+      right: 0;
+      left: var(--timeline-item-pad);
+      height: var(--timeline-rule);
+      background: var(--timeline-dots-x);
+      .timeline-phase(0.3, 0.24);
+      clip-path: inset(0 calc((1 - var(--t)) * 100%) 0 0);
+    }
 
     @media (min-width: @bp-lg) {
       grid-column: 1;
@@ -94,6 +121,9 @@
   }
 
   &__time {
+    .timeline-phase(0, 0.22);
+    opacity: var(--t);
+    transform: translateX(calc((1 - var(--t)) * var(--timeline-slide)));
     min-height: 1.75rem; // 28: label sits directly on the rule
     margin: 0;
     font-family: var(--font-ui);
@@ -104,20 +134,15 @@
     color: var(--color-heading);
   }
 
-  // Dotted rule across the top; the marker is centred on it, over the centre line.
+  // The marker is centred on that rule, over the centre line.
   &__body {
     position: relative;
     padding-top: 1.6875rem; // 27
 
-    &::before {
-      content: "";
-      position: absolute;
-      inset: 0 0 auto;
-      height: var(--timeline-rule);
-      background: var(--timeline-dots-x);
-    }
-
     h3 {
+      .timeline-phase(0.4, 0.2);
+      opacity: var(--t);
+      transform: translateX(calc((1 - var(--t)) * var(--timeline-slide)));
       max-width: var(--timeline-title-width);
       margin: 0 0 var(--timeline-title-gap);
       font-family: var(--font-display);
@@ -126,6 +151,9 @@
     }
 
     p {
+      .timeline-phase(0.52, 0.2);
+      opacity: var(--t);
+      transform: translateX(calc((1 - var(--t)) * var(--timeline-slide)));
       max-width: var(--timeline-text-width);
       margin: 0;
     }
@@ -142,9 +170,12 @@
   }
 
   &__marker {
+    .timeline-phase(0.16, 0.2);
+    opacity: var(--t);
+    transform: scale(calc(0.4 + 0.6 * var(--t)));
     position: absolute;
-    top: calc(var(--timeline-marker) / -2);
-    left: calc(-1 * (var(--timeline-marker) + var(--space-3)));
+    top: calc(var(--timeline-time-height) - var(--timeline-marker) / 2);
+    left: 0;
     z-index: var(--z-content);
     display: grid;
     place-items: center;
@@ -170,6 +201,13 @@
       left: calc(var(--timeline-marker) / -2);
     }
   }
+  @media (min-width: @bp-lg) {
+    &__item::before { clip-path: inset(0 0 0 calc((1 - var(--t)) * 100%)); }
+    &__item:nth-child(even) {
+      --timeline-slide: 10%;
+      &::before { clip-path: inset(0 calc((1 - var(--t)) * 100%) 0 0); }
+    }
+  }
 
   // Preparatory "A day in the life": steps at 237, 393, 553, 709, 872, 1028, 1187, 1343, 1504, 1688
   &--day {
@@ -193,3 +231,5 @@
     }
   }
 }
+
+// Resting state is the finished one; these hold a step back until its own reveal lands.

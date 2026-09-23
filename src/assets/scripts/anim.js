@@ -77,9 +77,11 @@ const orderOf = (el, fallback = 0) => number(el, "data-anim-order", fallback);
 const leadOf = (el) => number(el, "data-anim-lead", DEFAULTS.entranceLead);
 const presetOf = (el) => REVEAL[attr(el, "data-anim-type", "fade-up")] || REVEAL["fade-up"];
 
-const toVars = (preset) => ({
+// data-anim-duration / data-anim-delay let a step be timed against its neighbours
+const toVars = (preset, el) => ({
   ...preset.to,
-  duration: preset.to.duration || DEFAULTS.duration,
+  duration: (el && number(el, "data-anim-duration", 0)) || preset.to.duration || DEFAULTS.duration,
+  delay: (el && number(el, "data-anim-delay", 0)) || 0,
   ease: preset.to.ease || DEFAULTS.ease,
 });
 
@@ -119,7 +121,11 @@ function play(el, step, entrance) {
     trigger: el,
     start: startOf(el),
     once: true,
-    onEnter: () => step.animation().delay(orderOf(el) * DEFAULTS.stagger),
+    // the order stagger adds to whatever data-anim-delay already asked for
+    onEnter: () => {
+      const tween = step.animation();
+      tween.delay(tween.delay() + orderOf(el) * DEFAULTS.stagger);
+    },
   }));
 }
 
@@ -160,7 +166,7 @@ function expandGroups(root) {
 }
 
 const revealStep = (el) => ({
-  animation: () => gsap.to(el, { ...toVars(presetOf(el)), onComplete: () => el.classList.add("is-revealed") }),
+  animation: () => gsap.to(el, { ...toVars(presetOf(el), el), onComplete: () => el.classList.add("is-revealed") }),
 });
 
 function setupReveals(root, entrance) {
@@ -178,7 +184,10 @@ function setupReveals(root, entrance) {
       start: TIER_START[tier] || TIER_START.default,
       once: true,
       onEnter: (batch) =>
-        batch.forEach((el, i) => revealStep(el).animation().delay(orderOf(el, i) * DEFAULTS.stagger)),
+        batch.forEach((el, i) => {
+          const tween = revealStep(el).animation();
+          tween.delay(tween.delay() + orderOf(el, i) * DEFAULTS.stagger);
+        }),
     }).forEach((st) => triggers.set(st.trigger, st));
   });
 }
@@ -279,12 +288,13 @@ function setupSequences(root, entrance) {
     play(el, {
       animation: () => {
         const tl = gsap.timeline({
+          delay: number(el, "data-anim-delay", 0),
           onComplete: () => {
             el.classList.add("is-revealed");
             gsap.set(items, { clearProps: "all" });
           },
         });
-        items.forEach((item, i) => tl.to(item, toVars(presetFor(item)), i * stagger));
+        items.forEach((item, i) => tl.to(item, toVars(presetFor(item), item), i * stagger));
         return tl;
       },
     }, entrance);
@@ -320,6 +330,28 @@ function setupParallax(root) {
   });
 }
 
+// data-anim="progress" — scrubs --anim-progress from 0 to 1 as the block passes, for CSS to hang a
+// growing line or any other scroll-linked state on.
+function setupProgress(root) {
+  scoped(root, '[data-anim="progress"]').forEach((el) => {
+    bind(el);
+    gsap.fromTo(
+      el,
+      { "--anim-progress": 0 },
+      {
+        "--anim-progress": 1,
+        ease: "none",
+        scrollTrigger: {
+          trigger: el,
+          start: attr(el, "data-anim-start", "top 75%"),
+          end: attr(el, "data-anim-end", "bottom 70%"),
+          scrub: 0.5,
+        },
+      }
+    );
+  });
+}
+
 function setupAll(root, opts = {}) {
   const entrance = [];
   immediate = !!opts.immediate;
@@ -329,6 +361,7 @@ function setupAll(root, opts = {}) {
     setupReveals(root, entrance);
     setupSplits(root, entrance);
     setupParallax(root);
+    setupProgress(root);
   } finally {
     immediate = false;
   }
