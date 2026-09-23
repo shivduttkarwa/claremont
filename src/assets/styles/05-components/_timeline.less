@@ -4,6 +4,7 @@
 // that range, so label, icon, rule and copy are all tied to the scroll rather than to a clock.
 .timeline-phase(@from, @span) {
   --t: ~"clamp(0, (var(--anim-progress, 1) - @{from}) / @{span}, 1)";
+  --e: ~"calc(var(--t) * var(--t) * (3 - 2 * var(--t)))"; // smoothstep: eases in and out, no snap
 }
 
 .timeline {
@@ -15,7 +16,7 @@
   --timeline-row: 9.875rem;           // fallback rhythm
   --timeline-marker: 3rem;            // 48
   --timeline-time-height: 1.75rem;    // 28: the label the rule sits under
-  --timeline-slide: -10%;              // the copy arrives from its own side of the line
+  --timeline-slide: -3.1875rem;       // 51 — the copy arrives from its own side of the line
   --timeline-item-pad: calc(var(--timeline-marker) + var(--space-3));
   --timeline-rule: 0.09375rem;        // 1.5
   --timeline-dash: 0.125rem;          // 2 on, 2 off
@@ -32,6 +33,7 @@
   @media (min-width: @bp-lg) {
     --timeline-text-width: 19rem;    // 304
     --timeline-item-pad: 0rem;
+    --timeline-slide: -4rem;         // 64
     --timeline-title-width: 20rem;   // 320: Figma boxes run 302-376; the widest single-line title needs 313
     padding-block: var(--timeline-pad-top) var(--timeline-pad-bottom);
     // Centre line (x 819 → 820.5) runs the full height of the section, drawn as you scroll
@@ -105,8 +107,8 @@
       left: var(--timeline-item-pad);
       height: var(--timeline-rule);
       background: var(--timeline-dots-x);
-      .timeline-phase(0.3, 0.24);
-      clip-path: inset(0 calc((1 - var(--t)) * 100%) 0 0);
+      .timeline-phase(0.2, 0.45);
+      clip-path: inset(0 calc((1 - var(--e)) * 100%) 0 0);
     }
 
     @media (min-width: @bp-lg) {
@@ -121,9 +123,9 @@
   }
 
   &__time {
-    .timeline-phase(0, 0.22);
-    opacity: var(--t);
-    transform: translateX(calc((1 - var(--t)) * var(--timeline-slide)));
+    .timeline-phase(0, 0.45);
+    opacity: var(--e);
+    transform: translateX(calc((1 - var(--e)) * var(--timeline-slide)));
     min-height: 1.75rem; // 28: label sits directly on the rule
     margin: 0;
     font-family: var(--font-ui);
@@ -140,9 +142,9 @@
     padding-top: 1.6875rem; // 27
 
     h3 {
-      .timeline-phase(0.4, 0.2);
-      opacity: var(--t);
-      transform: translateX(calc((1 - var(--t)) * var(--timeline-slide)));
+      .timeline-phase(0.3, 0.48);
+      opacity: var(--e);
+      transform: translateX(calc((1 - var(--e)) * var(--timeline-slide)));
       max-width: var(--timeline-title-width);
       margin: 0 0 var(--timeline-title-gap);
       font-family: var(--font-display);
@@ -151,9 +153,9 @@
     }
 
     p {
-      .timeline-phase(0.52, 0.2);
-      opacity: var(--t);
-      transform: translateX(calc((1 - var(--t)) * var(--timeline-slide)));
+      .timeline-phase(0.42, 0.5);
+      opacity: var(--e);
+      transform: translateX(calc((1 - var(--e)) * var(--timeline-slide)));
       max-width: var(--timeline-text-width);
       margin: 0;
     }
@@ -170,9 +172,9 @@
   }
 
   &__marker {
-    .timeline-phase(0.16, 0.2);
-    opacity: var(--t);
-    transform: scale(calc(0.4 + 0.6 * var(--t)));
+    .timeline-phase(0.1, 0.4);
+    opacity: var(--e);
+    transform: scale(calc(0.4 + 0.6 * var(--e)));
     position: absolute;
     top: calc(var(--timeline-time-height) - var(--timeline-marker) / 2);
     left: 0;
@@ -202,10 +204,10 @@
     }
   }
   @media (min-width: @bp-lg) {
-    &__item::before { clip-path: inset(0 0 0 calc((1 - var(--t)) * 100%)); }
+    &__item::before { clip-path: inset(0 0 0 calc((1 - var(--e)) * 100%)); }
     &__item:nth-child(even) {
-      --timeline-slide: 10%;
-      &::before { clip-path: inset(0 calc((1 - var(--t)) * 100%) 0 0); }
+      --timeline-slide: 4rem;
+      &::before { clip-path: inset(0 calc((1 - var(--e)) * 100%) 0 0); }
     }
   }
 

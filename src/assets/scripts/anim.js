@@ -345,7 +345,7 @@ function setupProgress(root) {
           trigger: el,
           start: attr(el, "data-anim-start", "top 75%"),
           end: attr(el, "data-anim-end", "bottom 70%"),
-          scrub: 0.5,
+          scrub: number(el, "data-anim-scrub", 0.5),
         },
       }
     );
