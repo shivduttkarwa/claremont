@@ -84,12 +84,17 @@ const toVars = (preset) => ({
 function scoped(root, selector) {
   const list = Array.from(root.querySelectorAll(selector));
   if (root.matches && root.matches(selector)) list.unshift(root);
-  return list.filter((el) => !el.hasAttribute(BOUND));
+  // a hidden element (a closed tab pane) is left for Anim.add() once it is shown
+  return list.filter((el) => !el.hasAttribute(BOUND) && el.getClientRects().length);
 }
 const bind = (el) => el.setAttribute(BOUND, "");
 
 let lenis = null;
 let started = false;
+let immediate = false; // add(root, { immediate }) treats every step as an entrance step
+const triggers = new WeakMap(); // element -> its ScrollTrigger
+const splits = new WeakMap(); // element -> its SplitText while split
+const entrances = new WeakMap(); // root -> its entrance timeline
 
 function initScroll(opts) {
   lenis = new Lenis({ ...DEFAULTS.lenis, ...(opts.lenis || {}) });
@@ -103,21 +108,22 @@ function initScroll(opts) {
 
 // Hero-tier steps join the entrance timeline; the rest play once they scroll into view.
 function play(el, step, entrance) {
-  if (tierOf(el) === HERO) {
+  if (tierOf(el) === HERO || immediate) {
     entrance.push({ order: orderOf(el), lead: leadOf(el), ...step });
     return;
   }
-  ScrollTrigger.create({
+  triggers.set(el, ScrollTrigger.create({
     trigger: el,
     start: startOf(el),
     once: true,
     onEnter: () => step.animation().delay(orderOf(el) * DEFAULTS.stagger),
-  });
+  }));
 }
 
-function playEntrance(steps) {
+function playEntrance(steps, root) {
   if (!steps.length) return;
   const tl = gsap.timeline();
+  entrances.set(root, tl);
   [...new Set(steps.map((step) => step.order))]
     .sort((a, b) => a - b)
     .forEach((order, i) => {
@@ -140,7 +146,7 @@ function expandGroups(root) {
   scoped(root, "[data-anim-group]").forEach((group) => {
     const type = group.getAttribute("data-anim-group") || "fade-up";
     Array.from(group.children).forEach((child, i) => {
-      if (child.hasAttribute("data-anim")) return;
+      if (child.hasAttribute("data-anim") || child.hasAttribute("data-anim-item")) return; // an item belongs to its sequence
       child.setAttribute("data-anim", "reveal");
       child.setAttribute("data-anim-type", type);
       if (!child.hasAttribute("data-anim-order"))
@@ -161,7 +167,7 @@ function setupReveals(root, entrance) {
     gsap.set(el, presetOf(el).from);
     const tier = tierOf(el);
     // a custom start point needs its own trigger; the rest batch per tier
-    if (tier === HERO || el.hasAttribute("data-anim-start")) play(el, revealStep(el), entrance);
+    if (tier === HERO || immediate || el.hasAttribute("data-anim-start")) play(el, revealStep(el), entrance);
     else (byTier[tier] ||= []).push(el);
   });
   Object.entries(byTier).forEach(([tier, group]) => {
@@ -170,7 +176,7 @@ function setupReveals(root, entrance) {
       once: true,
       onEnter: (batch) =>
         batch.forEach((el, i) => revealStep(el).animation().delay(orderOf(el, i) * DEFAULTS.stagger)),
-    });
+    }).forEach((st) => triggers.set(st.trigger, st));
   });
 }
 
@@ -224,6 +230,7 @@ function setupSplits(root, entrance) {
         );
         const targets = isChars ? split.chars : split.lines;
         if (lefts) keepKerning(targets, lefts);
+        splits.set(el, split);
         gsap.set(el, { autoAlpha: 1 }); // the container shows; its pieces carry the hidden state
         gsap.set(targets, preset.from);
         return gsap.to(targets, {
@@ -233,6 +240,7 @@ function setupSplits(root, entrance) {
           onComplete: () => {
             el.classList.add("is-revealed");
             split.revert();
+            splits.delete(el);
           },
         });
       },
@@ -247,8 +255,18 @@ function setupSequences(root, entrance) {
   scoped(root, '[data-anim="sequence"]').forEach((el) => {
     bind(el);
     const items = Array.from(el.querySelectorAll("[data-anim-item]")).filter((item) => item.getClientRects().length);
-    if (!items.length || (el.hasAttribute("data-anim-disable-mobile") && window.innerWidth < 992)) {
+    const mobile = window.innerWidth < 992;
+    if (!items.length || (mobile && el.hasAttribute("data-anim-disable-mobile"))) {
       el.classList.add("is-revealed");
+      return;
+    }
+    // data-anim-mobile="each": where the items stack, each one reveals on its own as it scrolls in
+    if (mobile && attr(el, "data-anim-mobile") === "each") {
+      el.classList.add("is-revealed");
+      items.forEach((item) => {
+        item.setAttribute("data-anim", "reveal");
+        item.setAttribute("data-anim-type", item.getAttribute("data-anim-item") || attr(el, "data-anim-type", "fade-up"));
+      });
       return;
     }
     const presetFor = (item) => REVEAL[item.getAttribute("data-anim-item")] || presetOf(el);
@@ -299,14 +317,38 @@ function setupParallax(root) {
   });
 }
 
-function setupAll(root) {
+function setupAll(root, opts = {}) {
   const entrance = [];
-  expandGroups(root);
-  setupReveals(root, entrance);
-  setupSplits(root, entrance);
-  setupSequences(root, entrance);
-  setupParallax(root);
-  playEntrance(entrance);
+  immediate = !!opts.immediate;
+  try {
+    expandGroups(root);
+    setupSequences(root, entrance); // first: on a phone it may hand its items to setupReveals
+    setupReveals(root, entrance);
+    setupSplits(root, entrance);
+    setupParallax(root);
+  } finally {
+    immediate = false;
+  }
+  playEntrance(entrance, root);
+}
+
+// Put every bound target under `root` back to its hidden start, so add() can play it again.
+function resetAll(root) {
+  entrances.get(root)?.kill();
+  entrances.delete(root);
+  const bound = Array.from(root.querySelectorAll(`[${BOUND}]`));
+  if (root.hasAttribute && root.hasAttribute(BOUND)) bound.unshift(root);
+  bound.forEach((el) => {
+    triggers.get(el)?.kill();
+    triggers.delete(el);
+    const pieces = Array.from(el.querySelectorAll("[data-anim-item], .anim-char"));
+    gsap.killTweensOf([el, ...pieces]);
+    splits.get(el)?.revert();
+    splits.delete(el);
+    gsap.set([el, ...pieces], { clearProps: "all" });
+    el.removeAttribute(BOUND);
+    el.classList.remove("is-revealed");
+  });
 }
 
 function revealEverything() {
@@ -341,18 +383,33 @@ const Anim = {
     return this;
   },
 
-  // Initialise animations on content added AFTER init (e.g. load-more / AJAX).
+  // Initialise animations on content added AFTER init (e.g. load-more / AJAX, a tab pane).
   // Pass the inserted container (or a selector). Already-bound elements are skipped.
-  add(container = document) {
+  // { immediate: true } plays every step at once as an entrance instead of waiting for scroll.
+  add(container = document, opts = {}) {
     if (reduced()) return this;
     const root =
       typeof container === "string" ? document.querySelector(container) : container;
     if (!root) return this;
     try {
-      setupAll(root);
+      setupAll(root, opts);
       ScrollTrigger.refresh();
     } catch (err) {
       console.error("[anim] add() failed", err);
+    }
+    return this;
+  },
+
+  // Return a container's targets to their hidden start so add() can replay them (a tab pane re-shown).
+  reset(container = document) {
+    if (reduced()) return this;
+    const root =
+      typeof container === "string" ? document.querySelector(container) : container;
+    if (!root) return this;
+    try {
+      resetAll(root);
+    } catch (err) {
+      console.error("[anim] reset() failed", err);
     }
     return this;
   },

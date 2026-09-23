@@ -7,8 +7,8 @@
      ))
      Marker positions render as --x / --y custom properties (modifier classes here; inline vars in Wagtail).
      The hotspot that is open by default carries data-anim-item="wipe-right" on its card so it unfolds after its marker.
-     ASSUMPTION: Figma designs only the first tab's panel and only the first hotspot's copy. Tabs 2–4
-     reuse the same image, and hotspots 2–6 carry placeholder copy to be replaced by the client. -->
+     ASSUMPTION: Figma designs only the first tab's panel and only the first hotspot's copy. Hotspots 2–6 and
+     every hotspot on tabs 2–4 carry placeholder copy; those tabs use photos from the Figma Photography canvas. -->
 <section class="approach bg-light" aria-label="Our approach" data-tabs>
   <div class="container">
     <div class="approach__bar" data-anim="sequence" data-anim-type="fade" data-anim-stagger="0.08">
@@ -85,34 +85,172 @@
       </div>
     </div>
 
-    <!-- Tabs 2–4: same panel structure; image and hotspots to be supplied per tab -->
+    <!-- Tabs 2–4: photos from the Figma Photography canvas; the six hotspots sit where the first tab's do, copy is placeholder -->
     <div class="tab-pane fade" id="pane-future" role="tabpanel" aria-labelledby="tab-future" tabindex="0">
       <div class="approach__panel">
         <div class="approach__media">
-          <img src="assets/images/home/teaching-approach.webp" alt="" width="1226" height="511">
+          <img src="assets/images/home/approach-future.webp" alt="A student holding a VR headset in the blue technology room while a classmate tries one on" width="1640" height="684" loading="lazy" decoding="async">
         </div>
         <div class="approach__overlay">
-          <div class="container"><h2>Future-ready children</h2></div>
+          <div class="container">
+            <h2 data-anim="split" data-anim-type="chars-soft" data-anim-tier="hero" data-anim-order="0">Future-ready children</h2>
+          </div>
+          <ol class="hotspots" data-hotspots data-anim="sequence" data-anim-type="pop" data-anim-tier="hero" data-anim-order="1" data-anim-stagger="0.08" data-anim-disable-mobile>
+            <li class="hotspot hotspot--1 is-open" data-hotspot>
+              <button class="hotspot__marker" data-anim-item type="button" aria-expanded="true" aria-controls="hotspot-7" data-hotspot-toggle><span class="hotspot__label">Immersive technology</span></button>
+              <div class="hotspot__card" id="hotspot-7" data-anim-item="wipe-right">
+                <h3 class="hotspot__title">Immersive technology</h3>
+                <p class="hotspot__text">Placeholder copy. Virtual reality and coding tools bring big ideas within reach.</p>
+              </div>
+            </li>
+            <li class="hotspot hotspot--2" data-hotspot>
+              <button class="hotspot__marker" data-anim-item type="button" aria-expanded="false" aria-controls="hotspot-8" data-hotspot-toggle><span class="hotspot__label">Maker shelves</span></button>
+              <div class="hotspot__card" id="hotspot-8">
+                <h3 class="hotspot__title">Maker shelves</h3>
+                <p class="hotspot__text">Placeholder copy. Tools and materials for building, testing and trying again.</p>
+              </div>
+            </li>
+            <li class="hotspot hotspot--3" data-hotspot>
+              <button class="hotspot__marker" data-anim-item type="button" aria-expanded="false" aria-controls="hotspot-9" data-hotspot-toggle><span class="hotspot__label">Hands-on devices</span></button>
+              <div class="hotspot__card" id="hotspot-9">
+                <h3 class="hotspot__title">Hands-on devices</h3>
+                <p class="hotspot__text">Placeholder copy. Every child learns to use technology with purpose.</p>
+              </div>
+            </li>
+            <li class="hotspot hotspot--4 hotspot--flip" data-hotspot>
+              <button class="hotspot__marker" data-anim-item type="button" aria-expanded="false" aria-controls="hotspot-10" data-hotspot-toggle><span class="hotspot__label">Design thinking</span></button>
+              <div class="hotspot__card" id="hotspot-10">
+                <h3 class="hotspot__title">Design thinking</h3>
+                <p class="hotspot__text">Placeholder copy. Students frame problems, prototype answers and refine them.</p>
+              </div>
+            </li>
+            <li class="hotspot hotspot--5" data-hotspot>
+              <button class="hotspot__marker" data-anim-item type="button" aria-expanded="false" aria-controls="hotspot-11" data-hotspot-toggle><span class="hotspot__label">Digital citizenship</span></button>
+              <div class="hotspot__card" id="hotspot-11">
+                <h3 class="hotspot__title">Digital citizenship</h3>
+                <p class="hotspot__text">Placeholder copy. Learning to be safe, kind and critical online.</p>
+              </div>
+            </li>
+            <li class="hotspot hotspot--6 hotspot--flip" data-hotspot>
+              <button class="hotspot__marker" data-anim-item type="button" aria-expanded="false" aria-controls="hotspot-12" data-hotspot-toggle><span class="hotspot__label">Collaborative projects</span></button>
+              <div class="hotspot__card" id="hotspot-12">
+                <h3 class="hotspot__title">Collaborative projects</h3>
+                <p class="hotspot__text">Placeholder copy. Teams share ideas and build on each other's thinking.</p>
+              </div>
+            </li>
+          </ol>
         </div>
       </div>
     </div>
     <div class="tab-pane fade" id="pane-wellbeing" role="tabpanel" aria-labelledby="tab-wellbeing" tabindex="0">
       <div class="approach__panel">
         <div class="approach__media">
-          <img src="assets/images/home/teaching-approach.webp" alt="" width="1226" height="511">
+          <img src="assets/images/home/approach-wellbeing.webp" alt="Two students reading in green armchairs in a calm, plant-filled learning space" width="1640" height="684" loading="lazy" decoding="async">
         </div>
         <div class="approach__overlay">
-          <div class="container"><h2>Wellbeing is priority</h2></div>
+          <div class="container">
+            <h2 data-anim="split" data-anim-type="chars-soft" data-anim-tier="hero" data-anim-order="0">Wellbeing is priority</h2>
+          </div>
+          <ol class="hotspots" data-hotspots data-anim="sequence" data-anim-type="pop" data-anim-tier="hero" data-anim-order="1" data-anim-stagger="0.08" data-anim-disable-mobile>
+            <li class="hotspot hotspot--1 is-open" data-hotspot>
+              <button class="hotspot__marker" data-anim-item type="button" aria-expanded="true" aria-controls="hotspot-13" data-hotspot-toggle><span class="hotspot__label">Calm reading corners</span></button>
+              <div class="hotspot__card" id="hotspot-13" data-anim-item="wipe-right">
+                <h3 class="hotspot__title">Calm reading corners</h3>
+                <p class="hotspot__text">Placeholder copy. Quiet places to settle, breathe and lose yourself in a book.</p>
+              </div>
+            </li>
+            <li class="hotspot hotspot--2" data-hotspot>
+              <button class="hotspot__marker" data-anim-item type="button" aria-expanded="false" aria-controls="hotspot-14" data-hotspot-toggle><span class="hotspot__label">Room to be yourself</span></button>
+              <div class="hotspot__card" id="hotspot-14">
+                <h3 class="hotspot__title">Room to be yourself</h3>
+                <p class="hotspot__text">Placeholder copy. Familiar spaces where every child feels known and safe.</p>
+              </div>
+            </li>
+            <li class="hotspot hotspot--3" data-hotspot>
+              <button class="hotspot__marker" data-anim-item type="button" aria-expanded="false" aria-controls="hotspot-15" data-hotspot-toggle><span class="hotspot__label">Light and nature</span></button>
+              <div class="hotspot__card" id="hotspot-15">
+                <h3 class="hotspot__title">Light and nature</h3>
+                <p class="hotspot__text">Placeholder copy. Natural light and greenery help young minds rest and focus.</p>
+              </div>
+            </li>
+            <li class="hotspot hotspot--4 hotspot--flip" data-hotspot>
+              <button class="hotspot__marker" data-anim-item type="button" aria-expanded="false" aria-controls="hotspot-16" data-hotspot-toggle><span class="hotspot__label">Mindful moments</span></button>
+              <div class="hotspot__card" id="hotspot-16">
+                <h3 class="hotspot__title">Mindful moments</h3>
+                <p class="hotspot__text">Placeholder copy. Short pauses through the day to settle and refocus.</p>
+              </div>
+            </li>
+            <li class="hotspot hotspot--5" data-hotspot>
+              <button class="hotspot__marker" data-anim-item type="button" aria-expanded="false" aria-controls="hotspot-17" data-hotspot-toggle><span class="hotspot__label">Known by name</span></button>
+              <div class="hotspot__card" id="hotspot-17">
+                <h3 class="hotspot__title">Known by name</h3>
+                <p class="hotspot__text">Placeholder copy. Small classes where every adult knows every child.</p>
+              </div>
+            </li>
+            <li class="hotspot hotspot--6 hotspot--flip" data-hotspot>
+              <button class="hotspot__marker" data-anim-item type="button" aria-expanded="false" aria-controls="hotspot-18" data-hotspot-toggle><span class="hotspot__label">Movement and play</span></button>
+              <div class="hotspot__card" id="hotspot-18">
+                <h3 class="hotspot__title">Movement and play</h3>
+                <p class="hotspot__text">Placeholder copy. Active breaks that help children learn and feel well.</p>
+              </div>
+            </li>
+          </ol>
         </div>
       </div>
     </div>
     <div class="tab-pane fade" id="pane-community" role="tabpanel" aria-labelledby="tab-community" tabindex="0">
       <div class="approach__panel">
         <div class="approach__media">
-          <img src="assets/images/home/teaching-approach.webp" alt="" width="1226" height="511">
+          <img src="assets/images/home/approach-community.webp" alt="The whole school gathered on the playground under the shade sail, seen from above" width="1640" height="684" loading="lazy" decoding="async">
         </div>
         <div class="approach__overlay">
-          <div class="container"><h2>Community minded</h2></div>
+          <div class="container">
+            <h2 data-anim="split" data-anim-type="chars-soft" data-anim-tier="hero" data-anim-order="0">Community minded</h2>
+          </div>
+          <ol class="hotspots" data-hotspots data-anim="sequence" data-anim-type="pop" data-anim-tier="hero" data-anim-order="1" data-anim-stagger="0.08" data-anim-disable-mobile>
+            <li class="hotspot hotspot--1 is-open" data-hotspot>
+              <button class="hotspot__marker" data-anim-item type="button" aria-expanded="true" aria-controls="hotspot-19" data-hotspot-toggle><span class="hotspot__label">Whole-school gatherings</span></button>
+              <div class="hotspot__card" id="hotspot-19" data-anim-item="wipe-right">
+                <h3 class="hotspot__title">Whole-school gatherings</h3>
+                <p class="hotspot__text">Placeholder copy. Assemblies where every year group learns from each other.</p>
+              </div>
+            </li>
+            <li class="hotspot hotspot--2" data-hotspot>
+              <button class="hotspot__marker" data-anim-item type="button" aria-expanded="false" aria-controls="hotspot-20" data-hotspot-toggle><span class="hotspot__label">Shared spaces</span></button>
+              <div class="hotspot__card" id="hotspot-20">
+                <h3 class="hotspot__title">Shared spaces</h3>
+                <p class="hotspot__text">Placeholder copy. Places designed for the whole community to come together.</p>
+              </div>
+            </li>
+            <li class="hotspot hotspot--3" data-hotspot>
+              <button class="hotspot__marker" data-anim-item type="button" aria-expanded="false" aria-controls="hotspot-21" data-hotspot-toggle><span class="hotspot__label">Play and belonging</span></button>
+              <div class="hotspot__card" id="hotspot-21">
+                <h3 class="hotspot__title">Play and belonging</h3>
+                <p class="hotspot__text">Placeholder copy. Games, teams and traditions that build friendships across ages.</p>
+              </div>
+            </li>
+            <li class="hotspot hotspot--4 hotspot--flip" data-hotspot>
+              <button class="hotspot__marker" data-anim-item type="button" aria-expanded="false" aria-controls="hotspot-22" data-hotspot-toggle><span class="hotspot__label">Buddies across ages</span></button>
+              <div class="hotspot__card" id="hotspot-22">
+                <h3 class="hotspot__title">Buddies across ages</h3>
+                <p class="hotspot__text">Placeholder copy. Older students look out for the youngest.</p>
+              </div>
+            </li>
+            <li class="hotspot hotspot--5" data-hotspot>
+              <button class="hotspot__marker" data-anim-item type="button" aria-expanded="false" aria-controls="hotspot-23" data-hotspot-toggle><span class="hotspot__label">Families welcome</span></button>
+              <div class="hotspot__card" id="hotspot-23">
+                <h3 class="hotspot__title">Families welcome</h3>
+                <p class="hotspot__text">Placeholder copy. Parents and carers are part of school life.</p>
+              </div>
+            </li>
+            <li class="hotspot hotspot--6 hotspot--flip" data-hotspot>
+              <button class="hotspot__marker" data-anim-item type="button" aria-expanded="false" aria-controls="hotspot-24" data-hotspot-toggle><span class="hotspot__label">Serving others</span></button>
+              <div class="hotspot__card" id="hotspot-24">
+                <h3 class="hotspot__title">Serving others</h3>
+                <p class="hotspot__text">Placeholder copy. Projects that connect the school with its neighbourhood.</p>
+              </div>
+            </li>
+          </ol>
         </div>
       </div>
     </div>

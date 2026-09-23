@@ -5,6 +5,8 @@
   --approach-bar-gap: 3.3125rem;     // 53
   --approach-title-top: 3.5625rem;   // 57
   --approach-card-width: 22.0625rem; // 353
+  --approach-fade: calc(var(--duration-slow) * 1.5); // the pane cross-fade and photo zoom
+  --approach-zoom: 1.25;
 
   padding-top: var(--approach-pad-top);
 
@@ -49,6 +51,26 @@
     @media (min-width: @bp-md) { display: flex; }
   }
 
+  // Panes stack in one cell and cross-fade: Bootstrap alone would drop the old pane at once
+  .tab-content { display: grid; }
+  .tab-pane {
+    grid-area: 1 / 1;
+    opacity: 0;
+    transition: opacity var(--approach-fade) ease-in-out;
+    &.active { z-index: var(--z-content); opacity: 1; }
+    &.is-entering,
+    &.is-leaving { display: block; }
+    // the photo zooms through the cross-fade: the leaving one grows, the arriving one settles
+    .approach__media img {
+      transform: scale(var(--approach-zoom));
+      transition: transform var(--approach-fade) ease-in-out;
+    }
+    &.active .approach__media img { transform: none; }
+    // the leaving pane drops its title, markers and card early, so the photos cross over on their own
+    .approach__overlay { transition: opacity calc(var(--approach-fade) / 3) ease-out; }
+    &.is-leaving .approach__overlay { opacity: 0; }
+  }
+
   &__panel {
     position: relative;
     isolation: isolate;
@@ -62,6 +84,7 @@
 
   &__media {
     position: relative;
+    overflow: hidden;
     aspect-ratio: 4 / 3;
     @media (min-width: @bp-md) { aspect-ratio: 16 / 9; }
     @media (min-width: @bp-lg) {
@@ -221,6 +244,9 @@
     max-width: var(--hotspot-measure);
     padding-bottom: var(--space-3);
     @media (min-width: @bp-lg) {
+      --hotspot-card-shift: -0.75rem;         // 12: slides in from the marker side
+      --hotspot-card-clip: inset(0 100% 0 0); // wipes open from the marker side
+      --hotspot-card-time: calc(var(--duration-slow) * 1.5);
       display: block;
       position: absolute;
       top: 0.0625rem;
@@ -229,15 +255,19 @@
       padding-bottom: 0;
       opacity: 0;
       visibility: hidden;
-      transform: translateY(var(--space-1));
+      clip-path: var(--hotspot-card-clip);
+      transform: translateX(var(--hotspot-card-shift));
       transition:
-        opacity var(--duration-base) var(--ease-out),
-        transform var(--duration-base) var(--ease-out),
-        visibility 0s linear var(--duration-base);
+        opacity var(--hotspot-card-time) var(--ease-out),
+        clip-path var(--hotspot-card-time) var(--ease-out),
+        transform var(--hotspot-card-time) var(--ease-out),
+        visibility 0s linear var(--hotspot-card-time);
     }
   }
   &--flip &__card {
     @media (min-width: @bp-lg) {
+      --hotspot-card-shift: 0.75rem;
+      --hotspot-card-clip: inset(0 0 0 100%);
       left: auto;
       right: calc(100% + 0.5625rem);
     }
@@ -246,6 +276,7 @@
     display: block;
     opacity: 1;
     visibility: visible;
+    clip-path: inset(0);
     transform: none;
     transition-delay: 0s;
   }

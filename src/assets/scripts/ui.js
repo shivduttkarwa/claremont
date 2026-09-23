@@ -4,6 +4,7 @@
  * Everything else (reveals, parallax) is the anim system.
  */
 import Tab from "bootstrap/js/dist/tab";
+import { Anim } from "./anim.js";
 
 const remToPx = (value) =>
   parseFloat(value) * parseFloat(getComputedStyle(document.documentElement).fontSize);
@@ -16,26 +17,25 @@ export function initCurrentNav(root = document) {
   });
 }
 
+// Open one hotspot of a group (or none) and close the rest
+export function openHotspot(group, open) {
+  group.querySelectorAll("[data-hotspot]").forEach((item) => {
+    const on = item === open;
+    item.classList.toggle("is-open", on);
+    item.querySelector("[data-hotspot-toggle]")?.setAttribute("aria-expanded", String(on));
+  });
+}
+
 export function initHotspots(root = document) {
   root.querySelectorAll("[data-hotspots]").forEach((group) => {
-    const items = Array.from(group.querySelectorAll("[data-hotspot]"));
-    const close = (item) => {
-      item.classList.remove("is-open");
-      item.querySelector("[data-hotspot-toggle]")?.setAttribute("aria-expanded", "false");
-    };
     group.addEventListener("click", (event) => {
       const toggle = event.target.closest("[data-hotspot-toggle]");
       if (!toggle) return;
       const item = toggle.closest("[data-hotspot]");
-      const willOpen = !item.classList.contains("is-open");
-      items.forEach(close);
-      if (willOpen) {
-        item.classList.add("is-open");
-        toggle.setAttribute("aria-expanded", "true");
-      }
+      openHotspot(group, item.classList.contains("is-open") ? null : item);
     });
     group.addEventListener("keydown", (event) => {
-      if (event.key === "Escape") items.forEach(close);
+      if (event.key === "Escape") openHotspot(group, null);
     });
   });
 }
@@ -79,6 +79,7 @@ export function initTabArrows(root = document) {
   root.querySelectorAll("[data-tabs]").forEach((wrap) => {
     const tabs = Array.from(wrap.querySelectorAll('[data-bs-toggle="tab"]'));
     if (!tabs.length) return;
+    const paneOf = (tab) => document.querySelector(tab.getAttribute("data-bs-target"));
     const go = (dir) => {
       const current = tabs.findIndex((tab) => tab.classList.contains("active"));
       const next = tabs[(current + dir + tabs.length) % tabs.length];
@@ -87,5 +88,40 @@ export function initTabArrows(root = document) {
     };
     wrap.querySelector("[data-tabs-prev]")?.addEventListener("click", () => go(-1));
     wrap.querySelector("[data-tabs-next]")?.addEventListener("click", () => go(1));
+
+    // Before the switch: the incoming pane goes back to its start (first hotspot open, content
+    // hidden) and is laid out at opacity 0, so it can cross-fade in over the outgoing pane.
+    wrap.addEventListener("show.bs.tab", (event) => {
+      const pane = paneOf(event.target);
+      if (!pane) return;
+      pane.querySelectorAll("[data-hotspots]").forEach((group) => openHotspot(group, group.querySelector("[data-hotspot]")));
+      Anim.reset(pane);
+      pane.classList.add("is-entering");
+      void pane.offsetWidth;
+    });
+    // The outgoing pane stays in place while the incoming one fades over it
+    wrap.addEventListener("hide.bs.tab", (event) => {
+      const pane = paneOf(event.target);
+      if (!pane) return;
+      pane.classList.add("is-leaving");
+      const done = (end) => {
+        if (end && (end.target !== pane || end.propertyName !== "opacity")) return;
+        pane.classList.remove("is-leaving");
+        pane.removeEventListener("transitionend", done);
+      };
+      pane.addEventListener("transitionend", done);
+      setTimeout(done, 1500);
+    });
+    // The pane plays its entrance (title, markers, card) once its cross-fade is most of the way in.
+    // Bootstrap's shown event fires at once, so the timing comes from the pane's own transition.
+    wrap.addEventListener("shown.bs.tab", (event) => {
+      const pane = paneOf(event.target);
+      if (!pane) return;
+      const fade = parseFloat(getComputedStyle(pane).transitionDuration) * 1000 || 0;
+      setTimeout(() => {
+        pane.classList.remove("is-entering");
+        if (pane.classList.contains("active")) Anim.add(pane, { immediate: true });
+      }, fade * 0.7);
+    });
   });
 }
