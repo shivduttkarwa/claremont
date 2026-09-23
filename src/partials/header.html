@@ -1,27 +1,27 @@
 <!-- @wagtail-partial: header — site settings: logo:ImageChooserBlock, nav:ListBlock(StructBlock(label:CharBlock, page:PageChooserBlock)) -->
-<header class="site-header">
+<header class="site-header" data-anim="sequence" data-anim-type="drop" data-anim-tier="hero" data-anim-stagger="0.07">
   <div class="container-fluid container-edge">
     <div class="site-header__inner">
-      <a class="site-header__logo" href="index.html">
+      <a class="site-header__logo" href="index.html" data-anim-item>
         <img src="assets/images/logo.webp" alt="Claremont College — An Anglican Co-Educational Primary School" width="748" height="185">
       </a>
 
       <div class="site-header__right">
         <nav class="site-header__nav" aria-label="Primary" data-nav>
-          <a class="site-header__link" href="welcome.html">Welcome from Claremont</a>
-          <a class="site-header__link" href="preparatory-program.html">Preparatory Program</a>
-          <a class="site-header__link" href="k-6-primary.html">K–6 Primary</a>
-          <a class="site-header__link" href="extra-curricular.html">Extra Curricular</a>
+          <a class="site-header__link" href="welcome.html" data-anim-item>Welcome from Claremont</a>
+          <a class="site-header__link" href="preparatory-program.html" data-anim-item>Preparatory Program</a>
+          <a class="site-header__link" href="k-6-primary.html" data-anim-item>K–6 Primary</a>
+          <a class="site-header__link" href="extra-curricular.html" data-anim-item>Extra Curricular</a>
         </nav>
 
         <div class="site-header__tools">
-          <button class="site-header__tool" type="button" aria-label="Search" data-search-open aria-haspopup="dialog" aria-controls="site-search">
+          <button class="site-header__tool" type="button" aria-label="Search" data-search-open aria-haspopup="dialog" aria-controls="site-search" data-anim-item>
             <svg class="icon"><use href="#icon-search"></use></svg>
           </button>
-          <a class="site-header__tool site-header__tool--secondary" href="contact-us.html" aria-label="Find us">
+          <a class="site-header__tool site-header__tool--secondary" href="contact-us.html" aria-label="Find us" data-anim-item>
             <svg class="icon"><use href="#icon-location"></use></svg>
           </a>
-          <button class="site-header__toggle" type="button" data-bs-toggle="offcanvas" data-bs-target="#site-menu" aria-controls="site-menu" aria-label="Open menu">
+          <button class="site-header__toggle" type="button" data-bs-toggle="offcanvas" data-bs-target="#site-menu" aria-controls="site-menu" aria-label="Open menu" data-anim-item>
             <span></span><span></span><span></span>
           </button>
         </div>

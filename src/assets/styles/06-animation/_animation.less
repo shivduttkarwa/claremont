@@ -5,11 +5,12 @@
 // =====================================================================
 
 // --- FOUC guard -----------------------------------------------------
-// Hide reveal/split targets only while JS-driven animation is active.
-// If JS never runs, or reduced-motion is on, nothing is hidden.
+// Hide reveal/split targets, and sequence items until their sequence has played, only while
+// JS-driven animation is active. If JS never runs, or reduced-motion is on, nothing is hidden.
 html.anim-ready:not(.anim-reduced) {
   [data-anim="reveal"],
-  [data-anim="split"] {
+  [data-anim="split"],
+  [data-anim="sequence"]:not(.is-revealed) [data-anim-item] {
     visibility: hidden;
   }
 }
@@ -34,5 +35,6 @@ html.lenis body { height: auto; }
 
 // --- Reduced motion safety net --------------------------------------
 @media (prefers-reduced-motion: reduce) {
-  [data-anim] { visibility: visible !important; }
+  [data-anim],
+  [data-anim-item] { visibility: visible !important; }
 }
