@@ -7,6 +7,7 @@
   --testimonials-track-gap: 2.75rem;     // copy ends 297, cards at 341
   --testimonials-card: 25.75rem;         // 412
   --testimonials-fade: 0.45;
+  --testimonials-quote-travel: 3rem;
 
   padding-block: var(--space-8);
   @media (min-width: @bp-lg) { padding-block: var(--testimonials-pad-top) var(--testimonials-pad-bottom); }
@@ -61,24 +62,28 @@
     background: var(--color-secondary);
     img { .img-cover(); }
 
-    // Quote starts 25 in and 31 down
-    &--quote {
-      display: flex;
-      align-items: flex-start;
-      padding: 1.9375rem 1.5625rem;
-      &::after {
-        content: "";
-        .cover();
-        background: var(--color-secondary);
-        opacity: 0.95;
-      }
-      img { .cover(); }
+    &::after {
+      content: "";
+      .cover();
+      z-index: var(--z-content);
+      background: var(--color-secondary);
+      opacity: 0;
+      transition: opacity var(--duration-base) linear;
+    }
+
+    &.is-open::after {
+      opacity: 0.95;
+      transition-timing-function: var(--ease-out);
     }
   }
 
+  // Quote starts 25 in and 31 down; it rises into place as a card opens and drops away as the next one takes over
   &__quote {
-    position: relative;
-    z-index: var(--z-content);
+    position: absolute;
+    top: 1.9375rem;   // 31
+    right: 1.5625rem; // 25
+    left: 1.5625rem;  // 25
+    z-index: var(--z-raised);
     max-width: 19.625rem; // 314
     margin: 0;
     font-family: var(--font-display);
@@ -86,5 +91,19 @@
     line-height: var(--line-height-tight);
     letter-spacing: var(--letter-spacing-body);
     color: var(--color-heading);
+    opacity: 0;
+    transform: translateY(var(--testimonials-quote-travel));
+    transition: opacity var(--duration-base) linear, transform var(--duration-base) var(--ease-in);
+
+    .is-open > & {
+      opacity: 1;
+      transform: none;
+      transition: opacity var(--duration-base) var(--ease-out), transform var(--duration-slow) var(--ease-out);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      transform: none;
+      transition-duration: 0.01ms;
+    }
   }
 }

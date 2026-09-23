@@ -40,6 +40,20 @@ export function initHotspots(root = document) {
   });
 }
 
+// One quote showing at a time: hovering a card raises its quote and drops the one before it.
+// Touch keeps whichever card the markup opens, so the design's resting state stands.
+export function initQuoteCards(root = document) {
+  if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+  root.querySelectorAll("[data-quote-cards]").forEach((group) => {
+    const cards = [...group.querySelectorAll("[data-quote-card]")];
+    cards.forEach((card) => {
+      card.addEventListener("pointerenter", () => {
+        cards.forEach((other) => other.classList.toggle("is-open", other === card));
+      });
+    });
+  });
+}
+
 export function initScrollers(root = document) {
   root.querySelectorAll("[data-scroller]").forEach((scroller) => {
     const track = scroller.querySelector("[data-scroller-track]");

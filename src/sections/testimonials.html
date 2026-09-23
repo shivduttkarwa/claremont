@@ -1,8 +1,9 @@
 <!-- @wagtail-block: testimonials
      title:  CharBlock(required)
      intro:  TextBlock
-     slides: ListBlock(StructBlock(kind:ChoiceBlock(image|quote), image:ImageChooserBlock, quote:TextBlock, alt:CharBlock))
-     The slider is Swiper (data-slider): slides snap to the .container edge, the second one first. -->
+     slides: ListBlock(StructBlock(image:ImageChooserBlock, alt:CharBlock, quote:TextBlock))
+     The slider is Swiper (data-slider): slides snap to the .container edge, the second one first.
+     Every card carries a quote; hovering a card slides its quote up and drops the previous one. -->
 <section class="testimonials" aria-labelledby="testimonials-title" data-slider>
   <div class="container">
     <div class="testimonials__header">
@@ -18,31 +19,35 @@
   </div>
 
   <div class="swiper testimonials__slider" data-slider-start="1">
-    <ul class="swiper-wrapper testimonials__track" data-anim="sequence" data-anim-type="wipe-up" data-anim-start="top 65%" data-anim-stagger="0.2">
+    <ul class="swiper-wrapper testimonials__track" data-anim="sequence" data-anim-type="wipe-up" data-anim-start="top 65%" data-anim-stagger="0.2" data-quote-cards>
       <li class="swiper-slide testimonials__slide" data-anim-item>
-        <div class="testimonials__card">
+        <div class="testimonials__card" data-quote-card>
           <img src="assets/images/home/testimonial-girl.webp" alt="A smiling student with plaits in her school uniform" width="539" height="539" loading="lazy" decoding="async">
+          <blockquote class="testimonials__quote">“I like that everyone here knows my name. Walking in each morning feels like coming back to friends.”</blockquote>
         </div>
       </li>
       <li class="swiper-slide testimonials__slide" data-anim-item>
-        <div class="testimonials__card testimonials__card--quote">
-          <img src="assets/images/home/testimonial-flute.webp" alt="" width="824" height="824" loading="lazy" decoding="async">
+        <div class="testimonials__card is-open" data-quote-card>
+          <img src="assets/images/home/testimonial-flute.webp" alt="A student playing the flute on stage" width="824" height="824" loading="lazy" decoding="async">
           <blockquote class="testimonials__quote">“Music is my favourite lesson because it's where I can be myself. I always leave class feeling happy.”</blockquote>
         </div>
       </li>
       <li class="swiper-slide testimonials__slide" data-anim-item>
-        <div class="testimonials__card">
+        <div class="testimonials__card" data-quote-card>
           <img src="assets/images/home/testimonial-boy.webp" alt="A smiling student in blazer and striped tie" width="824" height="824" loading="lazy" decoding="async">
+          <blockquote class="testimonials__quote">“My teacher knows when I need a hand and when I just need to keep going on my own.”</blockquote>
         </div>
       </li>
       <li class="swiper-slide testimonials__slide" data-anim-item>
-        <div class="testimonials__card">
+        <div class="testimonials__card" data-quote-card>
           <img src="assets/images/home/testimonial-early-years.webp" alt="A young student in the early years classroom" width="824" height="824" loading="lazy" decoding="async">
+          <blockquote class="testimonials__quote">“She talks about her day the whole way home. That tells us everything we need to know.”</blockquote>
         </div>
       </li>
       <li class="swiper-slide testimonials__slide" data-anim-item>
-        <div class="testimonials__card">
+        <div class="testimonials__card" data-quote-card>
           <img src="assets/images/home/testimonial-music.webp" alt="A student taking part in a music lesson" width="824" height="824" loading="lazy" decoding="async">
+          <blockquote class="testimonials__quote">“We chose Claremont for the teaching and stayed for the community our family found here.”</blockquote>
         </div>
       </li>
     </ul>
