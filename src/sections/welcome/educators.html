@@ -1,23 +1,26 @@
 <!-- @wagtail-block: scroller (photo cards)
      title: CharBlock(required)
      cards: ListBlock(StructBlock(photo:ImageChooserBlock, name:CharBlock, page:PageChooserBlock))
-     Figma names nobody in this row, so the link labels stay generic. Five cards, five photos. -->
-<section class="scroller scroller--photos" aria-labelledby="educators-title" data-scroller>
+     Figma names nobody in this row, so the link labels stay generic. Five cards, five photos.
+     Swiper (data-slider) like the home testimonials: flush to the page edge, the clipped card dimmed. -->
+<section class="scroller scroller--photos" aria-labelledby="educators-title" data-slider>
   <div class="container">
     <div class="scroller__header">
       <h2 id="educators-title" data-anim="split" data-anim-type="chars-soft">Our team of educators who inspire</h2>
       <div class="arrow-group" data-anim="reveal" data-anim-type="fade" data-anim-order="1">
-        <button class="arrow-btn arrow-btn--prev" type="button" aria-label="Previous educators" data-scroller-prev><svg class="icon"><use href="#icon-arrow-right"></use></svg></button>
-        <button class="arrow-btn arrow-btn--next" type="button" aria-label="Next educators" data-scroller-next><svg class="icon"><use href="#icon-arrow-right"></use></svg></button>
+        <button class="arrow-btn arrow-btn--prev" type="button" aria-label="Previous educators" data-slider-prev><svg class="icon"><use href="#icon-arrow-right"></use></svg></button>
+        <button class="arrow-btn arrow-btn--next" type="button" aria-label="Next educators" data-slider-next><svg class="icon"><use href="#icon-arrow-right"></use></svg></button>
       </div>
     </div>
   </div>
 
-  <ul class="scroller__track" data-scroller-track data-scroller-dim data-anim-group="fade-up">
-    <li class="scroller__card"><a class="scroller__photo" href="#" aria-label="Meet this educator"><img src="assets/images/welcome/educator-1.webp" alt="" width="714" height="712" loading="lazy" decoding="async"><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
-    <li class="scroller__card"><a class="scroller__photo" href="#" aria-label="Meet this educator"><img src="assets/images/welcome/educator-2.webp" alt="" width="714" height="712" loading="lazy" decoding="async"><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
-    <li class="scroller__card"><a class="scroller__photo" href="#" aria-label="Meet this educator"><img src="assets/images/welcome/educator-3.webp" alt="" width="714" height="712" loading="lazy" decoding="async"><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
-    <li class="scroller__card"><a class="scroller__photo" href="#" aria-label="Meet this educator"><img src="assets/images/welcome/educator-4.webp" alt="" width="714" height="712" loading="lazy" decoding="async"><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
-    <li class="scroller__card"><a class="scroller__photo" href="#" aria-label="Meet this educator"><img src="assets/images/welcome/educator-5.webp" alt="" width="714" height="712" loading="lazy" decoding="async"><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
-  </ul>
+  <div class="swiper scroller__slider" data-slider-dim>
+    <ul class="swiper-wrapper scroller__track" data-anim="sequence" data-anim-type="wipe-up" data-anim-start="top 65%" data-anim-stagger="0.2">
+      <li class="swiper-slide scroller__card" data-anim-item><a class="scroller__photo" href="#" aria-label="Meet this educator"><img src="assets/images/welcome/educator-1.webp" alt="" width="714" height="712" loading="lazy" decoding="async"><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+      <li class="swiper-slide scroller__card" data-anim-item><a class="scroller__photo" href="#" aria-label="Meet this educator"><img src="assets/images/welcome/educator-2.webp" alt="" width="714" height="712" loading="lazy" decoding="async"><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+      <li class="swiper-slide scroller__card" data-anim-item><a class="scroller__photo" href="#" aria-label="Meet this educator"><img src="assets/images/welcome/educator-3.webp" alt="" width="714" height="712" loading="lazy" decoding="async"><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+      <li class="swiper-slide scroller__card" data-anim-item><a class="scroller__photo" href="#" aria-label="Meet this educator"><img src="assets/images/welcome/educator-4.webp" alt="" width="714" height="712" loading="lazy" decoding="async"><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+      <li class="swiper-slide scroller__card" data-anim-item><a class="scroller__photo" href="#" aria-label="Meet this educator"><img src="assets/images/welcome/educator-5.webp" alt="" width="714" height="712" loading="lazy" decoding="async"><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+    </ul>
+  </div>
 </section>

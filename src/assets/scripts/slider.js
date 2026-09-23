@@ -1,6 +1,7 @@
 /**
- * slider — Swiper carousels for [data-slider] sections: free-width slides that snap to the
- * .container edge, with the section's own arrow buttons.
+ * slider — Swiper carousels for [data-slider] sections: free-width slides with the section's own
+ * arrow buttons. data-slider-edge snaps them to the .container edge, data-slider-dim fades the
+ * card that is only partly on screen.
  */
 import Swiper from "swiper";
 import { A11y, Navigation } from "swiper/modules";
@@ -13,11 +14,26 @@ const containerEdge = (section, el) => {
   return box.getBoundingClientRect().left + parseFloat(getComputedStyle(box).paddingLeft) - el.getBoundingClientRect().left;
 };
 
+// Fade whichever card is only partly on screen (the design fades the peeking card). This reads
+// Swiper's own geometry rather than the painted box: the wipe-up entrance clips the cards, and an
+// observer would take that for sideways clipping and dim the whole row until the reveal finished.
+const dimClipped = (swiper) => {
+  const update = () => {
+    swiper.slides.forEach((slide, i) => {
+      const left = swiper.slidesGrid[i] + swiper.translate;
+      slide.classList.toggle("is-clipped", left < -1 || left + slide.swiperSlideSize > swiper.width + 1);
+    });
+  };
+  swiper.on("setTranslate", update);
+  swiper.on("resize", update);
+  update();
+};
+
 export function initSliders(root = document) {
   root.querySelectorAll("[data-slider]").forEach((section) => {
     const el = section.querySelector(".swiper");
     if (!el) return;
-    const edge = () => containerEdge(section, el);
+    const edge = () => (el.hasAttribute("data-slider-edge") ? containerEdge(section, el) : 0);
 
     el.swiper = new Swiper(el, {
       modules: [Navigation, A11y],
@@ -41,5 +57,7 @@ export function initSliders(root = document) {
         },
       },
     });
+
+    if (el.hasAttribute("data-slider-dim")) dimClipped(el.swiper);
   });
 }

@@ -93,7 +93,7 @@
     display: block;
     overflow: hidden;
     aspect-ratio: 357 / 356;
-    color: var(--color-heading);
+    color: var(--color-white);
     img {
       .img-cover();
       transition: transform var(--duration-slow) var(--ease-out);
@@ -108,11 +108,17 @@
     }
     &:hover,
     &:focus-visible {
-      color: var(--color-heading);
+      color: var(--color-white);
       img { transform: scale(1.04); }
       .icon { transform: translate(0.25rem, -0.25rem); }
     }
   }
   &--photos &__card { width: ~"min(22.3125rem, 80vw)"; } // 357, no gutter between photos
   &--photos &__track { gap: 0; }
+
+  // Swiper drives the educators row, so the wrapper drops the native scroll container
+  .swiper > &__track {
+    overflow: visible;
+    scroll-snap-type: none;
+  }
 }
