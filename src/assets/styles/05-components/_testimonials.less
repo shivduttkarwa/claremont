@@ -1,4 +1,4 @@
-// 05-components/_testimonials.less — intro + edge-to-edge snap carousel (848 tall at 1640)
+// 05-components/_testimonials.less — intro + edge-to-edge Swiper carousel (848 tall at 1640)
 
 .testimonials {
   --testimonials-pad-top: 6.6875rem;     // 107
@@ -30,17 +30,11 @@
     p { margin: 0; }
   }
 
-  // --offset = the .container left edge, so the active card lines up with the copy above it.
-  &__track {
+  // --offset = the .container left edge, so the snapped card lines up with the copy above it.
+  // Cards outside the container are dimmed through the mask.
+  &__slider {
     --offset: ~"max(var(--container-gutter), calc((100% - var(--container-content)) / 2))";
-    .reset-list();
-    .hide-scrollbar();
-    display: flex;
     margin-top: var(--testimonials-track-gap);
-    overflow-x: auto;
-    overscroll-behavior-x: contain;
-    scroll-snap-type: x mandatory;
-    scroll-padding-inline-start: var(--offset);
     mask-image: linear-gradient(
       90deg,
       rgba(0, 0, 0, var(--testimonials-fade)) 0,
@@ -52,13 +46,18 @@
     );
   }
 
+  &__track {
+    .reset-list();
+  }
+
+  &__slide {
+    width: ~"min(var(--testimonials-card), 80vw)";
+  }
+
   &__card {
     position: relative;
-    flex: 0 0 auto;
-    width: ~"min(var(--testimonials-card), 80vw)";
     aspect-ratio: 1;
     overflow: hidden;
-    scroll-snap-align: start;
     background: var(--color-secondary);
     img { .img-cover(); }
 

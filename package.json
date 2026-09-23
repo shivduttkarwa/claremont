@@ -10,7 +10,8 @@
   "dependencies": {
     "bootstrap": "^5.3.8",
     "gsap": "^3.13.0",
-    "lenis": "^1.1.18"
+    "lenis": "^1.1.18",
+    "swiper": "^11.2.10"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.20",
@@ -18,8 +19,8 @@
     "chokidar": "^4.0.1",
     "esbuild": "^0.24.0",
     "less": "^4.2.1",
+    "postcss": "^8.4.49",
     "posthtml": "^0.16.6",
-    "posthtml-include": "^2.0.1",
-    "postcss": "^8.4.49"
+    "posthtml-include": "^2.0.1"
   }
 }
