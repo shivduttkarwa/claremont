@@ -47,9 +47,11 @@ const REVEAL = {
 
 // Split text: characters slide up one after another; lines rise out of a mask. `spread` caps how
 // long the stagger may run in total, so a long title tightens its stagger instead of dragging on.
+// `rise` is the distance in em of the element's font size, so a phone title rises less than the
+// 1640 one (0.38em: 50 at the 131.6 hero, 23 at the 60 phone hero; 0.4em: 14 at the 35 section h2).
 const SPLIT = {
-  "chars":      { from: { y: 50, autoAlpha: 0 }, to: { y: 0, autoAlpha: 1, duration: 0.3, ease: "power1.inOut", stagger: 0.03 }, spread: 0.9 }, // hero titles
-  "chars-soft": { from: { y: 14, autoAlpha: 0 }, to: { y: 0, autoAlpha: 1, duration: 0.25, ease: "power1.inOut", stagger: 0.02 }, spread: 0.5 }, // section titles
+  "chars":      { from: { autoAlpha: 0 }, rise: 0.38, to: { y: 0, autoAlpha: 1, duration: 0.3, ease: "power1.inOut", stagger: 0.03 }, spread: 0.9 }, // hero titles
+  "chars-soft": { from: { autoAlpha: 0 }, rise: 0.4, to: { y: 0, autoAlpha: 1, duration: 0.25, ease: "power1.inOut", stagger: 0.02 }, spread: 0.5 }, // section titles
   "lines":      { from: { y: 30, autoAlpha: 0 }, to: { y: 0, autoAlpha: 1, duration: 0.6, ease: "power1.out", stagger: 0.1 } },
 };
 
@@ -273,14 +275,15 @@ function setupSplits(root, entrance) {
         const split = new SplitText(
           el,
           isChars
-            ? { type: "words,chars", charsClass: "anim-char" }
+            ? { type: "words,chars", wordsClass: "anim-word", charsClass: "anim-char" }
             : { type: "lines", linesClass: "anim-line", mask: "lines", tag: "span" }
         );
         const targets = isChars ? split.chars : split.lines;
         if (lefts) keepKerning(targets, lefts);
         splits.set(el, split);
         gsap.set(el, { autoAlpha: 1 }); // the container shows; its pieces carry the hidden state
-        gsap.set(targets, preset.from);
+        const from = preset.rise ? { ...preset.from, y: parseFloat(getComputedStyle(el).fontSize) * preset.rise } : preset.from;
+        gsap.set(targets, from);
         return gsap.to(targets, {
           ...preset.to,
           stagger,
@@ -443,16 +446,28 @@ const Anim = {
       document.documentElement.classList.add("anim-reduced");
       return this;
     }
+    const start = () => {
+      try {
+        setupAll(document);
+        ScrollTrigger.refresh();
+      } catch (err) {
+        console.error("[anim] init failed — revealing content", err);
+        revealEverything();
+      }
+    };
     try {
       initScroll(opts);
       this.lenis = lenis;
-      setupAll(document);
-      ScrollTrigger.refresh();
       window.addEventListener("load", () => ScrollTrigger.refresh());
     } catch (err) {
       console.error("[anim] init failed — revealing content", err);
       revealEverything();
+      return this;
     }
+    // A split measured against the fallback face would nudge its glyphs to the wrong places, so the
+    // entrance waits for the webfonts (briefly: a font that never arrives must not hold the page).
+    const fonts = document.fonts?.ready ?? Promise.resolve();
+    Promise.race([fonts, new Promise((resolve) => setTimeout(resolve, 800))]).then(start, start);
     return this;
   },
 

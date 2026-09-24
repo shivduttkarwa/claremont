@@ -25,6 +25,9 @@ html {
 @media (min-width: 2200px)  { html { font-size: 21px; } } // 1.3125×
 @media (min-width: 2560px)  { html { font-size: 24px; } } // 1.5×
 
+// The root clips too: a phone browser pans to whatever sits past the edge when only body clips
+html { overflow-x: clip; }
+
 body {
   background: var(--color-background);
   color: var(--color-text);

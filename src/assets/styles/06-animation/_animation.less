@@ -27,9 +27,13 @@ html.anim-ready:not(.anim-reduced) [data-anim="progress"] { --anim-progress: 0; 
   clip-path: inset(0 0 var(--anim-clip) 0);
 }
 
-// Split-text: masked lines wrapper (SplitText adds .anim-line / .anim-char)
+// Split-text: masked lines wrapper (SplitText adds .anim-line / .anim-word / .anim-char). The boxes
+// must not inherit a text-indent, or each one indents again and the kerning nudges fight it.
 .anim-line { display: block; }
 .anim-char { display: inline-block; }
+.anim-line,
+.anim-word,
+.anim-char { text-indent: 0; }
 
 // --- Lenis (window-native smooth scroll) ----------------------------
 html.lenis,

@@ -11,6 +11,7 @@
   --cta-icon-height: 1.625rem;   // 26
 
   padding-block: var(--space-8);
+  overflow-x: clip; // the links wait for their reveal 40 to the right, past a phone's edge
   background: var(--color-primary);
   color: var(--color-white);
   @media (min-width: @bp-lg) { padding-block: var(--cta-pad-top) var(--cta-pad-bottom); }
