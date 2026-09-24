@@ -14,6 +14,14 @@ const containerEdge = (section, el) => {
   return box.getBoundingClientRect().left + parseFloat(getComputedStyle(box).paddingLeft) - el.getBoundingClientRect().left;
 };
 
+// The trailing space that leaves the row on the card grid: the carousel then stops with the last
+// card's edge where the dim starts, instead of a few px past it.
+const latticeTail = (el, before) => {
+  const slide = el.querySelector(".swiper-slide");
+  const card = slide ? slide.getBoundingClientRect().width : 0;
+  return card > 0 ? (el.getBoundingClientRect().width - before) % card : before;
+};
+
 // Fade whichever card is only partly on screen (the design fades the peeking card). This reads
 // Swiper's own geometry rather than the painted box: the wipe-up entrance clips the cards, and an
 // observer would take that for sideways clipping and dim the whole row until the reveal finished.
@@ -34,6 +42,7 @@ export function initSliders(root = document) {
     const el = section.querySelector(".swiper");
     if (!el) return;
     const edge = () => (el.hasAttribute("data-slider-edge") ? containerEdge(section, el) : 0);
+    const tail = () => (el.hasAttribute("data-slider-edge") ? latticeTail(el, edge()) : 0);
 
     el.swiper = new Swiper(el, {
       modules: [Navigation, A11y],
@@ -43,7 +52,7 @@ export function initSliders(root = document) {
       resistance: false,
       initialSlide: parseInt(el.dataset.sliderStart || "0", 10),
       slidesOffsetBefore: edge(),
-      slidesOffsetAfter: edge(),
+      slidesOffsetAfter: tail(),
       navigation: {
         prevEl: section.querySelector("[data-slider-prev]"),
         nextEl: section.querySelector("[data-slider-next]"),
@@ -52,7 +61,7 @@ export function initSliders(root = document) {
       on: {
         resize: (s) => {
           s.params.slidesOffsetBefore = edge();
-          s.params.slidesOffsetAfter = edge();
+          s.params.slidesOffsetAfter = tail();
           s.update();
         },
       },

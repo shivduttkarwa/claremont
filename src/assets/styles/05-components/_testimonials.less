@@ -35,14 +35,20 @@
   // Cards outside the container are dimmed through the mask.
   &__slider {
     --offset: ~"max(var(--container-gutter), calc((100% - var(--container-content)) / 2))";
+    --card-w: ~"min(var(--testimonials-card), 80vw)";
+    // Three cards run 4 short of the 1240 column, so round down to whole cards or the dim starts inside the peeking card
+    --dim-start: calc(100% - var(--offset));
+    @supports (width: round(down, 3rem, 2rem)) {
+      --dim-start: ~"calc(var(--offset) + round(down, 100% - var(--offset), var(--card-w)))";
+    }
     margin-top: var(--testimonials-track-gap);
     mask-image: linear-gradient(
       90deg,
       rgba(0, 0, 0, var(--testimonials-fade)) 0,
       rgba(0, 0, 0, var(--testimonials-fade)) var(--offset),
       #000 var(--offset),
-      #000 calc(100% - var(--offset)),
-      rgba(0, 0, 0, var(--testimonials-fade)) calc(100% - var(--offset)),
+      #000 var(--dim-start),
+      rgba(0, 0, 0, var(--testimonials-fade)) var(--dim-start),
       rgba(0, 0, 0, var(--testimonials-fade)) 100%
     );
   }
@@ -52,7 +58,7 @@
   }
 
   &__slide {
-    width: ~"min(var(--testimonials-card), 80vw)";
+    width: var(--card-w);
   }
 
   &__card {
