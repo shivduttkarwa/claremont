@@ -322,7 +322,11 @@
 
     &__bar { display: none; }
 
-    .tab-content { display: block; background: var(--color-secondary); }
+    .tab-content {
+      display: block;
+      overflow-x: clip; // the rows wait for their reveal 15% to the right, past the phone's edge
+      background: var(--color-secondary);
+    }
 
     .tab-pane {
       display: flex;

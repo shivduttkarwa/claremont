@@ -311,7 +311,10 @@ function setupSequences(root, entrance) {
     bind(el);
     // data-anim-items="children" makes the direct children the items (rich text: the CMS cannot mark each <p>)
     if (attr(el, "data-anim-items") === "children") Array.from(el.children).forEach((child) => child.setAttribute("data-anim-item", ""));
-    const items = Array.from(el.querySelectorAll("[data-anim-item]")).filter((item) => item.getClientRects().length);
+    // an item belongs to its nearest sequence, so sequences can nest (the accordion rows around the hotspots)
+    const items = Array.from(el.querySelectorAll("[data-anim-item]")).filter(
+      (item) => item.closest('[data-anim="sequence"]') === el && item.getClientRects().length
+    );
     const mobile = window.innerWidth < 992;
     if (!items.length || (mobile && el.hasAttribute("data-anim-disable-mobile"))) {
       el.classList.add("is-revealed");
