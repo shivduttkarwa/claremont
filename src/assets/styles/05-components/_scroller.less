@@ -106,10 +106,14 @@
       height: 1.625rem;
       transition: transform var(--duration-base) var(--ease-out);
     }
+    .portrait-duotone(~".scroller__fluid");
+    .scroller__fluid { transition: transform var(--duration-slow) var(--ease-out); }
+    .icon { z-index: var(--z-raised); }
     &:hover,
     &:focus-visible {
       color: var(--color-white);
-      img { transform: scale(1.04); }
+      img,
+      .scroller__fluid { transform: scale(1.04); }
       .icon { transform: translate(0.25rem, -0.25rem); }
     }
   }

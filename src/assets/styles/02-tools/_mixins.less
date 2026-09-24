@@ -50,6 +50,31 @@
   img { .img-cover(); }
 }
 
+// Portrait at rest in the brand two-tone (dark green shadows, blue highlights) once the fluid colour reveal is live
+.portrait-duotone(@fluid) {
+  .has-portrait-reveal & {
+    position: relative;
+    isolation: isolate;
+    background: var(--color-secondary);
+    img {
+      filter: grayscale(1) contrast(1.08);
+      mix-blend-mode: multiply;
+    }
+    &::after {
+      content: "";
+      .cover();
+      background: var(--color-primary-dark);
+      mix-blend-mode: lighten;
+      pointer-events: none;
+    }
+  }
+  @{fluid} {
+    .cover();
+    z-index: var(--z-content);
+    pointer-events: none;
+  }
+}
+
 // Dock the quick-link subnav to the screen edge of a hero (from lg).
 .subnav-dock(@top) {
   @media (min-width: @bp-lg) {
