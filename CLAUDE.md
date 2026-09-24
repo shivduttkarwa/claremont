@@ -4,12 +4,13 @@ Stack: plain **HTML** pages · Bootstrap 5.3 (CSS-variable themed) · **LESS** (
 
 ## Figma
 - File `IOcoW0YV5Habv7cMDDqs9b` (the client original; `NM56T29qdCtdZaFwfcRdjB` is an earlier copy, verified identical across all 2,362 nodes on 2026-09-21), page "02 - Design Round 3 For Presentation" (canvas `2238:4789`). Desktop frames only, 1640 wide, 200px side margins → 1240 content width.
+- **Inner-page hero photos come from canvas `1619:1791` ("03- Design 2", cached as `.qa/figma/n1619-1791.json`), not from Round 3.** Round 3 pastes one photo (`9331879…`) into all eight inner heroes; Design 2 is the only canvas that gives each page its own. `python .qa/fills-crop.py heroes` rebuilds the set from the node ids listed in that script.
 - **Never build a page from guesses.** If Figma cannot be read, stop on that page and say so. The user expects exact design and content.
 - Figma MCP on this Starter plan allows **20 tool calls per month**. Prefer the REST helpers in `.qa/` (token in the git-ignored `.qa/.figma-token`):
   - `python .qa/figma.py nodes <ids> <out.json>` — full node data (copy, type styles, fills, geometry). Still open when image renders are capped. Add `&geometry=paths` for vector paths.
   - `python .qa/extract.py <page-id>` — readable dump of a cached page (`.qa/figma/pages.json` holds all ten pages).
   - `python .qa/figma.py render …` — PNG/SVG renders. **Capped hard on Starter** (a 429 with Retry-After of days after about ten calls). Do not depend on it.
-  - `python .qa/fills-crop.py` — reproduces any image slot exactly from the original fill + the node's `imageTransform` (validated to <1/255 against a Figma render). Nodes reported with rotation = π are **horizontal mirrors**.
+  - `python .qa/fills-crop.py` — reproduces any image slot exactly from the original fill + the node's `imageTransform` (validated to <1/255 against a Figma render). Nodes reported with rotation = π are **horizontal mirrors**. It composites the node's own gradient paints, takes the topmost image where two photos are stacked, and replicates the edge where a fill is placed so the photo ends above the node's bottom (Figma clips that away; our hero keeps it as parallax travel).
   - `python .qa/icons-from-geometry.py` — rebuilds icon SVGs from node geometry; `sprite-add.py` puts them in the sprite.
 - Compare against the true renders in `.qa/figma/renders/` at 1640 wide.
 
