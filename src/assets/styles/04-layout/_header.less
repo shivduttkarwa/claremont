@@ -22,6 +22,16 @@
   }
 
   .container-edge { --edge-gutter: var(--header-gutter); }
+
+  // Figma 2125:14070 keeps the bar in view above the search wash: fixed sits where absolute did at scroll 0.
+  // The page scrollbar is clipped while it is open, so its width is padded back to hold the nav still.
+  @media (min-width: @bp-lg) {
+    .has-search-open & {
+      position: fixed;
+      z-index: calc(var(--z-overlay) + 1);
+      padding-right: var(--scrollbar-size, 0);
+    }
+  }
   @media (min-width: @bp-xl) { --header-logo-width: 17rem; --header-nav-gap: 2.25rem; }
   @media (min-width: @bp-xxl) {
     --header-logo-width: 20.0625rem; // 321: the 334 frame shows the artwork at 96.11%
@@ -125,7 +135,7 @@
     .tap-area();
     .icon { width: 1.25rem; height: 1.25rem; }          // search 20 × 20
     &--secondary .icon { width: 1.125rem; height: 1.375rem; } // pin 18 × 22
-    &:hover { color: var(--color-secondary); transform: translateY(-0.125rem); }
+    &:hover { transform: scale(1.1); }
     @media (min-width: @bp-lg) { display: inline-flex; }
   }
 
@@ -168,7 +178,10 @@
     padding: 0.625rem var(--header-gutter); // 10 / 30
     padding-top: ~"max(0.625rem, env(safe-area-inset-top))";
   }
+  // 2087:12254 centres the list in the space under the bar; auto margins give way to scrolling on short screens
   .offcanvas-body {
+    display: flex;
+    flex-direction: column;
     padding: 3.75rem var(--container-gutter);
     padding-bottom: ~"max(3.75rem, env(safe-area-inset-bottom))";
   }
@@ -183,7 +196,7 @@
   &__nav {
     display: flex;
     flex-direction: column;
-    margin-top: 3.3125rem; // 53 — the links start at 185 on the 375 frame
+    margin-top: auto; // the links start at 185 on the 375 frame
   }
 
   // Ruled rows with a diagonal arrow, 65 apart (node 2087:12570)
@@ -196,7 +209,7 @@
     padding-block: 1.125rem; // 18
     border-top: var(--border-width-rule) solid currentColor;
     font-size: var(--font-size-xl);
-    line-height: 1.1;
+    line-height: 1.75rem; // 28: Figma's whole-pixel text box, so the rows land 65.2 apart
     letter-spacing: var(--letter-spacing-body);
     color: var(--color-white);
     transition: color var(--duration-fast) ease, padding-inline-start var(--duration-base) var(--ease-out);
@@ -220,23 +233,27 @@
 
   &__tools {
     display: flex;
+    align-items: center;
     justify-content: center;
-    gap: 5rem; // 80
+    gap: 5rem; // 80 between the glyphs
+    margin-bottom: auto;
     padding-top: 3.75rem; // 60
   }
 
+  // Drawn at glyph size (search 27, pin 24 × 30) so the 80 gap lands where Figma puts it; ::before adds the 44 hit area
   &__tool {
+    .tap-area();
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: var(--tap-size);
-    height: var(--tap-size);
+    height: 1.875rem; // 30
     padding: 0;
     border: 0;
     background: none;
     color: var(--color-white);
-    transition: color var(--duration-fast) ease, transform var(--duration-fast) var(--ease-out);
-    .icon { width: 1.75rem; height: 1.75rem; }
-    &:hover { color: var(--color-secondary); transform: translateY(-0.125rem); }
+    transition: transform var(--duration-fast) var(--ease-out);
+    .icon { width: 1.6875rem; height: 1.6875rem; }        // search 27 × 27
+    &--secondary .icon { width: 1.5rem; height: 1.875rem; } // pin 24 × 30
+    &:hover { transform: scale(1.1); }
   }
 }

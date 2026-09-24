@@ -1,43 +1,44 @@
-<!-- @wagtail-partial: search — site search over the build-time index.
-     No Figma design exists for this; it reuses the site's display serif and green. -->
-<div class="search" id="site-search" role="dialog" aria-modal="true" aria-labelledby="search-title" data-search hidden>
-  <div class="search__bar">
-    <p class="search__eyebrow" id="search-title">Search Claremont College</p>
-    <button class="search__close" type="button" data-search-close aria-label="Close search">
-      <span>Close</span>
-      <svg class="icon" aria-hidden="true"><use href="#icon-close"></use></svg>
-    </button>
-  </div>
-
-  <div class="search__inner">
-    <label class="search__eyebrow search__label" for="search-input">Searching for</label>
-    <input class="search__input" id="search-input" type="search" data-search-input
-           placeholder="Type a word" aria-label="Search the site"
-           autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
-           role="combobox" aria-expanded="false" aria-controls="search-results" aria-autocomplete="list">
-
-    <p class="search__meta" data-search-meta aria-hidden="true"></p>
-
-    <ol class="search__results" id="search-results" role="listbox" aria-label="Search results" data-search-results hidden></ol>
-
-    <div class="search__empty" data-search-empty>
-      <p class="search__eyebrow">Popular</p>
-      <ul class="search__suggestions">
-        <li><a href="welcome.html">Welcome from Claremont</a></li>
-        <li><a href="preparatory-program.html">Preparatory Program</a></li>
-        <li><a href="k-6-primary.html">K–6 Primary</a></li>
-        <li><a href="extra-curricular.html">Extra Curricular</a></li>
-        <li><a href="enrolment.html">Enrolment</a></li>
-        <li><a href="contact-us.html">Contact us</a></li>
-      </ul>
+<!-- @wagtail-partial: search — site settings. Desktop: Figma 2125:14070 "claremont search" + 2125:14365 "filled and clicked"
+     (Design 2 canvas): a 90% Dark Green wash over the page, the header showing through, a 768 bar under the nav.
+     Phone: 2125:14449 "claremont homepage M": a solid panel with the bar centred, a back arrow and the search glyph lit.
+     The form GETs `q` to the Wagtail search view once it exists (set `action`); until then scripts/search.js
+     intercepts submit and lists matches from the build-time index as a stand-in. Figma draws no results state. -->
+<div class="search" id="site-search" role="dialog" aria-modal="true" aria-label="Search Claremont College" data-search data-lenis-prevent hidden>
+  <div class="search__panel">
+    <div class="search__top">
+      <a class="site-header__logo" href="index.html">
+        <img src="assets/images/logo.webp" alt="Claremont College" width="748" height="185">
+      </a>
+      <button class="search__close" type="button" data-search-close aria-label="Close search">
+        <svg class="icon" aria-hidden="true"><use href="#icon-close"></use></svg>
+      </button>
     </div>
+
+    <div class="search__body">
+      <form class="search__form" id="search-form" role="search" method="get" data-search-form>
+        <label class="visually-hidden" for="search-input">Search</label>
+        <input class="search__input" id="search-input" name="q" type="search" placeholder="Search" data-search-input
+               autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="search">
+        <button class="arrow-btn arrow-btn--next search__submit" type="submit" aria-label="Search">
+          <svg class="icon" aria-hidden="true"><use href="#icon-arrow-right"></use></svg>
+        </button>
+      </form>
+
+      <div class="search__tools">
+        <button class="search__tool search__tool--back" type="button" data-search-back aria-label="Back to menu">
+          <svg class="icon" aria-hidden="true"><use href="#icon-arrow-left"></use></svg>
+        </button>
+        <button class="search__tool search__tool--go" type="submit" form="search-form" aria-label="Search">
+          <svg class="icon" aria-hidden="true"><use href="#icon-search"></use></svg>
+        </button>
+      </div>
+
+      <div class="search__results" data-search-results hidden>
+        <p class="search__meta" data-search-meta></p>
+        <ol class="search__list" data-search-list></ol>
+      </div>
+    </div>
+
+    <p class="visually-hidden" role="status" aria-live="polite" data-search-status></p>
   </div>
-
-  <p class="search__hints" aria-hidden="true">
-    <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
-    <span><kbd>↵</kbd> open</span>
-    <span><kbd>esc</kbd> close</span>
-  </p>
-
-  <p class="visually-hidden" role="status" aria-live="polite" data-search-status></p>
 </div>

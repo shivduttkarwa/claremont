@@ -1,9 +1,13 @@
 /**
- * search — site-wide search over the build-time index (assets/search-index.js).
- * The index loads once, on first open, so it costs nothing until used.
+ * search — the overlay drawn in Figma 2125:14070 / 2125:14365.
+ * Wagtail will own the results (the form GETs `q` to its search view). Until then this stand-in
+ * intercepts submit and lists matches from the build-time index (assets/search-index.js), which
+ * loads once, on first open.
  */
+import Offcanvas from "bootstrap/js/dist/offcanvas";
+import { Anim } from "./anim.js";
 
-const MAX_RESULTS = 24;
+const MAX_RESULTS = 20;
 
 const FOLD = { "’": "'", "‘": "'", "“": '"', "”": '"', "–": "-", "—": "-" };
 
@@ -57,7 +61,7 @@ function rank(query, records) {
   return scored.sort((a, b) => b.score - a.score).slice(0, MAX_RESULTS);
 }
 
-function snippet(text, terms, length = 160) {
+function snippet(text, terms, length = 140) {
   if (!text) return "";
   const norm = normalise(text);
   let at = -1;
@@ -65,7 +69,7 @@ function snippet(text, terms, length = 160) {
     const i = norm.indexOf(term);
     if (i >= 0 && (at < 0 || i < at)) at = i;
   }
-  let start = at < 0 ? 0 : Math.max(0, at - 60);
+  let start = at < 0 ? 0 : Math.max(0, at - 50);
   if (start > 0) {
     const space = text.indexOf(" ", start);
     if (space > -1 && space < start + 25) start = space + 1;
@@ -87,28 +91,32 @@ function highlight(text, terms) {
   return safe.replace(new RegExp(`(${pattern})`, "gi"), "<mark>$1</mark>");
 }
 
+const visible = (el) => el && el.getClientRects().length > 0;
+
 export function initSearch(root = document) {
   const box = root.querySelector("[data-search]");
   if (!box) return;
 
+  const form = box.querySelector("[data-search-form]");
   const input = box.querySelector("[data-search-input]");
-  const list = box.querySelector("[data-search-results]");
-  const status = box.querySelector("[data-search-status]");
-  const empty = box.querySelector("[data-search-empty]");
+  const results = box.querySelector("[data-search-results]");
+  const list = box.querySelector("[data-search-list]");
   const meta = box.querySelector("[data-search-meta]");
-  const closers = box.querySelectorAll("[data-search-close]");
+  const status = box.querySelector("[data-search-status]");
   const openers = root.querySelectorAll("[data-search-open]");
-  if (!input || !list) return;
+  const closers = box.querySelectorAll("[data-search-close]");
+  const backs = box.querySelectorAll("[data-search-back]");
+  const menuPanel = root.querySelector(".offcanvas");
+  if (!form || !input || !results || !list) return;
 
   let records = null;
   let loading = null;
   let failed = false;
-  let results = [];
-  let active = -1;
   let lastFocus = null;
+  let hideTimer;
 
   // A script tag rather than fetch(): file:// blocks cross-origin fetches, and the
-  // built site is previewed from disk. Still loaded on first open, not on page load.
+  // built site is previewed from disk.
   const load = () => {
     if (records) return Promise.resolve(records);
     if (!loading) {
@@ -127,7 +135,7 @@ export function initSearch(root = document) {
     return loading;
   };
 
-  const setStatus = (text) => {
+  const say = (text) => {
     if (status) status.textContent = text;
   };
 
@@ -135,94 +143,89 @@ export function initSearch(root = document) {
     if (meta) meta.textContent = text;
   };
 
-  const setActive = (index) => {
-    const options = list.querySelectorAll("[role='option']");
-    if (!options.length) {
-      active = -1;
-      input.removeAttribute("aria-activedescendant");
-      return;
-    }
-    active = (index + options.length) % options.length;
-    options.forEach((el, i) => el.setAttribute("aria-selected", i === active ? "true" : "false"));
-    const current = options[active];
-    input.setAttribute("aria-activedescendant", current.id);
-    current.scrollIntoView({ block: "nearest" });
+  const setFilled = () => form.classList.toggle("is-filled", input.value.trim() !== "");
+
+  const setExpanded = (on) => openers.forEach((el) => el.setAttribute("aria-expanded", on ? "true" : "false"));
+
+  const clear = () => {
+    list.innerHTML = "";
+    setMeta("");
+    results.hidden = true;
   };
 
   const render = (query) => {
     const terms = normalise(query).split(" ").filter(Boolean);
     if (!terms.length) {
-      list.innerHTML = "";
-      list.hidden = true;
-      if (empty) empty.hidden = false;
-      input.setAttribute("aria-expanded", "false");
-      input.removeAttribute("aria-activedescendant");
-      setStatus("");
-      setMeta("");
-      results = [];
-      active = -1;
+      clear();
+      say("");
       return;
     }
 
-    results = rank(query, records || []);
-    if (empty) empty.hidden = true;
-    list.hidden = false;
-    input.setAttribute("aria-expanded", "true");
+    const hits = rank(query, records || []);
+    results.hidden = false;
 
-    if (!results.length) {
-      const message = failed
+    if (!hits.length) {
+      const text = failed
         ? "Search is unavailable right now. Please use the menu."
-        : `No matches for <strong>${escapeHtml(query)}</strong>. Try a different word.`;
-      list.innerHTML = `<li class="search__none" role="presentation">${message}</li>`;
-      setMeta(failed ? "Unavailable" : "No results");
-      setStatus(failed ? "Search is unavailable" : `No results for ${query}`);
-      active = -1;
-      input.removeAttribute("aria-activedescendant");
+        : `No results for “${query}”. Try another word.`;
+      list.innerHTML = `<li class="search__none">${escapeHtml(text)}</li>`;
+      setMeta("");
+      say(text);
       return;
     }
 
-    list.innerHTML = results
-      .map(({ record }, i) => {
+    list.innerHTML = hits
+      .map(({ record }) => {
         const href = record.i ? `${record.u}#${record.i}` : record.u;
-        const number = String(i + 1).padStart(2, "0");
         const text = snippet(record.x, terms);
         const trail = text ? ` &middot; ${highlight(text, terms)}` : "";
-        return `<li class="search__result" role="option" id="search-result-${i}" aria-selected="false">
-          <a class="search__result-link" href="${href}" tabindex="-1">
-            <span class="search__result-index" aria-hidden="true">${number}</span>
-            <span class="search__result-body">
-              <span class="search__result-heading">${highlight(record.h, terms)}</span>
-              <span class="search__result-snippet"><span class="search__result-page">${escapeHtml(record.t)}</span>${trail}</span>
-            </span>
-            <svg class="icon search__result-arrow" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+        return `<li class="search__item">
+          <a class="search__link" href="${href}">
+            <span class="search__heading">${highlight(record.h, terms)}</span>
+            <span class="search__snippet"><span class="search__page">${escapeHtml(record.t)}</span>${trail}</span>
           </a>
         </li>`;
       })
       .join("");
 
-    setMeta(`${results.length} result${results.length === 1 ? "" : "s"}`);
-    setStatus(`${results.length} result${results.length === 1 ? "" : "s"} for ${query}`);
-    setActive(0);
+    const count = `${hits.length} result${hits.length === 1 ? "" : "s"}`;
+    setMeta(count);
+    say(`${count} for ${query}`);
   };
 
-  let timer;
-  const onType = () => {
-    clearTimeout(timer);
-    timer = setTimeout(() => load().then(() => render(input.value)), 120);
-  };
+  const focusables = () =>
+    [...box.querySelectorAll("input, button, a[href]")].filter((el) => visible(el) && !el.disabled);
 
-  const open = () => {
+  const open = (from) => {
+    clearTimeout(hideTimer);
     if (!box.hidden) return;
-    lastFocus = document.activeElement;
+    lastFocus = from || document.activeElement;
+
+    // From the phone menu the panel slides away first, so the overlay is alone on screen.
+    // Bootstrap hands focus back to the burger once hidden, so the field takes it again then.
+    const menu = from && from.closest(".offcanvas");
+    if (menu) {
+      const panel = Offcanvas.getInstance(menu);
+      if (panel) {
+        menu.addEventListener("hidden.bs.offcanvas", () => { if (!box.hidden) input.focus(); }, { once: true });
+        panel.hide();
+      }
+    }
+
+    // Stopping Lenis clips the page scrollbar; the header and bar pad by its width so they do not slide
+    const html = document.documentElement;
+    html.style.setProperty("--scrollbar-size", `${window.innerWidth - html.clientWidth}px`);
     box.hidden = false;
-    document.documentElement.classList.add("has-search-open");
-    load().then(() => {
-      if (input.value.trim()) render(input.value);
-    });
+    html.classList.add("has-search-open");
+    setExpanded(true);
+    Anim.stop();
     requestAnimationFrame(() => {
       box.classList.add("is-open");
       input.focus();
       input.select();
+    });
+    load().then(() => {
+      if (input.value.trim()) render(input.value);
     });
   };
 
@@ -230,46 +233,52 @@ export function initSearch(root = document) {
     if (box.hidden) return;
     box.classList.remove("is-open");
     document.documentElement.classList.remove("has-search-open");
+    setExpanded(false);
+    Anim.start();
     const done = () => {
       box.hidden = true;
+      document.documentElement.style.removeProperty("--scrollbar-size");
       box.removeEventListener("transitionend", done);
     };
     box.addEventListener("transitionend", done);
-    setTimeout(done, 400);
-    if (lastFocus && lastFocus.focus) lastFocus.focus();
+    hideTimer = setTimeout(done, 400);
+
+    // The phone menu's search button is gone by now; the burger stands in for it
+    const target = visible(lastFocus) ? lastFocus : [...openers, root.querySelector(".site-header__toggle")].find(visible);
+    if (target && target.focus) target.focus();
   };
+
+  setExpanded(false);
 
   openers.forEach((el) =>
     el.addEventListener("click", (event) => {
       event.preventDefault();
-      open();
+      box.hidden ? open(el) : close();
     })
   );
   closers.forEach((el) => el.addEventListener("click", close));
 
-  input.addEventListener("input", onType);
+  // The phone panel's back arrow returns to the menu it was opened from
+  backs.forEach((el) =>
+    el.addEventListener("click", () => {
+      close();
+      if (menuPanel) Offcanvas.getOrCreateInstance(menuPanel).show();
+    })
+  );
 
-  input.addEventListener("keydown", (event) => {
-    if (event.key === "ArrowDown") {
-      event.preventDefault();
-      setActive(active + 1);
-    } else if (event.key === "ArrowUp") {
-      event.preventDefault();
-      setActive(active - 1);
-    } else if (event.key === "Home" && results.length) {
-      event.preventDefault();
-      setActive(0);
-    } else if (event.key === "End" && results.length) {
-      event.preventDefault();
-      setActive(results.length - 1);
-    } else if (event.key === "Enter") {
-      const current = list.querySelectorAll("[role='option']")[active];
-      const link = current && current.querySelector("a");
-      if (link) {
-        event.preventDefault();
-        link.click();
-      }
-    }
+  // Anywhere on the wash outside the bar and its results closes, like a backdrop
+  box.addEventListener("click", (event) => {
+    if (!event.target.closest(".search__form, .search__tools, .search__results, .search__top")) close();
+  });
+
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    load().then(() => render(input.value));
+  });
+
+  input.addEventListener("input", () => {
+    setFilled();
+    if (!input.value.trim()) clear();
   });
 
   list.addEventListener("click", (event) => {
@@ -280,10 +289,23 @@ export function initSearch(root = document) {
     if (event.key === "Escape") {
       event.preventDefault();
       close();
+      return;
     }
-    // Focus stays between the field and the close button while the dialog is up
+
+    const links = [...list.querySelectorAll("a")];
+    if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+      if (!links.length) return;
+      const at = links.indexOf(document.activeElement);
+      let next;
+      if (event.key === "ArrowDown") next = at < 0 ? links[0] : links[Math.min(at + 1, links.length - 1)];
+      else next = at <= 0 ? input : links[at - 1];
+      event.preventDefault();
+      next.focus();
+      return;
+    }
+
     if (event.key === "Tab") {
-      const stops = [input, box.querySelector("[data-search-close]")].filter(Boolean);
+      const stops = focusables();
       if (stops.length < 2) return;
       const first = stops[0];
       const last = stops[stops.length - 1];

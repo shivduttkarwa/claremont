@@ -35,14 +35,10 @@
     p { margin-bottom: var(--split-paragraph-gap); }
   }
 
+  // The slot stays untransformed so the scrubbed reveal can trigger from it; the figure inside swings
   &__media {
     max-width: 28rem;
     margin: var(--space-4) auto 0;
-    img {
-      display: block;
-      width: 100%;
-      height: auto;
-    }
     @media (min-width: @bp-lg) {
       position: absolute;
       top: 0.3125rem;
@@ -50,6 +46,15 @@
       width: var(--split-media-width);
       max-width: none;
       margin: 0;
+    }
+  }
+
+  &__photo {
+    margin: 0;
+    img {
+      display: block;
+      width: 100%;
+      height: auto;
     }
   }
 }

@@ -234,4 +234,72 @@
   }
 }
 
-// Resting state is the finished one; these hold a step back until its own reveal lands.
+// Phone redraw (Figma 2125:14836): spine and markers on the right edge, the dotted rule running from the gutter to
+// the marker under its time label, 45px headings and the copy in the 287 column beside the spine
+@media @upto-lg {
+  .timeline {
+    --timeline-time-height: 1.5rem;  // 24: rule and marker centre on the 48 row
+    --timeline-item-pad: 0rem;
+    --timeline-title-gap: 1.25rem;   // 20
+    --timeline-m-gap: 2.9375rem;     // 47: spine top to the first row
+    --timeline-m-pad: 3.75rem;       // 60
+    --timeline-m-copy: 0.9375rem;    // 15
+    padding-block: 0 var(--timeline-m-pad); // the top 60 belongs to the header, whose background hides the spine
+
+    // The spine spans the section like the desktop line, so its tip tracks the same scroll position;
+    // the header's own background hides it above the 30 under the intro
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: calc(var(--container-gutter) + var(--timeline-marker) / 2 - var(--timeline-rule) / 2);
+      width: var(--timeline-rule);
+      height: calc(var(--anim-progress, 1) * 100%);
+      background: var(--timeline-dots-y);
+    }
+
+    &__header {
+      margin-bottom: var(--timeline-m-gap);             // 47 of spine before the first row
+      padding: var(--timeline-m-pad) 0 1.875rem;        // 60 above the title, 30 under the intro
+      background: var(--color-background);
+      h2 {
+        margin-bottom: 1.875rem; // 30
+        font-size: 2.1875rem;    // 35
+      }
+    }
+
+    // The frame sets its copy at 15/22.5, not the site's 16 phone body, and the items only fit the drawn heights at that size
+    &__header p,
+    &__body p,
+    &__time { font-size: var(--timeline-m-copy); }
+
+    &__list {
+      gap: 1.25rem; // 20
+      &::before { display: none; }
+    }
+
+    // The spine's tip (90% of the viewport) meets a marker at about 0.3 of its step's progress: the marker
+    // lands just then, the rule then grows from it leftwards to the label, and the copy follows
+    &__marker {
+      .timeline-phase(0.05, 0.25);
+      left: auto;
+      right: 0;
+    }
+
+    &__item::before {
+      .timeline-phase(0.25, 0.35);
+      left: 0;
+      right: var(--timeline-marker);
+      clip-path: inset(0 0 0 calc((1 - var(--e)) * 100%));
+    }
+
+    &__time { .timeline-phase(0.35, 0.3); }
+    &__body h3 { .timeline-phase(0.4, 0.4); }
+    &__body p { .timeline-phase(0.5, 0.4); }
+
+    &__body {
+      padding-right: var(--timeline-marker); // the 287 column stops at the marker
+      h3 { font-size: 2.8125rem; } // 45
+    }
+  }
+}

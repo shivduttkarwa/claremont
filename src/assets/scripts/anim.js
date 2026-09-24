@@ -85,6 +85,9 @@ const orderOf = (el, fallback = 0) =>
     ? number(el, "data-anim-order-mobile", fallback)
     : number(el, "data-anim-order", fallback);
 const leadOf = (el) => number(el, "data-anim-lead", DEFAULTS.entranceLead);
+// Scroll-scrubbed steps may pace differently on phones: a `-mobile` twin of start, end or scrub wins below 992
+const variant = (el, name) =>
+  window.innerWidth < 992 && el.hasAttribute(`${name}-mobile`) ? `${name}-mobile` : name;
 const presetOf = (el) => REVEAL[attr(el, "data-anim-type", "fade-up")] || REVEAL["fade-up"];
 
 // data-anim-duration / data-anim-delay let a step be timed against its neighbours
@@ -203,9 +206,9 @@ function setupReveals(root, entrance) {
         ...vars,
         scrollTrigger: {
           trigger: el.closest("[data-anim-trigger]") || el.parentElement || el,
-          start: attr(el, "data-anim-start", "top 85%"),
-          end: attr(el, "data-anim-end", "top 35%"),
-          scrub: number(el, "data-anim-scrub", 1),
+          start: attr(el, variant(el, "data-anim-start"), "top 85%"),
+          end: attr(el, variant(el, "data-anim-end"), "top 35%"),
+          scrub: number(el, variant(el, "data-anim-scrub"), 1),
         },
       });
       if (tween.scrollTrigger) triggers.set(el, tween.scrollTrigger);
@@ -391,9 +394,9 @@ function setupProgress(root) {
         ease: "none",
         scrollTrigger: {
           trigger: el,
-          start: attr(el, "data-anim-start", "top 75%"),
-          end: attr(el, "data-anim-end", "bottom 70%"),
-          scrub: number(el, "data-anim-scrub", 0.5),
+          start: attr(el, variant(el, "data-anim-start"), "top 75%"),
+          end: attr(el, variant(el, "data-anim-end"), "bottom 70%"),
+          scrub: number(el, variant(el, "data-anim-scrub"), 0.5),
         },
       }
     );

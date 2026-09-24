@@ -1,17 +1,24 @@
-// 05-components/_search.less — full-bleed search takeover. No Figma design; built on the site's tokens.
+// 05-components/_search.less — search overlay. Desktop (Figma 2125:14070 empty, 2125:14365 filled): a 90% Dark Green
+// wash over the page with the header showing through and a 768 bar at the nav's left edge. Phone (2125:14449): a solid
+// panel with the bar centred, a back arrow and the search glyph lit beneath it.
 
 .search {
-  --search-track: 0.12em;               // uppercase labels need positive tracking
-  --search-rule: ~"color-mix(in srgb, currentColor 18%, transparent)";
-  --search-max: 74rem;
+  --search-bar-width: 48rem;             // 768
+  --search-bar-top: 6.6875rem;           // 107
+  --search-bar-inset: 0.4375rem;         // 7: the bar ends at 1573, the header's tool hit areas at 1580
+  --search-input-pad: 1.25rem;           // 20
+  --search-font-size: var(--font-size-xl);       // 25
+  --search-line-height: var(--line-height-snug); // 27.5
+  --search-rule: ~"color-mix(in srgb, var(--color-white) 18%, transparent)";
 
   position: fixed;
   inset: 0;
   z-index: var(--z-overlay);
+  padding-right: var(--scrollbar-size, 0); // the clipped page scrollbar's width, so the bar holds still
   overflow-y: auto;
   overscroll-behavior: contain;
-  padding-bottom: 4rem;
-  background: var(--color-primary-dark);
+  .hide-scrollbar();
+  background: ~"color-mix(in srgb, var(--color-green-dark) 90%, transparent)";
   color: var(--color-white);
   opacity: 0;
   transition: opacity var(--duration-base) var(--ease-out);
@@ -19,255 +26,224 @@
   &[hidden] { display: none; }
   &.is-open { opacity: 1; }
 
-  @media (prefers-reduced-motion: reduce) {
-    transition: none;
-    .search__input,
-    .search__result { animation: none; }
+  // A hair taller than the viewport makes the overlay its own scroller: wheel and touch stay inside it
+  // (overscroll-behavior), the page keeps its scrollbar and the header above does not shift
+  &__panel {
+    min-height: ~"calc(100% + 0.0625rem)";
+    padding-bottom: var(--space-8);
+    transform: translateY(-0.5rem);
+    transition: transform var(--duration-base) var(--ease-out);
+    .is-open & { transform: none; }
   }
 
-  &__eyebrow {
-    margin: 0;
-    font-family: var(--font-ui);
-    font-size: var(--font-size-xs);
-    font-weight: var(--font-weight-semibold);
-    letter-spacing: var(--search-track);
-    text-transform: uppercase;
-    color: ~"color-mix(in srgb, currentColor 65%, transparent)";
+  // The header shows through the wash from lg; the panel's own top row and tools are the phone redraw below
+  &__top,
+  &__tools { display: none; }
+
+  // The bar and its results share one column under the header tools
+  &__body {
+    width: var(--search-bar-width);
+    margin: 0 calc(var(--header-gutter) + var(--search-bar-inset)) 0 auto;
+    padding-top: var(--search-bar-top);
   }
 
-  // Top bar ------------------------------------------------------------
-  &__bar {
+  &__form {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--space-2);
-    min-height: 5.5rem;
-    padding-inline: var(--container-gutter);
-    @media (min-width: @bp-lg) { padding-inline: var(--edge-gutter); }
-  }
-
-  &__close {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.625rem;
-    min-height: var(--tap-size);
-    padding: 0 0.875rem;
-    border: var(--border-width-rule) solid var(--search-rule);
-    border-radius: var(--radius-full);
-    background: none;
-    color: inherit;
-    font-family: var(--font-ui);
-    font-size: var(--font-size-xs);
-    font-weight: var(--font-weight-semibold);
-    letter-spacing: var(--search-track);
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: background-color var(--duration-fast) ease, border-color var(--duration-fast) ease;
-    .icon { width: 0.875rem; height: 0.875rem; }
-    @media (hover: hover) {
-      &:hover { background: ~"color-mix(in srgb, currentColor 12%, transparent)"; border-color: currentColor; }
-    }
-  }
-
-  // Query --------------------------------------------------------------
-  &__inner {
-    width: 100%;
-    max-width: var(--search-max);
-    margin-inline: auto;
-    padding-inline: var(--container-gutter);
-    @media (min-width: @bp-lg) { padding-inline: var(--edge-gutter); }
-  }
-
-  &__label {
-    display: block;
-    margin-bottom: var(--space-2);
+    gap: var(--space-1); // 8
   }
 
   &__input {
-    display: block;
-    width: 100%;
-    padding: 0 0 var(--space-3);
+    flex: 1 1 auto;
+    min-width: 0;
+    height: var(--control-height);
+    padding: 0 var(--search-input-pad);
     border: 0;
-    border-bottom: var(--border-width-rule) solid var(--search-rule);
-    background: none;
-    color: var(--color-white);
-    caret-color: var(--color-accent);
-    font-family: var(--font-display);
-    font-size: ~"clamp(2.5rem, 1.5rem + 5vw, 5.625rem)"; // 90 at the design width
+    border-radius: 0;
+    background: var(--color-white);
+    color: var(--color-primary);
+    font-family: var(--font-body);
+    font-size: var(--search-font-size);
     font-weight: var(--font-weight-regular);
-    line-height: 1.05;
+    line-height: var(--search-line-height);
     letter-spacing: var(--letter-spacing-body);
-    &::placeholder { color: ~"color-mix(in srgb, currentColor 35%, transparent)"; }
-    &:focus { outline: none; border-bottom-color: var(--color-accent); }
-    &::-webkit-search-cancel-button { appearance: none; }
+    appearance: none;
+    &::placeholder { color: var(--color-primary); opacity: 1; }
+    &::-webkit-search-cancel-button,
+    &::-webkit-search-decoration { appearance: none; }
+    &:focus-visible { outline: none; } // the arrow turning Light Blue is the focus cue (2125:14365)
+  }
+
+  // Yellow at rest; Light Blue once the field is filled or focused (2125:14365), and under the mouse
+  &__form &__submit {
+    flex: 0 0 auto;
+    background: var(--color-accent);
+    color: var(--color-primary);
+    &:focus-visible {
+      background: var(--color-secondary);
+      color: var(--color-primary);
+    }
+    @media (hover: hover) {
+      &:hover {
+        background: var(--color-secondary);
+        color: var(--color-primary);
+      }
+    }
+  }
+  &__form.is-filled &__submit,
+  &__form:focus-within &__submit { background: var(--color-secondary); }
+
+  // Results (no Figma state: a plain list in the site's tokens until Wagtail renders them)
+  &__results {
+    margin-top: var(--space-4);
+    &[hidden] { display: none; }
   }
 
   &__meta {
-    margin: var(--space-3) 0 0;
+    margin: 0 0 var(--space-1);
     font-family: var(--font-ui);
-    font-size: var(--font-size-xs);
-    font-weight: var(--font-weight-semibold);
-    letter-spacing: var(--search-track);
-    text-transform: uppercase;
-    color: ~"color-mix(in srgb, currentColor 65%, transparent)";
+    font-size: var(--font-size-sm);
+    letter-spacing: var(--letter-spacing-ui);
+    color: var(--color-secondary);
     &:empty { display: none; }
   }
 
-  // Results ------------------------------------------------------------
-  &__results {
+  &__list {
     .reset-list();
-    margin-top: var(--space-2);
-  }
-
-  &__result {
     border-top: var(--border-width-rule) solid var(--search-rule);
-    &:last-child { border-bottom: var(--border-width-rule) solid var(--search-rule); }
   }
 
-  &__result-link {
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-    align-items: start;
-    gap: var(--space-2);
-    padding: var(--space-3) 0;
-    color: inherit;
-    text-decoration: none;
-    @media (min-width: @bp-md) { gap: var(--space-4); }
-  }
+  &__item { border-bottom: var(--border-width-rule) solid var(--search-rule); }
 
-  &__result-index {
-    font-family: var(--font-ui);
-    font-size: var(--font-size-xs);
-    font-weight: var(--font-weight-semibold);
-    letter-spacing: var(--search-track);
-    line-height: 2;
-    color: ~"color-mix(in srgb, currentColor 45%, transparent)";
-    transition: color var(--duration-fast) ease;
-  }
-
-  &__result-body { min-width: 0; }
-
-  &__result-heading {
+  &__link {
     display: block;
-    font-family: var(--font-display);
-    font-size: ~"clamp(1.5rem, 1.1rem + 1.6vw, 2.8125rem)"; // 45 at the design width
-    line-height: 1.1;
-    letter-spacing: var(--letter-spacing-body);
+    padding: var(--space-2) 0;
+    color: var(--color-white);
+    &:hover,
+    &:focus-visible { color: var(--color-secondary); }
   }
 
-  &__result-page {
+  &__heading {
+    display: block;
+    font-size: var(--font-size-lg);
+    line-height: var(--line-height-snug);
+  }
+
+  &__snippet {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-body);
+    color: ~"color-mix(in srgb, var(--color-white) 75%, transparent)";
+  }
+
+  &__page {
     font-family: var(--font-ui);
-    font-size: var(--font-size-xs);
-    font-weight: var(--font-weight-semibold);
-    letter-spacing: var(--search-track);
-    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-ui);
     color: var(--color-secondary);
   }
 
-  &__result-snippet {
-    display: block;
-    max-width: 46rem;
-    margin-top: 0.375rem;
-    font-size: var(--font-size-sm);
-    line-height: var(--line-height-body);
-    color: ~"color-mix(in srgb, currentColor 75%, transparent)";
-  }
-
-  &__result-arrow {
-    width: 1.5rem;
-    height: 1.5rem;
-    margin-top: 0.375rem;
-    opacity: 0;
-    transform: translate(-0.375rem, 0.375rem);
-    transition: opacity var(--duration-fast) ease, transform var(--duration-base) var(--ease-out);
-  }
-
-  // The row is driven by keyboard selection, so hover mirrors it rather than competing
-  &__result[aria-selected="true"] &__result-link,
-  &__result-link:hover {
-    .search__result-index { color: var(--color-accent); }
-    .search__result-arrow { opacity: 1; transform: none; }
-  }
-
+  // Bootstrap fills mark yellow with padding; the match is coloured instead
   mark {
-    padding: 0 0.08em;
-    background: var(--color-accent);
-    color: var(--color-primary-dark);
-  }
-
-  // A solid block is too heavy behind 45px serif; colour the match instead
-  &__result-heading mark {
     padding: 0;
     background: none;
     color: var(--color-accent);
   }
 
   &__none {
-    padding: var(--space-4) 0;
-    font-family: var(--font-display);
-    font-size: ~"clamp(1.25rem, 1rem + 1vw, 1.875rem)";
+    padding: var(--space-3) 0;
+    font-size: var(--font-size-lg);
     line-height: var(--line-height-snug);
   }
 
-  // Empty state --------------------------------------------------------
-  &__empty {
-    margin-top: var(--space-5);
-    &[hidden] { display: none; }
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+    .search__panel { transition: none; transform: none; }
   }
 
-  &__suggestions {
-    .reset-list();
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-1);
-    margin-top: var(--space-2);
-    a {
+  // Phone redraw (2125:14449): the menu panel's top row, then the bar centred in the space below with the
+  // back arrow and the lit search glyph 60 under it; 18px in the field
+  @media @upto-lg {
+    --search-font-size: 1.125rem;  // 18
+    --search-line-height: 1.5;     // 27
+    --search-tools-gap: 5rem;      // 80
+    --search-tools-top: 3.75rem;   // 60
+    --search-back-size: 2.2981rem; // 36.77: the diagonal-arrow frame turned level
+    --search-go-size: 1.6875rem;   // 27
+    --header-logo-width: ~"min(13.28125rem, 59vw)"; // the top row repeats the bar's logo
+    --header-logo-top: 0;
+    background: var(--color-green-dark);
+
+    .search__panel {
+      display: flex;
+      flex-direction: column;
+      padding-bottom: 0;
+    }
+
+    .search__top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: var(--header-height);
+      padding: 0.625rem var(--header-gutter);
+      padding-top: ~"max(0.625rem, env(safe-area-inset-top))";
+    }
+
+    .search__close {
       display: inline-flex;
       align-items: center;
-      min-height: var(--tap-size);
-      padding: 0 var(--space-2);
-      border: var(--border-width-rule) solid var(--search-rule);
-      border-radius: var(--radius-full);
-      color: inherit;
-      font-family: var(--font-ui);
-      font-size: var(--font-size-sm);
-      letter-spacing: var(--letter-spacing-ui);
-      text-decoration: none;
-      transition: background-color var(--duration-fast) ease, border-color var(--duration-fast) ease;
-      @media (hover: hover) {
-        &:hover { background: ~"color-mix(in srgb, currentColor 12%, transparent)"; border-color: currentColor; }
+      justify-content: center;
+      width: var(--tap-size);
+      height: var(--tap-size);
+      margin-right: -0.6875rem; // the 22 glyph sits flush to the 30 gutter, like the menu's close
+      padding: 0;
+      border: 0;
+      background: none;
+      color: var(--color-white);
+      .icon { width: 1.375rem; height: 1.375rem; }
+    }
+
+    .search__body {
+      flex: 1 0 auto;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      width: auto;
+      margin: 0;
+      padding: 3.75rem var(--container-gutter); // 60
+      padding-bottom: ~"max(3.75rem, env(safe-area-inset-bottom))";
+    }
+
+    .search__tools {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--search-tools-gap);
+      margin-top: 0.75rem; // 12
+      padding-top: var(--search-tools-top);
+    }
+
+    .search__tool {
+      .tap-area();
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      border: 0;
+      background: none;
+      color: var(--color-white);
+      transition: transform var(--duration-fast) var(--ease-out);
+      &:hover { transform: scale(1.1); }
+      &--back {
+        width: var(--search-back-size);
+        height: var(--search-back-size);
+        .icon { width: 1.75rem; height: 1.75rem; } // the 26 arrow plus its round caps
+      }
+      &--go {
+        width: var(--search-go-size);
+        height: var(--search-go-size);
+        color: var(--color-accent);
+        .icon { width: 100%; height: 100%; }
       }
     }
   }
-
-  // Hints --------------------------------------------------------------
-  &__hints {
-    display: none;
-    gap: var(--space-3);
-    max-width: var(--search-max);
-    margin: var(--space-5) auto 0;
-    padding-inline: var(--edge-gutter);
-    font-family: var(--font-ui);
-    font-size: var(--font-size-xs);
-    letter-spacing: var(--letter-spacing-ui);
-    color: ~"color-mix(in srgb, currentColor 55%, transparent)";
-    @media @fine-lg { display: flex; }
-
-    span { display: inline-flex; align-items: center; gap: 0.375rem; }
-    kbd {
-      min-width: 1.25rem;
-      padding: 0.0625rem 0.3125rem;
-      border: var(--border-width-rule) solid var(--search-rule);
-      border-radius: var(--radius-sm);
-      background: none; // Bootstrap gives kbd a dark fill
-      color: inherit;
-      font-family: inherit;
-      font-size: inherit;
-      text-align: center;
-    }
-  }
-}
-
-.has-search-open {
-  overflow: hidden;
 }
