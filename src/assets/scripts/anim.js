@@ -19,6 +19,7 @@ const DEFAULTS = {
   duration: 0.7,
   ease: "power1.out",
   stagger: 0.1,
+  spread: 0.6, // the longest a batch of staggered reveals may run in total
   entranceLead: 0.4, // an entrance step starts this long before the previous one ends
   lenis: { duration: 1.2, smoothWheel: true, wheelMultiplier: 0.8, touchMultiplier: 1.5 },
 };
@@ -60,6 +61,7 @@ const TIER_START = {
 const HERO = "hero";
 
 const BOUND = "data-anim-bound"; // marks an element as already initialised
+const AUTO_ORDER = "data-anim-auto-order"; // the order came from a group, not from the markup
 
 const reduced = () =>
   window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -159,8 +161,10 @@ function expandGroups(root) {
       if (child.hasAttribute("data-anim") || child.hasAttribute("data-anim-item")) return; // an item belongs to its sequence
       child.setAttribute("data-anim", "reveal");
       child.setAttribute("data-anim-type", type);
-      if (!child.hasAttribute("data-anim-order"))
+      if (!child.hasAttribute("data-anim-order")) {
         child.setAttribute("data-anim-order", String(i));
+        child.setAttribute(AUTO_ORDER, "");
+      }
     });
     bind(group);
   });
@@ -169,6 +173,13 @@ function expandGroups(root) {
 const revealStep = (el) => ({
   animation: () => gsap.to(el, { ...toVars(presetOf(el), el), onComplete: () => el.classList.add("is-revealed") }),
 });
+
+// A group's auto order is only a stagger index, so it restarts with each batch; a hand-written one stays absolute.
+function batchOrders(batch) {
+  const auto = batch.filter((el) => el.hasAttribute(AUTO_ORDER)).map((el) => orderOf(el, 0));
+  const base = auto.length ? Math.min(...auto) : 0;
+  return batch.map((el, i) => orderOf(el, i) - (el.hasAttribute(AUTO_ORDER) ? base : 0));
+}
 
 function setupReveals(root, entrance) {
   const byTier = {};
@@ -203,11 +214,15 @@ function setupReveals(root, entrance) {
     ScrollTrigger.batch(group, {
       start: TIER_START[tier] || TIER_START.default,
       once: true,
-      onEnter: (batch) =>
+      onEnter: (batch) => {
+        const orders = batchOrders(batch);
+        const last = Math.max(0, ...orders);
+        const step = last ? Math.min(DEFAULTS.stagger, DEFAULTS.spread / last) : 0;
         batch.forEach((el, i) => {
           const tween = revealStep(el).animation();
-          tween.delay(tween.delay() + orderOf(el, i) * DEFAULTS.stagger);
-        }),
+          tween.delay(tween.delay() + orders[i] * step);
+        });
+      },
     }).forEach((st) => triggers.set(st.trigger, st));
   });
 }
