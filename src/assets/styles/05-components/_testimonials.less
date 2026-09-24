@@ -113,3 +113,51 @@
     }
   }
 }
+
+// ---------------------------------------------------------------------
+// Phones: heading and copy, then the arrows across the full width, then one full-bleed 375 × 412
+// card (node 2081:10673). No peeking card, so no dimming mask.
+// ---------------------------------------------------------------------
+@media @upto-lg {
+  .testimonials {
+    padding-block: 5.625rem 0; // 90
+
+    &__header { display: block; }
+
+    &__intro {
+      max-width: none;
+      h2 {
+        max-width: none;
+        margin-bottom: 1.875rem; // 30
+        font-family: var(--font-body);
+        font-size: var(--font-size-xl); // 25
+        font-weight: var(--font-weight-regular);
+        line-height: 1.1;               // 27.5
+      }
+      p {
+        font-size: 0.9375rem; // 15
+        line-height: 1.5;     // 22.5
+      }
+    }
+
+    .arrow-group {
+      justify-content: space-between;
+      width: 100%;
+      margin-top: 3.125rem; // 50
+    }
+
+    &__slider {
+      --card-w: 100%;
+      margin-top: 1.25rem; // 20
+      mask-image: none;
+    }
+
+    &__card { aspect-ratio: 375 / 412; }
+
+    &__quote {
+      max-width: none;
+      font-size: 2.5rem; // 40
+      line-height: 0.95; // 38
+    }
+  }
+}

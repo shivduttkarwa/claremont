@@ -3,7 +3,7 @@
  */
 import "bootstrap/js/dist/offcanvas";
 import { Anim } from "./anim.js";
-import { initCurrentNav, initHotspots, initQuoteCards, initScrollers, initTabArrows } from "./ui.js";
+import { initApproachAccordion, initCurrentNav, initHotspots, initQuoteCards, initScrollers, initTabArrows } from "./ui.js";
 import { initSearch } from "./search.js";
 import { initSliders } from "./slider.js";
 
@@ -15,5 +15,6 @@ document.addEventListener("DOMContentLoaded", () => {
   initScrollers();
   initSliders();
   initTabArrows();
+  initApproachAccordion();
   initSearch();
 });

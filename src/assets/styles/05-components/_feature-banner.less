@@ -87,3 +87,39 @@
     .feature-banner__media::after { background: none; }
   }
 }
+
+// ---------------------------------------------------------------------
+// Phones: the home banner is redrawn as a square photo with the copy in a dark block beneath it
+// (node 2081:10708) rather than laid over the photo.
+// ---------------------------------------------------------------------
+@media @upto-lg {
+  .feature-banner--stacked {
+    display: block;
+    min-height: 0;
+    padding-block: 0;
+    background: var(--color-primary-dark);
+
+    .feature-banner__media {
+      position: relative;
+      inset: auto;
+      aspect-ratio: 1 / 1; // 375 × 375
+      img { position: static; }
+      &::after { background: none; }
+    }
+
+    > .container { padding-block: 1.875rem; } // 30
+
+    .feature-banner__content { max-width: none; }
+
+    h2 {
+      margin-bottom: 2.5rem; // the blank line Figma leaves between the title and the copy
+      font-size: 2.5rem;     // 40
+      line-height: 0.95;     // 38
+    }
+
+    .feature-banner__text {
+      font-size: 0.9375rem; // 15
+      line-height: 1.5;     // 22.5
+    }
+  }
+}

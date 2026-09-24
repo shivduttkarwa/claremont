@@ -51,6 +51,9 @@
     @media (min-width: @bp-md) { display: flex; }
   }
 
+  // The accordion headers are a phone treatment; the tab bar drives this block from lg
+  &__row { display: none; }
+
   // Panes stack in one cell and cross-fade: Bootstrap alone would drop the old pane at once
   .tab-content { display: grid; }
   .tab-pane {
@@ -305,4 +308,143 @@
   &--4 { --x: 72.47%; --y: 63.67%; }
   &--5 { --x: 45.27%; --y: 67.76%; }
   &--6 { --x: 63.20%; --y: 32.24%; }
+}
+
+// ---------------------------------------------------------------------
+// Phones: the designer redrew this block as an accordion (canvas 1619:1791, node 2101:13731).
+// Four rows on blue; the open one turns pale and lifts its own photo above its header.
+// ---------------------------------------------------------------------
+@media @upto-lg {
+  .approach {
+    --approach-pad-top: 0;
+
+    &__bar { display: none; }
+
+    .tab-content { display: block; background: var(--color-secondary); }
+
+    .tab-pane {
+      display: flex;
+      flex-direction: column;
+      grid-area: auto;
+      opacity: 1;
+      border-top: var(--border-width-rule) solid var(--color-text);
+      transition: background-color var(--duration-base) ease;
+      &:last-child { border-bottom: var(--border-width-rule) solid var(--color-text); }
+      &.is-open { background: var(--color-background-alt); }
+    }
+
+    &__row {
+      order: 1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-2);
+      width: 100%;
+      padding: 1.625rem var(--container-gutter); // 26
+      border: 0;
+      background: none;
+      color: var(--color-primary);
+      font-family: var(--font-body);
+      font-size: var(--font-size-xl); // 25
+      font-weight: var(--font-weight-regular);
+      line-height: 1.1; // 27.5
+      letter-spacing: -0.03em;
+      text-align: left;
+      cursor: pointer;
+      .icon {
+        flex: 0 0 auto;
+        width: 1.625rem; // 26
+        height: 1.625rem;
+        transition: transform var(--duration-base) var(--ease-out);
+      }
+    }
+    .tab-pane.is-open &__row .icon { transform: rotate(90deg); } // ↗ turns to ↘
+
+    &__panel { display: contents; }
+
+    // One photo heads the accordion, whatever is open: it belongs to the first topic, which is the
+    // first pane, so ordering it above that pane's row puts it above the whole block.
+    &__media {
+      order: 0;
+      display: none;
+      img { transform: none; }
+    }
+    #pane-teaching &__media { display: block; }
+
+    &__overlay {
+      order: 2;
+      display: none;
+      padding: 0 0 1.625rem; // 26
+    }
+    .tab-pane.is-open &__overlay { display: block; }
+    &__overlay > .container { display: none; } // the row header already carries the topic title
+  }
+
+  .hotspots {
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem; // 28
+    margin: 0;
+    padding-inline: var(--container-gutter);
+  }
+
+  .hotspot {
+    border: 0;
+    &:last-child { border: 0; }
+
+    // The +/− sits in a 25 yellow disc on the left: ::before is the disc with the horizontal bar
+    // baked into it, ::after is the stroke that turns it into a plus when the item is closed.
+    &__marker {
+      align-items: flex-start;
+      gap: var(--space-2); // 16
+      min-height: 0;
+      padding: 0;
+      padding-inline-start: calc(var(--marker-size) + var(--space-2));
+
+      &::before {
+        right: auto;
+        left: 0;
+        top: 0;
+        width: var(--marker-size);
+        height: var(--marker-size);
+        border-radius: var(--radius-full);
+        background:
+          linear-gradient(var(--color-primary-dark) 0 0) center / 0.6875rem var(--border-width-rule) no-repeat,
+          var(--color-accent);
+        transform: none;
+      }
+      &::after {
+        right: auto;
+        left: calc(var(--marker-size) / 2);
+        top: calc(var(--marker-size) / 2);
+        width: var(--border-width-rule);
+        height: 0.5625rem; // 9
+        background: var(--color-primary-dark);
+        transform: translate(-50%, -50%);
+      }
+    }
+    &.is-open &__marker::after { opacity: 0; }
+
+    &__label {
+      font-family: var(--font-body);
+      font-size: 0.9375rem; // 15
+      font-weight: var(--font-weight-semibold);
+      line-height: 1.5;    // 22.5
+      letter-spacing: -0.02em;
+      color: var(--color-text);
+    }
+
+    &__card {
+      max-width: none;
+      padding-bottom: 0;
+      margin-top: var(--space-2); // 16
+    }
+    &__title { display: none; } // the marker label is the heading on phones
+    &__text {
+      font-size: 0.9375rem; // 15
+      line-height: 1.5;     // 22.5
+      letter-spacing: -0.03em;
+      color: var(--color-text);
+    }
+  }
 }

@@ -17,6 +17,11 @@
     h2 { margin: 0; }
   }
 
+  // The carousel is a phone treatment; the three columns need no arrows
+  &__arrows {
+    @media (min-width: @bp-lg) { display: none; }
+  }
+
   &__grid {
     display: grid;
     @media (min-width: @bp-lg) { grid-template-columns: repeat(3, minmax(0, 1fr)); }
@@ -57,5 +62,68 @@
   &__text {
     margin: 0;
     @media (min-width: @bp-lg) { height: var(--pillars-text-height); }
+  }
+}
+
+// ---------------------------------------------------------------------
+// Phones: the designer redrew this as a one-card carousel (node 2101:13967) — heading, a pair of
+// arrows across the full width, then one mission/vision/values card at a time.
+// ---------------------------------------------------------------------
+@media @upto-lg {
+  .pillars {
+    padding-top: 3.75rem;    // 60
+    padding-bottom: 3.125rem; // 50
+
+    &__header {
+      margin-bottom: 1.25rem; // 20
+      h2 {
+        font-family: var(--font-body);
+        font-size: var(--font-size-xl); // 25
+        font-weight: var(--font-weight-regular);
+        line-height: 1.1;                // 27.5
+      }
+    }
+
+    &__arrows {
+      justify-content: space-between;
+      width: 100%;
+      margin-top: 1.25rem; // 20
+    }
+
+    &__grid {
+      .hide-scrollbar();
+      display: flex;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scroll-padding-inline: 0;
+    }
+
+    &__item {
+      flex: 0 0 100%;
+      justify-content: flex-start;
+      gap: 5.625rem; // 90
+      padding: 3.75rem var(--container-gutter) 0; // 60
+      border-bottom: 0;
+      scroll-snap-align: start;
+
+      h3 {
+        font-family: var(--font-body);
+        font-size: 2rem;     // 32
+        font-weight: var(--font-weight-regular);
+        line-height: 1.05;   // 33.6
+        color: var(--color-heading);
+      }
+    }
+
+    &__statement {
+      margin-bottom: 1.875rem; // 30
+      font-size: 3.75rem;      // 60
+      line-height: 0.95;       // 57
+    }
+
+    &__text {
+      font-size: 0.9375rem; // 15
+      line-height: 1.5;     // 22.5
+    }
   }
 }

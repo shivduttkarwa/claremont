@@ -22,7 +22,10 @@
     <ul class="swiper-wrapper testimonials__track" data-anim="sequence" data-anim-type="wipe-up" data-anim-start="top 65%" data-anim-stagger="0.2" data-quote-cards>
       <li class="swiper-slide testimonials__slide" data-anim-item>
         <div class="testimonials__card" data-quote-card>
-          <img src="assets/images/home/testimonial-girl.webp" alt="A smiling student with plaits in her school uniform" width="539" height="539" loading="lazy" decoding="async">
+          <picture>
+            <source media="(min-width: 992px)" srcset="assets/images/home/testimonial-girl.webp" width="539" height="539">
+            <img src="assets/images/home/testimonial-m.webp" alt="A smiling student with plaits in her school uniform" width="750" height="824" loading="lazy" decoding="async">
+          </picture>
           <blockquote class="testimonials__quote">“I like that everyone here knows my name. Walking in each morning feels like coming back to friends.”</blockquote>
         </div>
       </li>

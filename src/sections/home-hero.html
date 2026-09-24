@@ -4,20 +4,28 @@
      body:       RichTextBlock
      cta:        StructBlock(text:CharBlock, url:URLBlock)
      background: ImageChooserBlock
-     quick links come from the subnav site setting (partials/subnav.html) -->
+     quick links come from the subnav site setting (partials/subnav.html)
+     The masthead is the photo on phones; the intro sits below it on white and over the photo from lg. -->
 <section class="hero" aria-labelledby="hero-title" data-anim-parallax-trigger>
   <div class="hero__media" aria-hidden="true">
-    <img class="hero__img" fetchpriority="high" decoding="async" src="assets/images/home/hero.webp" alt="" width="1842" height="1650"
-         data-anim="parallax" data-anim-axis="y" data-anim-speed="12" data-anim-reverse data-anim-start="top top" data-anim-disable-mobile>
+    <picture>
+      <source media="(min-width: 992px)" srcset="assets/images/home/hero.webp" width="1842" height="1650">
+      <img class="hero__img" fetchpriority="high" decoding="async" src="assets/images/home/hero-m.webp" alt="" width="750" height="1028"
+           data-anim="parallax" data-anim-axis="y" data-anim-speed="12" data-anim-reverse data-anim-start="top top" data-anim-disable-mobile>
+    </picture>
   </div>
 
-  <div class="container">
-    <div class="hero__content">
+  <div class="hero__masthead">
+    <div class="container">
       <h1 id="hero-title" data-anim="split" data-anim-type="chars" data-anim-tier="hero" data-anim-order="1" data-anim-lead="0.85">
         <span class="hero__title-line">Welcome to</span>
         <em class="hero__title-line hero__title-line--indent">Claremont College.</em>
       </h1>
+    </div>
+  </div>
 
+  <div class="hero__intro">
+    <div class="container">
       <p class="hero__subtitle" data-anim="reveal" data-anim-tier="hero" data-anim-order="2">Where progress is <em>personal.</em></p>
 
       <div class="hero__body" data-anim="reveal" data-anim-tier="hero" data-anim-order="3">
@@ -36,9 +44,9 @@
         <a class="btn btn-primary btn-primary--sans" href="welcome.html">Welcome from Claremont</a>
       </div>
     </div>
+  </div>
 
-    <div class="hero__subnav" data-anim="sequence" data-anim-type="enter-right" data-anim-tier="hero" data-anim-order="5" data-anim-stagger="0.08">
-      <include src="partials/subnav.html"></include>
-    </div>
+  <div class="hero__subnav" data-anim="sequence" data-anim-type="enter-right" data-anim-tier="hero" data-anim-order="5" data-anim-stagger="0.08">
+    <include src="partials/subnav.html"></include>
   </div>
 </section>

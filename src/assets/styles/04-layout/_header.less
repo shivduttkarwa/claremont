@@ -1,20 +1,27 @@
-// 04-layout/_header.less — transparent header over hero imagery
+// 04-layout/_header.less — solid bar on phones, transparent over hero imagery from lg
 
 .site-header {
-  --header-logo-width: ~"clamp(11.5rem, 52vw, 13.5rem)"; // legible wordmark beside two 44px tools
+  --header-logo-width: ~"min(13.8125rem, 59vw)"; // 221 at the 375 frame
   --header-logo-top: 0;
   --header-right-top: 0;
   --header-nav-gap: var(--space-4);
   --header-tools-gap: var(--space-1);
   --header-tool-size: var(--tap-size);
 
-  position: absolute;
-  inset: 0 0 auto;
+  position: relative;
   z-index: var(--z-header);
+  background: var(--color-primary-dark);
   color: var(--color-white);
 
-  @media (min-width: @bp-sm) { --header-logo-width: 13.5rem; --header-tools-gap: var(--space-2); }
-  @media (min-width: @bp-lg) { --header-logo-width: 15rem; --header-nav-gap: 1.75rem; }
+  @media (min-width: @bp-lg) {
+    position: absolute;
+    inset: 0 0 auto;
+    background: none;
+    --header-logo-width: 15rem;
+    --header-nav-gap: 1.75rem;
+  }
+
+  .container-edge { --edge-gutter: var(--header-gutter); }
   @media (min-width: @bp-xl) { --header-logo-width: 17rem; --header-nav-gap: 2.25rem; }
   @media (min-width: @bp-xxl) {
     --header-logo-width: 20.0625rem; // 321: the 334 frame shows the artwork at 96.11%
@@ -103,8 +110,9 @@
     gap: var(--header-tools-gap);
   }
 
+  // The phone bar carries the logo and the burger only; search and find-us live in the open menu
   &__tool {
-    display: inline-flex;
+    display: none;
     align-items: center;
     justify-content: center;
     width: var(--header-tool-size);
@@ -118,11 +126,7 @@
     .icon { width: 1.25rem; height: 1.25rem; }          // search 20 × 20
     &--secondary .icon { width: 1.125rem; height: 1.375rem; } // pin 18 × 22
     &:hover { color: var(--color-secondary); transform: translateY(-0.125rem); }
-  }
-
-  &__tool--secondary {
-    display: none;
-    @media (min-width: @bp-sm) { display: inline-flex; }
+    @media (min-width: @bp-lg) { display: inline-flex; }
   }
 
   // Hamburger (three bars)
@@ -130,7 +134,7 @@
     display: inline-flex;
     flex-direction: column;
     justify-content: center;
-    gap: 0.3125rem;
+    gap: 0.4375rem; // 7 — three 2px bars make the 20 tall burger
     width: var(--header-tool-size);
     height: var(--header-tool-size);
     padding: 0;
@@ -138,9 +142,9 @@
     background: none;
     span {
       display: block;
-      width: 1.5rem;
+      width: 1.375rem; // 22
       height: var(--border-width-thick);
-      margin-inline: auto;
+      margin-left: auto; // bars sit flush to the 30 gutter; the 44 hit area grows inwards
       background: var(--color-white);
       transition: transform var(--duration-fast) ease;
     }
@@ -152,35 +156,87 @@
 
 // Mobile menu (Bootstrap offcanvas, themed via --bs-offcanvas-* in 01-settings)
 .site-menu {
-  --header-logo-width: 12.5rem;
-  &:focus-visible { outline: 0; } // Bootstrap focuses the panel itself on open
+  --header-logo-width: ~"min(13.8125rem, 59vw)"; // the open panel keeps the bar's 221 logo
   --header-logo-top: 0;
+  background: var(--color-primary-dark);
+  &:focus-visible { outline: 0; } // Bootstrap focuses the panel itself on open
+
+  // The panel repeats the 72 bar, then 60 of air before the links
   .offcanvas-header {
     justify-content: space-between;
-    padding-top: ~"max(var(--space-3), env(safe-area-inset-top))";
+    min-height: var(--header-height);
+    padding: 0.625rem var(--header-gutter); // 10 / 30
+    padding-top: ~"max(0.625rem, env(safe-area-inset-top))";
   }
-  .offcanvas-body { padding-bottom: ~"max(var(--space-3), env(safe-area-inset-bottom))"; }
+  .offcanvas-body {
+    padding: 3.75rem var(--container-gutter);
+    padding-bottom: ~"max(3.75rem, env(safe-area-inset-bottom))";
+  }
   .btn-close {
     width: var(--tap-size);
     height: var(--tap-size);
     padding: 0;
-    margin: 0 -0.75rem 0 auto;
+    margin: 0 -0.6875rem 0 auto; // the 22 glyph sits flush to the 30 gutter
+    background-size: 1.375rem;   // 22
+    opacity: 1;
   }
   &__nav {
     display: flex;
     flex-direction: column;
-    gap: var(--space-1);
-    margin-bottom: var(--space-5);
+    margin-top: 3.3125rem; // 53 — the links start at 185 on the 375 frame
   }
+
+  // Ruled rows with a diagonal arrow, 65 apart (node 2087:12570)
   &__link {
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
     min-height: var(--tap-size);
+    padding-block: 1.125rem; // 18
+    border-top: var(--border-width-rule) solid currentColor;
     font-size: var(--font-size-xl);
-    line-height: var(--line-height-snug);
+    line-height: 1.1;
+    letter-spacing: var(--letter-spacing-body);
     color: var(--color-white);
     transition: color var(--duration-fast) ease, padding-inline-start var(--duration-base) var(--ease-out);
+    &:last-child { border-bottom: var(--border-width-rule) solid currentColor; }
+
+    .icon {
+      flex: 0 0 auto;
+      width: 2rem;      // the 32 symbol overhangs Figma's 26 frame
+      height: 1.625rem;
+      margin-right: -0.375rem;
+      transition: transform var(--duration-base) var(--ease-out);
+    }
+
     &:hover,
-    &[aria-current="page"] { color: var(--color-secondary); padding-inline-start: var(--space-1); }
+    &[aria-current="page"] {
+      color: var(--color-secondary);
+      padding-inline-start: var(--space-1);
+      .icon { transform: translate(0.25rem, -0.25rem); }
+    }
+  }
+
+  &__tools {
+    display: flex;
+    justify-content: center;
+    gap: 5rem; // 80
+    padding-top: 3.75rem; // 60
+  }
+
+  &__tool {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--tap-size);
+    height: var(--tap-size);
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--color-white);
+    transition: color var(--duration-fast) ease, transform var(--duration-fast) var(--ease-out);
+    .icon { width: 1.75rem; height: 1.75rem; }
+    &:hover { color: var(--color-secondary); transform: translateY(-0.125rem); }
   }
 }

@@ -3,11 +3,15 @@
      text:  TextBlock
      image: ImageChooserBlock
      cta:   StructBlock(text:CharBlock, url:URLBlock / document:DocumentChooserBlock) — optional
-     locals: id, title, text, image, width, height, modifier, actions (HTML buttons, or empty) -->
+     locals: id, title, text, image, image_m (phone crop; pass the same file when there is none),
+            width, height, modifier, actions (HTML buttons, or empty) -->
 <section class="feature-banner {{ modifier }}" aria-labelledby="{{ id }}" data-anim-parallax-trigger>
   <div class="feature-banner__media" aria-hidden="true">
-    <img src="{{ image }}" alt="" width="{{ width }}" height="{{ height }}" loading="lazy" decoding="async"
-         data-anim="reveal" data-anim-type="scale">
+    <picture>
+      <source media="(min-width: 992px)" srcset="{{ image }}" width="{{ width }}" height="{{ height }}">
+      <img src="{{ image_m }}" alt="" width="{{ width }}" height="{{ height }}" loading="lazy" decoding="async"
+           data-anim="reveal" data-anim-type="scale">
+    </picture>
   </div>
   <div class="container">
     <div class="feature-banner__content" data-anim-group="fade-up">

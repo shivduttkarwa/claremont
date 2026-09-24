@@ -1,36 +1,62 @@
-// 05-components/_hero.less — homepage hero, 1182 tall at 1640 (header overlays it)
+// 05-components/_hero.less — homepage hero. On phones the photo is a 514 masthead and the intro sits
+// below it on white; from lg the whole block is one photo with the copy over it, 1182 tall at 1640.
 
 .hero {
-  --hero-pad-top: calc(var(--header-height) + var(--space-8));
-  --hero-pad-bottom: var(--space-8);
-  --hero-subnav-top: 11.8125rem;   // 189
+  --hero-pad-top: 0;
+  --hero-pad-bottom: 0;
+  --hero-media-height: 32.125rem; // 514
+  --hero-subnav-top: 11.8125rem;  // 189
   --hero-title-gap: var(--space-6);
 
   position: relative;
   isolation: isolate;
-  overflow: hidden;
+  overflow: clip; // not hidden: the phone quick links stick to the viewport bottom inside this block
   padding-top: var(--hero-pad-top);
   padding-bottom: var(--hero-pad-bottom);
-  background: var(--color-primary);
-  color: var(--color-white);
+  background: var(--color-background);
+  color: var(--color-text);
 
   @media (min-width: @bp-lg) {
     --hero-pad-top: 13.25rem;      // 212
     --hero-pad-bottom: 13.75rem;   // 220
+    --hero-media-height: 100%;
     --hero-title-gap: 4.66875rem;  // 74.7: title 212 + 2 × 102.64 → subtitle at 492
+    background: var(--color-primary);
+    color: var(--color-white);
   }
 
   &__media {
-    .cover();
+    position: absolute;
+    inset: 0 0 auto;
+    height: var(--hero-media-height);
+    overflow: hidden;
     z-index: var(--z-behind);
+    @media (min-width: @bp-lg) { .cover(); z-index: var(--z-behind); }
     &::after {
       content: "";
       .cover();
-      background: linear-gradient(180deg, rgba(5, 51, 51, 0.1) 0%, rgba(5, 51, 51, 0.55) 55%, rgba(5, 51, 51, 0.8) 100%);
+      background: none;
       @media (min-width: @bp-lg) {
         background: linear-gradient(208deg, rgba(0, 0, 0, 0.3) 8.5%, rgba(0, 0, 0, 0) 14%);
       }
     }
+  }
+
+  &__masthead {
+    position: relative;
+    z-index: var(--z-content);
+    display: flex;
+    min-height: var(--hero-media-height);
+    padding-top: 3.75rem; // 60
+    color: var(--color-white);
+    @media (min-width: @bp-lg) { display: block; min-height: 0; padding-top: 0; color: inherit; }
+  }
+
+  &__intro {
+    position: relative;
+    z-index: var(--z-content);
+    padding-block: 3.75rem; // 60
+    @media (min-width: @bp-lg) { padding-block: 0; }
   }
 
   // Spare image below the crop is the parallax travel, so the crop is exact at rest
@@ -38,62 +64,98 @@
     position: absolute;
     inset: 0 auto auto 0;
     width: 100%;
-    height: 124.34%; // export is 1842 × 1650 against the 1842 × 1327 frame crop
+    height: 100%; // the phone crop is exact; parallax is off below lg
     object-fit: cover;
-    object-position: 80% 0;
-    @media (min-width: @bp-lg) { object-position: 50% 0; }
-  }
-
-  &__content {
-    position: relative;
-    z-index: var(--z-content);
+    object-position: 50% 0;
+    @media (min-width: @bp-lg) {
+      height: 124.34%; // export is 1842 × 1650 against the 1842 × 1327 frame crop
+    }
   }
 
   h1 {
-    max-width: 75.75rem;
-    margin-bottom: var(--hero-title-gap);
+    max-width: 20.25rem; // 324 on the 375 frame
+    margin-bottom: 0;
     font-size: var(--font-size-display);
     line-height: var(--line-height-display);
     color: var(--color-white);
+    @media (min-width: @bp-lg) {
+      max-width: 75.75rem;
+      margin-bottom: var(--hero-title-gap);
+    }
     @media (min-width: @bp-xxl) { margin-left: -0.125rem; } // x 198
   }
   &__title-line {
     display: block;
     &--indent {
-      @media (min-width: @bp-lg) { padding-inline-start: 0.6em; }
+      padding-inline-start: 0.6em; // the three spaces Figma sets before "Claremont"
     }
   }
 
   // Matching line boxes: the taller italic run would otherwise half-lead the baseline 5 below Figma
   &__subtitle {
-    --hero-subtitle-lh: 1.17333; // 52.8 on 45
-    max-width: 33.625rem;
-    margin-bottom: 1.45rem;
+    --hero-subtitle-lh: 0.95; // 38 on 40
+    --hero-subtitle-size: 2.5rem; // 40
+    max-width: 20.9375rem; // 335
+    margin-bottom: 1.25rem; // 20
     font-family: var(--font-display);
-    font-size: var(--font-size-callout);
+    font-size: var(--hero-subtitle-size);
     line-height: var(--hero-subtitle-lh);
-    em {
-      font-size: 1.0667em;
-      line-height: var(--line-height-snug);
+    color: var(--color-text);
+    em { font-size: 1em; font-style: normal; line-height: inherit; } // the phone frame sets it upright
+
+    @media (min-width: @bp-lg) {
+      --hero-subtitle-lh: 1.17333; // 52.8 on 45
+      --hero-subtitle-size: var(--font-size-callout);
+      max-width: 33.625rem;
+      margin-bottom: 1.45rem;
+      color: inherit;
+      em {
+        font-size: 1.0667em;
+        font-style: italic;
+        line-height: var(--line-height-snug);
+      }
     }
   }
 
   &__body {
-    max-width: 38.5625rem; // 617
-    font-size: var(--font-size-lg);
+    max-width: 20.9375rem; // 335
+    font-size: 1.125rem; // 18
     line-height: var(--line-height-relaxed);
     p { margin-bottom: 0.5483rem; } // 8.77
+    @media (min-width: @bp-lg) {
+      max-width: 38.5625rem; // 617
+      font-size: var(--font-size-lg);
+    }
   }
 
   &__actions {
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-2);
-    margin-top: 2.8125rem; // 45
+    margin-top: var(--space-5);
+    .btn { flex: 1 1 100%; justify-content: center; }
+    @media (min-width: @bp-lg) {
+      margin-top: 2.8125rem; // 45
+      .btn { flex: 0 0 auto; }
+    }
   }
 
+  // Phones: the quick links ride the bottom of the viewport until the intro block scrolls past.
+  // The sticky box is zero-height so it overlays the hero instead of adding to it.
   &__subnav {
-    margin-top: var(--space-6);
-    .subnav-dock(var(--hero-subnav-top));
+    position: sticky;
+    bottom: 0;
+    height: 0;
+    z-index: var(--z-raised);
+    .subnav {
+      position: absolute;
+      inset: auto 0.9375rem var(--space-1); // 15 gutter
+    }
+    @media (min-width: @bp-lg) {
+      height: auto;
+      margin-top: var(--space-6);
+      .subnav { position: static; }
+      .subnav-dock(var(--hero-subnav-top));
+    }
   }
 }

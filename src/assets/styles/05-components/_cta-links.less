@@ -119,3 +119,20 @@
     }
   }
 }
+
+// Phones: 70 of air top and bottom, a 25 heading on one line, then the ruled rows (node 2081:10734)
+@media @upto-lg {
+  .cta-links {
+    padding-block: 4.375rem; // 70
+
+    h2 {
+      margin-bottom: 2.5rem; // 40
+      font-family: var(--font-body);
+      font-size: var(--font-size-xl); // 25
+      font-weight: var(--font-weight-regular);
+      line-height: 1.1;               // 27.5
+    }
+
+    .row { --bs-gutter-y: 0; }
+  }
+}

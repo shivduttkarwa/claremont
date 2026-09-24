@@ -8,6 +8,8 @@
 @bp-lg: 992px;
 @bp-xl: 1200px;
 @bp-xxl: 1400px;
+// Phone/tablet-only overrides, for blocks the designer redrew rather than reflowed
+@upto-lg: ~"(max-width: 991.98px)";
 // Compact Figma hit areas only apply to a mouse at desktop widths; touch screens keep 44px targets
 @fine-lg: ~"(min-width: 992px) and (hover: hover) and (pointer: fine)";
 @fine-xl: ~"(min-width: 1200px) and (hover: hover) and (pointer: fine)";
@@ -61,7 +63,7 @@
   --font-size-callout: ~"clamp(2rem, 1.5rem + 1.6vw, 2.8125rem)";       /* 45 */
   --font-size-statement: ~"clamp(2.75rem, 1.9rem + 2.7vw, 4.25rem)";    /* 68 */
   --font-size-display-inner: ~"clamp(3rem, 1.8rem + 3.8vw, 5.625rem)";  /* 90 */
-  --font-size-display: ~"clamp(2.75rem, 1.125rem + 6.925vw, 8.2246rem)"; /* 131.593 at 1640, 44 at 375 */
+  --font-size-display: ~"clamp(3.5rem, 2.4238rem + 5.6595vw, 8.2246rem)"; /* 131.593 at 1640, 60 at 375 */
 
   --line-height-display: 0.78;
   --line-height-hero: 0.92;
@@ -121,7 +123,8 @@
   --container-gutter: ~"max(1.25rem, env(safe-area-inset-left), env(safe-area-inset-right))";
   --edge-gutter: var(--container-gutter); /* header + footer side padding (3.75rem at xxl) */
   --tap-size: 2.75rem;           /* 44: minimum touch target */
-  --header-height: 5rem;         /* 6.875rem from lg */
+  --header-height: 4.5rem;       /* 72 on the 375 frame; 6.875rem from lg */
+  --header-gutter: 1.875rem;     /* 30: the mobile bar sits wider than the 20 content gutter */
   --control-height: 3rem;        /* 48 — buttons, tabs, arrows */
   --marker-size: 1.5625rem;      /* 25 — hotspot dots */
 
@@ -150,11 +153,13 @@
   :root {
     --header-height: 6.875rem;
     --container-gutter: ~"max(2.5rem, env(safe-area-inset-left), env(safe-area-inset-right))";
+    --header-gutter: var(--container-gutter);
   }
 }
 @media (min-width: @bp-xxl) {
   :root {
     --container-gutter: 1.25rem;
     --edge-gutter: 3.75rem;
+    --header-gutter: 3.75rem;
   }
 }

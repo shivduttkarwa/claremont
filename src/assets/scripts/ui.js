@@ -63,9 +63,11 @@ export function initScrollers(root = document) {
     // Start on the Nth card, aligned to the .container edge (scroll-padding), with the previous card peeking.
     const start = parseInt(track.dataset.scrollerStart || "0", 10);
     if (start > 0) {
-      const styles = getComputedStyle(document.documentElement);
-      const gutter = remToPx(styles.getPropertyValue("--container-gutter"));
-      const content = remToPx(styles.getPropertyValue("--container-content"));
+      // --container-gutter is a max() below xxl, which parseFloat cannot read, so take the resolved
+      // padding off a real .container instead.
+      const probe = scroller.querySelector(".container");
+      const gutter = probe ? parseFloat(getComputedStyle(probe).paddingLeft) : 0;
+      const content = remToPx(getComputedStyle(document.documentElement).getPropertyValue("--container-content"));
       const offset = Math.max(gutter, (track.clientWidth - content) / 2);
       track.scrollLeft = step() * start - offset;
     }
@@ -136,6 +138,24 @@ export function initTabArrows(root = document) {
         pane.classList.remove("is-entering");
         if (pane.classList.contains("active")) Anim.add(pane, { immediate: true });
       }, fade * 0.7);
+    });
+  });
+}
+
+// Phones show the four approach topics as an accordion instead of tabs: one open at a time, and the
+// topic's photo rides above its own row. Desktop keeps the Bootstrap tabs untouched.
+export function initApproachAccordion(root = document) {
+  root.querySelectorAll("[data-tabs]").forEach((wrap) => {
+    wrap.addEventListener("click", (event) => {
+      const toggle = event.target.closest("[data-approach-toggle]");
+      if (!toggle) return;
+      const pane = toggle.closest(".tab-pane");
+      const open = !pane.classList.contains("is-open");
+      wrap.querySelectorAll(".tab-pane").forEach((other) => {
+        const on = other === pane && open;
+        other.classList.toggle("is-open", on);
+        other.querySelector("[data-approach-toggle]")?.setAttribute("aria-expanded", String(on));
+      });
     });
   });
 }

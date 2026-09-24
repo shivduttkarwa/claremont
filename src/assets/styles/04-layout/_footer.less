@@ -214,3 +214,26 @@
     line-height: var(--footer-leading-sm);
   }
 }
+
+// Phones: the buttons stack full width and the social row centres under them (node 2087:12253)
+@media @upto-lg {
+  .site-footer {
+    padding-block: 2.5rem ~"calc(2.5rem + env(safe-area-inset-bottom))"; // 40
+    --footer-text: 0.9375rem; // 15 on the phone frame
+    --footer-small: 0.875rem; // 14 labels
+    line-height: 1.21333;     // 18.2 on 15
+
+    &__ack { line-height: 1.5; } // 22.5 — the acknowledgement is the one block set loose
+
+    &__actions {
+      gap: var(--space-2);
+      .btn { flex: 1 1 100%; justify-content: center; }
+    }
+
+    &__social {
+      justify-content: center;
+      gap: var(--space-4);
+      margin-left: 0;
+    }
+  }
+}
