@@ -83,6 +83,12 @@
     }
   }
 
+  &__fluid {
+    .cover();
+    z-index: var(--z-raised);
+    pointer-events: none;
+  }
+
   // Quote starts 25 in and 31 down; it rises into place as a card opens and drops away as the next one takes over
   &__quote {
     position: absolute;
