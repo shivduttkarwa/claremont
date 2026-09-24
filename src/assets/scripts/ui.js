@@ -161,3 +161,36 @@ export function initApproachAccordion(root = document) {
     });
   });
 }
+
+// Headroom header: pinned once scrolled past its own height, hidden on the way down, shown on the way up
+export function initStickyHeader(header = document.querySelector(".site-header")) {
+  if (!header) return;
+  const tolerance = 6;
+  let last = window.scrollY;
+  let ticking = false;
+
+  const update = () => {
+    ticking = false;
+    const y = Math.max(0, window.scrollY);
+    const delta = y - last;
+    if (y <= 0) {
+      header.classList.remove("is-pinned", "is-shown");
+    } else if (!header.classList.contains("is-pinned")) {
+      if (y > header.offsetHeight) {
+        header.classList.add("is-pinning", "is-pinned");
+        requestAnimationFrame(() => requestAnimationFrame(() => header.classList.remove("is-pinning")));
+      }
+    } else if (Math.abs(delta) >= tolerance) {
+      header.classList.toggle("is-shown", delta < 0);
+    } else {
+      return;
+    }
+    last = y;
+  };
+
+  window.addEventListener("scroll", () => {
+    if (!ticking) requestAnimationFrame(update);
+    ticking = true;
+  }, { passive: true });
+  update();
+}

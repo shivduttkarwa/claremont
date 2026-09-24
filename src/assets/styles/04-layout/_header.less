@@ -1,4 +1,4 @@
-// 04-layout/_header.less — solid bar on phones, transparent over hero imagery from lg
+// 04-layout/_header.less — solid bar on phones, transparent over hero imagery from lg, a compact solid bar once pinned
 
 .site-header {
   --header-logo-width: ~"min(13.28125rem, 59vw)"; // 212.5: the 221 frame shows the artwork at 96.11%
@@ -8,18 +8,48 @@
   --header-tools-gap: var(--space-1);
   --header-tool-size: var(--tap-size);
 
-  position: relative;
+  position: sticky;
+  top: 0;
   z-index: var(--z-header);
-  background: var(--color-primary-dark);
+  background-color: var(--color-primary-dark);
   color: var(--color-white);
+  transition:
+    transform var(--duration-slow) var(--ease-out),
+    background-color var(--duration-base) ease,
+    box-shadow var(--duration-base) ease;
 
   @media (min-width: @bp-lg) {
     position: absolute;
     inset: 0 0 auto;
-    background: none;
+    background-color: transparent;
     --header-logo-width: 15rem;
     --header-nav-gap: 1.75rem;
   }
+
+  // Headroom: once scrolled past, the bar leaves on the way down and slides back in on the way up
+  &.is-pinned {
+    box-shadow: var(--shadow-header);
+    &:not(.is-shown):not(:has(:focus-visible)) {
+      transform: translateY(-100%);
+      box-shadow: none;
+      transition-duration: var(--duration-base);
+      transition-timing-function: var(--ease-in);
+    }
+    @media (min-width: @bp-lg) {
+      position: fixed;
+      background-color: var(--color-primary-dark);
+      --header-height: var(--header-height-pinned);
+      --header-logo-width: 12.5rem;
+      --header-logo-top: 0;
+      --header-right-top: 0;
+      .site-header__inner { align-items: center; }
+    }
+  }
+  // It was already off screen when it pinned, so it must not be seen sliding away
+  @media (min-width: @bp-lg) {
+    &.is-pinning { transition: none; }
+  }
+  @media (prefers-reduced-motion: reduce) { transition: none; }
 
   .container-edge { --edge-gutter: var(--header-gutter); }
 
@@ -32,6 +62,7 @@
       padding-right: var(--scrollbar-size, 0);
     }
   }
+  .has-search-open &.is-pinned { transform: none; }
   @media (min-width: @bp-xl) { --header-logo-width: 17rem; --header-nav-gap: 2.25rem; }
   @media (min-width: @bp-xxl) {
     --header-logo-width: 20.0625rem; // 321: the 334 frame shows the artwork at 96.11%
@@ -48,6 +79,7 @@
     justify-content: space-between;
     gap: var(--space-2);
     min-height: var(--header-height);
+    transition: min-height var(--duration-base) var(--ease-out);
     @media (min-width: @bp-sm) { gap: var(--space-4); }
     @media (min-width: @bp-xxl) { align-items: flex-start; }
   }
@@ -57,7 +89,7 @@
     flex: 0 0 auto;
     width: var(--header-logo-width);
     margin-top: var(--header-logo-top);
-    transition: opacity var(--duration-fast) ease;
+    transition: opacity var(--duration-fast) ease, width var(--duration-base) var(--ease-out), margin-top var(--duration-base) var(--ease-out);
     &:hover { opacity: 0.85; }
     img { display: block; width: 100%; height: auto; }
     @media (min-width: @bp-xxl) { margin-left: -0.0625rem; } // frame starts at 59
@@ -68,6 +100,7 @@
     align-items: center;
     gap: var(--space-4);
     margin-top: var(--header-right-top);
+    transition: margin-top var(--duration-base) var(--ease-out);
     @media (min-width: @bp-xxl) { gap: 1.625rem; } // 26 from the last link to the search hit area
   }
 
