@@ -2,9 +2,10 @@
 
 .subnav {
   display: flex;
+  justify-content: center; // the 345 row of chips sits centred on phones wider than the 375 frame
   gap: var(--space-1);
 
-  @media (min-width: @bp-lg) { flex-direction: column; }
+  @media (min-width: @bp-lg) { flex-direction: column; justify-content: flex-start; }
 
   &__short { @media (min-width: @bp-lg) { display: none; } }
   &__long { display: none; @media (min-width: @bp-lg) { display: inline; } }

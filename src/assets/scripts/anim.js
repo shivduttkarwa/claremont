@@ -79,7 +79,11 @@ const number = (el, name, fallback) => {
 
 const tierOf = (el) => attr(el, "data-anim-tier", "default");
 const startOf = (el) => attr(el, "data-anim-start", TIER_START[tierOf(el)] || TIER_START.default);
-const orderOf = (el, fallback = 0) => number(el, "data-anim-order", fallback);
+// data-anim-order-mobile reorders an entrance step where the phone layout stacks things differently
+const orderOf = (el, fallback = 0) =>
+  window.innerWidth < 992 && el.hasAttribute("data-anim-order-mobile")
+    ? number(el, "data-anim-order-mobile", fallback)
+    : number(el, "data-anim-order", fallback);
 const leadOf = (el) => number(el, "data-anim-lead", DEFAULTS.entranceLead);
 const presetOf = (el) => REVEAL[attr(el, "data-anim-type", "fade-up")] || REVEAL["fade-up"];
 
