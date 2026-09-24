@@ -1,7 +1,7 @@
 <!-- @wagtail-block: home_hero
      title:      RichTextBlock (two lines, second italic)
      subtitle:   RichTextBlock (italic run)
-     body:       RichTextBlock
+     body:       RichTextBlock — rendered inside the data-anim-items="children" wrapper, so its <p>s need no attributes
      cta:        StructBlock(text:CharBlock, url:URLBlock)
      background: ImageChooserBlock
      quick links come from the subnav site setting (partials/subnav.html)
@@ -29,7 +29,7 @@
     <div class="container">
       <p class="hero__subtitle" data-anim="reveal" data-anim-tier="hero" data-anim-order="2" data-anim-order-mobile="3">Where progress is <em>personal.</em></p>
 
-      <div class="hero__body" data-anim="reveal" data-anim-tier="hero" data-anim-order="3" data-anim-order-mobile="4">
+      <div class="hero__body" data-anim="sequence" data-anim-items="children" data-anim-type="fade-up" data-anim-stagger="0" data-anim-mobile="each" data-anim-tier="hero" data-anim-order="3" data-anim-order-mobile="4">
         <p>Where we don’t take the trust you instill in us for granted.</p>
         <p>Where a love of what we do seeps into everything we do.</p>
         <p>We are intentionally small.</p>
@@ -41,8 +41,8 @@
         <p><strong>This is Claremont College. Where progress is personal.</strong></p>
       </div>
 
-      <div class="hero__actions" data-anim="reveal" data-anim-tier="hero" data-anim-order="4" data-anim-order-mobile="5">
-        <a class="btn btn-primary btn-primary--sans" href="welcome.html">Welcome from Claremont</a>
+      <div class="hero__actions" data-anim="sequence" data-anim-type="fade-up" data-anim-stagger="0" data-anim-mobile="each" data-anim-tier="hero" data-anim-order="4" data-anim-order-mobile="5">
+        <a class="btn btn-primary btn-primary--sans" href="welcome.html" data-anim-item>Welcome from Claremont</a>
       </div>
     </div>
   </div>

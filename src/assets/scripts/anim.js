@@ -309,6 +309,8 @@ function setupSplits(root, entrance) {
 function setupSequences(root, entrance) {
   scoped(root, '[data-anim="sequence"]').forEach((el) => {
     bind(el);
+    // data-anim-items="children" makes the direct children the items (rich text: the CMS cannot mark each <p>)
+    if (attr(el, "data-anim-items") === "children") Array.from(el.children).forEach((child) => child.setAttribute("data-anim-item", ""));
     const items = Array.from(el.querySelectorAll("[data-anim-item]")).filter((item) => item.getClientRects().length);
     const mobile = window.innerWidth < 992;
     if (!items.length || (mobile && el.hasAttribute("data-anim-disable-mobile"))) {
@@ -325,7 +327,7 @@ function setupSequences(root, entrance) {
       return;
     }
     const presetFor = (item) => REVEAL[item.getAttribute("data-anim-item")] || presetOf(el);
-    const stagger = number(el, "data-anim-stagger", 0) || DEFAULTS.stagger;
+    const stagger = number(el, "data-anim-stagger", null) ?? DEFAULTS.stagger; // an explicit 0 plays the items together
     // a CSS transition on an item would smear every frame of the tween, so it is paused until the end
     items.forEach((item) => gsap.set(item, { ...presetFor(item).from, transition: "none" }));
     play(el, {

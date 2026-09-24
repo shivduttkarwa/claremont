@@ -96,12 +96,13 @@
   // Matching line boxes: the taller italic run would otherwise half-lead the baseline 5 below Figma
   &__subtitle {
     --hero-subtitle-lh: 0.95; // 38 on 40
-    --hero-subtitle-size: 2.5rem; // 40
-    max-width: 20.9375rem; // 335
+    // 40 at 375, then scaling with the 335 column so the frame's line breaks hold on wider phones
+    --hero-subtitle-size: ~"clamp(2.5rem, 11.9403vw - 0.2985rem, 2.9375rem)";
     margin-bottom: 1.25rem; // 20
     font-family: var(--font-display);
     font-size: var(--hero-subtitle-size);
     line-height: var(--hero-subtitle-lh);
+    letter-spacing: var(--letter-spacing-body); // -1.2 at 40: an inherited em tracking is fixed at body's 16
     color: var(--color-text);
     em { font-size: 1em; font-style: normal; line-height: inherit; } // the phone frame sets it upright
 
@@ -120,14 +121,15 @@
   }
 
   &__body {
-    max-width: 20.9375rem; // 335
-    font-size: 1.125rem; // 18
+    font-size: ~"clamp(1.125rem, 5.3731vw - 0.1343rem, 1.3125rem)"; // 18 at 375, scaling with the 335 column
     line-height: 1.3333; // 24: Figma draws its 24.3 line at a whole pixel
-    p { margin-bottom: 0.5483rem; } // 8.77
+    letter-spacing: var(--letter-spacing-body); // -0.54 at 18
+    p { margin-bottom: 0.4873em; } // 8.77 at 18
     @media (min-width: @bp-lg) {
       max-width: 38.5625rem; // 617
       font-size: var(--font-size-lg);
       line-height: var(--line-height-relaxed);
+      p { margin-bottom: 0.5483rem; } // 8.77
     }
   }
 
