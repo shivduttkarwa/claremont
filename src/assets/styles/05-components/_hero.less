@@ -6,6 +6,8 @@
   --hero-pad-bottom: 0;
   --hero-media-height: 32.125rem; // 514
   --hero-subnav-top: 11.8125rem;  // 189
+  --hero-subnav-inset: 0.9375rem; // 15: the phone row sits wider than the 20 gutter
+  --hero-subnav-rest: 1.5rem;     // 24 of the row over the photo's bottom edge, 24 over the white
   --hero-title-gap: var(--space-6);
 
   position: relative;
@@ -120,11 +122,12 @@
   &__body {
     max-width: 20.9375rem; // 335
     font-size: 1.125rem; // 18
-    line-height: var(--line-height-relaxed);
+    line-height: 1.3333; // 24: Figma draws its 24.3 line at a whole pixel
     p { margin-bottom: 0.5483rem; } // 8.77
     @media (min-width: @bp-lg) {
       max-width: 38.5625rem; // 617
       font-size: var(--font-size-lg);
+      line-height: var(--line-height-relaxed);
     }
   }
 
@@ -140,22 +143,26 @@
     }
   }
 
-  // Phones: the quick links ride the bottom of the viewport until the intro block scrolls past.
-  // The sticky box is zero-height so it overlays the hero instead of adding to it.
   &__subnav {
-    position: sticky;
-    bottom: 0;
-    height: 0;
+    position: relative;
     z-index: var(--z-raised);
+    @media (min-width: @bp-lg) {
+      margin-top: var(--space-6);
+      .subnav-dock(var(--hero-subnav-top));
+    }
+  }
+}
+
+// Phones: the quick links sit on the photo's bottom edge and scroll with the page. The zero-height
+// wrapper hangs the row above it, so the row's bottom edge is what gets positioned.
+@media @upto-lg {
+  .hero__subnav {
+    position: absolute;
+    inset: calc(var(--hero-media-height) + var(--hero-subnav-rest)) 0 auto;
+    height: 0;
     .subnav {
       position: absolute;
-      inset: auto 0.9375rem var(--space-1); // 15 gutter
-    }
-    @media (min-width: @bp-lg) {
-      height: auto;
-      margin-top: var(--space-6);
-      .subnav { position: static; }
-      .subnav-dock(var(--hero-subnav-top));
+      inset: auto var(--hero-subnav-inset) 0;
     }
   }
 }

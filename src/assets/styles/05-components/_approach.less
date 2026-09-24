@@ -312,11 +312,13 @@
 
 // ---------------------------------------------------------------------
 // Phones: the designer redrew this block as an accordion (canvas 1619:1791, node 2101:13731).
-// Four rows on blue; the open one turns pale and lifts its own photo above its header.
+// Four ruled rows on blue under one photo; the open row turns pale and unfolds its topics, and
+// each topic unfolds its own copy. Both unfold through a grid row that grows from 0fr to 1fr.
 // ---------------------------------------------------------------------
 @media @upto-lg {
   .approach {
     --approach-pad-top: 0;
+    --approach-open-time: var(--duration-slow);
 
     &__bar { display: none; }
 
@@ -327,12 +329,12 @@
       flex-direction: column;
       grid-area: auto;
       opacity: 1;
-      border-top: var(--border-width-rule) solid var(--color-text);
-      transition: background-color var(--duration-base) ease;
+      transition: background-color var(--approach-open-time) ease;
       &:last-child { border-bottom: var(--border-width-rule) solid var(--color-text); }
       &.is-open { background: var(--color-background-alt); }
     }
 
+    // The rule sits on the row, not the pane, so the first one lands under the photo
     &__row {
       order: 1;
       display: flex;
@@ -342,12 +344,13 @@
       width: 100%;
       padding: 1.625rem var(--container-gutter); // 26
       border: 0;
+      border-top: var(--border-width-rule) solid var(--color-text);
       background: none;
       color: var(--color-primary);
       font-family: var(--font-body);
       font-size: var(--font-size-xl); // 25
       font-weight: var(--font-weight-regular);
-      line-height: 1.1; // 27.5
+      line-height: 1.12; // 28: Figma draws its 27.5 line at a whole pixel
       letter-spacing: -0.03em;
       text-align: left;
       cursor: pointer;
@@ -355,7 +358,7 @@
         flex: 0 0 auto;
         width: 1.625rem; // 26
         height: 1.625rem;
-        transition: transform var(--duration-base) var(--ease-out);
+        transition: transform var(--approach-open-time) var(--ease-out);
       }
     }
     .tab-pane.is-open &__row .icon { transform: rotate(90deg); } // ↗ turns to ↘
@@ -367,44 +370,68 @@
     &__media {
       order: 0;
       display: none;
+      aspect-ratio: 750 / 552; // the phone crop: 375 × 276 on the frame
+      @media (min-width: @bp-md) { aspect-ratio: 16 / 9; }
       img { transform: none; }
+      &::after { display: none; } // no copy sits on the photo here, so no dimming
     }
     #pane-teaching &__media { display: block; }
 
-    &__overlay {
+    // Closed: a 0fr row with no padding. Open: the topics start 28 under the title and the pane
+    // ends 26 under the last one. Visibility waits for the fold so nothing hidden can take focus.
+    // Nested under .tab-pane to outrank the desktop cross-fade's opacity-only transition.
+    .tab-pane .approach__overlay {
       order: 2;
-      display: none;
-      padding: 0 0 1.625rem; // 26
+      display: grid;
+      grid-template-rows: 0fr;
+      padding: 0;
+      overflow: hidden;
+      visibility: hidden;
+      transition:
+        grid-template-rows var(--approach-open-time) var(--ease-out),
+        padding var(--approach-open-time) var(--ease-out),
+        visibility 0s linear var(--approach-open-time);
+      > .container { display: none; } // the row header already carries the topic title
     }
-    .tab-pane.is-open &__overlay { display: block; }
-    &__overlay > .container { display: none; } // the row header already carries the topic title
+    .tab-pane.is-open .approach__overlay {
+      grid-template-rows: 1fr;
+      padding: 0.125rem 0 1.625rem; // 2 on top of the row's 26; 26
+      visibility: visible;
+      transition-delay: 0s;
+    }
   }
 
   .hotspots {
     display: flex;
     flex-direction: column;
     gap: 1.75rem; // 28
+    min-height: 0;
     margin: 0;
     padding-inline: var(--container-gutter);
   }
 
   .hotspot {
+    --hotspot-line: 1.5333; // 23: Figma draws the 22.5 line at a whole pixel
+    --hotspot-hit: calc((var(--tap-size) - var(--marker-size)) / 2); // 9.5 above and below the 25 row
+
     border: 0;
     &:last-child { border: 0; }
 
     // The +/− sits in a 25 yellow disc on the left: ::before is the disc with the horizontal bar
     // baked into it, ::after is the stroke that turns it into a plus when the item is closed.
+    // The button grows to the 44 tap size through padding that its margins take back.
     &__marker {
       align-items: flex-start;
       gap: var(--space-2); // 16
-      min-height: 0;
-      padding: 0;
+      min-height: var(--tap-size);
+      margin-block: calc(-1 * var(--hotspot-hit));
+      padding: var(--hotspot-hit) 0;
       padding-inline-start: calc(var(--marker-size) + var(--space-2));
 
       &::before {
         right: auto;
         left: 0;
-        top: 0;
+        top: var(--hotspot-hit);
         width: var(--marker-size);
         height: var(--marker-size);
         border-radius: var(--radius-full);
@@ -416,11 +443,12 @@
       &::after {
         right: auto;
         left: calc(var(--marker-size) / 2);
-        top: calc(var(--marker-size) / 2);
+        top: calc(var(--hotspot-hit) + var(--marker-size) / 2);
         width: var(--border-width-rule);
         height: 0.5625rem; // 9
         background: var(--color-primary-dark);
         transform: translate(-50%, -50%);
+        transition: opacity var(--duration-fast) ease;
       }
     }
     &.is-open &__marker::after { opacity: 0; }
@@ -429,20 +457,37 @@
       font-family: var(--font-body);
       font-size: 0.9375rem; // 15
       font-weight: var(--font-weight-semibold);
-      line-height: 1.5;    // 22.5
+      line-height: var(--hotspot-line);
       letter-spacing: -0.02em;
       color: var(--color-text);
     }
 
-    &__card {
+    // The copy unfolds like the pane does, 16 under its title once open
+    &__card,
+    &.is-open &__card {
+      display: grid;
+      grid-template-rows: 0fr;
       max-width: none;
+      margin-top: 0;
       padding-bottom: 0;
+      visibility: hidden;
+      transition:
+        grid-template-rows var(--approach-open-time) var(--ease-out),
+        margin-top var(--approach-open-time) var(--ease-out),
+        visibility 0s linear var(--approach-open-time);
+    }
+    &.is-open &__card {
+      grid-template-rows: 1fr;
       margin-top: var(--space-2); // 16
+      visibility: visible;
+      transition-delay: 0s;
     }
     &__title { display: none; } // the marker label is the heading on phones
     &__text {
+      min-height: 0;
+      overflow: hidden;
       font-size: 0.9375rem; // 15
-      line-height: 1.5;     // 22.5
+      line-height: var(--hotspot-line);
       letter-spacing: -0.03em;
       color: var(--color-text);
     }

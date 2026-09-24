@@ -1,7 +1,7 @@
 // 04-layout/_header.less — solid bar on phones, transparent over hero imagery from lg
 
 .site-header {
-  --header-logo-width: ~"min(13.8125rem, 59vw)"; // 221 at the 375 frame
+  --header-logo-width: ~"min(13.28125rem, 59vw)"; // 212.5: the 221 frame shows the artwork at 96.11%
   --header-logo-top: 0;
   --header-right-top: 0;
   --header-nav-gap: var(--space-4);
@@ -156,7 +156,7 @@
 
 // Mobile menu (Bootstrap offcanvas, themed via --bs-offcanvas-* in 01-settings)
 .site-menu {
-  --header-logo-width: ~"min(13.8125rem, 59vw)"; // the open panel keeps the bar's 221 logo
+  --header-logo-width: ~"min(13.28125rem, 59vw)"; // the open panel keeps the bar's logo
   --header-logo-top: 0;
   background: var(--color-primary-dark);
   &:focus-visible { outline: 0; } // Bootstrap focuses the panel itself on open

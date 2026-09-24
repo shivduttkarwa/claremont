@@ -156,6 +156,8 @@ export function initApproachAccordion(root = document) {
         other.classList.toggle("is-open", on);
         other.querySelector("[data-approach-toggle]")?.setAttribute("aria-expanded", String(on));
       });
+      // reveals folded away at load are only set up once they have a box
+      if (open) Anim.add(pane);
     });
   });
 }
