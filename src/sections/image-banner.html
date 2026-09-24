@@ -4,7 +4,9 @@
      locals: image, alt, width, height -->
 <figure class="feature-banner feature-banner--media-only" data-anim-parallax-trigger>
   <div class="feature-banner__media">
-    <img src="{{ image }}" alt="{{ alt }}" width="{{ width }}" height="{{ height }}" loading="lazy" decoding="async"
-         data-anim="reveal" data-anim-type="scale">
+    <div class="feature-banner__layer" data-anim="parallax" data-anim-centered data-anim-speed="8.33" data-anim-scrub-mobile="0.3">
+      <img src="{{ image }}" alt="{{ alt }}" width="{{ width }}" height="{{ height }}" loading="lazy" decoding="async"
+           data-anim="reveal" data-anim-type="scale">
+    </div>
   </div>
 </figure>

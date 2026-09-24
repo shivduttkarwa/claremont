@@ -357,19 +357,20 @@ function setupParallax(root) {
     bind(el);
     if (el.hasAttribute("data-anim-disable-mobile") && window.innerWidth < 992) return;
     const axis = attr(el, "data-anim-axis", "y");
-    const speed = parseFloat(attr(el, "data-anim-speed", "0")) || 0;
+    const speed = number(el, variant(el, "data-anim-speed"), 0);
     const reverse = el.hasAttribute("data-anim-reverse");
     const scaleAttr = attr(el, "data-anim-scale", null);
-    const scrubAttr = attr(el, "data-anim-scrub", null);
+    const scrubAttr = attr(el, variant(el, "data-anim-scrub"), null);
     const trigger = el.closest("[data-anim-parallax-trigger]") || el;
     const dir = reverse ? -1 : 1;
+    const prop = axis === "x" ? "xPercent" : "yPercent";
 
-    const vars = { ease: "none" };
-    if (axis === "y") vars.yPercent = speed * dir;
-    if (axis === "x") vars.xPercent = speed * dir;
+    // data-anim-centered travels from -speed to +speed, so the layer sits at rest mid-way through the pass
+    const from = { [prop]: el.hasAttribute("data-anim-centered") ? -speed * dir : 0 };
+    const vars = { ease: "none", force3D: true, [prop]: speed * dir };
     if (scaleAttr) vars.scale = parseFloat(scaleAttr);
 
-    gsap.to(el, {
+    gsap.fromTo(el, from, {
       ...vars,
       scrollTrigger: {
         trigger,

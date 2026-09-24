@@ -38,6 +38,18 @@
   object-fit: cover;
 }
 
+// A photo layer that overhangs its frame by @travel above and below, for a centred parallax (data-anim-centered).
+// data-anim-speed = @travel / (100% + 2 × @travel): 10% of overhang is a speed of 8.33.
+.parallax-layer(@travel: 10%) {
+  position: absolute;
+  top: -@travel;
+  left: 0;
+  width: 100%;
+  height: 100% + @travel * 2;
+  will-change: transform;
+  img { .img-cover(); }
+}
+
 // Dock the quick-link subnav to the screen edge of a hero (from lg).
 .subnav-dock(@top) {
   @media (min-width: @bp-lg) {

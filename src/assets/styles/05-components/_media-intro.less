@@ -9,13 +9,15 @@
   @media (min-width: @bp-lg) { padding-block: var(--media-intro-pad-top) var(--media-intro-pad-bottom); }
 
   &__media {
+    position: relative;
     margin: 0 0 var(--space-5);
     overflow: hidden;
     aspect-ratio: 1242 / 371;
     @media (min-width: @bp-lg) { margin-bottom: var(--media-intro-gap); }
     @media (min-width: @bp-xxl) { margin-inline: -0.125rem 0; } // x 198 → 1440
-    img { .img-cover(); }
   }
+
+  &__layer { .parallax-layer(); }
 
   h2 {
     margin: 0 0 var(--space-3);
