@@ -136,7 +136,7 @@
       }
       p {
         font-size: 0.9375rem; // 15
-        line-height: 1.5;     // 22.5
+        line-height: 1.5333;  // 23: Figma draws the 22.5 line at a whole pixel
       }
     }
 
@@ -152,7 +152,10 @@
       mask-image: none;
     }
 
-    &__card { aspect-ratio: 375 / 412; }
+    &__card {
+      aspect-ratio: 375 / 412;
+      &.is-open::after { opacity: 0.8; } // the phone card's tint lets more of the photo through
+    }
 
     &__quote {
       max-width: none;

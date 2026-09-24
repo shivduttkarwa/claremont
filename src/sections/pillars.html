@@ -1,36 +1,39 @@
 <!-- @wagtail-block: pillars
      title: CharBlock(required)
-     items: ListBlock(StructBlock(heading:CharBlock, statement:RichTextBlock, text:TextBlock)) -->
-<section class="pillars bg-light" aria-labelledby="pillars-title" data-scroller>
+     items: ListBlock(StructBlock(heading:CharBlock, statement:RichTextBlock, text:TextBlock))
+     One list for both layouts: a three-column grid from lg, a one-card Swiper below it (data-slider-below-lg). -->
+<section class="pillars bg-light" aria-labelledby="pillars-title" data-slider data-slider-below-lg>
   <div class="container">
     <div class="pillars__header">
       <h2 id="pillars-title" data-anim="split" data-anim-type="chars-soft">What matters to us</h2>
       <div class="pillars__arrows arrow-group">
-        <button class="arrow-btn arrow-btn--prev" type="button" aria-label="Previous" data-scroller-prev><svg class="icon"><use href="#icon-arrow-right"></use></svg></button>
-        <button class="arrow-btn arrow-btn--next" type="button" aria-label="Next" data-scroller-next><svg class="icon"><use href="#icon-arrow-right"></use></svg></button>
+        <button class="arrow-btn arrow-btn--prev" type="button" aria-label="Previous" data-slider-prev><svg class="icon"><use href="#icon-arrow-right"></use></svg></button>
+        <button class="arrow-btn arrow-btn--next" type="button" aria-label="Next" data-slider-next><svg class="icon"><use href="#icon-arrow-right"></use></svg></button>
       </div>
     </div>
   </div>
-  <div class="pillars__grid" data-scroller-track data-scroller-start="1" data-anim="sequence" data-anim-type="fade-up" data-anim-start="top 50%" data-anim-stagger="0.15" data-anim-mobile="each">
-    <div class="pillars__item" data-anim-group="fade-up">
-      <h3 data-anim-order="0">Our mission</h3>
-      <div data-anim-item>
-        <p class="pillars__statement">Inspire for <em>life</em></p>
-        <p class="pillars__text">To inspire a life-long love of learning.</p>
+  <div class="pillars__grid swiper" data-slider-start="1" data-slider-per-view="1" data-anim="sequence" data-anim-type="fade-up" data-anim-start="top 50%" data-anim-stagger="0.15" data-anim-mobile="each">
+    <div class="pillars__track swiper-wrapper">
+      <div class="pillars__item swiper-slide" data-anim-group="fade-up">
+        <h3 data-anim-order="0">Our mission</h3>
+        <div data-anim-item>
+          <p class="pillars__statement">Inspire for <em>life</em></p>
+          <p class="pillars__text">To inspire a life-long love of learning.</p>
+        </div>
       </div>
-    </div>
-    <div class="pillars__item" data-anim-group="fade-up">
-      <h3 data-anim-order="1">Our vision</h3>
-      <div data-anim-item>
-        <p class="pillars__statement">Impact that <em>matters</em></p>
-        <p class="pillars__text">To teach every student that they matter, so they have the confidence to make an impact.</p>
+      <div class="pillars__item swiper-slide" data-anim-group="fade-up">
+        <h3 data-anim-order="1">Our vision</h3>
+        <div data-anim-item>
+          <p class="pillars__statement">Impact that <em>matters</em></p>
+          <p class="pillars__text">To teach every student that they matter, so they have the confidence to make an impact.</p>
+        </div>
       </div>
-    </div>
-    <div class="pillars__item" data-anim-group="fade-up">
-      <h3 data-anim-order="2">Our core values</h3>
-      <div data-anim-item>
-        <p class="pillars__statement">Innovation<br>Collaboration<br>Compassion</p>
-        <p class="pillars__text">Our core values drive us and define us.</p>
+      <div class="pillars__item swiper-slide" data-anim-group="fade-up">
+        <h3 data-anim-order="2">Our core values</h3>
+        <div data-anim-item>
+          <p class="pillars__statement">Innovation<br>Collaboration<br>Compassion</p>
+          <p class="pillars__text">Our core values drive us and define us.</p>
+        </div>
       </div>
     </div>
   </div>

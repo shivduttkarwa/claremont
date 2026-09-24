@@ -41,32 +41,65 @@ export function initSliders(root = document) {
   root.querySelectorAll("[data-slider]").forEach((section) => {
     const el = section.querySelector(".swiper");
     if (!el) return;
-    const edge = () => (el.hasAttribute("data-slider-edge") ? containerEdge(section, el) : 0);
-    const tail = () => (el.hasAttribute("data-slider-edge") ? latticeTail(el, edge()) : 0);
+    // data-slider-edge="lg" keeps the .container-edge snap for desktop only: phones run full-bleed
+    const edgeOn = () => {
+      const value = el.getAttribute("data-slider-edge");
+      return value !== null && (value !== "lg" || window.matchMedia("(min-width: 992px)").matches);
+    };
+    const edge = () => (edgeOn() ? containerEdge(section, el) : 0);
+    const tail = () => (edgeOn() ? latticeTail(el, edge()) : 0);
 
-    el.swiper = new Swiper(el, {
-      modules: [Navigation, A11y],
-      speed: 900,
-      slidesPerView: "auto",
-      spaceBetween: 0,
-      resistance: false,
-      initialSlide: parseInt(el.dataset.sliderStart || "0", 10),
-      slidesOffsetBefore: edge(),
-      slidesOffsetAfter: tail(),
-      navigation: {
-        prevEl: section.querySelector("[data-slider-prev]"),
-        nextEl: section.querySelector("[data-slider-next]"),
-        disabledClass: "is-disabled",
-      },
-      on: {
-        resize: (s) => {
-          s.params.slidesOffsetBefore = edge();
-          s.params.slidesOffsetAfter = tail();
-          s.update();
+    // data-slider-open-active: without hover, the active slide's card is the open one (its quote rises
+    // as the slide arrives and the previous card's drops), the way hovering opens a card on desktop
+    const openActive = (swiper) => {
+      if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+      const sync = (s) => s.slides.forEach((slide, i) => slide.firstElementChild?.classList.toggle("is-open", i === s.activeIndex));
+      swiper.on("slideChange", sync);
+      sync(swiper);
+    };
+
+    const build = () => {
+      el.swiper = new Swiper(el, {
+        modules: [Navigation, A11y],
+        speed: 900,
+        slidesPerView: el.dataset.sliderPerView ? parseFloat(el.dataset.sliderPerView) : "auto",
+        spaceBetween: 0,
+        resistance: false,
+        initialSlide: parseInt(el.dataset.sliderStart || "0", 10),
+        slidesOffsetBefore: edge(),
+        slidesOffsetAfter: tail(),
+        navigation: {
+          prevEl: section.querySelector("[data-slider-prev]"),
+          nextEl: section.querySelector("[data-slider-next]"),
+          disabledClass: "is-disabled",
         },
-      },
-    });
+        on: {
+          resize: (s) => {
+            s.params.slidesOffsetBefore = edge();
+            s.params.slidesOffsetAfter = tail();
+            s.update();
+          },
+        },
+      });
+      if (el.hasAttribute("data-slider-dim")) dimClipped(el.swiper);
+      if (el.hasAttribute("data-slider-open-active")) openActive(el.swiper);
+    };
 
-    if (el.hasAttribute("data-slider-dim")) dimClipped(el.swiper);
+    // data-slider-below-lg: one list of items is a slider on phones and tablets only; from lg the
+    // stylesheet lays the same slides out itself, so the Swiper is torn down there (styles cleaned)
+    if (section.hasAttribute("data-slider-below-lg")) {
+      const phone = window.matchMedia("(max-width: 991.98px)");
+      const sync = () => {
+        if (phone.matches && !el.swiper) build();
+        else if (!phone.matches && el.swiper) {
+          el.swiper.destroy(true, true);
+          el.swiper = null;
+        }
+      };
+      phone.addEventListener("change", sync);
+      sync();
+      return;
+    }
+    build();
   });
 }

@@ -2,8 +2,9 @@
      title:  CharBlock(required)
      intro:  TextBlock
      slides: ListBlock(StructBlock(image:ImageChooserBlock, alt:CharBlock, quote:TextBlock))
-     The slider is Swiper (data-slider): slides snap to the .container edge, the second one first.
-     Every card carries a quote; hovering a card slides its quote up and drops the previous one. -->
+     The slider is Swiper (data-slider): slides snap to the .container edge from lg (full-bleed on phones), the second one first.
+     Every card carries a quote; hovering a card slides its quote up and drops the previous one. Without hover
+     (phones), the active slide's card is the open one (data-slider-open-active). -->
 <section class="testimonials" aria-labelledby="testimonials-title" data-slider>
   <div class="container">
     <div class="testimonials__header">
@@ -18,7 +19,7 @@
     </div>
   </div>
 
-  <div class="swiper testimonials__slider" data-slider-start="1" data-slider-edge>
+  <div class="swiper testimonials__slider" data-slider-start="1" data-slider-edge="lg" data-slider-open-active>
     <ul class="swiper-wrapper testimonials__track" data-anim="sequence" data-anim-type="wipe-up" data-anim-start="top 65%" data-anim-stagger="0.2" data-quote-cards>
       <li class="swiper-slide testimonials__slide" data-anim-item>
         <div class="testimonials__card" data-quote-card>

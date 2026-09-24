@@ -22,9 +22,17 @@
     @media (min-width: @bp-lg) { display: none; }
   }
 
+  // The .swiper box clips; from lg the reveals travel past the columns' bottom edge, so it must not
   &__grid {
-    display: grid;
-    @media (min-width: @bp-lg) { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    @media (min-width: @bp-lg) { overflow: visible; }
+  }
+
+  // Swiper's own flex track below lg; the three columns from lg
+  &__track {
+    @media (min-width: @bp-lg) {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
   }
 
   &__item {
@@ -67,7 +75,7 @@
 
 // ---------------------------------------------------------------------
 // Phones: the designer redrew this as a one-card carousel (node 2101:13967) — heading, a pair of
-// arrows across the full width, then one mission/vision/values card at a time.
+// arrows across the full width, then one mission/vision/values card at a time (Swiper, slider.js).
 // ---------------------------------------------------------------------
 @media @upto-lg {
   .pillars {
@@ -91,11 +99,7 @@
     }
 
     &__grid {
-      .hide-scrollbar();
-      display: flex;
-      overflow-x: auto;
-      scroll-snap-type: x mandatory;
-      scroll-padding-inline: 0;
+      --swiper-wrapper-transition-timing-function: var(--ease-out); // the card glides to rest
     }
 
     &__item {
@@ -104,7 +108,6 @@
       gap: 5.625rem; // 90
       padding: 3.75rem var(--container-gutter) 0; // 60
       border-bottom: 0;
-      scroll-snap-align: start;
 
       h3 {
         font-family: var(--font-body);

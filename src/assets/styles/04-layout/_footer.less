@@ -215,25 +215,86 @@
   }
 }
 
-// Phones: the buttons stack full width and the social row centres under them (node 2087:12253)
+// ---------------------------------------------------------------------
+// Phones: one column (node 2087:12253). Logo, about, the two buttons and the social row sit 30 apart,
+// the columns 60 apart, and the acknowledgement and copyright run as one 15/23 block 10 apart.
+// ---------------------------------------------------------------------
 @media @upto-lg {
   .site-footer {
+    --footer-text: 0.9375rem;        // 15
+    --footer-small: 0.875rem;        // 14 labels
+    --footer-leading-sm: 1.05625rem; // 16.9
+    --footer-stack: 1.875rem;        // 30 inside the about column
     padding-block: 2.5rem ~"calc(2.5rem + env(safe-area-inset-bottom))"; // 40
-    --footer-text: 0.9375rem; // 15 on the phone frame
-    --footer-small: 0.875rem; // 14 labels
-    line-height: 1.21333;     // 18.2 on 15
+    line-height: 1.21333; // 18.2 on 15
 
-    &__ack { line-height: 1.5; } // 22.5 — the acknowledgement is the one block set loose
+    h2 {
+      font-size: 1rem;        // 16
+      line-height: 1.2125rem; // 19.4
+    }
 
+    &__columns { gap: 3.75rem 0; } // 60
+
+    &__logo {
+      max-width: 20.125rem; // 322: the 335 frame shows the artwork at 96.11%
+      height: auto;
+      margin-bottom: var(--footer-stack);
+    }
+
+    &__about p {
+      max-width: 20.9375rem; // 335: the frame's measure, so the five lines break the same on wider phones
+      margin-bottom: var(--footer-stack);
+      font-size: 0.8125rem; // 13
+      line-height: 1.25rem; // 20
+    }
+
+    // The design's 41.3 button, with the 44 hit area .tap-area() already gives it
     &__actions {
-      gap: var(--space-2);
-      .btn { flex: 1 1 100%; justify-content: center; }
+      gap: var(--footer-stack);
+      margin-bottom: calc(var(--footer-stack) - 0.375rem); // the 44 social anchors overhang their 32 glyphs by 6
+      .btn {
+        flex: 1 1 100%;
+        justify-content: center;
+        --bs-btn-font-size: 0.8606rem; // 13.77
+        --bs-btn-padding-x: 1.2913rem;
+        --bs-btn-padding-y: calc((2.5825rem - 1.2em - var(--bs-btn-border-width) * 2) / 2);
+      }
     }
 
     &__social {
       justify-content: center;
-      gap: var(--space-4);
+      gap: 1.75rem; // 28 between the 44 anchors puts the glyphs 72 apart
       margin-left: 0;
+      margin-bottom: -0.375rem;
+    }
+
+    // The text-link lists keep the design's pitch with WCAG AA 24 targets (data-tap-aa): 30 rows for
+    // the quick links; the contact values take the 44 hit area where nothing else sits within it
+    &__links {
+      margin-block: -0.375rem; // the 30 boxes overhang the 18 rows by 6
+      a:not(.btn) { min-height: 1.875rem; } // 30
+    }
+    &__contact {
+      gap: var(--space-2); // 16
+      .site-footer__label { margin-bottom: 0.25rem; } // 4
+      p a {
+        .tap-area();
+        min-height: 0;
+      }
+    }
+    &__stack p a { --tap-size: 1.5rem; } // the two emails are 18 apart: 24 areas, the AA minimum
+
+    &__bottom {
+      gap: 0.625rem;       // 10
+      margin-top: 3.75rem; // 60
+    }
+    &__ack,
+    &__copy {
+      max-width: 20.9375rem; // 335: the frame's measure, so the lines break the same on wider phones
+      font-family: var(--font-body);
+      font-size: 0.9375rem; // 15
+      line-height: 1.5333;  // 23: Figma draws the 22.5 line at a whole pixel
+      letter-spacing: var(--letter-spacing-body);
     }
   }
 }
