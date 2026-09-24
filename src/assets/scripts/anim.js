@@ -28,6 +28,7 @@ const DEFAULTS = {
 const REVEAL = {
   "fade-up":    { from: { y: 30, autoAlpha: 0 },                to: { y: 0, autoAlpha: 1 } },
   "fade":       { from: { autoAlpha: 0 },                       to: { autoAlpha: 1 } },
+  "fade-soft":  { from: { autoAlpha: 0 },                       to: { autoAlpha: 1, duration: 0.5, ease: "power1.out" } }, // header items
   "from-left":  { from: { x: "-15%", autoAlpha: 0 },            to: { x: "0%", autoAlpha: 1 } },
   "from-right": { from: { x: "15%", autoAlpha: 0 },             to: { x: "0%", autoAlpha: 1 } },
   "enter-right": { from: { x: "110%", autoAlpha: 0 },           to: { x: "0%", autoAlpha: 1, duration: 0.9, ease: "expo.out" } },
@@ -436,6 +437,7 @@ const Anim = {
     if (started) return this;
     started = true;
     document.documentElement.classList.add("anim-ready");
+    document.documentElement.setAttribute("data-anim-live", "");
 
     if (reduced()) {
       document.documentElement.classList.add("anim-reduced");
