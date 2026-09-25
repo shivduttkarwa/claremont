@@ -93,3 +93,101 @@
     gap: var(--space-2);
   }
 }
+
+// Columns that open in place, one at a time (the Preparatory teaching approach): a stacked accordion
+// below lg, the four tall columns from lg with the open one blue and its copy settled at the bottom
+.link-columns--reveal {
+  --columns-body-width: 19rem;    // 304
+  --columns-pad-bottom: 3rem;     // 48 under the copy
+
+  .link-columns__grid { grid-template-columns: minmax(0, 1fr); }
+
+  .link-columns__item--body-284 { --columns-body-width: 17.75rem; }   // Figma's copy box differs per column
+  .link-columns__item--body-301 { --columns-body-width: 18.8125rem; }
+  .link-columns__item--body-311 { --columns-body-width: 19.4375rem; }
+  .link-columns__item--body-323 { --columns-body-width: 20.1875rem; }
+
+  .link-columns__item:not(.link-columns__item--media) {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 0;
+    transition: background-color var(--duration-base) ease;
+    &.is-open { background: var(--color-blue); }
+  }
+
+  @media (min-width: @bp-sm) and (max-width: 991.98px) {
+    .link-columns__item:nth-child(odd) { border-right: 0; }
+    .link-columns__item--media { aspect-ratio: 4 / 3; }
+  }
+
+  .link-columns__head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-2);
+    width: 100%;
+    min-height: var(--tap-size);
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    letter-spacing: inherit;
+    text-align: left;
+    cursor: pointer;
+    span {
+      @media (min-width: @bp-lg) { max-width: var(--columns-title-width); }
+    }
+    .icon { flex: none; }
+  }
+
+  h3 { max-width: none; }
+
+  .is-open .icon { transform: rotate(90deg); }
+
+  .link-columns__panel {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows var(--duration-slow) var(--ease-out);
+  }
+  .is-open > .link-columns__panel { grid-template-rows: 1fr; }
+
+  .link-columns__body {
+    min-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: opacity var(--duration-base) ease;
+    p {
+      margin: 0;
+      padding-top: 0.625rem; // paragraph spacing 10
+    }
+    p:first-child { padding-top: var(--space-3); }
+    strong {
+      font-family: var(--font-ui);
+      font-weight: var(--font-weight-semibold);
+      letter-spacing: var(--letter-spacing-ui);
+    }
+  }
+
+  .is-open .link-columns__body {
+    opacity: 1;
+    transition-delay: 0.1s;
+  }
+
+  @media (min-width: @bp-lg) {
+    .link-columns__grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+    .link-columns__item:not(.link-columns__item--media) {
+      min-height: var(--columns-height);
+      padding-bottom: var(--columns-pad-bottom);
+    }
+
+    .link-columns__body {
+      max-width: var(--columns-body-width);
+      font-size: 0.9375rem; // 15
+      line-height: 1.5;     // 22.5
+      p:first-child { padding-top: 0; }
+    }
+  }
+}

@@ -56,14 +56,15 @@
     &.is-clipped > * { opacity: var(--scroller-dim); }
   }
 
-  // Blue link card: title at (25, 21), arrow frame 20 down and 16 in from the right
+  // Blue link card: title at (25, 21), arrow frame 20 down and 16 in from the right, copy 37 above the foot
   &__link {
     display: flex;
-    align-items: flex-start;
+    flex-direction: column;
     justify-content: space-between;
-    gap: var(--space-2);
+    gap: var(--space-4);
+    height: 100%;
     min-height: 16rem;
-    padding: 1.3125rem 1rem var(--space-4) 1.5625rem;
+    padding: 1.3125rem 1rem 2.3125rem 1.5625rem;
     background: var(--color-secondary);
     color: var(--color-heading);
     @media (min-width: @bp-lg) { min-height: var(--scroller-card-height); }
@@ -75,16 +76,51 @@
       line-height: var(--line-height-heading);
     }
     .icon {
+      flex: none;
       width: 2rem;
       height: 1.625rem;
       margin: -0.0625rem -0.375rem 0 0;
       transition: transform var(--duration-base) var(--ease-out);
     }
     &:hover,
-    &:focus-visible {
-      background: var(--color-blue-hover);
-      color: var(--color-heading);
-      .icon { transform: translate(0.25rem, -0.25rem); }
+    &:focus-visible { color: var(--color-heading); }
+  }
+
+  &__head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-2);
+  }
+
+  // With a mouse from lg only the open card shows its copy, which rises from the card foot
+  @media @fine-lg {
+    &__panel {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows var(--duration-slow) var(--ease-out);
+    }
+    &__text {
+      min-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: opacity var(--duration-base) ease;
+    }
+    &__card.is-open &__panel { grid-template-rows: 1fr; }
+    &__card.is-open &__text {
+      opacity: 1;
+      transition-delay: 0.1s;
+    }
+    &__card.is-open &__link .icon { transform: rotate(90deg); }
+  }
+
+  &__text {
+    max-width: 17.0625rem; // 273
+    margin: 0;
+    color: var(--color-text);
+    @media (min-width: @bp-md) {
+      font-size: 0.9375rem; // 15
+      line-height: 1.5;     // 22.5
     }
   }
 
@@ -188,6 +224,85 @@
         font-weight: var(--font-weight-regular);
         letter-spacing: var(--letter-spacing-body);
       }
+    }
+  }
+}
+
+// ---------------------------------------------------------------------
+// Phones: the designer redrew the activity cards as an accordion (node 2149:6282) — ruled blue rows
+// under the heading, the open one unfolding its copy 28 under the title. No carousel arrows.
+// ---------------------------------------------------------------------
+@media @upto-lg {
+  .scroller--reveal {
+    padding: 3.75rem 0 0; // 60
+    background: var(--color-blue-light);
+
+    .scroller__header {
+      display: block;
+      margin-bottom: 1.875rem; // 30
+      h2 {
+        font-size: 2rem;   // 32
+        line-height: 1.05; // 33.6
+      }
+      .arrow-group { display: none; }
+    }
+
+    .scroller__track {
+      display: block;
+      overflow: visible;
+      background: var(--color-secondary);
+    }
+
+    .scroller__card {
+      width: auto;
+      &.is-clipped > * { opacity: 1; }
+    }
+
+    .scroller__link {
+      display: block;
+      height: auto;
+      min-height: 0;
+      padding: 1.625rem var(--container-gutter); // 26
+      border-top: var(--border-width-rule) solid var(--color-text);
+      background: none;
+
+      h3 {
+        max-width: none;
+        font-size: var(--font-size-xl); // 25
+        line-height: 1.12;              // 28: Figma draws its 27.5 line at a whole pixel
+      }
+      .icon {
+        width: 1.625rem; // 26
+        height: 1.625rem;
+        margin: 0;
+        transition: transform var(--duration-slow) var(--ease-out);
+      }
+    }
+
+    .scroller__panel {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows var(--duration-slow) var(--ease-out);
+    }
+
+    .scroller__text {
+      min-height: 0;
+      max-width: none;
+      overflow: hidden;
+      opacity: 0;
+      font-size: 0.9375rem; // 15
+      line-height: 1.5333;  // 23: Figma draws the 22.5 line at a whole pixel
+      transition: opacity var(--duration-base) ease;
+    }
+
+    .scroller__card.is-open {
+      .scroller__panel { grid-template-rows: 1fr; }
+      .scroller__text {
+        padding-top: 1.75rem; // 28
+        opacity: 1;
+        transition-delay: 0.1s;
+      }
+      .scroller__link .icon { transform: rotate(90deg); }
     }
   }
 }

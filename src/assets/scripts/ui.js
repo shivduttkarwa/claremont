@@ -162,6 +162,60 @@ export function initApproachAccordion(root = document) {
   });
 }
 
+// One column open at a time: hover or click opens one from lg (one always stays open), a tap toggles below lg
+export function initRevealColumns(root = document) {
+  const desktop = window.matchMedia("(min-width: 992px)");
+  const mouse = window.matchMedia("(hover: hover) and (pointer: fine)");
+  root.querySelectorAll("[data-reveal-columns]").forEach((section) => {
+    const items = [...section.querySelectorAll(".link-columns__item:has([aria-expanded])")];
+    const open = (item, on = true) => {
+      items.forEach((other) => {
+        const state = other === item && on;
+        other.classList.toggle("is-open", state);
+        other.querySelector("[aria-expanded]")?.setAttribute("aria-expanded", String(state));
+      });
+    };
+    items.forEach((item) => {
+      item.querySelector("[aria-expanded]")?.addEventListener("click", () => {
+        open(item, desktop.matches || !item.classList.contains("is-open"));
+      });
+      item.addEventListener("mouseenter", () => {
+        if (desktop.matches && mouse.matches) open(item);
+      });
+    });
+  });
+}
+
+// Cards whose copy shows on the open one only: with a mouse from lg the first is open at rest and hover or
+// focus opens another; below lg the cards are an accordion, so a tap toggles the copy instead of following the link
+export function initRevealCards(root = document) {
+  const mouse = window.matchMedia("(min-width: 992px) and (hover: hover) and (pointer: fine)");
+  const phone = window.matchMedia("(max-width: 991.98px)");
+  root.querySelectorAll("[data-reveal-cards]").forEach((track) => {
+    const cards = [...track.children];
+    const links = cards.map((card) => card.querySelector("a"));
+    const open = (card) => cards.forEach((other) => other.classList.toggle("is-open", other === card));
+    const sync = () =>
+      cards.forEach((card, i) => {
+        if (phone.matches && card.querySelector(".scroller__panel")) links[i].setAttribute("aria-expanded", String(card.classList.contains("is-open")));
+        else links[i].removeAttribute("aria-expanded");
+      });
+    cards.forEach((card, i) => {
+      card.addEventListener("mouseenter", () => mouse.matches && open(card));
+      card.addEventListener("focusin", () => mouse.matches && open(card));
+      links[i].addEventListener("click", (event) => {
+        if (!phone.matches || !card.querySelector(".scroller__panel")) return;
+        event.preventDefault();
+        if (card.classList.contains("is-open")) card.classList.remove("is-open");
+        else open(card);
+        sync();
+      });
+    });
+    phone.addEventListener("change", sync);
+    sync();
+  });
+}
+
 // Headroom header: pinned once scrolled past its own height, hidden on the way down, shown on the way up
 export function initStickyHeader(header = document.querySelector(".site-header")) {
   if (!header) return;

@@ -1,10 +1,12 @@
 <!-- @wagtail-block: mosaic
      title: CharBlock(required)
      intro: TextBlock
-     cells: StreamBlock(photo:ImageChooserBlock | card:StructBlock(title:RichTextBlock, text:TextBlock, icon:ChoiceBlock, accent:BooleanBlock)),
-            each with size:ChoiceBlock(square | wide | tall)
-     Order matters: photo, wide card, photo, tall card, photo, wide card, wide photo, tall card, wide card, photo. -->
-<section class="mosaic" aria-labelledby="art-title">
+     items: ListBlock(StructBlock(photo:ImageChooserBlock, title:RichTextBlock, text:TextBlock, icon:ChoiceBlock, accent:BooleanBlock)), five items
+     One list feeds both layouts: each item (a photo and its card) is one Swiper slide below lg, and from lg the
+     slide is display: contents so its two cells fall into the mosaic. The template takes each cell's size and
+     whether the card or the photo comes first from the item's position:
+     1 photo + wide card · 2 photo + tall card · 3 photo + wide card · 4 wide photo + tall card · 5 wide card + photo -->
+<section class="mosaic" aria-labelledby="art-title" data-slider data-slider-below-lg>
   <div class="container">
     <div class="mosaic__header">
       <div class="row g-4 g-lg-0">
@@ -17,51 +19,68 @@
       </div>
     </div>
 
-    <div class="mosaic__grid" data-anim-group="fade-up">
-      <div class="mosaic__cell mosaic__cell--media">
-        <img src="assets/images/k-6-primary/mosaic-square.webp" alt="Two Claremont students in green hats, arm in arm and laughing" width="612" height="612" loading="lazy" decoding="async">
-      </div>
-      <article class="mosaic__cell mosaic__cell--wide">
-        <div class="mosaic__card mosaic__card--accent">
-          <div class="mosaic__head"><h3>Explicit teaching</h3><svg class="icon" aria-hidden="true"><use href="#icon-book-open"></use></svg></div>
-          <p>Explicit Teaching is used to make learning clear, explicit and purposeful. Teachers model new skills, provide guided practice and check understanding before students apply their learning independently. This approach builds strong foundations, mastery and confidence, while allowing teachers to respond quickly to individual learning needs.</p>
+    <div class="mosaic__arrows arrow-group">
+      <button class="arrow-btn arrow-btn--prev" type="button" aria-label="Previous" data-slider-prev><svg class="icon"><use href="#icon-arrow-right"></use></svg></button>
+      <button class="arrow-btn arrow-btn--next" type="button" aria-label="Next" data-slider-next><svg class="icon"><use href="#icon-arrow-right"></use></svg></button>
+    </div>
+
+    <div class="mosaic__slider swiper" data-slider-per-view="1">
+      <div class="mosaic__grid swiper-wrapper">
+        <div class="mosaic__slide swiper-slide" data-anim-group="fade-up">
+          <div class="mosaic__cell mosaic__cell--media">
+            <img src="assets/images/k-6-primary/mosaic-square.webp" alt="Two Claremont students in green hats, arm in arm and laughing" width="612" height="612" loading="lazy" decoding="async">
+          </div>
+          <article class="mosaic__cell mosaic__cell--wide">
+            <div class="mosaic__card mosaic__card--accent">
+              <div class="mosaic__head"><h3>Explicit teaching</h3><svg class="icon" aria-hidden="true"><use href="#icon-book-open"></use></svg></div>
+              <p>Explicit Teaching is used to make learning clear, explicit and purposeful. Teachers model new skills, provide guided practice and check understanding before students apply their learning independently. This approach builds strong foundations, mastery and confidence, while allowing teachers to respond quickly to individual learning needs.</p>
+            </div>
+          </article>
         </div>
-      </article>
-      <div class="mosaic__cell mosaic__cell--media">
-        <img src="assets/images/k-6-primary/mosaic-square.webp" alt="" width="612" height="612" loading="lazy" decoding="async">
-      </div>
-      <article class="mosaic__cell mosaic__cell--tall">
-        <div class="mosaic__card mosaic__card--accent">
-          <div class="mosaic__head"><h3>Daily reviews</h3><svg class="icon" aria-hidden="true"><use href="#icon-calendar-grid"></use></svg></div>
-          <p>Daily Review strengthens learning by revisiting key knowledge and skills regularly. Through short, focused activities, students consolidate previous learning, build fluency and develop confidence, helping knowledge become secure.</p>
+        <div class="mosaic__slide swiper-slide" data-anim-group="fade-up">
+          <div class="mosaic__cell mosaic__cell--media">
+            <img src="assets/images/k-6-primary/mosaic-square.webp" alt="" width="612" height="612" loading="lazy" decoding="async">
+          </div>
+          <article class="mosaic__cell mosaic__cell--tall">
+            <div class="mosaic__card mosaic__card--accent">
+              <div class="mosaic__head"><h3>Daily reviews</h3><svg class="icon" aria-hidden="true"><use href="#icon-calendar-grid"></use></svg></div>
+              <p>Daily Review strengthens learning by revisiting key knowledge and skills regularly. Through short, focused activities, students consolidate previous learning, build fluency and develop confidence, helping knowledge become secure.</p>
+            </div>
+          </article>
         </div>
-      </article>
-      <div class="mosaic__cell mosaic__cell--media">
-        <img src="assets/images/k-6-primary/mosaic-square-alt.webp" alt="" width="610" height="608" loading="lazy" decoding="async">
-      </div>
-      <article class="mosaic__cell mosaic__cell--wide">
-        <div class="mosaic__card">
-          <div class="mosaic__head"><h3>Immersive learning</h3><svg class="icon" aria-hidden="true"><use href="#icon-blocks"></use></svg></div>
-          <p>Learning comes to life through engaging, hands-on experiences that inspire students to explore, create and think critically. Through practical investigations, STEM challenges, robotics, Mathematics and Creative Arts, students apply their learning in meaningful ways, develop confidence and build the problem-solving skills needed for success in an ever-changing world.</p>
+        <div class="mosaic__slide swiper-slide" data-anim-group="fade-up">
+          <div class="mosaic__cell mosaic__cell--media">
+            <img src="assets/images/k-6-primary/mosaic-square-alt.webp" alt="" width="610" height="608" loading="lazy" decoding="async">
+          </div>
+          <article class="mosaic__cell mosaic__cell--wide">
+            <div class="mosaic__card">
+              <div class="mosaic__head"><h3>Immersive learning</h3><svg class="icon" aria-hidden="true"><use href="#icon-blocks"></use></svg></div>
+              <p>Learning comes to life through engaging, hands-on experiences that inspire students to explore, create and think critically. Through practical investigations, STEM challenges, robotics, Mathematics and Creative Arts, students apply their learning in meaningful ways, develop confidence and build the problem-solving skills needed for success in an ever-changing world.</p>
+            </div>
+          </article>
         </div>
-      </article>
-      <div class="mosaic__cell mosaic__cell--media mosaic__cell--wide">
-        <img src="assets/images/k-6-primary/mosaic-wide.webp" alt="" width="1234" height="612" loading="lazy" decoding="async">
-      </div>
-      <article class="mosaic__cell mosaic__cell--tall">
-        <div class="mosaic__card mosaic__card--accent">
-          <div class="mosaic__head"><h3>Think deeply,<br>learn confidently</h3><svg class="icon" aria-hidden="true"><use href="#icon-brain"></use></svg></div>
-          <p>We teach students to think deeply in all learning areas, ask questions and become aware of how they learn. Through purposeful learning experiences, students learn to plan, monitor and reflect on their thinking, develop effective strategies and build the confidence to approach challenges independently.</p>
+        <div class="mosaic__slide swiper-slide" data-anim-group="fade-up">
+          <div class="mosaic__cell mosaic__cell--media mosaic__cell--wide">
+            <img src="assets/images/k-6-primary/mosaic-wide.webp" alt="" width="1234" height="612" loading="lazy" decoding="async">
+          </div>
+          <article class="mosaic__cell mosaic__cell--tall">
+            <div class="mosaic__card mosaic__card--accent">
+              <div class="mosaic__head"><h3>Think deeply,<br>learn confidently</h3><svg class="icon" aria-hidden="true"><use href="#icon-brain"></use></svg></div>
+              <p>We teach students to think deeply in all learning areas, ask questions and become aware of how they learn. Through purposeful learning experiences, students learn to plan, monitor and reflect on their thinking, develop effective strategies and build the confidence to approach challenges independently.</p>
+            </div>
+          </article>
         </div>
-      </article>
-      <article class="mosaic__cell mosaic__cell--wide">
-        <div class="mosaic__card">
-          <div class="mosaic__head"><h3>The power of challenge</h3><svg class="icon" aria-hidden="true"><use href="#icon-bolt"></use></svg></div>
-          <p>At Claremont College, we provide learning experiences informed by the work of James Nottingham and Lev Vygotsky, stretching students beyond what they can do independently while providing the support they need to succeed. Students are encouraged to persist through challenge and see mistakes as valuable opportunities to learn, build resilience and grow in confidence.</p>
+        <div class="mosaic__slide swiper-slide" data-anim-group="fade-up">
+          <article class="mosaic__cell mosaic__cell--wide">
+            <div class="mosaic__card">
+              <div class="mosaic__head"><h3>The power of challenge</h3><svg class="icon" aria-hidden="true"><use href="#icon-bolt"></use></svg></div>
+              <p>At Claremont College, we provide learning experiences informed by the work of James Nottingham and Lev Vygotsky, stretching students beyond what they can do independently while providing the support they need to succeed. Students are encouraged to persist through challenge and see mistakes as valuable opportunities to learn, build resilience and grow in confidence.</p>
+            </div>
+          </article>
+          <div class="mosaic__cell mosaic__cell--media">
+            <img src="assets/images/k-6-primary/mosaic-square.webp" alt="" width="612" height="612" loading="lazy" decoding="async">
+          </div>
         </div>
-      </article>
-      <div class="mosaic__cell mosaic__cell--media">
-        <img src="assets/images/k-6-primary/mosaic-square.webp" alt="" width="612" height="612" loading="lazy" decoding="async">
       </div>
     </div>
   </div>

@@ -24,14 +24,29 @@
     }
   }
 
+  // The carousel is a phone treatment; the mosaic needs no arrows
+  &__arrows {
+    @media (min-width: @bp-lg) { display: none; }
+  }
+
+  // The .swiper box clips; from lg the reveals travel past the grid's edges, so it must not
+  &__slider {
+    @media (min-width: @bp-lg) { overflow: visible; }
+  }
+
+  // Swiper's own flex track below lg; the mosaic from lg, where each photo + card pair steps aside
   &__grid {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    grid-auto-flow: row dense;
-    gap: var(--mosaic-gap);
-    @media (min-width: @bp-sm) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    @media (min-width: @bp-lg) { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    @media (min-width: @bp-lg) {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-auto-flow: row dense;
+      gap: var(--mosaic-gap);
+    }
     @media (min-width: @bp-xxl) { grid-template-rows: 19rem 19rem 19.125rem 19.125rem; } // rows start 233 / 543 / 853 / 1165
+  }
+
+  &__slide {
+    @media (min-width: @bp-lg) { display: contents; }
   }
 
   &__cell {
@@ -113,5 +128,82 @@
     align-items: flex-start;
     justify-content: space-between;
     gap: var(--space-2);
+  }
+}
+
+// ---------------------------------------------------------------------
+// Phones: the designer redrew the mosaic as a one-slide carousel (node 2232:5523) — heading and intro,
+// full-width arrows, then each photo (375 × 300) over its blue card, one pair at a time (Swiper).
+// ---------------------------------------------------------------------
+@media @upto-lg {
+  .mosaic {
+    padding-block: 3.75rem 0; // 60
+    background: var(--color-blue-light);
+
+    &__header {
+      margin-bottom: 3.125rem; // 50
+      h2 {
+        margin-bottom: 1.25rem; // 20
+        font-size: 2rem;        // 32
+        line-height: 1.05;      // 33.6
+      }
+      p {
+        font-size: 0.9375rem; // 15
+        line-height: 1.5333;  // 23: Figma draws the 22.5 line at a whole pixel
+      }
+      .row { --bs-gutter-y: 0; }
+    }
+
+    &__arrows {
+      justify-content: space-between;
+      margin-bottom: 1.25rem; // 20
+    }
+
+    &__slider {
+      --swiper-wrapper-transition-timing-function: var(--ease-out);
+      margin-inline: calc(var(--container-gutter) * -1);
+    }
+
+    &__slide {
+      display: flex;
+      flex-direction: column;
+      height: auto;
+    }
+
+    &__cell,
+    &__cell--wide,
+    &__cell--tall {
+      grid-column: auto;
+      aspect-ratio: auto;
+    }
+
+    &__cell--media,
+    &__cell--media&__cell--wide {
+      order: -1; // the photo heads its slide, whichever comes first in the mosaic
+      aspect-ratio: 375 / 300;
+    }
+
+    &__cell:not(&__cell--media) { flex: 1; }
+
+    &__card {
+      justify-content: flex-start;
+      gap: 1.875rem;               // 30
+      padding: 1.875rem 1.5625rem; // 30 25
+      background: var(--color-secondary);
+
+      h3 {
+        font-size: var(--font-size-xl); // 25
+        line-height: 1.12;              // 28: Figma draws its 27.5 line at a whole pixel
+        br { display: none; }
+      }
+      p {
+        font-size: 0.9375rem; // 15
+        line-height: 1.5333;  // 23
+      }
+      .icon {
+        flex: none;
+        margin: 0;
+      }
+    }
   }
 }

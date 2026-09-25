@@ -1,8 +1,10 @@
-<!-- @wagtail-block: link_columns
+<!-- @wagtail-block: approach_columns
      title: CharBlock(required)
      intro: TextBlock (optional, shown right of the title)
-     items: ListBlock(StructBlock(title:CharBlock, page:PageChooserBlock, image:ImageChooserBlock(optional, photo column))) -->
-<section class="link-columns bg-light" aria-labelledby="teams-title">
+     image: ImageChooserBlock (optional, photo column first)
+     items: ListBlock(StructBlock(title:CharBlock, body:RichTextBlock))
+     One column open at a time (Figma 1709:10317, 1709:10346, 1713:10369), the first at rest; see initRevealColumns. -->
+<section class="link-columns link-columns--reveal bg-light" aria-labelledby="teams-title" data-reveal-columns>
   <div class="container">
     <div class="link-columns__header link-columns__header--split">
       <div class="row g-4 g-lg-0">
@@ -19,23 +21,29 @@
     <div class="link-columns__item link-columns__item--media">
       <img src="assets/images/k-6-primary/team.webp" alt="Two Claremont students in green hats and cardigans, arm in arm and laughing" width="820" height="1120" loading="lazy" decoding="async">
     </div>
-    <a class="link-columns__item" href="#">
-      <div class="link-columns__head">
-        <h3>Classroom teachers</h3>
-        <svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+    <div class="link-columns__item link-columns__item--body-323 is-open">
+      <h3><button class="link-columns__head" type="button" aria-expanded="true" aria-controls="teams-classroom"><span>Classroom teachers</span><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button></h3>
+      <div class="link-columns__panel" id="teams-classroom">
+        <div class="link-columns__body">
+          <p>Our Classroom Teachers identify each child’s readiness level and tailor learning experiences to match. Students are often grouped based on their point of need, interests, and learner profiles, allowing for personalised learning. Teachers implement tiered tasks, providing common content with varying levels of support, challenge, and complexity. Regular monitoring and assessment ensure that each student’s progress is closely tracked.</p>
+        </div>
       </div>
-    </a>
-    <a class="link-columns__item" href="#">
-      <div class="link-columns__head">
-        <h3>Learning enrichment teachers</h3>
-        <svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+    </div>
+    <div class="link-columns__item link-columns__item--body-301">
+      <h3><button class="link-columns__head" type="button" aria-expanded="false" aria-controls="teams-enrichment"><span>Learning enrichment teachers</span><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button></h3>
+      <div class="link-columns__panel" id="teams-enrichment">
+        <div class="link-columns__body">
+          <p>Our learning enrichment teachers collaborate with our classroom teachers. They focus on small groups of students who require either support or extension in English and Mathematics. These teachers assist with curriculum planning, deliver intensive reading interventions, conduct assessments and screenings, and help evaluate lessons and student outcomes.</p>
+        </div>
       </div>
-    </a>
-    <a class="link-columns__item" href="#">
-      <div class="link-columns__head">
-        <h3>Teachers and learning assistants</h3>
-        <svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg>
+    </div>
+    <div class="link-columns__item link-columns__item--body-311">
+      <h3><button class="link-columns__head" type="button" aria-expanded="false" aria-controls="teams-assistants"><span>Teachers and learning assistants</span><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button></h3>
+      <div class="link-columns__panel" id="teams-assistants">
+        <div class="link-columns__body">
+          <p>Our Teaching and Learning Assistants support both Classroom and Learning Enrichment Teachers by helping students develop independent learning skills and take ownership of their tasks. They also deliver targeted reading interventions to small groups in collaboration with Learning Enrichment Teachers.</p>
+        </div>
       </div>
-    </a>
+    </div>
   </div>
 </section>
