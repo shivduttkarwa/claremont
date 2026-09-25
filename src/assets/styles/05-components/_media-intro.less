@@ -38,9 +38,11 @@
   .media-intro {
     padding-block: 0 1.875rem; // 30
 
+    // The square phone crop; from sm the landscape photo comes back at 3 : 2
     &__media {
       margin: 0 calc(var(--container-gutter) * -1) 1.875rem; // 30
       aspect-ratio: 1;
+      @media (min-width: @bp-sm) { aspect-ratio: 3 / 2; }
     }
 
     .row { --bs-gutter-y: 0; }

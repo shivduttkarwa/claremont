@@ -101,10 +101,12 @@
     padding-block: 0;
     background: var(--color-primary-dark);
 
+    // The square phone crop; from sm the landscape photo comes back at 3 : 2, so a tablet is not a screen of photo
     .feature-banner__media {
       position: relative;
       inset: auto;
       aspect-ratio: 1 / 1; // 375 × 375
+      @media (min-width: @bp-sm) { aspect-ratio: 3 / 2; }
       img { position: static; }
       &::after { background: none; }
     }

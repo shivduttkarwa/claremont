@@ -153,7 +153,7 @@
   &--photos &__track { gap: 0; }
 
   &__caption {
-    @media (min-width: @bp-lg) { display: none; }
+    @media (min-width: @bp-md) { display: none; }
   }
 
   // Swiper drives the educators row, so the wrapper drops the native scroll container
@@ -187,42 +187,45 @@
 
     .scroller__slider { --swiper-wrapper-transition-timing-function: var(--ease-out); }
 
-    .scroller__card { width: 100%; }
+    // Tablets keep this header over the desktop's 357 photo cards; the quote panel is the phone card only
+    @media @upto-md {
+      .scroller__card { width: 100%; }
 
-    .scroller__photo {
-      aspect-ratio: 375 / 300;
-      .icon { display: none; }
-    }
+      .scroller__photo {
+        aspect-ratio: 375 / 300;
+        .icon { display: none; }
+      }
 
-    .scroller__caption {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      gap: 0.625rem; // 10
-      min-height: 18.75rem; // 300
-      padding: 1.875rem 1.5625rem; // 30 25
-      background: var(--color-blue);
-    }
+      .scroller__caption {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 0.625rem; // 10
+        min-height: 18.75rem; // 300
+        padding: 1.875rem 1.5625rem; // 30 25
+        background: var(--color-blue);
+      }
 
-    .scroller__quote {
-      margin: 0;
-      font-family: var(--font-display);
-      font-size: 2.5rem; // 40
-      line-height: 0.95; // 38
-      color: var(--color-heading);
-    }
+      .scroller__quote {
+        margin: 0;
+        font-family: var(--font-display);
+        font-size: 2.5rem; // 40
+        line-height: 0.95; // 38
+        color: var(--color-heading);
+      }
 
-    .scroller__name {
-      margin: 0;
-      font-family: var(--font-ui);
-      font-size: 0.9375rem; // 15
-      font-weight: var(--font-weight-semibold);
-      line-height: 1.5;     // 22.5
-      letter-spacing: var(--letter-spacing-ui);
-      span {
-        font-family: var(--font-body);
-        font-weight: var(--font-weight-regular);
-        letter-spacing: var(--letter-spacing-body);
+      .scroller__name {
+        margin: 0;
+        font-family: var(--font-ui);
+        font-size: 0.9375rem; // 15
+        font-weight: var(--font-weight-semibold);
+        line-height: 1.5;     // 22.5
+        letter-spacing: var(--letter-spacing-ui);
+        span {
+          font-family: var(--font-body);
+          font-weight: var(--font-weight-regular);
+          letter-spacing: var(--letter-spacing-body);
+        }
       }
     }
   }

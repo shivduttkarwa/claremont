@@ -49,10 +49,13 @@
       grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 0.7fr) minmax(0, 1fr);
       gap: 0 var(--space-6);
     }
+    // Figma's 487 / 300 / 188 / rest need the whole 1640 frame: below it the same shares, so the contact
+    // column keeps room for its emails at 1400
     @media (min-width: @bp-xxl) {
-      grid-template-columns: 30.4375rem 18.75rem 11.75rem minmax(0, 1fr); // 487 / 300 / 188 / rest
+      grid-template-columns: minmax(0, 487fr) minmax(0, 300fr) minmax(0, 188fr) minmax(0, 317fr);
       gap: 0 var(--footer-col-gap);
     }
+    @media (min-width: @bp-design) { grid-template-columns: 30.4375rem 18.75rem 11.75rem minmax(0, 1fr); }
   }
 
   &__logo {

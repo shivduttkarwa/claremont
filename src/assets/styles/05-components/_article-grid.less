@@ -5,7 +5,6 @@
   --articles-pad-bottom: 6.75rem;    // 108
   --articles-gap-x: 0.625rem;        // 10
   --articles-gap-y: 1.1875rem;       // 19
-  --articles-card-height: 29.6875rem; // 475
   --articles-text-inset: 0.5rem;     // 8
   --articles-pager-gap: 4.375rem;    // 70
 
@@ -21,6 +20,7 @@
     @media (min-width: @bp-lg) {
       grid-template-columns: repeat(4, minmax(0, 1fr));
       row-gap: var(--articles-gap-y);
+      > li { container-type: inline-size; }
     }
     @media (min-width: @bp-xxl) { margin-right: 0.125rem; } // last card ends at x 1438
   }
@@ -31,7 +31,7 @@
     flex-direction: column;
     height: 100%;
     color: var(--color-text);
-    @media (min-width: @bp-lg) { min-height: var(--articles-card-height); }
+    @media (min-width: @bp-lg) { min-height: ~"calc(100cqw * 475 / 302)"; } // the 475 card at its 302 width, scaling with the column
 
     // Rule in the gutter to the right of each card, 5 short of the card's foot
     &::after {

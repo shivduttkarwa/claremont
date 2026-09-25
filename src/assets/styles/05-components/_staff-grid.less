@@ -95,15 +95,16 @@
       margin-top: 3.125rem; // 50
     }
 
+    // Full-bleed on phones; tablets show two square portraits side by side inside the container (data-slider-per-view-md)
     &__slider {
       --swiper-wrapper-transition-timing-function: var(--ease-out);
-      margin-inline: calc(var(--container-gutter) * -1);
+      @media @upto-md { margin-inline: calc(var(--container-gutter) * -1); }
     }
 
     &__card {
-      flex: 0 0 100%;
       padding: 0 0 1.875rem; // 30
       border-right: 0;
+      @media (min-width: @bp-md) { padding-inline: calc(var(--staff-gap-x) / 2); }
 
       h3 {
         margin-top: 1.875rem;      // 30
@@ -113,7 +114,10 @@
       }
     }
 
-    &__photo { aspect-ratio: 375 / 300; }
+    &__photo {
+      aspect-ratio: 375 / 300;
+      @media (min-width: @bp-md) { aspect-ratio: 1; }
+    }
 
     &__role,
     &__bio {

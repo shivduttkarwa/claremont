@@ -1,10 +1,13 @@
 /**
  * slider — Swiper carousels for [data-slider] sections: free-width slides with the section's own
- * arrow buttons. data-slider-edge snaps them to the .container edge, data-slider-dim fades the
- * card that is only partly on screen.
+ * arrow buttons. data-slider-edge snaps them to the .container edge (from a breakpoint when it names
+ * one), data-slider-dim fades the card that is only partly on screen, data-slider-per-view-md shows
+ * that many slides from the md breakpoint.
  */
 import Swiper from "swiper";
 import { A11y, Navigation } from "swiper/modules";
+
+const breakpoints = { sm: 576, md: 768, lg: 992, xl: 1200, xxl: 1400 };
 
 // The .container content edge, measured from the section's own container so any gutter expression works:
 // the snapped card lines up with the copy above it
@@ -41,10 +44,11 @@ export function initSliders(root = document) {
   root.querySelectorAll("[data-slider]").forEach((section) => {
     const el = section.querySelector(".swiper");
     if (!el) return;
-    // data-slider-edge="lg" keeps the .container-edge snap for desktop only: phones run full-bleed
+    // data-slider-edge="md" keeps the .container-edge snap for tablets and up: phones run full-bleed
     const edgeOn = () => {
       const value = el.getAttribute("data-slider-edge");
-      return value !== null && (value !== "lg" || window.matchMedia("(min-width: 992px)").matches);
+      if (value === null) return false;
+      return !(value in breakpoints) || window.matchMedia(`(min-width: ${breakpoints[value]}px)`).matches;
     };
     const edge = () => (edgeOn() ? containerEdge(section, el) : 0);
     const tail = () => (edgeOn() ? latticeTail(el, edge()) : 0);
@@ -63,6 +67,7 @@ export function initSliders(root = document) {
         modules: [Navigation, A11y],
         speed: 900,
         slidesPerView: el.dataset.sliderPerView ? parseFloat(el.dataset.sliderPerView) : "auto",
+        breakpoints: el.dataset.sliderPerViewMd ? { [breakpoints.md]: { slidesPerView: parseFloat(el.dataset.sliderPerViewMd) } } : undefined,
         spaceBetween: 0,
         resistance: false,
         initialSlide: parseInt(el.dataset.sliderStart || "0", 10),

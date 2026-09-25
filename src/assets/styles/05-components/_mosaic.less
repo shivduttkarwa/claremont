@@ -49,52 +49,28 @@
     @media (min-width: @bp-lg) { display: contents; }
   }
 
+  // The photos set the row heights through their own proportions (square, or 2 : 1 across two columns) and
+  // every cell fills its area, so a card whose copy runs long on a narrow laptop grows its row and the
+  // photos beside it stretch with it instead of the copy spilling out of a fixed ratio
   &__cell {
     position: relative;
     min-width: 0;
-    @media (min-width: @bp-sm) { aspect-ratio: 1; }
 
     &--wide {
-      @media (min-width: @bp-sm) {
-        grid-column: span 2;
-        aspect-ratio: 617 / 306;
-      }
+      @media (min-width: @bp-lg) { grid-column: span 2; }
     }
-    // Two-column layout: tall cards run wide so no cell is left empty beside them
     &--tall {
-      @media (min-width: @bp-sm) {
-        grid-column: span 2;
-        aspect-ratio: 617 / 306;
-      }
-      @media (min-width: @bp-lg) {
-        grid-column: auto;
-        grid-row: span 2;
-        aspect-ratio: 306 / 617;
-      }
+      @media (min-width: @bp-lg) { grid-row: span 2; }
     }
 
     &--media {
       overflow: hidden;
-      aspect-ratio: 4 / 3;
-      @media (min-width: @bp-sm) { aspect-ratio: 1; }
       img {
         .img-cover();
         transition: transform var(--duration-slow) var(--ease-out);
       }
       &:hover img { transform: scale(1.04); }
     }
-    &--media&--wide {
-      @media (min-width: @bp-sm) { aspect-ratio: 617 / 306; }
-    }
-  }
-
-  // Rows are explicit at the design width, so the ratios step aside
-  &__cell,
-  &__cell--wide,
-  &__cell--tall,
-  &__cell--media,
-  &__cell--media&__cell--wide {
-    @media (min-width: @bp-xxl) { aspect-ratio: auto; }
   }
 
   // Title at (32, 32), pictogram frame 21 down and 26 in from the right, copy ending 28 above the edge
@@ -159,22 +135,17 @@
       margin-bottom: 1.25rem; // 20
     }
 
+    // Full-bleed on phones; tablets show two pairs side by side inside the container (data-slider-per-view-md)
     &__slider {
       --swiper-wrapper-transition-timing-function: var(--ease-out);
-      margin-inline: calc(var(--container-gutter) * -1);
+      @media @upto-md { margin-inline: calc(var(--container-gutter) * -1); }
     }
 
     &__slide {
       display: flex;
       flex-direction: column;
       height: auto;
-    }
-
-    &__cell,
-    &__cell--wide,
-    &__cell--tall {
-      grid-column: auto;
-      aspect-ratio: auto;
+      @media (min-width: @bp-md) { padding-inline: calc(var(--mosaic-gap) / 2); }
     }
 
     &__cell--media,

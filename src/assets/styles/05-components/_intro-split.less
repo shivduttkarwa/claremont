@@ -24,7 +24,10 @@
     font-size: var(--font-size-callout);
     line-height: var(--line-height-tight);
   }
-  &--wide-lead h2 { max-width: 39.125rem; } // 626
+  &--wide-lead h2 {
+    max-width: 39.125rem; // 626
+    @media @upto-xxl { br { display: none; } } // the designed break needs the whole 626 box; narrower columns wrap on their own
+  }
 
   // Right column starts at x 824, four past the half-way line
   &__body {

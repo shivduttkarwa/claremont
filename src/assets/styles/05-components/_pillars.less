@@ -9,7 +9,12 @@
   --pillars-text-height: 2.4375rem;  // Figma fixes the copy box at 39 whatever its line count
 
   padding-top: var(--space-8);
-  @media (min-width: @bp-lg) { padding-top: var(--pillars-pad-top); }
+  // The three full-bleed columns are 331 wide at 992: the side padding closes up and the statement caps
+  // itself at the column so "Collaboration" stays inside it, both back at the Figma values by 1640
+  @media (min-width: @bp-lg) {
+    --pillars-pad-x: ~"clamp(2.5rem, 0.5875rem + 3.0864vw, 3.75rem)"; // 40 at 992 → 60 at 1640
+    padding-top: var(--pillars-pad-top);
+  }
 
   &__header {
     margin-bottom: var(--space-6);
@@ -44,6 +49,7 @@
     border-bottom: var(--border-width) solid var(--color-line);
 
     @media (min-width: @bp-lg) {
+      container-type: inline-size;
       min-height: var(--pillars-min-height);
       padding: var(--pillars-pad-y) var(--pillars-pad-x);
       border-bottom: 0;
@@ -65,6 +71,7 @@
     line-height: var(--line-height-tight);
     letter-spacing: var(--letter-spacing-body);
     color: var(--color-heading);
+    @media (min-width: @bp-lg) { font-size: ~"min(var(--font-size-statement), 20cqw)"; } // "Collaboration" runs 4.8 × the size; 68 needs 340 of column
   }
 
   &__text {

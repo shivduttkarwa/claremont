@@ -51,6 +51,15 @@
   --bs-gutter-x: calc(var(--edge-gutter) * 2);
 }
 
+// Heading-left / copy-right rows. Figma butts the two 620 columns together and lets the heading's own box
+// leave the air, which only holds once the columns reach 620 at xxl; until then the row keeps a gutter.
+.row-split {
+  @media (min-width: @bp-lg) {
+    --bs-gutter-x: ~"clamp(0rem, 35rem - 40vw, 2.5rem)"; // 40 up to 1300, closing to 0 at 1400
+    --bs-gutter-y: 0;
+  }
+}
+
 // Offcanvas (mobile menu)
 .offcanvas {
   --bs-offcanvas-bg: var(--color-primary);

@@ -10,7 +10,12 @@
   --columns-pad-right: 1.75rem;      // 28 to the arrow frame
 
   padding-top: var(--space-8);
-  @media (min-width: @bp-lg) { padding-top: var(--columns-pad-top); }
+  // Four full-bleed columns are 248 wide at 992: the inner padding closes up, back at the Figma values by 1640
+  @media (min-width: @bp-lg) {
+    --columns-pad-x: ~"clamp(1.5rem, -0.4514rem + 3.1481vw, 2.34375rem)"; // 24 at 992 → 37.5 at 1640
+    --columns-pad-right: ~"clamp(1rem, -0.1481rem + 1.8519vw, 1.75rem)";   // 16 → 28
+    padding-top: var(--columns-pad-top);
+  }
 
   &__header {
     margin-bottom: var(--space-6);

@@ -8,8 +8,13 @@
 @bp-lg: 992px;
 @bp-xl: 1200px;
 @bp-xxl: 1400px;
+@bp-design: 1640px; // the Figma frame: fixed Figma measures that need the whole frame start here
 // Phone/tablet-only overrides, for blocks the designer redrew rather than reflowed
 @upto-lg: ~"(max-width: 991.98px)";
+// Phone-only measures inside a redraw, where a tablet has room for the desktop card sizes
+@upto-md: ~"(max-width: 767.98px)";
+// Below the 1280 container cap, where Figma's 620 columns do not exist yet
+@upto-xxl: ~"(max-width: 1399.98px)";
 // Compact Figma hit areas only apply to a mouse at desktop widths; touch screens keep 44px targets
 @fine-lg: ~"(min-width: 992px) and (hover: hover) and (pointer: fine)";
 @fine-xl: ~"(min-width: 1200px) and (hover: hover) and (pointer: fine)";

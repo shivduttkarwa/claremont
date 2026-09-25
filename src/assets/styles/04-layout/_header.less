@@ -5,8 +5,10 @@
   --header-logo-top: 0;
   --header-right-top: 0;
   --header-nav-gap: var(--space-4);
+  --header-link-size: var(--font-size-md);
   --header-tools-gap: var(--space-1);
   --header-tool-size: var(--tap-size);
+  --header-gap: var(--space-4);
 
   position: sticky;
   top: 0;
@@ -18,12 +20,15 @@
     background-color var(--duration-base) ease,
     box-shadow var(--duration-base) ease;
 
+  // The full bar only fits a 992 screen with the logo, links and gaps all at their smallest; they grow to the xl measures by 1200
   @media (min-width: @bp-lg) {
     position: absolute;
     inset: 0 0 auto;
     background-color: transparent;
-    --header-logo-width: 15rem;
-    --header-nav-gap: 1.75rem;
+    --header-logo-width: ~"clamp(12rem, -11.8462rem + 38.4615vw, 17rem)"; // 192 at 992 → 272 at 1200
+    --header-nav-gap: ~"clamp(1rem, -4.9615rem + 9.6154vw, 2.25rem)";      // 16 → 36
+    --header-link-size: ~"clamp(0.9375rem, 0.6394rem + 0.4808vw, 1rem)";  // 15 → 16
+    --header-gap: var(--space-3);
   }
 
   // Headroom: once scrolled past, the bar leaves on the way down and slides back in on the way up
@@ -63,7 +68,7 @@
     }
   }
   .has-search-open &.is-pinned { transform: none; }
-  @media (min-width: @bp-xl) { --header-logo-width: 17rem; --header-nav-gap: 2.25rem; }
+  @media (min-width: @bp-xl) { --header-gap: var(--space-4); }
   @media (min-width: @bp-xxl) {
     --header-logo-width: 20.0625rem; // 321: the 334 frame shows the artwork at 96.11%
     --header-logo-top: 1.75rem;      // 28
@@ -80,7 +85,7 @@
     gap: var(--space-2);
     min-height: var(--header-height);
     transition: min-height var(--duration-base) var(--ease-out);
-    @media (min-width: @bp-sm) { gap: var(--space-4); }
+    @media (min-width: @bp-sm) { gap: var(--header-gap); }
     @media (min-width: @bp-xxl) { align-items: flex-start; }
   }
 
@@ -98,7 +103,7 @@
   &__right {
     display: flex;
     align-items: center;
-    gap: var(--space-4);
+    gap: var(--header-gap);
     margin-top: var(--header-right-top);
     transition: margin-top var(--duration-base) var(--ease-out);
     @media (min-width: @bp-xxl) { gap: 1.625rem; } // 26 from the last link to the search hit area
@@ -117,7 +122,7 @@
     .tap-area();
     padding-block: 0.25rem;
     font-family: var(--font-ui);
-    font-size: var(--font-size-md);
+    font-size: var(--header-link-size);
     font-weight: var(--font-weight-medium);
     line-height: var(--line-height-ui);
     letter-spacing: var(--letter-spacing-ui);

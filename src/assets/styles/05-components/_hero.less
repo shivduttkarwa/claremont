@@ -4,9 +4,9 @@
 .hero {
   --hero-pad-top: 0;
   --hero-pad-bottom: 0;
-  --hero-media-height: 32.125rem; // 514
+  --hero-media-height: ~"max(32.125rem, 67vw)"; // 514; past 767 the landscape photo keeps the 768 × 514 proportion
   --hero-subnav-top: 11.8125rem;  // 189
-  --hero-subnav-inset: 0.9375rem; // 15: the phone row sits wider than the 20 gutter
+  --hero-subnav-inset: calc(var(--container-gutter) - 0.3125rem); // 15: the phone row sits 5 wider than the gutter
   --hero-subnav-rest: 1.5rem;     // 24 of the row over the photo's bottom edge, 24 over the white
   --hero-title-gap: var(--space-6);
 
@@ -66,7 +66,7 @@
     position: absolute;
     inset: 0 auto auto 0;
     width: 100%;
-    height: 100%; // the phone crop is exact; parallax is off below lg
+    height: 100%; // the phone crop is exact, and the landscape photo (from sm) shows its top; parallax is off below lg
     object-fit: cover;
     object-position: 50% 0;
     @media (min-width: @bp-lg) {
@@ -75,7 +75,7 @@
   }
 
   h1 {
-    max-width: 20.25rem; // 324 on the 375 frame
+    max-width: 5.4em; // 324 at the frame's 60 title, so its wrap holds as the title grows on tablets
     margin-bottom: 0;
     font-size: var(--font-size-display);
     line-height: var(--line-height-display);

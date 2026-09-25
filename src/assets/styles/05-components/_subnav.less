@@ -1,4 +1,4 @@
-// 05-components/_subnav.less — yellow quick links: a row of short pills on phones, a stack from lg
+// 05-components/_subnav.less — yellow quick links: a row of short pills on phones, full labels from md, a stack from lg
 
 .subnav {
   display: flex;
@@ -6,8 +6,8 @@
 
   @media (min-width: @bp-lg) { flex-direction: column; }
 
-  &__short { @media (min-width: @bp-lg) { display: none; } }
-  &__long { display: none; @media (min-width: @bp-lg) { display: inline; } }
+  &__short { @media (min-width: @bp-md) { display: none; } }
+  &__long { display: none; @media (min-width: @bp-md) { display: inline; } }
 
   &__link {
     display: flex;

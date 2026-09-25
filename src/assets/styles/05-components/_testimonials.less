@@ -152,21 +152,27 @@
       margin-top: 3.125rem; // 50
     }
 
+    // Tablets keep this stacked header but run the 412 desktop cards from the container edge, the peeking
+    // one dimmed as on desktop (data-slider-edge="md"); the phone's one full-bleed card needs no mask
     &__slider {
-      --card-w: 100%;
       margin-top: 1.25rem; // 20
-      mask-image: none;
+      @media @upto-md {
+        --card-w: 100%;
+        mask-image: none;
+      }
     }
 
     &__card {
-      aspect-ratio: 375 / 412;
       &.is-open::after { opacity: 0.8; } // the phone card's tint lets more of the photo through
+      @media @upto-md { aspect-ratio: 375 / 412; }
     }
 
     &__quote {
-      max-width: none;
-      font-size: 2.5rem; // 40
-      line-height: 0.95; // 38
+      @media @upto-md {
+        max-width: none;
+        font-size: 2.5rem; // 40
+        line-height: 0.95; // 38
+      }
     }
   }
 }
