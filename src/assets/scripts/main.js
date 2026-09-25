@@ -7,9 +7,10 @@ import { initApproachAccordion, initCurrentNav, initHotspots, initQuoteCards, in
 import { initSearch } from "./search.js";
 import { initSliders } from "./slider.js";
 import { initQuoteReveal } from "./quote-reveal.js";
+import { initPageTransition } from "./transition.js";
 
 document.addEventListener("DOMContentLoaded", () => {
-  Anim.init();
+  Anim.init({ after: window.__pageArrival });
   initCurrentNav();
   initHotspots();
   initQuoteCards();
@@ -22,4 +23,5 @@ document.addEventListener("DOMContentLoaded", () => {
   initApproachAccordion();
   initSearch();
   initStickyHeader();
+  initPageTransition();
 });

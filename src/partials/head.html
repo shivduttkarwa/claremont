@@ -11,6 +11,15 @@
   (function (d) {
     d.classList.add("anim-ready");
     if (matchMedia("(prefers-reduced-motion: reduce)").matches) d.classList.add("anim-reduced");
+    // after a page transition the hero entrance waits for the slide to land; a back step reverses the slide
+    window.__pageArrival = new Promise(function (resolve) {
+      addEventListener("pagereveal", function (e) {
+        var vt = e.viewTransition, nav = window.navigation && navigation.activation;
+        if (vt && vt.types && nav && nav.from && nav.entry && nav.from.index > nav.entry.index) vt.types.add("back");
+        resolve(vt ? vt.finished : null);
+      }, { once: true });
+      requestAnimationFrame(function () { resolve(null); });
+    });
     // if the bundle never runs, drop the guard rather than leave the page hidden
     addEventListener("load", function () {
       setTimeout(function () { if (!d.hasAttribute("data-anim-live")) d.classList.remove("anim-ready"); }, 800);

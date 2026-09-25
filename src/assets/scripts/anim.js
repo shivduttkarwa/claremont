@@ -478,9 +478,11 @@ const Anim = {
       return this;
     }
     // A split measured against the fallback face would nudge its glyphs to the wrong places, so the
-    // entrance waits for the webfonts (briefly: a font that never arrives must not hold the page).
+    // entrance waits for the webfonts (briefly: a font that never arrives must not hold the page), and
+    // after a page transition for the slide to land (opts.after, capped so a stuck one cannot hold it).
+    const briefly = (promise, ms) => Promise.race([promise, new Promise((resolve) => setTimeout(resolve, ms))]);
     const fonts = document.fonts?.ready ?? Promise.resolve();
-    Promise.race([fonts, new Promise((resolve) => setTimeout(resolve, 800))]).then(start, start);
+    Promise.all([briefly(fonts, 800), briefly(Promise.resolve(opts.after), 2000)]).then(start, start);
     return this;
   },
 

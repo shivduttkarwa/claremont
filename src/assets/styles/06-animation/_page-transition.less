@@ -1,0 +1,61 @@
+// 06-animation/_page-transition.less — the page transition: the next page slides up over the page being
+// left, which settles back beneath it. Cross-document view transitions; a browser without them loads as usual.
+
+@view-transition { navigation: auto; }
+
+@media (prefers-reduced-motion: reduce) {
+  @view-transition { navigation: none; }
+}
+
+::view-transition { background: var(--color-primary-dark); }
+
+::view-transition-group(root) { animation-duration: var(--page-slide); }
+
+// The default cross-fade blends the two pages with plus-lighter, which would wash out the overlap
+::view-transition-old(root),
+::view-transition-new(root) {
+  mix-blend-mode: normal;
+  animation-duration: var(--page-slide);
+  animation-timing-function: var(--ease-out);
+  animation-fill-mode: both;
+}
+
+::view-transition-old(root) { animation-name: page-recede; }
+
+::view-transition-new(root) {
+  animation-name: page-slide-in;
+  box-shadow: var(--shadow-page);
+}
+
+// A back step reverses it: the page being left slides down off the one returned to
+html:active-view-transition-type(back) {
+  &::view-transition-old(root) {
+    z-index: 1;
+    animation-name: page-slide-out;
+    box-shadow: var(--shadow-page);
+  }
+  &::view-transition-new(root) {
+    animation-name: page-return;
+    box-shadow: none;
+  }
+}
+
+@keyframes page-slide-in {
+  from { transform: translateY(100%); border-radius: var(--radius-lg) var(--radius-lg) 0 0; }
+  to { transform: none; border-radius: 0; }
+}
+
+@keyframes page-slide-out {
+  from { transform: none; border-radius: 0; }
+  to { transform: translateY(100%); border-radius: var(--radius-lg) var(--radius-lg) 0 0; }
+}
+
+@keyframes page-recede {
+  from { transform: none; opacity: 1; }
+  to { transform: scale(0.96); opacity: 0.6; }
+}
+
+@keyframes page-return {
+  from { transform: scale(0.96); opacity: 0.6; }
+  to { transform: none; opacity: 1; }
+}
