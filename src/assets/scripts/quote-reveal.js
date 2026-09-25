@@ -1,9 +1,11 @@
-// fluid-reveal — a cursor's fluid wake paints a photo back through whatever covers it; one canvas moves between hosts
+// quote-reveal — the cursor's fluid wake paints a testimonial photo back through its overlay; one canvas moves between cards
 
 const SIM = 128;
+const SPLAT_RADIUS = 0.0045;
 const SPLAT_FORCE = 5000;
 const CURL = 28;
 const VEL_DISS = 0.992;
+const DYE_DISS = 0.965;
 const DYE_DISS_IDLE = 0.55;
 const PRESSURE_ITS = 20;
 const IDLE_FRAMES = 40;
@@ -81,10 +83,9 @@ const GRADIENT_FS = `precision highp float;
   }`;
 
 // Inside the wake the quote takes white or its own dark ink, whichever the photo behind it is not, over a soft halo
-// u_flood grows a wobbling pool of photo out from u_origin, its edge pushed about by the wake
 const RENDER_FS = `precision highp float;
-  uniform sampler2D u_dye, u_photo, u_text; uniform vec2 u_scale, u_offset, u_halo, u_origin, u_ratio;
-  uniform vec3 u_ink; uniform float u_shift, u_textAlpha, u_flood, u_time; varying vec2 v_uv;
+  uniform sampler2D u_dye, u_photo, u_text; uniform vec2 u_scale, u_offset, u_halo;
+  uniform vec3 u_ink; uniform float u_shift, u_textAlpha; varying vec2 v_uv;
   void main(){
     float dye = clamp(texture2D(u_dye, v_uv).r, 0., 1.);
     vec3 photo = texture2D(u_photo, v_uv * u_scale + u_offset).rgb;
@@ -101,16 +102,12 @@ const RENDER_FS = `precision highp float;
     float light = smoothstep(0.5, 0.7, lum / 8.);
     vec3 ink = mix(vec3(1.), u_ink, light);
     vec3 color = mix(mix(photo, vec3(light), 0.45 * halo), ink, text);
-    vec2 p = (v_uv - u_origin) * u_ratio;
-    float ang = atan(p.y, p.x);
-    float d = length(p) + 0.035 * sin(ang * 5. + u_time * 1.4) + 0.025 * sin(ang * 9. - u_time * 2.1) - 0.25 * dye;
-    float flood = (1. - smoothstep(u_flood - 0.12, u_flood, d)) * step(0.001, u_flood);
-    gl_FragColor = vec4(color, max(smoothstep(0.018, 0.22, dye), flood));
+    gl_FragColor = vec4(color, smoothstep(0.018, 0.22, dye));
   }`;
 
-// radius: splat size; dissipation: how long the wake lingers; flood: colour pours out from the entry point
-function createFluid({ radius, dissipation, flood: floods = false }) {
+function createFluid() {
   const canvas = document.createElement("canvas");
+  canvas.className = "testimonials__fluid";
   canvas.setAttribute("aria-hidden", "true");
   const gl = canvas.getContext("webgl", { alpha: true, premultipliedAlpha: false, antialias: false, powerPreference: "low-power" });
   if (!gl || !gl.getExtension("OES_texture_float")) return null;
@@ -198,8 +195,6 @@ function createFluid({ radius, dissipation, flood: floods = false }) {
   let fit = [1, 1, 0, 0];
   let mx = 0.5, my = 0.5, dmx = 0, dmy = 0;
   let pointer = false;
-  let origin = [0.5, 0.5];
-  let flood = 0;
   let idle = 0;
   let raf = 0;
   let last = 0;
@@ -211,7 +206,7 @@ function createFluid({ radius, dissipation, flood: floods = false }) {
       gl.uniform2f(loc(p, "u_point"), mx, my);
       gl.uniform2f(loc(p, "u_aspect"), canvas.width / canvas.height, 1);
       gl.uniform3f(loc(p, "u_color"), ...color);
-      gl.uniform1f(loc(p, "u_radius"), radius);
+      gl.uniform1f(loc(p, "u_radius"), SPLAT_RADIUS);
     });
     field.reverse();
   };
@@ -260,8 +255,7 @@ function createFluid({ radius, dissipation, flood: floods = false }) {
       field.reverse();
     };
     advect(vel, VEL_DISS);
-    advect(dye, pointer ? dissipation : DYE_DISS_IDLE);
-    if (floods) flood += ((pointer ? 1.7 : 0) - flood) * (1 - Math.exp(-dt * (pointer ? 2.2 : 3.5)));
+    advect(dye, pointer ? DYE_DISS : DYE_DISS_IDLE);
 
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
     gl.clearColor(0, 0, 0, 0);
@@ -280,14 +274,10 @@ function createFluid({ radius, dissipation, flood: floods = false }) {
         gl.uniform1f(loc(p, "u_shift"), shift / card.height);
         gl.uniform1f(loc(p, "u_textAlpha"), quote ? parseFloat(getComputedStyle(quote).opacity) : 0);
         gl.uniform3f(loc(p, "u_ink"), ...ink);
-        gl.uniform2f(loc(p, "u_origin"), ...origin);
-        gl.uniform2f(loc(p, "u_ratio"), canvas.width / canvas.height, 1);
-        gl.uniform1f(loc(p, "u_flood"), flood);
-        gl.uniform1f(loc(p, "u_time"), t * 0.001);
       });
     }
 
-    raf = !pointer && idle > IDLE_FRAMES && flood < 0.005 ? 0 : requestAnimationFrame(frame);
+    raf = !pointer && idle > IDLE_FRAMES ? 0 : requestAnimationFrame(frame);
   };
   const wake = () => { if (!raf) { last = performance.now(); raf = requestAnimationFrame(frame); } };
 
@@ -319,7 +309,7 @@ function createFluid({ radius, dissipation, flood: floods = false }) {
       if ("letterSpacing" in ctx && cs.letterSpacing !== "normal") ctx.letterSpacing = cs.letterSpacing;
       ctx.fillStyle = "#fff";
       const ascent = ctx.measureText("Hg").fontBoundingBoxAscent;
-      const at = quote.getBoundingClientRect();
+      const origin = quote.getBoundingClientRect();
       const walker = document.createTreeWalker(quote, NodeFilter.SHOW_TEXT);
       const range = document.createRange();
       for (let node = walker.nextNode(); node; node = walker.nextNode()) {
@@ -327,7 +317,7 @@ function createFluid({ radius, dissipation, flood: floods = false }) {
           range.setStart(node, match.index);
           range.setEnd(node, match.index + match[0].length);
           const r = range.getClientRects()[0];
-          if (r) ctx.fillText(match[0], r.left - at.left + quote.offsetLeft, r.top - at.top + quote.offsetTop + ascent);
+          if (r) ctx.fillText(match[0], r.left - origin.left + quote.offsetLeft, r.top - origin.top + quote.offsetTop + ascent);
         }
       }
     }
@@ -337,13 +327,12 @@ function createFluid({ radius, dissipation, flood: floods = false }) {
 
   return {
     canvas,
-    // text: an element whose words recolour over the photo; place: where the canvas goes in the host
-    attach(host, { className, text = null, place = (img) => img.after(canvas) }) {
-      const img = host.querySelector("img");
+    attach(card) {
+      const img = card.querySelector("img");
       if (!img || !img.complete || !img.naturalWidth) return false;
       const entry = photoFor(img);
       if (!entry) return false;
-      const box = { width: img.offsetWidth, height: img.offsetHeight };
+      const box = card.getBoundingClientRect();
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       canvas.width = Math.max(1, Math.round(box.width * dpr));
       canvas.height = Math.max(1, Math.round(box.height * dpr));
@@ -352,19 +341,17 @@ function createFluid({ radius, dissipation, flood: floods = false }) {
       const sy = entry.ratio > ratio ? 1 : entry.ratio / ratio;
       fit = [sx, sy, (1 - sx) / 2, (1 - sy) / 2];
       photo = entry.tex;
-      quote = text;
+      quote = card.querySelector("blockquote");
       drawText(dpr);
       [...vel, ...pre, ...dye].forEach(clear);
-      flood = 0;
-      canvas.className = className;
-      place(img, canvas);
+      card.append(canvas);
       return true;
     },
     move(event) {
       const r = canvas.getBoundingClientRect();
       const nx = (event.clientX - r.left) / r.width;
       const ny = 1 - (event.clientY - r.top) / r.height;
-      if (pointer) { dmx += nx - mx; dmy += ny - my; } else origin = [nx, ny];
+      if (pointer) { dmx += nx - mx; dmy += ny - my; }
       mx = nx; my = ny;
       pointer = true;
       wake();
@@ -373,45 +360,24 @@ function createFluid({ radius, dissipation, flood: floods = false }) {
   };
 }
 
-const canHover = () =>
-  window.matchMedia("(hover: hover) and (pointer: fine)").matches &&
-  !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-// One fluid per page, created on the first hover (or up front when the resting look depends on it)
-function bindHosts(hosts, fluid, options) {
-  hosts.forEach((host) => {
-    host.addEventListener("pointerenter", (event) => {
-      if (event.pointerType !== "mouse") return;
-      const f = fluid();
-      if (!f || !f.attach(host, options(host))) return;
-      f.move(event);
-    });
-    host.addEventListener("pointermove", (event) => {
-      const f = fluid();
-      if (event.pointerType === "mouse" && f && host.contains(f.canvas)) f.move(event);
-    });
-    host.addEventListener("pointerleave", () => fluid()?.leave());
-  });
-}
-
 export function initQuoteReveal(root = document) {
-  const hosts = root.querySelectorAll("[data-quote-cards] [data-quote-card]");
-  if (!hosts.length || !canHover()) return;
+  if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   let fluid;
-  const get = () => (fluid === undefined ? (fluid = createFluid({ radius: 0.0045, dissipation: 0.965 })) : fluid);
-  bindHosts(hosts, get, (card) => ({
-    className: "testimonials__fluid",
-    text: card.querySelector("blockquote"),
-    place: (img, canvas) => card.append(canvas),
-  }));
-}
 
-// Portraits rest in the brand two-tone (CSS, switched on only once WebGL is running) and flood into colour on hover
-export function initPortraitReveal(root = document) {
-  const hosts = root.querySelectorAll("[data-portrait-reveal]");
-  if (!hosts.length || !canHover()) return;
-  const fluid = createFluid({ radius: 0.006, dissipation: 0.975, flood: true });
-  if (!fluid) return;
-  document.documentElement.classList.add("has-portrait-reveal");
-  bindHosts(hosts, () => fluid, (host) => ({ className: host.dataset.portraitReveal }));
+  root.querySelectorAll("[data-quote-cards]").forEach((group) => {
+    group.querySelectorAll("[data-quote-card]").forEach((card) => {
+      card.addEventListener("pointerenter", (event) => {
+        if (event.pointerType !== "mouse") return;
+        if (fluid === undefined) fluid = createFluid();
+        if (!fluid) return;
+        if (!fluid.attach(card)) return;
+        fluid.move(event);
+      });
+      card.addEventListener("pointermove", (event) => {
+        if (event.pointerType === "mouse" && fluid?.canvas.parentElement === card) fluid.move(event);
+      });
+      card.addEventListener("pointerleave", () => fluid?.leave());
+    });
+  });
 }

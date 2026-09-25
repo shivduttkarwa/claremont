@@ -6,7 +6,7 @@ import { Anim } from "./anim.js";
 import { initApproachAccordion, initCurrentNav, initHotspots, initQuoteCards, initScrollers, initStickyHeader, initTabArrows } from "./ui.js";
 import { initSearch } from "./search.js";
 import { initSliders } from "./slider.js";
-import { initPortraitReveal, initQuoteReveal } from "./fluid-reveal.js";
+import { initQuoteReveal } from "./quote-reveal.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   Anim.init();
@@ -14,7 +14,6 @@ document.addEventListener("DOMContentLoaded", () => {
   initHotspots();
   initQuoteCards();
   initQuoteReveal();
-  initPortraitReveal();
   initScrollers();
   initSliders();
   initTabArrows();
