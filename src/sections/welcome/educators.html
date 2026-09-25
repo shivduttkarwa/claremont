@@ -2,7 +2,9 @@
      title: CharBlock(required)
      cards: ListBlock(StructBlock(photo:ImageChooserBlock, name:CharBlock, page:PageChooserBlock))
      Figma names nobody in this row, so the link labels stay generic. Five cards, five photos.
-     Swiper (data-slider) like the home testimonials: flush to the page edge, the clipped card dimmed. -->
+     Swiper (data-slider) like the home testimonials: flush to the page edge, the clipped card dimmed.
+     Below lg each card is one full-width slide with a quote panel under the photo (node 2088:12798);
+     the quote and name are Figma's placeholder copy, repeated on every card. -->
 <section class="scroller scroller--photos" aria-labelledby="educators-title" data-slider>
   <div class="container">
     <div class="scroller__header">
@@ -16,11 +18,11 @@
 
   <div class="swiper scroller__slider" data-slider-dim>
     <ul class="swiper-wrapper scroller__track" data-anim="sequence" data-anim-type="wipe-up" data-anim-start="top 65%" data-anim-stagger="0.2">
-      <li class="swiper-slide scroller__card" data-anim-item><a class="scroller__photo" href="#" aria-label="Meet this educator"><img src="assets/images/welcome/educator-1.webp" alt="" width="714" height="712" loading="lazy" decoding="async"><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
-      <li class="swiper-slide scroller__card" data-anim-item><a class="scroller__photo" href="#" aria-label="Meet this educator"><img src="assets/images/welcome/educator-2.webp" alt="" width="714" height="712" loading="lazy" decoding="async"><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
-      <li class="swiper-slide scroller__card" data-anim-item><a class="scroller__photo" href="#" aria-label="Meet this educator"><img src="assets/images/welcome/educator-3.webp" alt="" width="714" height="712" loading="lazy" decoding="async"><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
-      <li class="swiper-slide scroller__card" data-anim-item><a class="scroller__photo" href="#" aria-label="Meet this educator"><img src="assets/images/welcome/educator-4.webp" alt="" width="714" height="712" loading="lazy" decoding="async"><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
-      <li class="swiper-slide scroller__card" data-anim-item><a class="scroller__photo" href="#" aria-label="Meet this educator"><img src="assets/images/welcome/educator-5.webp" alt="" width="714" height="712" loading="lazy" decoding="async"><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+      <li class="swiper-slide scroller__card" data-anim-item><a class="scroller__photo" href="#" aria-label="Meet this educator"><img src="assets/images/welcome/educator-1.webp" alt="" width="714" height="712" loading="lazy" decoding="async"><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a><div class="scroller__caption"><p class="scroller__quote">“Lorem ipsum dolor sit amet, consectetur adipiscing elit.”</p><p class="scroller__name">Alana Koch<br><span>Principal</span></p></div></li>
+      <li class="swiper-slide scroller__card" data-anim-item><a class="scroller__photo" href="#" aria-label="Meet this educator"><img src="assets/images/welcome/educator-2.webp" alt="" width="714" height="712" loading="lazy" decoding="async"><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a><div class="scroller__caption"><p class="scroller__quote">“Lorem ipsum dolor sit amet, consectetur adipiscing elit.”</p><p class="scroller__name">Alana Koch<br><span>Principal</span></p></div></li>
+      <li class="swiper-slide scroller__card" data-anim-item><a class="scroller__photo" href="#" aria-label="Meet this educator"><img src="assets/images/welcome/educator-3.webp" alt="" width="714" height="712" loading="lazy" decoding="async"><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a><div class="scroller__caption"><p class="scroller__quote">“Lorem ipsum dolor sit amet, consectetur adipiscing elit.”</p><p class="scroller__name">Alana Koch<br><span>Principal</span></p></div></li>
+      <li class="swiper-slide scroller__card" data-anim-item><a class="scroller__photo" href="#" aria-label="Meet this educator"><img src="assets/images/welcome/educator-4.webp" alt="" width="714" height="712" loading="lazy" decoding="async"><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a><div class="scroller__caption"><p class="scroller__quote">“Lorem ipsum dolor sit amet, consectetur adipiscing elit.”</p><p class="scroller__name">Alana Koch<br><span>Principal</span></p></div></li>
+      <li class="swiper-slide scroller__card" data-anim-item><a class="scroller__photo" href="#" aria-label="Meet this educator"><img src="assets/images/welcome/educator-5.webp" alt="" width="714" height="712" loading="lazy" decoding="async"><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a><div class="scroller__caption"><p class="scroller__quote">“Lorem ipsum dolor sit amet, consectetur adipiscing elit.”</p><p class="scroller__name">Alana Koch<br><span>Principal</span></p></div></li>
     </ul>
   </div>
 </section>

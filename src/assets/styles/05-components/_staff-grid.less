@@ -19,13 +19,24 @@
     h2 { margin: 0; }
   }
 
+  // The carousel is a phone treatment; the three columns need no arrows
+  &__arrows {
+    @media (min-width: @bp-lg) { display: none; }
+  }
+
+  // The .swiper box clips; from lg the grid reveals travel past its edges, so it must not
+  &__slider {
+    @media (min-width: @bp-lg) { overflow: visible; }
+  }
+
+  // Swiper's own flex track below lg; the three columns from lg
   &__grid {
     .reset-list();
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: var(--staff-gap-y) var(--staff-gap-x);
-    @media (min-width: @bp-sm) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    @media (min-width: @bp-lg) { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    @media (min-width: @bp-lg) {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: var(--staff-gap-y) var(--staff-gap-x);
+    }
   }
 
   &__card {
@@ -58,5 +69,62 @@
   &__bio {
     margin: 0.625rem 0 0; // paragraph spacing 10
     padding: 0 var(--staff-text-inset) var(--space-2);
+  }
+}
+
+// ---------------------------------------------------------------------
+// Phones: the designer redrew this as a one-card carousel (node 2235:5637) — heading, a pair of
+// arrows across the full width, then one full-bleed portrait (375 × 300) over its text panel.
+// ---------------------------------------------------------------------
+@media @upto-lg {
+  .staff-grid {
+    padding-block: 3.75rem 1.875rem; // 60 / 30
+    background: var(--color-blue-light);
+
+    &__header {
+      margin-bottom: 1.25rem; // 20
+      h2 {
+        font-size: 2rem;   // 32
+        line-height: 1.05; // 33.6
+      }
+    }
+
+    &__arrows {
+      justify-content: space-between;
+      width: 100%;
+      margin-top: 3.125rem; // 50
+    }
+
+    &__slider {
+      --swiper-wrapper-transition-timing-function: var(--ease-out);
+      margin-inline: calc(var(--container-gutter) * -1);
+    }
+
+    &__card {
+      flex: 0 0 100%;
+      padding: 0 0 1.875rem; // 30
+      border-right: 0;
+
+      h3 {
+        margin-top: 1.875rem;      // 30
+        padding-inline: 2.1875rem; // 25 panel + 10 text inset
+        font-size: var(--font-size-xl); // 25
+        line-height: 1.1;          // 27.5
+      }
+    }
+
+    &__photo { aspect-ratio: 375 / 300; }
+
+    &__role,
+    &__bio {
+      padding-inline: 2.1875rem; // 35
+      font-size: 0.9375rem;      // 15
+      line-height: 1.5;          // 22.5
+    }
+
+    &__bio {
+      margin-top: 0.625rem; // 10
+      padding-bottom: 0;
+    }
   }
 }

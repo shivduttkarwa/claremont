@@ -116,9 +116,78 @@
   &--photos &__card { width: ~"min(22.3125rem, 80vw)"; } // 357, no gutter between photos
   &--photos &__track { gap: 0; }
 
+  &__caption {
+    @media (min-width: @bp-lg) { display: none; }
+  }
+
   // Swiper drives the educators row, so the wrapper drops the native scroll container
   .swiper > &__track {
     overflow: visible;
     scroll-snap-type: none;
+  }
+}
+
+// ---------------------------------------------------------------------
+// Phones: the designer redrew the educators row as a one-card carousel (node 2088:12798) — heading,
+// full-width arrows, then a full-bleed photo (375 × 300) over a blue quote panel (375 × 300).
+// ---------------------------------------------------------------------
+@media @upto-lg {
+  .scroller--photos {
+    padding-top: 3.75rem; // 60
+
+    .scroller__header {
+      display: block;
+      margin-bottom: 1.25rem; // 20
+      h2 {
+        font-size: 2rem;   // 32
+        line-height: 1.05; // 33.6
+      }
+      .arrow-group {
+        justify-content: space-between;
+        width: 100%;
+        margin-top: 3.125rem; // 50
+      }
+    }
+
+    .scroller__slider { --swiper-wrapper-transition-timing-function: var(--ease-out); }
+
+    .scroller__card { width: 100%; }
+
+    .scroller__photo {
+      aspect-ratio: 375 / 300;
+      .icon { display: none; }
+    }
+
+    .scroller__caption {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 0.625rem; // 10
+      min-height: 18.75rem; // 300
+      padding: 1.875rem 1.5625rem; // 30 25
+      background: var(--color-blue);
+    }
+
+    .scroller__quote {
+      margin: 0;
+      font-family: var(--font-display);
+      font-size: 2.5rem; // 40
+      line-height: 0.95; // 38
+      color: var(--color-heading);
+    }
+
+    .scroller__name {
+      margin: 0;
+      font-family: var(--font-ui);
+      font-size: 0.9375rem; // 15
+      font-weight: var(--font-weight-semibold);
+      line-height: 1.5;     // 22.5
+      letter-spacing: var(--letter-spacing-ui);
+      span {
+        font-family: var(--font-body);
+        font-weight: var(--font-weight-regular);
+        letter-spacing: var(--letter-spacing-body);
+      }
+    }
   }
 }

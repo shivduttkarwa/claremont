@@ -1,49 +1,56 @@
 <!-- @wagtail-block: staff_grid
      title:  CharBlock(required)
      people: ListBlock(StructBlock(photo:ImageChooserBlock, name:CharBlock, role:CharBlock, bio:TextBlock))
-     Portraits are the real ones from Figma; the bios are still Figma's lorem ipsum. -->
-<section class="staff-grid" aria-labelledby="executives-title">
+     Portraits are the real ones from Figma; the bios are still Figma's lorem ipsum.
+     One list for both layouts: a three-column grid from lg, a one-card Swiper below it (data-slider-below-lg). -->
+<section class="staff-grid" aria-labelledby="executives-title" data-slider data-slider-below-lg>
   <div class="container">
     <div class="staff-grid__header">
       <h2 id="executives-title" data-anim="split" data-anim-type="chars-soft">Our passionate educational executives</h2>
+      <div class="staff-grid__arrows arrow-group">
+        <button class="arrow-btn arrow-btn--prev" type="button" aria-label="Previous executives" data-slider-prev><svg class="icon"><use href="#icon-arrow-right"></use></svg></button>
+        <button class="arrow-btn arrow-btn--next" type="button" aria-label="Next executives" data-slider-next><svg class="icon"><use href="#icon-arrow-right"></use></svg></button>
+      </div>
     </div>
-    <ul class="staff-grid__grid" data-anim-group="fade-up">
-      <li class="staff-grid__card">
-        <img class="staff-grid__photo" src="assets/images/welcome/alana-koch.webp" alt="Portrait of Alana Koch" width="806" height="806" loading="lazy" decoding="async">
-        <h3>Alana Koch</h3>
-        <p class="staff-grid__role">Principal</p>
-        <p class="staff-grid__bio">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec nunc congue, ultricies felis at, malesuada erat. Morbi nisi nulla, blandit eget dolor id, aliquam vehicula dolor sagittis eleifend.</p>
-      </li>
-      <li class="staff-grid__card">
-        <img class="staff-grid__photo" src="assets/images/welcome/janelle-ford.webp" alt="Portrait of Janelle Ford" width="806" height="806" loading="lazy" decoding="async">
-        <h3>Janelle Ford</h3>
-        <p class="staff-grid__role">Deputy Principal</p>
-        <p class="staff-grid__bio">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec nunc congue, ultricies felis at, malesuada erat. Morbi nisi nulla, blandit eget dolor id, aliquam vehicula dolor sagittis eleifend.</p>
-      </li>
-      <li class="staff-grid__card">
-        <img class="staff-grid__photo" src="assets/images/welcome/chloe-leary.webp" alt="Portrait of Chloe Leary" width="806" height="806" loading="lazy" decoding="async">
-        <h3>Chloe Leary</h3>
-        <p class="staff-grid__role">Principal's Executive Assistant/Registrar</p>
-        <p class="staff-grid__bio">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec nunc congue, ultricies felis at, malesuada erat. Morbi nisi nulla, blandit eget dolor id, aliquam vehicula dolor sagittis eleifend.</p>
-      </li>
-      <li class="staff-grid__card">
-        <img class="staff-grid__photo" src="assets/images/welcome/renee-de-rossi.webp" alt="Portrait of Renee De Rossi" width="806" height="806" loading="lazy" decoding="async">
-        <h3>Renee De Rossi</h3>
-        <p class="staff-grid__role">Head of Inclusive Learning</p>
-        <p class="staff-grid__bio">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec nunc congue, ultricies felis at, malesuada erat. Morbi nisi nulla, blandit eget dolor id, aliquam vehicula dolor sagittis eleifend.</p>
-      </li>
-      <li class="staff-grid__card">
-        <img class="staff-grid__photo" src="assets/images/welcome/emily-eu.webp" alt="Portrait of Emily Eu" width="806" height="806" loading="lazy" decoding="async">
-        <h3>Emily Eu</h3>
-        <p class="staff-grid__role">Head of Primary</p>
-        <p class="staff-grid__bio">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec nunc congue, ultricies felis at, malesuada erat. Morbi nisi nulla, blandit eget dolor id, aliquam vehicula dolor sagittis eleifend.</p>
-      </li>
-      <li class="staff-grid__card">
-        <img class="staff-grid__photo" src="assets/images/welcome/hannah-davis.webp" alt="Portrait of Hannah Davis" width="806" height="806" loading="lazy" decoding="async">
-        <h3>Hannah Davis</h3>
-        <p class="staff-grid__role">Head of Infants</p>
-        <p class="staff-grid__bio">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec nunc congue, ultricies felis at, malesuada erat. Morbi nisi nulla, blandit eget dolor id, aliquam vehicula dolor sagittis eleifend.</p>
-      </li>
-    </ul>
+    <div class="staff-grid__slider swiper">
+      <ul class="staff-grid__grid swiper-wrapper" data-anim-group="fade-up">
+        <li class="staff-grid__card swiper-slide">
+          <img class="staff-grid__photo" src="assets/images/welcome/alana-koch.webp" alt="Portrait of Alana Koch" width="806" height="806" loading="lazy" decoding="async">
+          <h3>Alana Koch</h3>
+          <p class="staff-grid__role">Principal</p>
+          <p class="staff-grid__bio">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec nunc congue, ultricies felis at, malesuada erat. Morbi nisi nulla, blandit eget dolor id, aliquam vehicula dolor sagittis eleifend.</p>
+        </li>
+        <li class="staff-grid__card swiper-slide">
+          <img class="staff-grid__photo" src="assets/images/welcome/janelle-ford.webp" alt="Portrait of Janelle Ford" width="806" height="806" loading="lazy" decoding="async">
+          <h3>Janelle Ford</h3>
+          <p class="staff-grid__role">Deputy Principal</p>
+          <p class="staff-grid__bio">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec nunc congue, ultricies felis at, malesuada erat. Morbi nisi nulla, blandit eget dolor id, aliquam vehicula dolor sagittis eleifend.</p>
+        </li>
+        <li class="staff-grid__card swiper-slide">
+          <img class="staff-grid__photo" src="assets/images/welcome/chloe-leary.webp" alt="Portrait of Chloe Leary" width="806" height="806" loading="lazy" decoding="async">
+          <h3>Chloe Leary</h3>
+          <p class="staff-grid__role">Principal's Executive Assistant/Registrar</p>
+          <p class="staff-grid__bio">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec nunc congue, ultricies felis at, malesuada erat. Morbi nisi nulla, blandit eget dolor id, aliquam vehicula dolor sagittis eleifend.</p>
+        </li>
+        <li class="staff-grid__card swiper-slide">
+          <img class="staff-grid__photo" src="assets/images/welcome/renee-de-rossi.webp" alt="Portrait of Renee De Rossi" width="806" height="806" loading="lazy" decoding="async">
+          <h3>Renee De Rossi</h3>
+          <p class="staff-grid__role">Head of Inclusive Learning</p>
+          <p class="staff-grid__bio">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec nunc congue, ultricies felis at, malesuada erat. Morbi nisi nulla, blandit eget dolor id, aliquam vehicula dolor sagittis eleifend.</p>
+        </li>
+        <li class="staff-grid__card swiper-slide">
+          <img class="staff-grid__photo" src="assets/images/welcome/emily-eu.webp" alt="Portrait of Emily Eu" width="806" height="806" loading="lazy" decoding="async">
+          <h3>Emily Eu</h3>
+          <p class="staff-grid__role">Head of Primary</p>
+          <p class="staff-grid__bio">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec nunc congue, ultricies felis at, malesuada erat. Morbi nisi nulla, blandit eget dolor id, aliquam vehicula dolor sagittis eleifend.</p>
+        </li>
+        <li class="staff-grid__card swiper-slide">
+          <img class="staff-grid__photo" src="assets/images/welcome/hannah-davis.webp" alt="Portrait of Hannah Davis" width="806" height="806" loading="lazy" decoding="async">
+          <h3>Hannah Davis</h3>
+          <p class="staff-grid__role">Head of Infants</p>
+          <p class="staff-grid__bio">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec nunc congue, ultricies felis at, malesuada erat. Morbi nisi nulla, blandit eget dolor id, aliquam vehicula dolor sagittis eleifend.</p>
+        </li>
+      </ul>
+    </div>
   </div>
 </section>
