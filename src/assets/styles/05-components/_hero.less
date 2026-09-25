@@ -133,16 +133,14 @@
     }
   }
 
+  // The 375 frame stretches the button to the column; the client prefers it at its label width everywhere
   &__actions {
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-2);
     margin-top: var(--space-5);
-    .btn { flex: 1 1 100%; justify-content: center; }
-    @media (min-width: @bp-lg) {
-      margin-top: 2.8125rem; // 45
-      .btn { flex: 0 0 auto; }
-    }
+    .btn { flex: 0 0 auto; }
+    @media (min-width: @bp-lg) { margin-top: 2.8125rem; } // 45
   }
 
   &__subnav {
