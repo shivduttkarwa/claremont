@@ -299,6 +299,16 @@
       letter-spacing: var(--letter-spacing-body);
     }
 
+    // Phones centre the brand block only: the logo, its copy and the two buttons (the client's call)
+    @media @upto-md {
+      &__logo { margin-inline: auto; }
+      &__about p {
+        margin-inline: auto;
+        text-align: center;
+      }
+      &__actions { justify-content: center; }
+    }
+
     // Tablets and landscape phones: the brand row runs full width, then two aligned columns
     @media (min-width: @bp-md) {
       &__columns {

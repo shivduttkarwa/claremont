@@ -7,6 +7,8 @@
  * every hero-tier element joins one timeline on load, stepping through data-anim-order (0 first);
  * elements that share an order start together and each step starts as the previous one lands
  * (data-anim-lead = seconds before the previous step ends; the default is DEFAULTS.entranceLead).
+ * A scroll step already in view at load follows the entrance as its last step, so a short hero never
+ * lets the content below it beat the title. On phones a section's copy waits for its title as well.
  */
 import Lenis from "lenis";
 import { gsap } from "gsap";
@@ -110,6 +112,31 @@ const bind = (el) => el.setAttribute(BOUND, "");
 let lenis = null;
 let started = false;
 let immediate = false; // add(root, { immediate }) treats every step as an entrance step
+let handoff = 0; // ticker time from which scroll steps already in view may play: the page entrance's last step
+const follow = () => Math.max(0, handoff - gsap.ticker.time);
+
+// On phones a section's copy follows its title: the nearest split before it in the same `main > *` block.
+// An ancestor with data-anim-titles-first="off" switches that off (the home page, choreographed per block).
+const titleDurations = new WeakMap(); // split -> how long its animation runs
+const titleEnds = new WeakMap(); // split -> ticker time at which it has finished
+const titlesFirst = (el) => window.innerWidth < 992 && !el.closest('[data-anim-titles-first="off"]');
+function titleFor(el) {
+  const section = el.closest("main > *");
+  if (!section) return null;
+  const titles = Array.from(section.querySelectorAll('[data-anim="split"]')).filter(
+    (title) => title !== el && tierOf(title) !== HERO && (title.compareDocumentPosition(el) & Node.DOCUMENT_POSITION_FOLLOWING)
+  );
+  return titles[titles.length - 1] || null;
+}
+// seconds until the title before `el` has finished; one that has not fired yet is taken to start now
+function titleWait(el) {
+  if (!titlesFirst(el)) return 0;
+  const title = titleFor(el);
+  if (!title) return 0;
+  const now = gsap.ticker.time;
+  const end = titleEnds.has(title) ? titleEnds.get(title) : now + follow() + (titleDurations.get(title) || 0);
+  return Math.max(0, end - now);
+}
 const triggers = new WeakMap(); // element -> its ScrollTrigger
 const splits = new WeakMap(); // element -> its SplitText while split
 const entrances = new WeakMap(); // root -> its entrance timeline
@@ -124,28 +151,31 @@ function initScroll(opts) {
 // A step is { animation } — a factory that creates and starts its tween or timeline — plus
 // { deferred: true, duration } when it can only be built at play time (text splits need the final font).
 
-// Hero-tier steps join the entrance timeline; the rest play once they scroll into view.
-function play(el, step, entrance) {
+// Hero-tier steps join the entrance timeline; the rest play once they scroll into view. Their triggers
+// are created after the entrance is built, so one already in view can follow it instead of racing it.
+function play(el, step, entrance, scroll) {
   if (tierOf(el) === HERO || immediate) {
     entrance.push({ order: orderOf(el), lead: leadOf(el), ...step });
     return;
   }
-  triggers.set(el, ScrollTrigger.create({
+  scroll.push(() => triggers.set(el, ScrollTrigger.create({
     trigger: el,
     start: startOf(el),
     once: true,
     // the order stagger adds to whatever data-anim-delay already asked for
     onEnter: () => {
       const tween = step.animation();
-      tween.delay(tween.delay() + orderOf(el) * DEFAULTS.stagger);
+      tween.delay(tween.delay() + Math.max(follow(), titleWait(el)) + orderOf(el) * DEFAULTS.stagger);
+      if (titleDurations.has(el)) titleEnds.set(el, gsap.ticker.time + tween.delay() + tween.duration());
     },
-  }));
+  })));
 }
 
 function playEntrance(steps, root) {
   if (!steps.length) return;
   const tl = gsap.timeline();
   entrances.set(root, tl);
+  let titleEnd = 0; // when the last hero title has finished splitting
   [...new Set(steps.map((step) => step.order))]
     .sort((a, b) => a - b)
     .forEach((order, i) => {
@@ -159,8 +189,11 @@ function playEntrance(steps, root) {
         }
         tl.call(() => step.animation(), [], at);
         tl.to({}, { duration: step.duration }, at); // holds the slot so the next step waits for it
+        titleEnd = Math.max(titleEnd, at + step.duration);
       });
     });
+  // scroll steps already in view follow as the last step, but never while a title is still rising
+  if (root === document) handoff = gsap.ticker.time + Math.max(0, tl.duration() - DEFAULTS.entranceLead, titleEnd);
 }
 
 // data-anim-group -> tag direct children as staggered reveals (auto ordering)
@@ -191,7 +224,7 @@ function batchOrders(batch) {
   return batch.map((el, i) => orderOf(el, i) - (el.hasAttribute(AUTO_ORDER) ? base : 0));
 }
 
-function setupReveals(root, entrance) {
+function setupReveals(root, entrance, scroll) {
   const byTier = {};
   scoped(root, '[data-anim="reveal"]').forEach((el) => {
     bind(el);
@@ -217,23 +250,24 @@ function setupReveals(root, entrance) {
 
     const tier = tierOf(el);
     // a custom start point needs its own trigger; the rest batch per tier
-    if (tier === HERO || immediate || el.hasAttribute("data-anim-start")) play(el, revealStep(el), entrance);
+    if (tier === HERO || immediate || el.hasAttribute("data-anim-start")) play(el, revealStep(el), entrance, scroll);
     else (byTier[tier] ||= []).push(el);
   });
   Object.entries(byTier).forEach(([tier, group]) => {
-    ScrollTrigger.batch(group, {
+    scroll.push(() => ScrollTrigger.batch(group, {
       start: TIER_START[tier] || TIER_START.default,
       once: true,
       onEnter: (batch) => {
         const orders = batchOrders(batch);
         const last = Math.max(0, ...orders);
         const step = last ? Math.min(DEFAULTS.stagger, DEFAULTS.spread / last) : 0;
+        const wait = follow();
         batch.forEach((el, i) => {
           const tween = revealStep(el).animation();
-          tween.delay(tween.delay() + orders[i] * step);
+          tween.delay(tween.delay() + Math.max(wait, titleWait(el)) + orders[i] * step);
         });
       },
-    }).forEach((st) => triggers.set(st.trigger, st));
+    }).forEach((st) => triggers.set(st.trigger, st)));
   });
 }
 
@@ -263,7 +297,7 @@ function keepKerning(chars, lefts) {
   });
 }
 
-function setupSplits(root, entrance) {
+function setupSplits(root, entrance, scroll) {
   scoped(root, '[data-anim="split"]').forEach((el) => {
     bind(el);
     const type = attr(el, "data-anim-type", "lines");
@@ -273,9 +307,10 @@ function setupSplits(root, entrance) {
       ? el.textContent.replace(/\s/g, "").length
       : Math.max(1, Math.round(el.getBoundingClientRect().height / parseFloat(getComputedStyle(el).lineHeight)) || 1);
     const stagger = preset.spread ? Math.min(preset.to.stagger, preset.spread / Math.max(1, count)) : preset.to.stagger;
+    titleDurations.set(el, preset.to.duration + stagger * Math.max(0, count - 1));
     play(el, {
       deferred: true,
-      duration: preset.to.duration + stagger * Math.max(0, count - 1),
+      duration: titleDurations.get(el),
       animation: () => {
         const lefts = isChars ? glyphLefts(el) : null;
         // words are boxed too, so a wrapping title still breaks between words and not inside one
@@ -302,14 +337,14 @@ function setupSplits(root, entrance) {
           },
         });
       },
-    }, entrance);
+    }, entrance, scroll);
   });
 }
 
 // data-anim="sequence": one timeline over the marked descendants, staggered in DOM order. An item
 // inherits the container's data-anim-type unless data-anim-item names a preset of its own.
 // Items are cleared on completion so their own hover transitions keep working afterwards.
-function setupSequences(root, entrance) {
+function setupSequences(root, entrance, scroll) {
   scoped(root, '[data-anim="sequence"]').forEach((el) => {
     bind(el);
     // data-anim-items="children" makes the direct children the items (rich text: the CMS cannot mark each <p>)
@@ -348,7 +383,7 @@ function setupSequences(root, entrance) {
         items.forEach((item, i) => tl.to(item, toVars(presetFor(item), item), i * stagger));
         return tl;
       },
-    }, entrance);
+    }, entrance, scroll);
   });
 }
 
@@ -406,18 +441,20 @@ function setupProgress(root) {
 
 function setupAll(root, opts = {}) {
   const entrance = [];
+  const scroll = [];
   immediate = !!opts.immediate;
   try {
     expandGroups(root);
-    setupSequences(root, entrance); // first: on a phone it may hand its items to setupReveals
-    setupReveals(root, entrance);
-    setupSplits(root, entrance);
+    setupSequences(root, entrance, scroll); // first: on a phone it may hand its items to setupReveals
+    setupSplits(root, entrance, scroll); // before the reveals, so a title's trigger fires ahead of its copy's
+    setupReveals(root, entrance, scroll);
     setupParallax(root);
     setupProgress(root);
   } finally {
     immediate = false;
   }
   playEntrance(entrance, root);
+  scroll.forEach((create) => create());
 }
 
 // Put every bound target under `root` back to its hidden start, so add() can play it again.
