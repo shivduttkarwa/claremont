@@ -308,24 +308,31 @@ function setupSplits(root, entrance, scroll) {
       : Math.max(1, Math.round(el.getBoundingClientRect().height / parseFloat(getComputedStyle(el).lineHeight)) || 1);
     const stagger = preset.spread ? Math.min(preset.to.stagger, preset.spread / Math.max(1, count)) : preset.to.stagger;
     titleDurations.set(el, preset.to.duration + stagger * Math.max(0, count - 1));
+    const build = () => {
+      const lefts = isChars ? glyphLefts(el) : null;
+      // words are boxed too, so a wrapping title still breaks between words and not inside one
+      const split = new SplitText(
+        el,
+        isChars
+          ? { type: "words,chars", wordsClass: "anim-word", charsClass: "anim-char" }
+          : { type: "lines", linesClass: "anim-line", mask: "lines", tag: "span" }
+      );
+      const targets = isChars ? split.chars : split.lines;
+      if (lefts) keepKerning(targets, lefts);
+      splits.set(el, split);
+      const from = preset.rise ? { ...preset.from, y: parseFloat(getComputedStyle(el).fontSize) * preset.rise } : preset.from;
+      gsap.set(targets, from);
+      return { split, targets };
+    };
+    let built = null;
     play(el, {
       deferred: true,
       duration: titleDurations.get(el),
+      prepare: () => { built = build(); },
       animation: () => {
-        const lefts = isChars ? glyphLefts(el) : null;
-        // words are boxed too, so a wrapping title still breaks between words and not inside one
-        const split = new SplitText(
-          el,
-          isChars
-            ? { type: "words,chars", wordsClass: "anim-word", charsClass: "anim-char" }
-            : { type: "lines", linesClass: "anim-line", mask: "lines", tag: "span" }
-        );
-        const targets = isChars ? split.chars : split.lines;
-        if (lefts) keepKerning(targets, lefts);
-        splits.set(el, split);
+        const { split, targets } = built || build();
+        built = null;
         gsap.set(el, { autoAlpha: 1 }); // the container shows; its pieces carry the hidden state
-        const from = preset.rise ? { ...preset.from, y: parseFloat(getComputedStyle(el).fontSize) * preset.rise } : preset.from;
-        gsap.set(targets, from);
         return gsap.to(targets, {
           ...preset.to,
           stagger,
@@ -439,7 +446,8 @@ function setupProgress(root) {
   });
 }
 
-function setupAll(root, opts = {}) {
+// Binds, start states and entrance splits; the returned function plays them
+function prepareAll(root, opts = {}) {
   const entrance = [];
   const scroll = [];
   immediate = !!opts.immediate;
@@ -453,8 +461,15 @@ function setupAll(root, opts = {}) {
   } finally {
     immediate = false;
   }
-  playEntrance(entrance, root);
-  scroll.forEach((create) => create());
+  entrance.forEach((step) => step.prepare?.());
+  return () => {
+    playEntrance(entrance, root);
+    scroll.forEach((create) => create());
+  };
+}
+
+function setupAll(root, opts = {}) {
+  prepareAll(root, opts)();
 }
 
 // Put every bound target under `root` back to its hidden start, so add() can play it again.
@@ -496,13 +511,25 @@ const Anim = {
       document.documentElement.classList.add("anim-reduced");
       return this;
     }
-    const start = () => {
+    let run = null;
+    const fail = (err) => {
+      run = null;
+      console.error("[anim] init failed — revealing content", err);
+      revealEverything();
+    };
+    const prepare = () => {
       try {
-        setupAll(document);
+        run = prepareAll(document);
         ScrollTrigger.refresh();
       } catch (err) {
-        console.error("[anim] init failed — revealing content", err);
-        revealEverything();
+        fail(err);
+      }
+    };
+    const start = () => {
+      try {
+        run?.();
+      } catch (err) {
+        fail(err);
       }
     };
     try {
@@ -517,9 +544,15 @@ const Anim = {
     // A split measured against the fallback face would nudge its glyphs to the wrong places, so the
     // entrance waits for the webfonts (briefly: a font that never arrives must not hold the page), and
     // after a page transition for the slide to land (opts.after, capped so a stuck one cannot hold it).
+    // Setup and splits happen during the slide; play waits two frames past it for the browser's repaint.
     const briefly = (promise, ms) => Promise.race([promise, new Promise((resolve) => setTimeout(resolve, ms))]);
+    const settle = () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
     const fonts = document.fonts?.ready ?? Promise.resolve();
-    Promise.all([briefly(fonts, 800), briefly(Promise.resolve(opts.after), 2000)]).then(start, start);
+    briefly(fonts, 800)
+      .then(prepare, prepare)
+      .then(() => briefly(Promise.resolve(opts.after), 2000))
+      .then(settle, settle)
+      .then(start, start);
     return this;
   },
 
