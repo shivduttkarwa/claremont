@@ -3,7 +3,7 @@
  */
 import "bootstrap/js/dist/offcanvas";
 import { Anim } from "./anim.js";
-import { initApproachAccordion, initCurrentNav, initHotspots, initQuoteCards, initRevealCards, initRevealColumns, initScrollers, initStickyHeader, initTabArrows } from "./ui.js";
+import { initApproachAccordion, initCurrentNav, initHeaderNav, initHotspots, initQuoteCards, initRevealCards, initRevealColumns, initScrollers, initStickyHeader, initTabArrows } from "./ui.js";
 import { initSearch } from "./search.js";
 import { initSliders } from "./slider.js";
 import { initQuoteReveal } from "./quote-reveal.js";
@@ -23,5 +23,6 @@ document.addEventListener("DOMContentLoaded", () => {
   initApproachAccordion();
   initSearch();
   initStickyHeader();
+  initHeaderNav();
   initPageTransition();
 });
