@@ -24,6 +24,57 @@ export function openHotspot(group, open) {
     item.classList.toggle("is-open", on);
     item.querySelector("[data-hotspot-toggle]")?.setAttribute("aria-expanded", String(on));
   });
+  placeHotspot(group);
+}
+
+// The card keeps Figma's 353 as the photo shrinks, so it moves to a clear spot or fades what it covers
+const desktop = window.matchMedia("(min-width: 992px)");
+const PLACES = [[false, false], [true, false], [false, true], [true, true]];
+
+export function placeHotspot(group) {
+  const items = [...group.querySelectorAll("[data-hotspot]")];
+  items.forEach((item) => item.classList.remove("is-covered"));
+  const open = items.find((item) => item.classList.contains("is-open"));
+  const bounds = group.getBoundingClientRect();
+  if (!open || !desktop.matches || !bounds.width) {
+    open?.classList.remove("is-swapped", "is-up");
+    return;
+  }
+  const card = open.querySelector(".hotspot__card");
+  const gap = remToPx(0.5);
+  const title = group.closest(".approach__overlay")?.querySelector("h2");
+  const obstacles = items.filter((item) => item !== open).map((item) => [item, item.getBoundingClientRect()]);
+  if (title) {
+    const range = document.createRange();
+    range.selectNodeContents(title);
+    obstacles.push([null, range.getBoundingClientRect()]);
+  }
+
+  const measure = ([swapped, up]) => {
+    open.classList.toggle("is-swapped", swapped);
+    open.classList.toggle("is-up", up);
+    const box = open.getBoundingClientRect();
+    const left = box.left + card.offsetLeft;
+    const top = box.top + card.offsetTop;
+    const right = left + card.offsetWidth;
+    const bottom = top + card.offsetHeight;
+    const hits = obstacles.filter(([, r]) => r.right + gap > left && r.left - gap < right && r.bottom + gap > top && r.top - gap < bottom);
+    const outside = left < bounds.left || right > bounds.right || top < bounds.top || bottom > bounds.bottom;
+    return { place: [swapped, up], hits, score: (outside ? 100 : 0) + hits.length };
+  };
+
+  let best = null;
+  for (const place of PLACES) {
+    const result = measure(place);
+    if (!best || result.score < best.score) best = result;
+    if (!result.score) break;
+  }
+  measure(best.place);
+  best.hits.forEach(([item]) => item?.classList.add("is-covered"));
+}
+
+function placeAll() {
+  document.querySelectorAll("[data-hotspots]").forEach(placeHotspot);
 }
 
 export function initHotspots(root = document) {
@@ -38,6 +89,13 @@ export function initHotspots(root = document) {
       if (event.key === "Escape") openHotspot(group, null);
     });
   });
+  let frame = 0;
+  window.addEventListener("resize", () => {
+    cancelAnimationFrame(frame);
+    frame = requestAnimationFrame(placeAll);
+  });
+  document.fonts?.ready.then(placeAll);
+  placeAll();
 }
 
 // One quote showing at a time: hovering a card raises its quote and drops the one before it.
@@ -114,6 +172,7 @@ export function initTabArrows(root = document) {
       Anim.reset(pane);
       pane.classList.add("is-entering");
       void pane.offsetWidth;
+      pane.querySelectorAll("[data-hotspots]").forEach(placeHotspot);
     });
     // The outgoing pane stays in place while the incoming one fades over it
     wrap.addEventListener("hide.bs.tab", (event) => {
