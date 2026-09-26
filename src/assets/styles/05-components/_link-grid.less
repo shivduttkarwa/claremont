@@ -69,6 +69,7 @@
   }
 
   &__label { max-width: var(--link-grid-title-width); }
+  &--plain &__link:not([href="#"]) &__label { text-decoration: underline; }
 
   // Policies: no header, rules from 200 on a 220 pitch, 200 below the last row
   &--plain {

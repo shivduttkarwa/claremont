@@ -54,6 +54,19 @@
     // Dim the child, not the card: the reveal animation leaves an inline opacity on the card itself
     > * { transition: opacity var(--duration-base) ease, background-color var(--duration-base) ease; }
     &.is-clipped > * { opacity: var(--scroller-dim); }
+    // Figma rules each link card 2 wide, 1 in from its right edge, beside the 1 gap
+    @media (min-width: @bp-lg) {
+      &:has(> .scroller__link)::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: var(--border-width);
+        bottom: 0;
+        width: var(--border-width-thick);
+        background: var(--color-white);
+        pointer-events: none;
+      }
+    }
   }
 
   // Blue link card: title at (25, 21), arrow frame 20 down and 16 in from the right, copy 37 above the foot

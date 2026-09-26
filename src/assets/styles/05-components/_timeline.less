@@ -167,6 +167,11 @@
       p { margin-inline-start: auto; }
     }
   }
+  @media (min-width: @bp-lg) {
+    &__item--w344 { --timeline-text-width: 21.5rem; }
+    &__item--w324 { --timeline-text-width: 20.25rem; }
+    &__item--w304 { --timeline-text-width: 19rem; }
+  }
   &__item--tight {
     @media (min-width: @bp-lg) { --timeline-title-gap: var(--timeline-title-gap-tight); }
   }
@@ -213,6 +218,10 @@
 
   // Preparatory "A day in the life": steps at 237, 393, 553, 709, 872, 1028, 1187, 1343, 1504, 1688
   &--day {
+    @media (min-width: @bp-lg) {
+      .timeline__item:nth-child(odd) { --timeline-title-width: 19.25rem; }  // 308
+      .timeline__item:nth-child(even) { --timeline-text-width: 18.875rem; } // 302
+    }
     @media (min-width: @bp-xxl) {
       --timeline-rows: 9.75rem 10rem 9.75rem 10.1875rem 9.75rem 9.9375rem 9.75rem 10.0625rem 11.5rem auto;
       --timeline-row: 0rem;
@@ -222,10 +231,10 @@
   // Enrolment journey: heading only (first step 115 below it); steps at 237, 416, 600, 785, 972; 154 below
   &--steps {
     @media (min-width: @bp-lg) {
-      --timeline-text-width: 21rem; // 335
+      --timeline-text-width: 21rem; // 336: Figma gives each step its own copy box, hence the width modifiers below
       --timeline-row: 11.375rem;
       --timeline-header-gap: 7.203125rem;
-      --timeline-pad-bottom: 10.21875rem; // 163.5
+      --timeline-pad-bottom: 8.8125rem; // 141 under the last step's four lines
     }
     @media (min-width: @bp-xxl) {
       --timeline-rows: 11.1875rem 11.5rem 11.5625rem 11.6875rem auto;

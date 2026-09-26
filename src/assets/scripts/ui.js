@@ -242,11 +242,14 @@ export function initRevealColumns(root = document) {
         if (desktop.matches && mouse.matches) open(item);
       });
     });
+    items[0]?.parentElement.addEventListener("mouseleave", () => {
+      if (desktop.matches && mouse.matches) open(null);
+    });
   });
 }
 
-// Cards whose copy shows on the open one only: with a mouse from lg the first is open at rest and hover or
-// focus opens another; below lg the cards are an accordion, so a tap toggles the copy instead of following the link
+// Cards whose copy shows on the open one only: with a mouse from lg all rest closed and hover or
+// focus opens one; below lg the cards are an accordion, so a tap toggles the copy instead of following the link
 export function initRevealCards(root = document) {
   const mouse = window.matchMedia("(min-width: 992px) and (hover: hover) and (pointer: fine)");
   const phone = window.matchMedia("(max-width: 991.98px)");
@@ -259,6 +262,7 @@ export function initRevealCards(root = document) {
         if (phone.matches && card.querySelector(".scroller__panel")) links[i].setAttribute("aria-expanded", String(card.classList.contains("is-open")));
         else links[i].removeAttribute("aria-expanded");
       });
+    track.addEventListener("mouseleave", () => mouse.matches && !track.contains(document.activeElement) && open(null));
     cards.forEach((card, i) => {
       card.addEventListener("mouseenter", () => mouse.matches && open(card));
       card.addEventListener("focusin", () => mouse.matches && open(card));

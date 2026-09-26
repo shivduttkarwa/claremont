@@ -5,7 +5,7 @@
   --article-pad-bottom: 6.375rem;    // 102
   --article-lead-width: 31.875rem;   // 510
   --article-media-width: 44.5rem;    // 712
-  --article-body-width: 43.75rem;    // 700
+  --article-body-width: 43.6875rem;  // 699: Instrument Sans sets a hair narrower than Figma, so its 700 box breaks here
 
   padding-block: var(--space-8);
   @media (min-width: @bp-lg) { padding-block: var(--article-pad-top) var(--article-pad-bottom); }
@@ -77,4 +77,9 @@
   }
 
   &__nav-label span { display: block; }
+  &__nav-label span + span {
+    font-family: var(--font-ui);
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: var(--letter-spacing-ui);
+  }
 }

@@ -71,6 +71,7 @@ export function initSliders(root = document) {
         spaceBetween: 0,
         resistance: false,
         initialSlide: parseInt(el.dataset.sliderStart || "0", 10),
+        rewind: el.hasAttribute("data-slider-rewind"),
         slidesOffsetBefore: edge(),
         slidesOffsetAfter: tail(),
         navigation: {

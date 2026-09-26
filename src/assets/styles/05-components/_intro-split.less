@@ -18,7 +18,7 @@
   &--lg { --intro-height: 23.875rem; }  // 382
 
   h2 {
-    max-width: var(--intro-lead-width);
+    max-width: calc(var(--intro-lead-width) + var(--text-fit));
     margin: 0;
     font-family: var(--font-display);
     font-size: var(--font-size-callout);
@@ -36,6 +36,10 @@
     p { margin-bottom: 1.40625rem; } // one blank 22.5 line between paragraphs
   }
   &--tight-paragraphs &__body p { margin-bottom: 0.625rem; } // Enrolment: 10
+  // Enrolment: its copy needs the whole 617 box, which runs a pixel past the container edge
+  &--wide-body &__body {
+    @media (min-width: @bp-lg) { margin-right: calc(-1 * var(--text-fit)); }
+  }
   &--body-offset &__body {
     @media (min-width: @bp-lg) { padding-top: 0.375rem; } // News copy starts at 105
   }
