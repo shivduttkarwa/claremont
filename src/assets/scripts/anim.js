@@ -354,6 +354,10 @@ function setupSplits(root, entrance, scroll) {
 function setupSequences(root, entrance, scroll) {
   scoped(root, '[data-anim="sequence"]').forEach((el) => {
     bind(el);
+    if (attr(el, "data-anim-arrival") === "static" && document.documentElement.classList.contains("page-arrival")) {
+      el.classList.add("is-revealed");
+      return;
+    }
     // data-anim-items="children" makes the direct children the items (rich text: the CMS cannot mark each <p>)
     if (attr(el, "data-anim-items") === "children") Array.from(el.children).forEach((child) => child.setAttribute("data-anim-item", ""));
     // an item belongs to its nearest sequence, so sequences can nest (the accordion rows around the hotspots)
@@ -546,9 +550,11 @@ const Anim = {
     // after a page transition for the slide to land (opts.after, capped so a stuck one cannot hold it).
     // Setup and splits happen during the slide; play waits two frames past it for the browser's repaint.
     const briefly = (promise, ms) => Promise.race([promise, new Promise((resolve) => setTimeout(resolve, ms))]);
-    const settle = () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    const nextFrame = () => new Promise((resolve) => requestAnimationFrame(resolve));
+    const settle = () => nextFrame().then(nextFrame);
     const fonts = document.fonts?.ready ?? Promise.resolve();
     briefly(fonts, 800)
+      .then(nextFrame, nextFrame) // pagereveal has fired by the first frame, so a page arrival is known
       .then(prepare, prepare)
       .then(() => briefly(Promise.resolve(opts.after), 2000))
       .then(settle, settle)

@@ -14,6 +14,8 @@ html.anim-ready:not(.anim-reduced) {
   [data-anim="sequence"][data-anim-items="children"]:not(.is-revealed) > * {
     visibility: hidden;
   }
+  // arriving from another page, the header is already in place
+  &.page-arrival [data-anim-arrival="static"] [data-anim-item] { visibility: visible; }
 }
 
 // --- scroll progress ------------------------------------------------

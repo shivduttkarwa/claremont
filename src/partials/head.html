@@ -14,6 +14,7 @@
       addEventListener("pagereveal", function (e) {
         var vt = e.viewTransition, nav = window.navigation && navigation.activation;
         if (vt && vt.types && nav && nav.from && nav.entry && nav.from.index > nav.entry.index) vt.types.add("back");
+        if (vt) d.classList.add("page-arrival");
         resolve(vt ? vt.finished : null);
       }, { once: true });
       requestAnimationFrame(function () { resolve(null); });
