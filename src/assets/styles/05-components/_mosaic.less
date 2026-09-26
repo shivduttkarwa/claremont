@@ -52,9 +52,36 @@
   // The photos set the row heights through their own proportions (square, or 2 : 1 across two columns) and
   // every cell fills its area, so a card whose copy runs long on a narrow laptop grows its row and the
   // photos beside it stretch with it instead of the copy spilling out of a fixed ratio
+  // --draw, --fill, --develop and --settle run 0 → 1 as mosaic.js assembles a tile; at rest they are all 1
   &__cell {
+    --draw: 1;
+    --fill: 1;
+    --develop: 1;
+    --settle: 1;
+    --mosaic-line: var(--color-primary);
+    --mosaic-line-width: 0.0625rem;
     position: relative;
     min-width: 0;
+
+    // the outline draws from two opposite corners and fades as the tile floods in
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: var(--z-raised);
+      pointer-events: none;
+      background:
+        ~"linear-gradient(var(--mosaic-line), var(--mosaic-line)) left top / calc(var(--draw) * 100%) var(--mosaic-line-width) no-repeat",
+        ~"linear-gradient(var(--mosaic-line), var(--mosaic-line)) left top / var(--mosaic-line-width) calc(var(--draw) * 100%) no-repeat",
+        ~"linear-gradient(var(--mosaic-line), var(--mosaic-line)) right bottom / calc(var(--draw) * 100%) var(--mosaic-line-width) no-repeat",
+        ~"linear-gradient(var(--mosaic-line), var(--mosaic-line)) right bottom / var(--mosaic-line-width) calc(var(--draw) * 100%) no-repeat";
+      opacity: calc(1 - var(--fill));
+    }
+
+    // the panel or photo floods in from the top-left corner along the drawn lines
+    > * {
+      clip-path: inset(0 calc((1 - var(--fill)) * 100%) calc((1 - var(--fill)) * 100%) 0);
+    }
 
     &--wide {
       @media (min-width: @bp-lg) { grid-column: span 2; }
@@ -63,14 +90,20 @@
       @media (min-width: @bp-lg) { grid-row: span 2; }
     }
 
+    // the photo develops from a pale monochrome wash to full colour as it settles from a slight zoom
     &--media {
+      --mosaic-zoom: 1;
       overflow: hidden;
       img {
         .img-cover();
+        filter: grayscale(calc(1 - var(--develop))) brightness(calc(1 + (1 - var(--develop)) * 0.25));
+        transform: scale(calc(var(--mosaic-zoom) + (1 - var(--develop)) * 0.06));
         transition: transform var(--duration-slow) var(--ease-out);
       }
-      &:hover img { transform: scale(1.04); }
+      &:hover { --mosaic-zoom: 1.04; }
     }
+    // the hover transition would trail every frame of the zoom, so it waits for the tile to finish
+    &.is-assembling img { transition: none; }
   }
 
   // Title at (32, 32), pictogram frame 21 down and 26 in from the right, copy ending 28 above the edge
@@ -87,6 +120,11 @@
 
     h3 { margin: 0; }
     p { margin: 0; }
+
+    > * {
+      opacity: var(--settle);
+      transform: translateY(calc((1 - var(--settle)) * 0.75rem));
+    }
 
     .icon {
       width: var(--mosaic-icon);

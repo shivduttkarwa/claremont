@@ -7,6 +7,7 @@ import { initApproachAccordion, initCurrentNav, initHeaderNav, initHotspots, ini
 import { initSearch } from "./search.js";
 import { initSliders } from "./slider.js";
 import { initQuoteReveal } from "./quote-reveal.js";
+import { initMosaicAssembly } from "./mosaic.js";
 import { initPageTransition } from "./transition.js";
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -17,6 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initRevealColumns();
   initRevealCards();
   initQuoteReveal();
+  initMosaicAssembly();
   initScrollers();
   initSliders();
   initTabArrows();
