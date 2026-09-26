@@ -7,8 +7,9 @@
  * every hero-tier element joins one timeline on load, stepping through data-anim-order (0 first);
  * elements that share an order start together and each step starts as the previous one lands
  * (data-anim-lead = seconds before the previous step ends; the default is DEFAULTS.entranceLead).
- * A scroll step already in view at load follows the entrance as its last step, so a short hero never
- * lets the content below it beat the title. On phones a section's copy waits for its title as well.
+ * Scroll steps are tied to the scroll position but only ever move forwards (see SCRUB). A scroll step
+ * already in view at load plays in time after the entrance instead, so a short hero never lets the
+ * content below it beat the title. On phones a section's copy waits for its title as well.
  */
 import Lenis from "lenis";
 import { gsap } from "gsap";
@@ -25,6 +26,10 @@ const DEFAULTS = {
   entranceLead: 0.4, // an entrance step starts this long before the previous one ends
   lenis: { duration: 1.2, smoothWheel: true, wheelMultiplier: 0.8, touchMultiplier: 1.5 },
 };
+
+// Scroll reveals follow the scroll forwards only: they run from their start line over this share of the
+// viewport, trailing the scroll by `smooth` seconds, and stay revealed once they reach the end.
+const SCRUB = { distance: 0.28, smooth: 0.4 };
 
 // Every preset fades (autoAlpha) so the CSS FOUC guard works uniformly.
 const REVEAL = {
@@ -57,7 +62,7 @@ const SPLIT = {
   "lines":      { from: { y: 30, autoAlpha: 0 }, to: { y: 0, autoAlpha: 1, duration: 0.6, ease: "power1.out", stagger: 0.1 } },
 };
 
-// Scroll tiers play once the element's top is this far up the viewport; data-anim-start overrides it
+// Scroll tiers start once the element's top is this far up the viewport; data-anim-start overrides it
 // (ScrollTrigger syntax, e.g. "top 45%" for a tall block whose pieces sit low).
 const TIER_START = {
   default: "top 85%",
@@ -118,7 +123,6 @@ const follow = () => Math.max(0, handoff - gsap.ticker.time);
 // On phones a section's copy follows its title: the nearest split before it in the same `main > *` block.
 // An ancestor with data-anim-titles-first="off" switches that off (the home page, choreographed per block).
 const titleDurations = new WeakMap(); // split -> how long its animation runs
-const titleEnds = new WeakMap(); // split -> ticker time at which it has finished
 const titlesFirst = (el) => window.innerWidth < 992 && !el.closest('[data-anim-titles-first="off"]');
 function titleFor(el) {
   const section = el.closest("main > *");
@@ -128,14 +132,15 @@ function titleFor(el) {
   );
   return titles[titles.length - 1] || null;
 }
-// seconds until the title before `el` has finished; one that has not fired yet is taken to start now
-function titleWait(el) {
+// How long `el` holds back for the title before it: all of the title's run when they start together,
+// less the further down the page the copy sits
+function titleHold(el) {
   if (!titlesFirst(el)) return 0;
   const title = titleFor(el);
   if (!title) return 0;
-  const now = gsap.ticker.time;
-  const end = titleEnds.has(title) ? titleEnds.get(title) : now + follow() + (titleDurations.get(title) || 0);
-  return Math.max(0, end - now);
+  const gap = el.getBoundingClientRect().top - title.getBoundingClientRect().top;
+  const share = 1 - gap / (window.innerHeight * SCRUB.distance);
+  return (titleDurations.get(title) || 0) * gsap.utils.clamp(0, 1, share);
 }
 const triggers = new WeakMap(); // element -> its ScrollTrigger
 const splits = new WeakMap(); // element -> its SplitText while split
@@ -151,24 +156,54 @@ function initScroll(opts) {
 // A step is { animation } — a factory that creates and starts its tween or timeline — plus
 // { deferred: true, duration } when it can only be built at play time (text splits need the final font).
 
-// Hero-tier steps join the entrance timeline; the rest play once they scroll into view. Their triggers
-// are created after the entrance is built, so one already in view can follow it instead of racing it.
-function play(el, step, entrance, scroll) {
+// A scroll step's animation sits `hold` seconds into a paused timeline whose progress follows the
+// scroll and never goes back. It is built on first use, since a split needs the final layout. One
+// already past its start line when created plays in time after the entrance, as does one whose
+// range the page is too short to scroll through. data-anim-scroll="timed" keeps a step on the clock
+// (the staggered slider wipes, which scrubbing makes feel rushed).
+function scrollStep(el, animation, hold) {
+  let tl = null;
+  let reached = 0;
+  const timeline = () => (tl ||= gsap.timeline({ paused: true }).add(animation(), hold));
+  const playNow = (st) => {
+    st.kill();
+    triggers.delete(el);
+    gsap.delayedCall(follow(), () => timeline().play());
+  };
+  if (attr(el, "data-anim-scroll") === "timed") {
+    triggers.set(el, ScrollTrigger.create({ trigger: el, start: startOf(el), once: true, onEnter: playNow }));
+    return;
+  }
+  const range = () => window.innerHeight * SCRUB.distance;
+  const st = ScrollTrigger.create({
+    trigger: el,
+    start: `clamp(${startOf(el)})`,
+    end: () => `+=${range()}`,
+    onUpdate: (self) => {
+      const reach = Math.min(self.end, ScrollTrigger.maxScroll(window));
+      if (reach - self.start < range() / 2) return playNow(self);
+      const progress = gsap.utils.clamp(0, 1, (self.scroll() - self.start) / (reach - self.start));
+      if (progress <= reached) return;
+      reached = progress;
+      gsap.to(timeline(), { progress, duration: SCRUB.smooth, ease: "power2.out", overwrite: true });
+      if (progress === 1) {
+        self.kill();
+        triggers.delete(el);
+      }
+    },
+  });
+  triggers.set(el, st);
+  if (st.scroll() >= st.start) playNow(st);
+}
+
+// Hero-tier steps join the entrance timeline; the rest follow the scroll. Their triggers are created
+// after the entrance is built, so one already in view can follow it instead of racing it.
+function play(el, step, entrance, scroll, hold = orderOf(el) * DEFAULTS.stagger) {
   if (tierOf(el) === HERO || immediate) {
     entrance.push({ order: orderOf(el), lead: leadOf(el), ...step });
     return;
   }
-  scroll.push(() => triggers.set(el, ScrollTrigger.create({
-    trigger: el,
-    start: startOf(el),
-    once: true,
-    // the order stagger adds to whatever data-anim-delay already asked for
-    onEnter: () => {
-      const tween = step.animation();
-      tween.delay(tween.delay() + Math.max(follow(), titleWait(el)) + orderOf(el) * DEFAULTS.stagger);
-      if (titleDurations.has(el)) titleEnds.set(el, gsap.ticker.time + tween.delay() + tween.duration());
-    },
-  })));
+  scroll.push(() => scrollStep(el, step.animation, hold + titleHold(el)));
 }
 
 function playEntrance(steps, root) {
@@ -217,15 +252,17 @@ const revealStep = (el) => ({
   animation: () => gsap.to(el, { ...toVars(presetOf(el), el), onComplete: () => el.classList.add("is-revealed") }),
 });
 
-// A group's auto order is only a stagger index, so it restarts with each batch; a hand-written one stays absolute.
-function batchOrders(batch) {
-  const auto = batch.filter((el) => el.hasAttribute(AUTO_ORDER)).map((el) => orderOf(el, 0));
-  const base = auto.length ? Math.min(...auto) : 0;
-  return batch.map((el, i) => orderOf(el, i) - (el.hasAttribute(AUTO_ORDER) ? base : 0));
+// A group's auto order is only a stagger index, so it restarts on each row; a hand-written one stays absolute.
+function staggerHold(el) {
+  if (!el.hasAttribute(AUTO_ORDER)) return orderOf(el) * DEFAULTS.stagger;
+  const row = Array.from(el.parentElement.children).filter(
+    (item) => item.hasAttribute(AUTO_ORDER) && Math.abs(item.offsetTop - el.offsetTop) < 2
+  );
+  const last = row.length - 1;
+  return last ? row.indexOf(el) * Math.min(DEFAULTS.stagger, DEFAULTS.spread / last) : 0;
 }
 
 function setupReveals(root, entrance, scroll) {
-  const byTier = {};
   scoped(root, '[data-anim="reveal"]').forEach((el) => {
     bind(el);
     const preset = presetOf(el);
@@ -248,32 +285,13 @@ function setupReveals(root, entrance, scroll) {
       return;
     }
 
-    const tier = tierOf(el);
-    // a custom start point needs its own trigger; the rest batch per tier
-    if (tier === HERO || immediate || el.hasAttribute("data-anim-start")) play(el, revealStep(el), entrance, scroll);
-    else (byTier[tier] ||= []).push(el);
-  });
-  Object.entries(byTier).forEach(([tier, group]) => {
-    scroll.push(() => ScrollTrigger.batch(group, {
-      start: TIER_START[tier] || TIER_START.default,
-      once: true,
-      onEnter: (batch) => {
-        const orders = batchOrders(batch);
-        const last = Math.max(0, ...orders);
-        const step = last ? Math.min(DEFAULTS.stagger, DEFAULTS.spread / last) : 0;
-        const wait = follow();
-        batch.forEach((el, i) => {
-          const tween = revealStep(el).animation();
-          tween.delay(tween.delay() + Math.max(wait, titleWait(el)) + orders[i] * step);
-        });
-      },
-    }).forEach((st) => triggers.set(st.trigger, st)));
+    play(el, revealStep(el), entrance, scroll, staggerHold(el));
   });
 }
 
-// Left edge of every non-blank glyph while the text is still one kerned run.
-function glyphLefts(el) {
-  const lefts = [];
+// Box of every non-blank glyph while the text is still one kerned run.
+function glyphBoxes(el) {
+  const boxes = [];
   const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
   for (let node = walker.nextNode(); node; node = walker.nextNode()) {
     const text = node.textContent;
@@ -282,17 +300,32 @@ function glyphLefts(el) {
       const range = document.createRange();
       range.setStart(node, i);
       range.setEnd(node, i + 1);
-      lefts.push(range.getBoundingClientRect().left);
+      boxes.push(range.getBoundingClientRect());
     }
   }
-  return lefts;
+  return boxes;
+}
+
+// Boxed words run a little wider than the kerned text, so a full line would wrap its last word while split.
+// The split keeps the original line breaks instead: no wrapping, and a <br> wherever a line used to start.
+function keepLines(el, split, boxes) {
+  const index = new Map(split.chars.map((char, i) => [char, i]));
+  el.style.whiteSpace = "nowrap";
+  let prev = null;
+  split.words.forEach((word) => {
+    const first = index.get(word.querySelector(".anim-char"));
+    if (first === undefined) return;
+    if (prev && boxes[first].top > boxes[prev.first].top + 1 && word.getBoundingClientRect().top <= prev.word.getBoundingClientRect().top + 1) {
+      word.before(document.createElement("br"));
+    }
+    prev = { word, first };
+  });
 }
 
 // Boxing each character loses the kerning between pairs; nudge every box back to where its glyph sat.
-function keepKerning(chars, lefts) {
-  if (chars.length !== lefts.length) return;
+function keepKerning(chars, boxes) {
   chars.forEach((char, i) => {
-    const nudge = lefts[i] - char.getBoundingClientRect().left;
+    const nudge = boxes[i].left - char.getBoundingClientRect().left;
     if (Math.abs(nudge) > 0.01) char.style.marginLeft = `${nudge}px`;
   });
 }
@@ -309,7 +342,7 @@ function setupSplits(root, entrance, scroll) {
     const stagger = preset.spread ? Math.min(preset.to.stagger, preset.spread / Math.max(1, count)) : preset.to.stagger;
     titleDurations.set(el, preset.to.duration + stagger * Math.max(0, count - 1));
     const build = () => {
-      const lefts = isChars ? glyphLefts(el) : null;
+      const boxes = isChars ? glyphBoxes(el) : null;
       // words are boxed too, so a wrapping title still breaks between words and not inside one
       const split = new SplitText(
         el,
@@ -318,7 +351,10 @@ function setupSplits(root, entrance, scroll) {
           : { type: "lines", linesClass: "anim-line", mask: "lines", tag: "span" }
       );
       const targets = isChars ? split.chars : split.lines;
-      if (lefts) keepKerning(targets, lefts);
+      if (boxes && boxes.length === targets.length) {
+        keepLines(el, split, boxes);
+        keepKerning(targets, boxes);
+      }
       splits.set(el, split);
       const from = preset.rise ? { ...preset.from, y: parseFloat(getComputedStyle(el).fontSize) * preset.rise } : preset.from;
       gsap.set(targets, from);
@@ -340,6 +376,7 @@ function setupSplits(root, entrance, scroll) {
           onComplete: () => {
             el.classList.add("is-revealed");
             split.revert();
+            el.style.whiteSpace = "";
             splits.delete(el);
           },
         });
@@ -489,6 +526,7 @@ function resetAll(root) {
     gsap.killTweensOf([el, ...pieces]);
     splits.get(el)?.revert();
     splits.delete(el);
+    el.style.whiteSpace = "";
     gsap.set([el, ...pieces], { clearProps: "all" });
     el.removeAttribute(BOUND);
     el.classList.remove("is-revealed");
