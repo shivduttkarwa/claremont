@@ -98,6 +98,14 @@ export function initHotspots(root = document) {
   placeAll();
 }
 
+// Links still pointing at "#" are placeholders for pages the CMS will supply: a click does nothing, instead of jumping to the top
+export function initPlaceholderLinks(root = document) {
+  root.addEventListener("click", (event) => {
+    const link = event.target.closest('a[href="#"]');
+    if (link) event.preventDefault();
+  });
+}
+
 // Hover only, no click: the card under the pointer raises its quote over its overlay, and drops it again
 // when the pointer leaves. Touch opens the active slide instead (data-slider-open-active).
 export function initQuoteCards(root = document) {
