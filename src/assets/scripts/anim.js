@@ -158,20 +158,23 @@ function initScroll(opts) {
 
 // A scroll step's animation sits `hold` seconds into a paused timeline whose progress follows the
 // scroll and never goes back. It is built on first use, since a split needs the final layout. One
-// already past its start line when created plays in time after the entrance, as does one whose
-// range the page is too short to scroll through. data-anim-scroll="timed" keeps a step on the clock
+// already on screen when created plays in time after the entrance, even below its start line (the
+// copy under a short hero), as does one whose range the page is too short to scroll through. data-anim-scroll="timed" keeps a step on the clock
 // (the staggered slider wipes, which scrubbing makes feel rushed).
 function scrollStep(el, animation, hold) {
   let tl = null;
   let reached = 0;
   const timeline = () => (tl ||= gsap.timeline({ paused: true }).add(animation(), hold));
+  const onScreen = () => el.getBoundingClientRect().top < window.innerHeight;
   const playNow = (st) => {
     st.kill();
     triggers.delete(el);
     gsap.delayedCall(follow(), () => timeline().play());
   };
   if (attr(el, "data-anim-scroll") === "timed") {
-    triggers.set(el, ScrollTrigger.create({ trigger: el, start: startOf(el), once: true, onEnter: playNow }));
+    const st = ScrollTrigger.create({ trigger: el, start: startOf(el), once: true, onEnter: playNow });
+    triggers.set(el, st);
+    if (onScreen()) playNow(st);
     return;
   }
   const range = () => window.innerHeight * SCRUB.distance;
@@ -193,7 +196,7 @@ function scrollStep(el, animation, hold) {
     },
   });
   triggers.set(el, st);
-  if (st.scroll() >= st.start) playNow(st);
+  if (st.scroll() >= st.start || onScreen()) playNow(st);
 }
 
 // Hero-tier steps join the entrance timeline; the rest follow the scroll. Their triggers are created

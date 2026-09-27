@@ -1,7 +1,7 @@
-// 05-components/_page-hero.less — inner-page hero, 784 tall at 1640: photo, title bottom-left
+// 05-components/_page-hero.less — inner-page hero, 80% of the screen tall: photo, title bottom-left
 
 .page-hero {
-  --page-hero-height: 28rem;
+  --page-hero-height: 80svh; // svh, so a phone's address bar showing or hiding does not resize it
   --page-hero-pad-bottom: var(--space-4);
   --page-hero-subnav-top: 10.3125rem; // 165
   --page-hero-title-shift: 0rem;
@@ -17,11 +17,7 @@
   background: var(--color-primary);
   color: var(--color-white);
 
-  @media (min-width: @bp-md) { --page-hero-height: 36rem; }
-  @media (min-width: @bp-lg) {
-    --page-hero-height: ~"clamp(34rem, 47.8vw, 49rem)"; // 784 at 1640
-    --page-hero-pad-bottom: 2.45rem;                     // title box ends at 744.8
-  }
+  @media (min-width: @bp-lg) { --page-hero-pad-bottom: 2.45rem; } // title box ends 39.2 above the edge
   // Figma hangs the display title 16 left of the content edge (x 184) on every inner page
   @media (min-width: @bp-xxl) { --page-hero-title-shift: -1rem; }
 
@@ -131,8 +127,8 @@
 
   // No photo: solid dark green, 564 tall (news article); title box ends 63 above the edge
   &--plain {
+    --page-hero-height: 28rem;
     background: var(--color-primary-dark);
-    @media (min-width: @bp-md) { --page-hero-height: 28rem; }
     @media (min-width: @bp-lg) {
       --page-hero-height: ~"clamp(26rem, 34.4vw, 35.25rem)";
       --page-hero-pad-bottom: 3.95rem;
