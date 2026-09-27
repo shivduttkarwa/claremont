@@ -2,7 +2,7 @@
      title: RichTextBlock (may carry a line break)
      body:  RichTextBlock
      ctas:  ListBlock(StructBlock(text:CharBlock, url:URLBlock, style:ChoiceBlock)) — outline then primary
-     locals: id, title, body, secondary_text, secondary_url, primary_text, primary_url, primary_modifier -->
+     locals: id, title, body, secondary_text, secondary_url, primary_text, primary_url -->
 <section class="cta-row" aria-labelledby="{{ id }}">
   <div class="container">
     <div class="row g-4 row-split">
@@ -14,7 +14,7 @@
         <div class="cta-row__body rich-text" data-anim="reveal" data-anim-order="1">{{{ body }}}</div>
         <div class="cta-row__actions" data-anim="reveal" data-anim-order="2">
           <a class="btn btn-outline-light" href="{{ secondary_url }}">{{ secondary_text }}</a>
-          <a class="btn btn-primary {{ primary_modifier }}" href="{{ primary_url }}">{{ primary_text }}</a>
+          <a class="btn btn-primary" href="{{ primary_url }}">{{ primary_text }}</a>
         </div>
         </div>
       </div>

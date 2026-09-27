@@ -104,8 +104,8 @@
       content: "";
       .cover();
       background:
-        linear-gradient(180deg, rgba(0, 0, 0, 0.5) 5%, rgba(102, 102, 102, 0) 40%),
-        var(--color-overlay);
+        linear-gradient(var(--color-overlay) 0 0),
+        linear-gradient(180deg, rgba(0, 0, 0, 0.5) -4.82%, rgba(102, 102, 102, 0) 40.17%);
     }
   }
 
@@ -141,16 +141,15 @@
   --hotspot-rule: ~"color-mix(in srgb, currentColor 22%, transparent)";
   --hotspot-measure: 38rem; // readable line length below lg; Figma's 353 takes over from lg
 
-  border-top: var(--border-width-rule) solid var(--hotspot-rule);
-  &:last-child { border-bottom: var(--border-width-rule) solid var(--hotspot-rule); }
+  border-top: var(--border-width) solid var(--hotspot-rule);
+  &:last-child { border-bottom: var(--border-width) solid var(--hotspot-rule); }
 
   @media (min-width: @bp-lg) {
     position: absolute;
-    left: var(--x);
-    top: var(--y);
+    left: calc(var(--x) - var(--marker-size) / 2); // not a translate: a layout offset snaps to whole pixels, so the plus stays crisp
+    top: calc(var(--y) - var(--marker-size) / 2);
     width: var(--marker-size);
     height: var(--marker-size);
-    transform: translate(-50%, -50%);
     z-index: var(--z-content);
     border: 0;
     transition: opacity var(--duration-fast) ease;
@@ -178,7 +177,7 @@
       right: 0;
       top: 50%;
       width: 0.65625rem; // 10.5
-      height: var(--border-width-rule);
+      height: var(--border-width);
       background: currentColor;
       transform: translateY(-50%);
       transition: transform var(--duration-base) var(--ease-out);
@@ -196,14 +195,27 @@
       box-shadow: var(--shadow-marker);
       transition: transform var(--duration-base) var(--ease-out), background-color var(--duration-fast) ease;
 
+      // Borders, not fills: Chrome rounds a border to whole device pixels, so every stroke draws at the same weight
       &::before,
       &::after {
-        left: 50%;
         right: auto;
-        background: var(--color-primary);
-        transform: translate(-50%, -50%);
+        border: 0 solid var(--color-primary);
+        background: none;
+        transform: none;
       }
-      &::after { transform: translate(-50%, -50%) rotate(90deg); }
+      &::before {
+        left: calc(50% - 0.328125rem);
+        top: calc(50% - var(--border-width) / 2);
+        height: 0;
+        border-top-width: var(--border-width);
+      }
+      &::after {
+        left: calc(50% - var(--border-width) / 2);
+        top: calc(50% - 0.328125rem);
+        width: 0;
+        height: 0.65625rem;
+        border-left-width: var(--border-width);
+      }
 
       &:hover,
       &:focus-visible { transform: scale(1.15); background: var(--color-yellow-hover); }
@@ -221,7 +233,7 @@
   }
   &.is-open &__marker::after { transform: translateY(-50%) rotate(0deg); }
   @media (min-width: @bp-lg) {
-    &.is-open &__marker::after { transform: translate(-50%, -50%) rotate(0deg); }
+    &.is-open &__marker::after { transform: scaleY(0); }
   }
 
   &__label {
@@ -353,7 +365,7 @@
       grid-area: auto;
       opacity: 1;
       transition: background-color var(--approach-open-time) ease;
-      &:last-child { border-bottom: var(--border-width-rule) solid var(--color-text); }
+      &:last-child { border-bottom: var(--border-width) solid var(--color-text); }
       &.is-open { background: var(--color-background-alt); }
     }
 
@@ -367,14 +379,14 @@
       width: 100%;
       padding: 1.625rem var(--container-gutter); // 26
       border: 0;
-      border-top: var(--border-width-rule) solid var(--color-text);
+      border-top: var(--border-width) solid var(--color-text);
       background: none;
       color: var(--color-primary);
       font-family: var(--font-body);
       font-size: var(--font-size-xl); // 25
       font-weight: var(--font-weight-regular);
       line-height: 1.12; // 28: Figma draws its 27.5 line at a whole pixel
-      letter-spacing: -0.03em;
+      letter-spacing: var(--letter-spacing-body);
       text-align: left;
       cursor: pointer;
       .icon {
@@ -459,7 +471,7 @@
         height: var(--marker-size);
         border-radius: var(--radius-full);
         background:
-          linear-gradient(var(--color-primary-dark) 0 0) center / 0.6875rem var(--border-width-rule) no-repeat,
+          linear-gradient(var(--color-primary-dark) 0 0) center / 0.6875rem var(--border-width) no-repeat,
           var(--color-accent);
         transform: none;
       }
@@ -467,7 +479,7 @@
         right: auto;
         left: calc(var(--marker-size) / 2);
         top: calc(var(--hotspot-hit) + var(--marker-size) / 2);
-        width: var(--border-width-rule);
+        width: var(--border-width);
         height: 0.5625rem; // 9
         background: var(--color-primary-dark);
         transform: translate(-50%, -50%);
@@ -481,7 +493,7 @@
       font-size: 0.9375rem; // 15
       font-weight: var(--font-weight-semibold);
       line-height: var(--hotspot-line);
-      letter-spacing: -0.02em;
+      letter-spacing: var(--letter-spacing-ui);
       color: var(--color-text);
     }
 
@@ -511,7 +523,7 @@
       overflow: hidden;
       font-size: 0.9375rem; // 15
       line-height: var(--hotspot-line);
-      letter-spacing: -0.03em;
+      letter-spacing: var(--letter-spacing-body);
       color: var(--color-text);
     }
   }
