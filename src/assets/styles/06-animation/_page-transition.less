@@ -22,8 +22,10 @@
 
 ::view-transition-old(root) { animation-name: page-recede; }
 
+// The corners hold still: animating border-radius takes the whole slide off the compositor, where the new page's script stalls it
 ::view-transition-new(root) {
   animation-name: page-slide-in;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
   box-shadow: var(--shadow-page);
 }
 
@@ -32,22 +34,24 @@ html:active-view-transition-type(back) {
   &::view-transition-old(root) {
     z-index: 1;
     animation-name: page-slide-out;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
     box-shadow: var(--shadow-page);
   }
   &::view-transition-new(root) {
     animation-name: page-return;
+    border-radius: 0;
     box-shadow: none;
   }
 }
 
 @keyframes page-slide-in {
-  from { transform: translateY(100%); border-radius: var(--radius-lg) var(--radius-lg) 0 0; }
-  to { transform: none; border-radius: 0; }
+  from { transform: translateY(100%); }
+  to { transform: none; }
 }
 
 @keyframes page-slide-out {
-  from { transform: none; border-radius: 0; }
-  to { transform: translateY(100%); border-radius: var(--radius-lg) var(--radius-lg) 0 0; }
+  from { transform: none; }
+  to { transform: translateY(100%); }
 }
 
 @keyframes page-recede {
