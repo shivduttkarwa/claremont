@@ -28,7 +28,12 @@
       content: "";
       .cover();
       background: linear-gradient(180deg, rgba(0, 0, 0, 0.35) 0%, rgba(0, 0, 0, 0) 28%, rgba(0, 0, 0, 0) 52%, rgba(0, 0, 0, 0.55) 100%);
-      @media (min-width: @bp-lg) { background: none; } // the Figma photo carries no overlay
+      // Not in Figma: soft shades behind the header and the title, so white text holds on a bright photo
+      @media (min-width: @bp-lg) {
+        background:
+          linear-gradient(180deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.3) 15%, rgba(0, 0, 0, 0) 32%),
+          linear-gradient(180deg, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 0.45) 100%);
+      }
     }
   }
 
