@@ -44,7 +44,7 @@
       position: fixed;
       background-color: var(--color-primary-dark);
       --header-height: var(--header-height-pinned);
-      --header-logo-width: 12.5rem;
+      --header-logo-width: 17.5rem; // 280: 69 tall in the 80 bar
       --header-logo-top: 0;
       --header-right-top: 0;
       .site-header__inner { align-items: center; }
@@ -94,8 +94,7 @@
     flex: 0 0 auto;
     width: var(--header-logo-width);
     margin-top: var(--header-logo-top);
-    transition: opacity var(--duration-fast) ease, width var(--duration-base) var(--ease-out), margin-top var(--duration-base) var(--ease-out);
-    &:hover { opacity: 0.85; }
+    transition: width var(--duration-base) var(--ease-out), margin-top var(--duration-base) var(--ease-out);
     img { display: block; width: 100%; height: auto; }
     @media (min-width: @bp-xxl) { margin-left: -0.0625rem; } // frame starts at 59
   }
