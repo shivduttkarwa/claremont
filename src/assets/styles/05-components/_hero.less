@@ -5,7 +5,7 @@
   --hero-pad-top: 0;
   --hero-pad-bottom: 0;
   --hero-media-height: ~"max(32.125rem, 67vw)"; // 514; past 767 the landscape photo keeps the 768 × 514 proportion
-  --hero-subnav-top: 11.8125rem;  // 189
+  --hero-subnav-top: ~"calc(var(--hero-pad-top) + 0.37 * var(--hero-u))"; // level with the title's cap top (6 below its box), however short the screen
   --hero-subnav-inset: calc(var(--container-gutter) - 0.3125rem); // 15: the phone row sits 5 wider than the gutter
   --hero-subnav-rest: 1.5rem;     // 24 of the row over the photo's bottom edge, 24 over the white
   --hero-title-gap: var(--space-6);
@@ -128,8 +128,9 @@
   &__body {
     font-size: ~"clamp(1.125rem, 5.3731vw - 0.1343rem, 1.3125rem)"; // 18 at 375, scaling with the 335 column
     line-height: 1.3333; // 24: Figma draws its 24.3 line at a whole pixel
-    letter-spacing: var(--letter-spacing-body); // -0.54 at 18
+    letter-spacing: 0.01em; // looser than Figma's -0.03em, which read cramped once the text scales below 19
     p { margin-bottom: 0.4873em; } // 8.77 at 18
+    strong { font-weight: var(--font-weight-semibold); }
     @media (min-width: @bp-lg) {
       max-width: 38.5625rem; // 617
       font-size: ~"max(1rem, min(var(--font-size-lg), 1.1875 * var(--hero-u)))";
