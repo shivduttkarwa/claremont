@@ -98,8 +98,8 @@ export function initHotspots(root = document) {
   placeAll();
 }
 
-// One quote showing at a time: hovering a card raises its quote and drops the one before it.
-// Touch keeps whichever card the markup opens, so the design's resting state stands.
+// Hover only, no click: the card under the pointer raises its quote over its overlay, and drops it again
+// when the pointer leaves. Touch opens the active slide instead (data-slider-open-active).
 export function initQuoteCards(root = document) {
   if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
   root.querySelectorAll("[data-quote-cards]").forEach((group) => {
@@ -108,6 +108,7 @@ export function initQuoteCards(root = document) {
       card.addEventListener("pointerenter", () => {
         cards.forEach((other) => other.classList.toggle("is-open", other === card));
       });
+      card.addEventListener("pointerleave", () => card.classList.remove("is-open"));
     });
   });
 }

@@ -1,4 +1,5 @@
-// quote-reveal — the cursor's fluid wake paints a testimonial photo back through its overlay; one canvas moves between cards
+// quote-reveal — the cursor's fluid wake paints a card's photo back through its overlay; one canvas moves between
+// [data-quote-card]s, and the card's [data-quote-text] copy is redrawn inside the wake so it stays legible
 
 const SIM = 128;
 const SPLAT_RADIUS = 0.0045;
@@ -9,6 +10,7 @@ const DYE_DISS = 0.965;
 const DYE_DISS_IDLE = 0.55;
 const PRESSURE_ITS = 20;
 const IDLE_FRAMES = 40;
+const VEIL = 0.45; // the photo shows through the wake under this much black, so the quote reads white on it
 
 const VS = `attribute vec2 a_pos; varying vec2 v_uv;
   void main(){ v_uv=a_pos*.5+.5; gl_Position=vec4(a_pos,0.,1.); }`;
@@ -82,32 +84,29 @@ const GRADIENT_FS = `precision highp float;
     gl_FragColor = vec4(texture2D(u_velocity, v_uv).xy - 0.5*vec2(pR-pL, pT-pB), 0., 1.);
   }`;
 
-// Inside the wake the quote takes white or its own dark ink, whichever the photo behind it is not, over a soft halo
+// Inside the wake the photo shows through a dark scrim and the quote turns white over a soft dark halo
 const RENDER_FS = `precision highp float;
   uniform sampler2D u_dye, u_photo, u_text; uniform vec2 u_scale, u_offset, u_halo;
-  uniform vec3 u_ink; uniform float u_shift, u_textAlpha; varying vec2 v_uv;
+  uniform vec4 u_veil; uniform float u_shift, u_textAlpha; varying vec2 v_uv;
+  vec3 veiled(vec2 uv){ return mix(texture2D(u_photo, uv * u_scale + u_offset).rgb, u_veil.rgb, u_veil.a); }
   void main(){
     float dye = clamp(texture2D(u_dye, v_uv).r, 0., 1.);
-    vec3 photo = texture2D(u_photo, v_uv * u_scale + u_offset).rgb;
+    vec3 photo = veiled(v_uv);
     vec2 t = v_uv + vec2(0., u_shift);
     float text = texture2D(u_text, t).a * u_textAlpha;
     float halo = 0.;
-    float lum = 0.;
     for (int i = 0; i < 8; i++) {
       vec2 d = vec2(cos(float(i) * 0.785398), sin(float(i) * 0.785398));
       halo += texture2D(u_text, t + d * u_halo).a + texture2D(u_text, t + d * u_halo * 2.).a;
-      lum += dot(texture2D(u_photo, (v_uv + d * u_halo * 6.) * u_scale + u_offset).rgb, vec3(0.299, 0.587, 0.114));
     }
     halo = clamp(halo / 8., 0., 1.) * u_textAlpha;
-    float light = smoothstep(0.5, 0.7, lum / 8.);
-    vec3 ink = mix(vec3(1.), u_ink, light);
-    vec3 color = mix(mix(photo, vec3(light), 0.45 * halo), ink, text);
+    vec3 color = mix(mix(photo, vec3(0.), 0.45 * halo), vec3(1.), text);
     gl_FragColor = vec4(color, smoothstep(0.018, 0.22, dye));
   }`;
 
 function createFluid() {
   const canvas = document.createElement("canvas");
-  canvas.className = "testimonials__fluid";
+  canvas.className = "quote-fluid";
   canvas.setAttribute("aria-hidden", "true");
   const gl = canvas.getContext("webgl", { alpha: true, premultipliedAlpha: false, antialias: false, powerPreference: "low-power" });
   if (!gl || !gl.getExtension("OES_texture_float")) return null;
@@ -187,10 +186,11 @@ function createFluid() {
   };
 
   const photos = new WeakMap();
+  const veil = [0, 0, 0];
   const textTex = texture();
   const textCanvas = document.createElement("canvas");
   let quote = null;
-  let ink = [0, 0, 0];
+  let texts = [];
   let photo = null;
   let fit = [1, 1, 0, 0];
   let mx = 0.5, my = 0.5, dmx = 0, dmy = 0;
@@ -273,7 +273,7 @@ function createFluid() {
         const shift = quote ? quote.getBoundingClientRect().top - card.top - quote.offsetTop : 0;
         gl.uniform1f(loc(p, "u_shift"), shift / card.height);
         gl.uniform1f(loc(p, "u_textAlpha"), quote ? parseFloat(getComputedStyle(quote).opacity) : 0);
-        gl.uniform3f(loc(p, "u_ink"), ...ink);
+        gl.uniform4f(loc(p, "u_veil"), ...veil, VEIL);
       });
     }
 
@@ -302,22 +302,24 @@ function createFluid() {
     const ctx = textCanvas.getContext("2d");
     ctx.clearRect(0, 0, textCanvas.width, textCanvas.height);
     if (quote) {
-      const cs = getComputedStyle(quote);
-      ink = (cs.color.match(/[\d.]+/g) || [0, 0, 0]).slice(0, 3).map((v) => v / 255);
       ctx.scale(dpr, dpr);
-      ctx.font = `${cs.fontStyle} ${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
-      if ("letterSpacing" in ctx && cs.letterSpacing !== "normal") ctx.letterSpacing = cs.letterSpacing;
       ctx.fillStyle = "#fff";
-      const ascent = ctx.measureText("Hg").fontBoundingBoxAscent;
-      const origin = quote.getBoundingClientRect();
-      const walker = document.createTreeWalker(quote, NodeFilter.SHOW_TEXT);
       const range = document.createRange();
-      for (let node = walker.nextNode(); node; node = walker.nextNode()) {
-        for (const match of node.data.matchAll(/\S+/g)) {
-          range.setStart(node, match.index);
-          range.setEnd(node, match.index + match[0].length);
-          const r = range.getClientRects()[0];
-          if (r) ctx.fillText(match[0], r.left - origin.left + quote.offsetLeft, r.top - origin.top + quote.offsetTop + ascent);
+      for (const el of texts) {
+        const origin = el.getBoundingClientRect();
+        const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+        for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+          // each run in its own face: a name may set its title in another
+          const cs = getComputedStyle(node.parentElement);
+          ctx.font = `${cs.fontStyle} ${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
+          if ("letterSpacing" in ctx && cs.letterSpacing !== "normal") ctx.letterSpacing = cs.letterSpacing;
+          const ascent = ctx.measureText("Hg").fontBoundingBoxAscent;
+          for (const match of node.data.matchAll(/\S+/g)) {
+            range.setStart(node, match.index);
+            range.setEnd(node, match.index + match[0].length);
+            const r = range.getClientRects()[0];
+            if (r) ctx.fillText(match[0], r.left - origin.left + el.offsetLeft, r.top - origin.top + el.offsetTop + ascent);
+          }
         }
       }
     }
@@ -341,7 +343,8 @@ function createFluid() {
       const sy = entry.ratio > ratio ? 1 : entry.ratio / ratio;
       fit = [sx, sy, (1 - sx) / 2, (1 - sy) / 2];
       photo = entry.tex;
-      quote = card.querySelector("blockquote");
+      texts = [...card.querySelectorAll("[data-quote-text]")];
+      quote = texts[0] || null;
       drawText(dpr);
       [...vel, ...pre, ...dye].forEach(clear);
       card.append(canvas);

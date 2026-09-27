@@ -51,3 +51,10 @@ html.lenis body { height: auto; }
   [data-anim],
   [data-anim-item] { visibility: visible !important; }
 }
+
+// The quote-reveal canvas (quote-reveal.js): the pointer's wake over a card's overlay
+.quote-fluid {
+  .cover();
+  z-index: var(--z-raised);
+  pointer-events: none;
+}

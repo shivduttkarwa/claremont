@@ -6,6 +6,7 @@ import { Anim } from "./anim.js";
 import { initApproachAccordion, initCurrentNav, initHeaderNav, initHotspots, initQuoteCards, initRevealCards, initRevealColumns, initScrollers, initStickyHeader, initTabArrows } from "./ui.js";
 import { initSearch } from "./search.js";
 import { initSliders } from "./slider.js";
+import { initPan } from "./pan.js";
 import { initQuoteReveal } from "./quote-reveal.js";
 import { initMosaicAssembly } from "./mosaic.js";
 import { initPageTransition } from "./transition.js";
@@ -21,6 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initMosaicAssembly();
   initScrollers();
   initSliders();
+  initPan();
   initTabArrows();
   initApproachAccordion();
   initSearch();

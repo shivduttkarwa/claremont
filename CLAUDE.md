@@ -4,6 +4,7 @@ Stack: plain **HTML** pages · Bootstrap 5.3 (CSS-variable themed) · **LESS** (
 
 ## Figma
 - File `IOcoW0YV5Habv7cMDDqs9b` (the client original; `NM56T29qdCtdZaFwfcRdjB` is an earlier copy, verified identical across all 2,362 nodes on 2026-09-21), page "02 - Design Round 3 For Presentation" (canvas `2238:4789`). Desktop frames only, 1640 wide, 200px side margins → 1240 content width.
+- **The home page audits against the Design 2 home frame `1619:5207`** (`.qa/figma/n1619-5207.json`, fetched 2026-09-27) and the welcome page against `1732:11760`: their testimonials and educators rows follow Design 2 (seven 373 testimonial cards in an 806 row, eight educator cards, hover quote boxes, the slow pan). The other pages audit against Round 3.
 - **Inner-page hero photos come from canvas `1619:1791` ("03- Design 2", cached as `.qa/figma/n1619-1791.json`), not from Round 3.** Round 3 pastes one photo (`9331879…`) into all eight inner heroes; Design 2 is the only canvas that gives each page its own. `python .qa/fills-crop.py heroes` rebuilds the set from the node ids listed in that script.
 - **Never build a page from guesses.** If Figma cannot be read, stop on that page and say so. The user expects exact design and content.
 - Figma MCP on this Starter plan allows **20 tool calls per month**. Prefer the REST helpers in `.qa/` (token in the git-ignored `.qa/.figma-token`):

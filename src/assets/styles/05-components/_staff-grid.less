@@ -5,7 +5,7 @@
   --staff-pad-bottom: 1.9375rem;     // 31
   --staff-header-gap: 4.140625rem;   // heading box ends 151.75, cards start 218
   --staff-card: 25.5625rem;          // 409
-  --staff-gap-x: 0.40625rem;         // 6.5
+  --staff-gap-x: 0.375rem;           // 6
   --staff-gap-y: 1.875rem;           // 30
   --staff-card-height: 39.375rem;    // 630
   --staff-text-inset: 0.625rem;      // 10
@@ -36,11 +36,18 @@
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: var(--staff-gap-y) var(--staff-gap-x);
+      // Whole-pixel columns and gap: the 1240 column does not divide by three, and a fractional pitch
+      // snaps the rule a pixel closer to one portrait than the next
+      @supports (width: round(down, 3rem, 1px)) {
+        --staff-gap-x: ~"round(nearest, 0.375rem, 1px)";
+        grid-template-columns: ~"repeat(3, round(down, calc((100% - 2 * var(--staff-gap-x)) / 3), 1px))";
+      }
     }
   }
 
   &__card {
-    padding-right: 0.3rem; // 403 portrait inside the 409 card, less the rule
+    padding-right: 0.3125rem; // 5: the 403 portrait, then the rule at the card's edge
+    @supports (width: round(down, 3rem, 1px)) { padding-right: ~"round(nearest, 0.3125rem, 1px)"; }
     border-right: var(--border-width) solid var(--color-text);
     @media (min-width: @bp-xxl) { min-height: var(--staff-card-height); }
 

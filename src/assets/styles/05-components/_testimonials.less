@@ -1,12 +1,11 @@
-// 05-components/_testimonials.less — intro + edge-to-edge Swiper carousel (848 tall at 1640)
+// 05-components/_testimonials.less — intro + edge-to-edge card row (806 tall at 1640, Design 2 node 2410:7552)
 
 .testimonials {
   --testimonials-pad-top: 6.6875rem;     // 107
-  --testimonials-pad-bottom: 5.9375rem;  // 95
+  --testimonials-pad-bottom: 4.42875rem; // 70.86: the 806 frame under the 373.14 cards
   --testimonials-title-gap: 1.65625rem;  // heading box ends 180.5, copy at 207
-  --testimonials-track-gap: 2.75rem;     // copy ends 297, cards at 341
-  --testimonials-card: 25.75rem;         // 412
-  --testimonials-fade: 0.45;
+  --testimonials-track-gap: 4.0625rem;   // the copy box ends 297 (Figma draws 299), cards at 362
+  --testimonials-card: 23.32125rem;      // 373.14: the live frame draws the 370 strip at 1.0085
   --testimonials-quote-travel: 3rem;
 
   padding-block: var(--space-8);
@@ -31,27 +30,11 @@
     p { margin: 0; }
   }
 
-  // --offset = the .container left edge, so the snapped card lines up with the copy above it.
-  // Cards outside the container are dimmed through the mask.
+  // The cards run from the page edge (Design 2); below lg the slides drag
   &__slider {
-    @media (hover: hover) and (pointer: fine) { cursor: pointer; } // the slides drag
-    --offset: ~"max(var(--container-gutter), calc((100% - var(--container-content)) / 2))";
+    @media (hover: hover) and (pointer: fine) { cursor: pointer; }
     --card-w: ~"min(var(--testimonials-card), 80vw)";
-    // Three cards run 4 short of the 1240 column, so round down to whole cards or the dim starts inside the peeking card
-    --dim-start: calc(100% - var(--offset));
-    @supports (width: round(down, 3rem, 2rem)) {
-      --dim-start: ~"calc(var(--offset) + round(down, 100% - var(--offset), var(--card-w)))";
-    }
     margin-top: var(--testimonials-track-gap);
-    mask-image: linear-gradient(
-      90deg,
-      rgba(0, 0, 0, var(--testimonials-fade)) 0,
-      rgba(0, 0, 0, var(--testimonials-fade)) var(--offset),
-      #000 var(--offset),
-      #000 var(--dim-start),
-      rgba(0, 0, 0, var(--testimonials-fade)) var(--dim-start),
-      rgba(0, 0, 0, var(--testimonials-fade)) 100%
-    );
   }
 
   &__track {
@@ -84,20 +67,14 @@
     }
   }
 
-  &__fluid {
-    .cover();
-    z-index: var(--z-raised);
-    pointer-events: none;
-  }
-
-  // Quote starts 25 in and 31 down; it rises into place as a card opens and drops away as the next one takes over
+  // Quote starts 27 in and 27 down; it rises into place as a card opens and drops away as the next one takes over
   &__quote {
     position: absolute;
-    top: 1.9375rem;   // 31
-    right: 1.5625rem; // 25
-    left: 1.5625rem;  // 25
+    top: 1.70375rem;  // 27.26
+    right: 1.69625rem; // 27.14
+    left: 1.69625rem;
     z-index: var(--z-raised);
-    max-width: calc(19.625rem + var(--text-fit)); // 314
+    max-width: calc(17.8125rem + var(--text-fit)); // 285
     margin: 0;
     font-family: var(--font-display);
     font-size: var(--font-size-quote);
@@ -153,14 +130,10 @@
       margin-top: 3.125rem; // 50
     }
 
-    // Tablets keep this stacked header but run the 412 desktop cards from the container edge, the peeking
-    // one dimmed as on desktop (data-slider-edge="md"); the phone's one full-bleed card needs no mask
+    // Tablets keep this stacked header over the desktop's 370 cards; the phone shows one full-bleed card
     &__slider {
       margin-top: 1.25rem; // 20
-      @media @upto-md {
-        --card-w: 100%;
-        mask-image: none;
-      }
+      @media @upto-md { --card-w: 100%; }
     }
 
     &__card {

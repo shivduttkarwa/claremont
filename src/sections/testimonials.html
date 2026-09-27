@@ -2,10 +2,13 @@
      title:  CharBlock(required)
      intro:  TextBlock
      slides: ListBlock(StructBlock(image:ImageChooserBlock, alt:CharBlock, quote:TextBlock))
-     The slider is Swiper (data-slider): slides snap to the .container edge from lg (full-bleed on phones), the second one first.
-     Every card carries a quote; hovering a card slides its quote up and drops the previous one. Without hover
-     (phones), the active slide's card is the open one (data-slider-open-active). -->
-<section class="testimonials" aria-labelledby="testimonials-title" data-slider>
+     Seven cards from the "03- Design 2" strip (2410:7552, 2470:7150), full-bleed from the page edge; the quotes are
+     the students' own from its hover frame (2470:7161), set in one pair of typographic quote marks. From lg the row
+     drifts slowly to the left, wrapping round, paused under the pointer, the arrows stepping it (pan.js, note 1909:8789);
+     below lg it is the Swiper carousel (data-slider-below-lg). Every card carries a quote; hovering a card slides its
+     quote up over its overlay and drops it again when the pointer leaves, and the pointer's wake paints the photo back
+     through the box (quote-reveal.js). Without hover (phones), the active slide's card is the open one (data-slider-open-active). -->
+<section class="testimonials" aria-labelledby="testimonials-title" data-slider data-slider-below-lg data-pan>
   <div class="container">
     <div class="testimonials__header">
       <div class="testimonials__intro">
@@ -19,39 +22,48 @@
     </div>
   </div>
 
-  <div class="swiper testimonials__slider" data-slider-start="1" data-slider-edge="md" data-slider-open-active>
-    <ul class="swiper-wrapper testimonials__track" data-anim="sequence" data-anim-type="wipe-up" data-anim-scroll="timed" data-anim-start="top 65%" data-anim-stagger="0.2" data-quote-cards>
+  <div class="swiper testimonials__slider" data-slider-open-active data-pan-hover>
+    <ul class="swiper-wrapper testimonials__track" data-pan-track data-anim="sequence" data-anim-type="wipe-up" data-anim-scroll="timed" data-anim-start="top 65%" data-anim-stagger="0.2" data-quote-cards>
       <li class="swiper-slide testimonials__slide" data-anim-item>
         <div class="testimonials__card" data-quote-card>
-          <picture>
-            <source media="(min-width: 992px)" srcset="assets/images/home/testimonial-girl.webp" width="539" height="539">
-            <img src="assets/images/home/testimonial-m.webp" alt="A smiling student with plaits in her school uniform" width="750" height="824" loading="lazy" decoding="async">
-          </picture>
-          <blockquote class="testimonials__quote">“I like that everyone here knows my name. Walking in each morning feels like coming back to friends.”</blockquote>
-        </div>
-      </li>
-      <li class="swiper-slide testimonials__slide" data-anim-item>
-        <div class="testimonials__card is-open" data-quote-card>
-          <img src="assets/images/home/testimonial-flute.webp" alt="A student playing the flute on stage" width="824" height="824" loading="lazy" decoding="async">
-          <blockquote class="testimonials__quote">“Music is my favourite lesson because it's where I can be myself. I always leave class feeling happy.”</blockquote>
+          <img src="assets/images/home/testimonial-1.webp" alt="A student smiling at a lunchtime club" width="740" height="740" loading="lazy" decoding="async">
+          <blockquote class="testimonials__quote" data-quote-text>“Clubs are fun because you get to try new things and find out what you enjoy.”</blockquote>
         </div>
       </li>
       <li class="swiper-slide testimonials__slide" data-anim-item>
         <div class="testimonials__card" data-quote-card>
-          <img src="assets/images/home/testimonial-boy.webp" alt="A smiling student in blazer and striped tie" width="824" height="824" loading="lazy" decoding="async">
-          <blockquote class="testimonials__quote">“My teacher knows when I need a hand and when I just need to keep going on my own.”</blockquote>
+          <img src="assets/images/home/testimonial-2.webp" alt="A student in school uniform smiling at the camera" width="740" height="740" loading="lazy" decoding="async">
+          <blockquote class="testimonials__quote" data-quote-text>“At Claremont everyone looks after each other. No one is left out.”</blockquote>
         </div>
       </li>
       <li class="swiper-slide testimonials__slide" data-anim-item>
         <div class="testimonials__card" data-quote-card>
-          <img src="assets/images/home/testimonial-early-years.webp" alt="A young student in the early years classroom" width="824" height="824" loading="lazy" decoding="async">
-          <blockquote class="testimonials__quote">“She talks about her day the whole way home. That tells us everything we need to know.”</blockquote>
+          <img src="assets/images/home/testimonial-3.webp" alt="A student writing at a desk" width="740" height="740" loading="lazy" decoding="async">
+          <blockquote class="testimonials__quote" data-quote-text>“English is fun because we get to play with words and use things like similes and metaphors to make our writing really interesting!”</blockquote>
         </div>
       </li>
       <li class="swiper-slide testimonials__slide" data-anim-item>
         <div class="testimonials__card" data-quote-card>
-          <img src="assets/images/home/testimonial-music.webp" alt="A student taking part in a music lesson" width="824" height="824" loading="lazy" decoding="async">
-          <blockquote class="testimonials__quote">“We chose Claremont for the teaching and stayed for the community our family found here.”</blockquote>
+          <img src="assets/images/home/testimonial-4.webp" alt="A Prep student in the classroom" width="740" height="740" loading="lazy" decoding="async">
+          <blockquote class="testimonials__quote" data-quote-text>“I like Prep because we learnt about the Cooroobee frog and that it is endangered.”</blockquote>
+        </div>
+      </li>
+      <li class="swiper-slide testimonials__slide" data-anim-item>
+        <div class="testimonials__card" data-quote-card>
+          <img src="assets/images/home/testimonial-5.webp" alt="A student in a science lesson" width="740" height="740" loading="lazy" decoding="async">
+          <blockquote class="testimonials__quote" data-quote-text>“I love learning in Science because we got to make a rain gauge to help solve a problem.”</blockquote>
+        </div>
+      </li>
+      <li class="swiper-slide testimonials__slide" data-anim-item>
+        <div class="testimonials__card" data-quote-card>
+          <img src="assets/images/home/testimonial-6.webp" alt="A student working on maths" width="740" height="740" loading="lazy" decoding="async">
+          <blockquote class="testimonials__quote" data-quote-text>“I love doing Year 6 Maths even though I am in Year 4. It is challenging and I never get bored.”</blockquote>
+        </div>
+      </li>
+      <li class="swiper-slide testimonials__slide" data-anim-item>
+        <div class="testimonials__card" data-quote-card>
+          <img src="assets/images/home/testimonial-7.webp" alt="A young student reading" width="740" height="740" loading="lazy" decoding="async">
+          <blockquote class="testimonials__quote" data-quote-text>“I love reading because I can sound out new words all by myself. I’m getting better every day!”</blockquote>
         </div>
       </li>
     </ul>

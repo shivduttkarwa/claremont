@@ -1,6 +1,8 @@
 // 05-components/_subnav.less — yellow quick links: a row of short pills on phones, full labels from md, a stack from lg
 
 .subnav {
+  --subnav-stretch: 0.5rem; // 8
+
   display: flex;
   gap: var(--space-1);
 
@@ -25,22 +27,33 @@
     line-height: var(--line-height-ui);
     letter-spacing: var(--letter-spacing-ui);
     white-space: nowrap;
-    transition: background-color var(--duration-fast) ease, transform var(--duration-base) var(--ease-out);
+    transition: transform var(--duration-base) var(--ease-out);
 
     .icon { width: 1.25rem; height: 1.25rem; }
 
     @media (min-width: @bp-lg) {
+      position: relative;
       flex: 1 1 auto;
       justify-content: flex-start;
       gap: var(--space-2); // icon 1470 → 1490, label at 1506
       padding-inline: 1.125rem var(--space-2);
+      // sits past the screen edge and follows the strip in, so the stretch leaves no gap on the right
+      &::after {
+        content: "";
+        position: absolute;
+        inset: 0 auto 0 100%;
+        width: calc(var(--subnav-stretch) * 2); // twice the stretch, so the back-out overshoot is covered too
+        background: inherit;
+      }
     }
 
+    // From lg the strip stretches out to the left on a back-out ease and returns on a plain ease-out
     &:hover,
     &:focus-visible {
-      background: var(--color-yellow-hover);
-      color: var(--color-primary-dark);
-      @media (min-width: @bp-lg) { transform: translateX(-0.375rem); }
+      @media (min-width: @bp-lg) {
+        transform: translateX(calc(-1 * var(--subnav-stretch)));
+        transition: transform var(--duration-slow) var(--ease-elastic);
+      }
     }
   }
 }
