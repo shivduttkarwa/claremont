@@ -5,18 +5,31 @@
   --bs-btn-font-size: var(--font-size-md);
   --bs-btn-font-weight: var(--font-weight-medium);
   --bs-btn-line-height: var(--line-height-ui);
-  --bs-btn-border-width: var(--border-width);
-  --bs-btn-padding-x: calc(1.5rem - var(--bs-btn-border-width)); // Figma strokes sit inside the 24 padding
-  --bs-btn-padding-y: calc((var(--control-height) - 1.2em - var(--bs-btn-border-width) * 2) / 2);
+  --bs-btn-border-width: var(--border-width-button);
+  --bs-btn-padding-x: 1.5rem; // 24: Figma's stroke sits inside it
+  --bs-btn-padding-y: calc((var(--control-height) - 1.2em) / 2);
   --bs-btn-border-radius: var(--radius-none);
   --bs-btn-focus-box-shadow: 0 0 0 0.25rem var(--bs-focus-ring-color);
+  --btn-ring: var(--bs-btn-border-color);
+  border: 0;
+  box-shadow: inset 0 0 0 var(--bs-btn-border-width) var(--btn-ring);
   letter-spacing: var(--letter-spacing-body);
   white-space: nowrap;
   transition:
     color var(--duration-fast) ease,
     background-color var(--duration-fast) ease,
-    border-color var(--duration-fast) ease,
+    box-shadow var(--duration-fast) ease,
     transform var(--duration-fast) var(--ease-out);
+  &:hover { --btn-ring: var(--bs-btn-hover-border-color); }
+  &:focus-visible {
+    --btn-ring: var(--bs-btn-hover-border-color);
+    box-shadow: inset 0 0 0 var(--bs-btn-border-width) var(--btn-ring), var(--bs-btn-focus-box-shadow);
+  }
+  &.active,
+  &:active,
+  &.show { --btn-ring: var(--bs-btn-active-border-color); }
+  &:disabled,
+  &.disabled { --btn-ring: var(--bs-btn-disabled-border-color); }
   &:active { transform: translateY(0.0625rem); }
 }
 
@@ -59,7 +72,7 @@
   display: inline-flex;
   align-items: center;
   gap: 1.1875rem;
-  padding-right: calc(1.5rem - var(--bs-btn-border-width));
+  padding-right: 1.5rem;
   .icon {
     width: 1rem;
     height: 1rem;
@@ -83,8 +96,9 @@
   transition: background-color var(--duration-fast) ease, color var(--duration-fast) ease;
 
   .icon {
-    width: 1.125rem;
-    height: 1.125rem;
+    width: 1.25rem; // 20: the 19-unit glyph lands on Figma's 18.6 × 18.3 arrow
+    height: 1.25rem;
+    margin-top: 0.0625rem; // Chrome snaps the glyph to whole pixels; one down puts the shaft on Figma's row 24.7
     transition: transform var(--duration-base) var(--ease-out);
   }
   &--prev .icon { transform: rotate(180deg); }

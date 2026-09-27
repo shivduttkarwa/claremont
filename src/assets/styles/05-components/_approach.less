@@ -140,6 +140,7 @@
 .hotspot {
   --hotspot-rule: ~"color-mix(in srgb, currentColor 22%, transparent)";
   --hotspot-measure: 38rem; // readable line length below lg; Figma's 353 takes over from lg
+  --hotspot-line: 1.5333; // 23: Figma draws its 22.5 line at a whole pixel
 
   border-top: var(--border-width) solid var(--hotspot-rule);
   &:last-child { border-bottom: var(--border-width) solid var(--hotspot-rule); }
@@ -317,11 +318,11 @@
 
   &__title {
     display: none;
-    margin: 0 0 1.03125rem; // copy starts 39 under the title top
+    margin: 0 0 1rem; // copy starts 39 under the title top
     font-family: var(--font-ui);
     font-size: var(--font-size-base);
     font-weight: var(--font-weight-semibold);
-    line-height: var(--line-height-body);
+    line-height: var(--hotspot-line);
     letter-spacing: var(--letter-spacing-ui);
     color: var(--color-white);
     @media (min-width: @bp-lg) { display: block; }
@@ -329,7 +330,7 @@
   &__text {
     margin: 0;
     font-size: var(--font-size-base);
-    line-height: var(--line-height-body);
+    line-height: var(--hotspot-line);
   }
 
   // Marker centres from Figma (panel 1640 × 684)
@@ -446,7 +447,6 @@
   }
 
   .hotspot {
-    --hotspot-line: 1.5333; // 23: Figma draws the 22.5 line at a whole pixel
     --hotspot-hit: calc((var(--tap-size) - var(--marker-size)) / 2); // 9.5 above and below the 25 row
 
     border: 0;
