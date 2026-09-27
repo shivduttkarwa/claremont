@@ -9,22 +9,27 @@
 
 ::view-transition { background: var(--color-primary-dark); }
 
-::view-transition-group(root) { animation-duration: var(--page-slide); }
+::view-transition-group(root) { animation-duration: var(--page-slide-total); }
 
 // The default cross-fade blends the two pages with plus-lighter, which would wash out the overlap
 ::view-transition-old(root),
 ::view-transition-new(root) {
   mix-blend-mode: normal;
   animation-duration: var(--page-slide);
-  animation-timing-function: var(--ease-out);
+  animation-timing-function: var(--ease-page);
   animation-fill-mode: both;
 }
 
-::view-transition-old(root) { animation-name: page-recede; }
+::view-transition-old(root) {
+  animation-name: page-recede;
+  animation-duration: var(--page-slide-total);
+  animation-timing-function: var(--ease-out);
+}
 
 // The corners hold still: animating border-radius takes the whole slide off the compositor, where the new page's script stalls it
 ::view-transition-new(root) {
   animation-name: page-slide-in;
+  animation-delay: var(--page-slide-delay);
   border-radius: var(--radius-lg) var(--radius-lg) 0 0;
   box-shadow: var(--shadow-page);
 }
@@ -34,11 +39,16 @@ html:active-view-transition-type(back) {
   &::view-transition-old(root) {
     z-index: 1;
     animation-name: page-slide-out;
+    animation-duration: var(--page-slide);
+    animation-timing-function: var(--ease-page);
     border-radius: var(--radius-lg) var(--radius-lg) 0 0;
     box-shadow: var(--shadow-page);
   }
   &::view-transition-new(root) {
     animation-name: page-return;
+    animation-delay: 0s;
+    animation-duration: var(--page-slide-total);
+    animation-timing-function: var(--ease-out);
     border-radius: 0;
     box-shadow: none;
   }
@@ -56,10 +66,10 @@ html:active-view-transition-type(back) {
 
 @keyframes page-recede {
   from { transform: none; opacity: 1; }
-  to { transform: scale(0.96); opacity: 0.6; }
+  to { transform: scale(0.93); opacity: 0.45; }
 }
 
 @keyframes page-return {
-  from { transform: scale(0.96); opacity: 0.6; }
+  from { transform: scale(0.93); opacity: 0.45; }
   to { transform: none; opacity: 1; }
 }
