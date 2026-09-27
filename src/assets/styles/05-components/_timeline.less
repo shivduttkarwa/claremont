@@ -36,16 +36,16 @@
     --timeline-slide: -4rem;         // 64
     --timeline-title-width: 20rem;   // 320: Figma boxes run 302-376; the widest single-line title needs 313
     padding-block: var(--timeline-pad-top) var(--timeline-pad-bottom);
-    // Centre line (x 819 → 820.5) runs the full height of the section, drawn as you scroll
-    &::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: calc(50% - 0.0625rem);
-      width: var(--timeline-rule);
-      height: calc(var(--anim-progress, 1) * 100%);
-      background: var(--timeline-dots-y);
-    }
+  }
+
+  // Its own element, so the scrubbed progress restyles one box, not the whole section, and clips rather than resizes
+  &__spine {
+    position: absolute;
+    inset-block: 0;
+    left: calc(50% - 0.0625rem); // centre line x 819 → 820.5
+    width: var(--timeline-rule);
+    background: var(--timeline-dots-y);
+    clip-path: inset(0 0 calc((1 - var(--anim-progress, 1)) * 100%) 0);
   }
 
   &__header {
@@ -73,16 +73,6 @@
     display: grid;
     gap: var(--space-6);
 
-    &::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: calc(var(--timeline-marker) / 2);
-      width: var(--timeline-rule);
-      height: calc(var(--anim-progress, 1) * 100%);
-      background: var(--timeline-dots-y);
-    }
-
     @media (min-width: @bp-lg) {
       grid-template-columns: repeat(2, minmax(0, 1fr));
       grid-template-rows: var(--timeline-rows);
@@ -90,7 +80,6 @@
       gap: 0;
       max-width: var(--timeline-width);
       margin-inline: auto;
-      &::before { display: none; }
     }
   }
 
@@ -257,14 +246,9 @@
 
     // The spine spans the section like the desktop line, so its tip tracks the same scroll position;
     // the header's own background hides it above the 30 under the intro
-    &::before {
-      content: "";
-      position: absolute;
-      top: 0;
+    &__spine {
       right: calc(var(--container-gutter) + var(--timeline-marker) / 2 - var(--timeline-rule) / 2);
-      width: var(--timeline-rule);
-      height: calc(var(--anim-progress, 1) * 100%);
-      background: var(--timeline-dots-y);
+      left: auto;
     }
 
     &__header {
@@ -282,10 +266,7 @@
     &__body p,
     &__time { font-size: var(--timeline-m-copy); }
 
-    &__list {
-      gap: 1.25rem; // 20
-      &::before { display: none; }
-    }
+    &__list { gap: 1.25rem; } // 20
 
     // The spine's tip (90% of the viewport) meets a marker at about 0.3 of its step's progress: the marker
     // lands just then, the rule then grows from it leftwards to the label, and the copy follows
