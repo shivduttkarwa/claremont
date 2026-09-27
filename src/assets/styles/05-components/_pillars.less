@@ -55,6 +55,11 @@
       border-bottom: 0;
       border-right: var(--border-width) solid var(--color-line);
       &:last-child { border-right: 0; }
+      // Hover only, no click (Figma 1619:6806): the column fills Light Blue, the type stays as it is
+      @media (hover: hover) {
+        transition: background-color var(--duration-base) ease;
+        &:hover { background: var(--color-secondary); }
+      }
     }
 
     h3 {

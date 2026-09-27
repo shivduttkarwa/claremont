@@ -34,6 +34,7 @@
   // --offset = the .container left edge, so the snapped card lines up with the copy above it.
   // Cards outside the container are dimmed through the mask.
   &__slider {
+    @media (hover: hover) and (pointer: fine) { cursor: pointer; } // the slides drag
     --offset: ~"max(var(--container-gutter), calc((100% - var(--container-content)) / 2))";
     --card-w: ~"min(var(--testimonials-card), 80vw)";
     // Three cards run 4 short of the 1240 column, so round down to whole cards or the dim starts inside the peeking card
