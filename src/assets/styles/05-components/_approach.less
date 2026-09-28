@@ -411,6 +411,14 @@
       }
     }
     .tab-pane.is-open &__row .icon { transform: rotate(90deg); } // ↗ turns to ↘
+    // the title and arrow carry the reveal, so the row's rule stays still and never re-renders as the fade ends
+    &__row-inner {
+      display: flex;
+      flex: 1 1 auto;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-2);
+    }
 
     &__panel { display: contents; }
 

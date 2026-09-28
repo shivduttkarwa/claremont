@@ -92,6 +92,16 @@
     &:focus-visible { color: var(--color-white); }
   }
 
+  // the quote and author, carrying the caption's layout: the scroll reveal sits on this wrapper, so the
+  // open state below can still lower and raise the quote itself
+  &__text {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 0.625rem; // 10
+  }
+
   &__quote {
     margin: 0;
     max-width: calc(17.0625rem + var(--text-fit)); // 273
@@ -210,6 +220,23 @@
 
       &__quote,
       &__author { max-width: none; }
+
+      // on touch (where the active card is the open one) its quote rises in, the author just after; the others wait lowered
+      @media (hover: none), (pointer: coarse) {
+        &__quote,
+        &__author {
+          opacity: 0;
+          transform: translateY(1.5rem);
+          transition: opacity var(--duration-base) ease, transform var(--duration-slow) var(--ease-out);
+          @media (prefers-reduced-motion: reduce) { transform: none; }
+        }
+        &__card.is-open &__quote,
+        &__card.is-open &__author {
+          opacity: 1;
+          transform: none;
+        }
+        &__card.is-open &__author { transition-delay: 0.12s; }
+      }
     }
   }
 

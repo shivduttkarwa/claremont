@@ -1,7 +1,7 @@
 // 04-layout/_header.less — solid bar on phones, transparent over hero imagery from lg, a compact solid bar once pinned
 
 .site-header {
-  --header-logo-width: ~"min(13.28125rem, 59vw)"; // 212.5: the 221 frame shows the artwork at 96.11%
+  --header-logo-width: ~"min(15.5rem, 66vw)"; // 248: the client asked for a larger phone logo, 62 tall in the 72 bar (Figma 212.5)
   --header-logo-top: 0;
   --header-right-top: 0;
   --header-nav-gap: var(--space-4);
@@ -218,7 +218,7 @@
 
 // Mobile menu (Bootstrap offcanvas, themed via --bs-offcanvas-* in 01-settings)
 .site-menu {
-  --header-logo-width: ~"min(13.28125rem, 59vw)"; // the open panel keeps the bar's logo
+  --header-logo-width: ~"min(15.5rem, 66vw)"; // the open panel keeps the bar's logo
   --header-logo-top: 0;
   background: var(--color-primary-dark);
   &:focus-visible { outline: 0; } // Bootstrap focuses the panel itself on open
@@ -227,8 +227,8 @@
   .offcanvas-header {
     justify-content: space-between;
     min-height: var(--header-height);
-    padding: 0.625rem var(--header-gutter); // 10 / 30
-    padding-top: ~"max(0.625rem, env(safe-area-inset-top))";
+    padding: 0.3125rem var(--header-gutter); // 5 / 30: the 62 logo fills the 72 bar
+    padding-top: ~"max(0.3125rem, env(safe-area-inset-top))";
   }
   // 2087:12254 centres the list in the space under the bar; auto margins give way to scrolling on short screens
   .offcanvas-body {
