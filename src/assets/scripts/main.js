@@ -10,6 +10,7 @@ import { initPan } from "./pan.js";
 import { initQuoteReveal } from "./quote-reveal.js";
 import { initMosaicAssembly } from "./mosaic.js";
 import { initPageTransition } from "./transition.js";
+import { initButtons } from "./buttons.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   Anim.init({ after: window.__pageArrival });
@@ -29,5 +30,6 @@ document.addEventListener("DOMContentLoaded", () => {
   initSearch();
   initStickyHeader();
   initHeaderNav();
+  initButtons();
   initPageTransition();
 });
