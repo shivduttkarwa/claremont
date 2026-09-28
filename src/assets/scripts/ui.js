@@ -309,17 +309,25 @@ export function initRevealCards(root = document) {
 export function initStickyHeader(header = document.querySelector(".site-header")) {
   if (!header) return;
   const tolerance = 6;
+  const band = window.matchMedia("(max-width: 991.98px)");
   let last = window.scrollY;
   let ticking = false;
 
   const update = () => {
     ticking = false;
     const y = Math.max(0, window.scrollY);
+    const h = header.offsetHeight;
     const delta = y - last;
-    if (y <= 0) {
+    // below lg the bar is sticky in its own slot: once that slot is back in view it docks at once, never sliding in over white
+    const docked = band.matches ? h : 0;
+    if (y <= docked) {
+      if (band.matches && header.classList.contains("is-pinned")) {
+        header.classList.add("is-docking");
+        requestAnimationFrame(() => requestAnimationFrame(() => header.classList.remove("is-docking")));
+      }
       header.classList.remove("is-pinned", "is-shown");
     } else if (!header.classList.contains("is-pinned")) {
-      if (y > header.offsetHeight) {
+      if (y > h + (band.matches ? h / 2 : 0)) {
         header.classList.add("is-pinning", "is-pinned");
         requestAnimationFrame(() => requestAnimationFrame(() => header.classList.remove("is-pinning")));
       }
