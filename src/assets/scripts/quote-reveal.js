@@ -354,7 +354,8 @@ function createFluid() {
       const r = canvas.getBoundingClientRect();
       const nx = (event.clientX - r.left) / r.width;
       const ny = 1 - (event.clientY - r.top) / r.height;
-      if (pointer) { dmx += nx - mx; dmy += ny - my; }
+      // a held button is dragging the row, and the card travels with the pointer
+      if (pointer && !event.buttons) { dmx += nx - mx; dmy += ny - my; }
       mx = nx; my = ny;
       pointer = true;
       wake();

@@ -30,9 +30,10 @@
     p { margin: 0; }
   }
 
-  // The cards run from the page edge (Design 2); below lg the slides drag
+  // The cards run from the page edge (Design 2); the row drags at every width
   &__slider {
     @media (hover: hover) and (pointer: fine) { cursor: pointer; }
+    .pan-drag();
     --card-w: ~"min(var(--testimonials-card), 80vw)";
     margin-top: var(--testimonials-track-gap);
   }

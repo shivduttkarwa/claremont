@@ -62,6 +62,13 @@
   }
 }
 
+// A pan.js row drags sideways from lg (below lg Swiper sets its own touch-action); vertical swipes still scroll the page.
+.pan-drag() {
+  @media (min-width: @bp-lg) { touch-action: pan-y; }
+  &.is-dragging,
+  &.is-dragging * { cursor: grabbing; }
+}
+
 // Zigzag timeline: item n starts on row n and spans two rows.
 .timeline-rows(@n, @i: 1) when (@i =< @n) {
   &:nth-child(@{i}) { grid-row: ~"@{i} / span 2"; }
