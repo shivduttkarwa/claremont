@@ -46,6 +46,10 @@ html.lenis body { height: auto; }
 .lenis.lenis-stopped { overflow: clip; }
 .lenis.lenis-smooth iframe { pointer-events: none; }
 
+// Ruled rows that slide in one by one (data-anim-type="nudge-right"): each keeps its own layer before, during and
+// after the slide, so its rule is drawn the same throughout and never snaps sharper as the fade ends
+[data-anim="reveal"][data-anim-type="nudge-right"] { will-change: transform, opacity; }
+
 // --- Reduced motion safety net --------------------------------------
 @media (prefers-reduced-motion: reduce) {
   [data-anim],
