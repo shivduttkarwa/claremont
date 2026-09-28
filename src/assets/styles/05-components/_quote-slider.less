@@ -1,0 +1,231 @@
+// 05-components/_quote-slider.less — heading (+ intro) and arrows over an edge-to-edge row of photo cards whose
+// Light Blue box carries a quote and, optionally, its author (sections/quote-slider.html). One block; the layout
+// option only sets each page's Figma card size and spacing.
+
+.quote-slider {
+  --qs-card: 22.3125rem;          // 357
+  --qs-ratio: 357 / 356;
+  --qs-pad-top: 7.1875rem;        // 115
+  --qs-pad-bottom: 0rem;
+  --qs-track-gap: 3.25rem;        // arrows end 166, photos start 218
+  --qs-dim: 0.45;
+
+  padding-block: var(--space-8) 0;
+  @media (min-width: @bp-lg) { padding-block: var(--qs-pad-top) var(--qs-pad-bottom); }
+
+  // Home (2410:7552): 806 tall at 1640 with the 373.14 cards, the copy under the heading
+  &--testimonials {
+    --qs-card: 23.32125rem;          // 373.14: the live frame draws the 370 strip at 1.0085
+    --qs-ratio: 1;
+    --qs-pad-top: 6.6875rem;         // 107
+    --qs-pad-bottom: 4.42875rem;     // 70.86: the 806 frame under the cards
+    --qs-track-gap: 4.0625rem;       // the copy box ends 297 (Figma draws 299), cards at 362
+    --qs-title-gap: 1.65625rem;      // heading box ends 180.5, copy at 207
+  }
+
+  &__header {
+    display: grid;
+    gap: var(--space-3);
+    align-items: start;
+    @media (min-width: @bp-md) { grid-template-columns: 1fr auto; }
+    h2 {
+      max-width: 49.625rem; // 794
+      margin: 0;
+    }
+    .arrow-group {
+      @media (min-width: @bp-lg) { margin-top: 0.1875rem; } // arrows sit 3 below the heading top
+    }
+  }
+  &--testimonials &__header {
+    align-items: end;
+    .arrow-group {
+      @media (min-width: @bp-lg) { margin: 0 0 0.0625rem; } // arrows end at 296
+    }
+  }
+
+  &__intro {
+    max-width: 37.5625rem; // 601
+    p { margin: 0; }
+  }
+  &--testimonials &__intro h2 {
+    max-width: 34.625rem; // 554
+    margin-bottom: var(--qs-title-gap);
+  }
+  &--educators &__intro { max-width: none; }
+
+  // The cards run from the page edge; the row drags at every width
+  &__slider {
+    --card-w: ~"min(var(--qs-card), 80vw)";
+    margin-top: var(--space-5);
+    @media (min-width: @bp-lg) { margin-top: var(--qs-track-gap); }
+    @media (hover: hover) and (pointer: fine) { cursor: pointer; }
+    .pan-drag();
+  }
+
+  &__track { .reset-list(); }
+
+  &__card {
+    position: relative;
+    width: var(--pan-card, var(--card-w)); // pan.js snaps the card to whole pixels from lg
+    // Dim the child, not the card: the reveal animation leaves an inline opacity on the card itself
+    > * { transition: opacity var(--duration-base) ease; }
+  }
+
+  // The photo, with the arrow frame 17 down and 15 in from the right when it links
+  &__photo {
+    display: block;
+    overflow: hidden;
+    aspect-ratio: var(--qs-ratio);
+    background: var(--color-secondary);
+    color: var(--color-white);
+    img { .img-cover(); }
+    .icon {
+      position: absolute;
+      top: 1.0875rem;
+      right: 0.5375rem;
+      z-index: calc(var(--z-raised) + 1); // above the box and the quote-reveal canvas
+      width: 2rem;
+      height: 1.625rem;
+      transition: transform var(--duration-base) var(--ease-out), color var(--duration-fast) ease;
+    }
+    &:hover,
+    &:focus-visible { color: var(--color-white); }
+  }
+
+  &__quote {
+    margin: 0;
+    max-width: calc(17.0625rem + var(--text-fit)); // 273
+    font-family: var(--font-display);
+    font-size: 2.5rem; // 40
+    line-height: 0.95; // 38
+    letter-spacing: var(--letter-spacing-body);
+    color: var(--color-heading);
+  }
+  &__author {
+    margin: 0;
+    max-width: 17.0625rem; // 273
+    font-family: var(--font-ui);
+    font-size: 0.9375rem; // 15
+    font-weight: var(--font-weight-semibold);
+    line-height: 1.5;     // 22.5
+    letter-spacing: var(--letter-spacing-ui);
+    color: var(--color-text);
+    span {
+      font-family: var(--font-body);
+      font-weight: var(--font-weight-regular);
+      letter-spacing: var(--letter-spacing-body);
+    }
+  }
+
+  // The box (2410:8175, note 1732:12358): Light Blue over the photo with the quote at the top and the author at the foot.
+  // It waits below the card and slides up as the card opens — on hover or focus from lg (ui.js), as the active slide on
+  // touch tablets (slider.js) — and the arrow turns down
+  @media (min-width: @bp-md) {
+    &__card { overflow: hidden; }
+    &__caption {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 0.625rem; // 10
+      position: absolute;
+      inset: 0;
+      z-index: var(--z-content);
+      padding: 1.3125rem 1.5625rem 1.5625rem; // 21 25 25
+      background: ~"color-mix(in srgb, var(--color-secondary) 95%, transparent)";
+      transform: translateY(100%);
+      transition: transform var(--duration-slow) var(--ease-out);
+      @media (prefers-reduced-motion: reduce) { transition-duration: 0.01ms; }
+    }
+    &__card.is-open &__caption,
+    &__card:focus-within &__caption { transform: none; }
+    &__card.is-open &__photo .icon,
+    &__card:focus-within &__photo .icon {
+      color: var(--color-primary);
+      transform: rotate(90deg);
+    }
+  }
+}
+
+// ---------------------------------------------------------------------
+// Below lg: heading (and copy), the arrows across the full width, then the Swiper carousel.
+// Tablets run the desktop cards from the page edge with the peeking one dimmed; phones show one
+// full-bleed card (2081:10675, 2570:4911): the photo over the quote panel, the arrows, photo and quote
+// filling one screen (the header hides while scrolling down), photo and panel in their 412 : 361 share.
+// ---------------------------------------------------------------------
+@media @upto-lg {
+  .quote-slider {
+    padding-top: 3.75rem; // 60
+
+    &__header { display: block; }
+    &__intro { max-width: none; }
+    &__intro h2 {
+      max-width: none;
+      font-size: 2rem;   // 32
+      line-height: 1.05; // 33.6
+    }
+
+    .arrow-group {
+      justify-content: space-between;
+      width: 100%;
+      margin-top: 3.125rem; // 50
+    }
+
+    &__slider {
+      --swiper-wrapper-transition-timing-function: var(--ease-out);
+      margin-top: 1.25rem; // 20
+    }
+
+    &__card.is-clipped > * { opacity: var(--qs-dim); }
+
+    @media @upto-md {
+      &__slider { --card-w: 100%; }
+
+      &__card {
+        display: flex;
+        flex-direction: column;
+        height: var(--quote-card-m);
+        &.is-clipped > * { opacity: 1; }
+      }
+
+      &__photo {
+        flex: 1 1 auto;
+        min-height: 0;
+        aspect-ratio: auto;
+        background: none;
+        img { opacity: 0.95; }
+        .icon { display: none; }
+      }
+
+      // a quote too long for its share grows the panel and takes the room from its own photo
+      &__caption {
+        display: flex;
+        flex: 0 0 auto;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 0.625rem; // 10
+        min-height: var(--quote-panel-m);
+        padding: 1.9375rem 1.5625rem; // 31 down, 25 in: the 325 text box
+        background: var(--color-secondary);
+      }
+
+      &__quote,
+      &__author { max-width: none; }
+    }
+  }
+
+  // Home phone frame (2081:10673): the copy-led header set smaller
+  .quote-slider--testimonials {
+    padding-top: 5.625rem; // 90
+    .quote-slider__intro h2 {
+      margin-bottom: 1.875rem; // 30
+      font-family: var(--font-body);
+      font-size: var(--font-size-xl); // 25
+      font-weight: var(--font-weight-regular);
+      line-height: 1.1;               // 27.5
+    }
+    .quote-slider__intro p {
+      font-size: 0.9375rem; // 15
+      line-height: 1.5333;  // 23: Figma draws the 22.5 line at a whole pixel
+    }
+  }
+}

@@ -57,7 +57,7 @@ export function initSliders(root = document) {
     // as the slide arrives and the previous card's drops), the way hovering opens a card on desktop
     const openActive = (swiper) => {
       if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
-      const sync = (s) => s.slides.forEach((slide, i) => slide.firstElementChild?.classList.toggle("is-open", i === s.activeIndex));
+      const sync = (s) => s.slides.forEach((slide, i) => slide.classList.toggle("is-open", i === s.activeIndex));
       swiper.on("slideChange", sync);
       sync(swiper);
     };

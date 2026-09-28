@@ -1,0 +1,45 @@
+<!-- @wagtail-block: quote_slider
+     layout: ChoiceBlock(testimonials | educators) — the Figma frame whose card size and spacing it takes
+     title:  CharBlock(required)
+     intro:  TextBlock (optional, under the title)
+     slides: ListBlock(StructBlock(image:ImageChooserBlock, alt:CharBlock, quote:TextBlock,
+             author:CharBlock (optional), role:CharBlock (optional), page:PageChooserBlock (optional: the photo links there and shows the arrow)))
+     From lg the row drifts slowly to the left, wrapping round, paused under the pointer, the arrows stepping it and a drag
+     throwing it (pan.js). Hovering or focusing a card slides a Light Blue box with the quote and author up over the photo
+     and turns the arrow down; the pointer's wake paints the photo back through the box (quote-reveal.js). Below lg it is
+     the Swiper carousel (data-slider-below-lg): on tablets the active card's box is open and the peeking card dims; on
+     phones each card is the photo over the quote panel, the arrows, photo and quote filling one screen.
+     locals: id, title, intro (or ""), layout, prev_label, next_label, slides [{ image, alt, width, height, quote, author, role, url, link_label }] -->
+<section class="quote-slider quote-slider--{{ layout }}" aria-labelledby="{{ id }}" data-slider data-slider-below-lg data-pan>
+  <div class="container">
+    <div class="quote-slider__header">
+      <div class="quote-slider__intro">
+        <h2 id="{{ id }}" data-anim="split" data-anim-type="chars-soft">{{ title }}</h2>
+        <if condition="intro"><p data-anim="reveal" data-anim-order="1">{{ intro }}</p></if>
+      </div>
+      <div class="arrow-group" data-anim="reveal" data-anim-type="fade" data-anim-order="{{ intro ? 2 : 1 }}">
+        <button class="arrow-btn arrow-btn--prev" type="button" aria-label="{{ prev_label }}" data-slider-prev><svg class="icon"><use href="#icon-arrow-right"></use></svg></button>
+        <button class="arrow-btn arrow-btn--next" type="button" aria-label="{{ next_label }}" data-slider-next><svg class="icon"><use href="#icon-arrow-right"></use></svg></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="swiper quote-slider__slider" data-slider-dim data-slider-rewind data-slider-open-active data-pan-hover>
+    <ul class="swiper-wrapper quote-slider__track" data-pan-track data-quote-cards data-anim="sequence" data-anim-type="wipe-up" data-anim-scroll="timed" data-anim-start="top 65%" data-anim-stagger="0.2">
+      <each loop="slide in slides">
+      <li class="swiper-slide quote-slider__card" data-anim-item data-quote-card>
+        <if condition="slide.url">
+        <a class="quote-slider__photo" href="{{ slide.url }}" aria-label="{{ slide.link_label }}"><img src="{{ slide.image }}" alt="{{ slide.alt }}" width="{{ slide.width }}" height="{{ slide.height }}" loading="lazy" decoding="async"><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+        </if>
+        <else>
+        <div class="quote-slider__photo"><img src="{{ slide.image }}" alt="{{ slide.alt }}" width="{{ slide.width }}" height="{{ slide.height }}" loading="lazy" decoding="async"></div>
+        </else>
+        <div class="quote-slider__caption">
+          <blockquote class="quote-slider__quote" data-quote-text>{{ slide.quote }}</blockquote>
+          <if condition="slide.author"><p class="quote-slider__author" data-quote-text>{{ slide.author }}<if condition="slide.role"><br><span>{{ slide.role }}</span></if></p></if>
+        </div>
+      </li>
+      </each>
+    </ul>
+  </div>
+</section>

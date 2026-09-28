@@ -1,5 +1,6 @@
 // quote-reveal — the cursor's fluid wake paints a card's photo back through its overlay; one canvas moves between
-// [data-quote-card]s, and the card's [data-quote-text] copy is redrawn inside the wake so it stays legible
+// [data-quote-card]s, and the card's [data-quote-text] copy is redrawn inside the wake so it stays legible.
+// In a [data-fluid-erase] group the wake instead wipes each card's hover fill back to the colour behind it.
 
 const SIM = 128;
 const SPLAT_RADIUS = 0.0045;
@@ -87,10 +88,14 @@ const GRADIENT_FS = `precision highp float;
 // Inside the wake the photo shows through a dark scrim and the quote turns white over a soft dark halo
 const RENDER_FS = `precision highp float;
   uniform sampler2D u_dye, u_photo, u_text; uniform vec2 u_scale, u_offset, u_halo;
-  uniform vec4 u_veil; uniform float u_shift, u_textAlpha; varying vec2 v_uv;
+  uniform vec4 u_veil, u_solid; uniform float u_shift, u_textAlpha; varying vec2 v_uv;
   vec3 veiled(vec2 uv){ return mix(texture2D(u_photo, uv * u_scale + u_offset).rgb, u_veil.rgb, u_veil.a); }
   void main(){
     float dye = clamp(texture2D(u_dye, v_uv).r, 0., 1.);
+    if (u_solid.a > 0.5) {
+      gl_FragColor = vec4(u_solid.rgb, smoothstep(0.018, 0.22, dye));
+      return;
+    }
     vec3 photo = veiled(v_uv);
     vec2 t = v_uv + vec2(0., u_shift);
     float text = texture2D(u_text, t).a * u_textAlpha;
@@ -192,6 +197,8 @@ function createFluid() {
   let quote = null;
   let texts = [];
   let photo = null;
+  let solid = null;
+  let radius = SPLAT_RADIUS;
   let fit = [1, 1, 0, 0];
   let mx = 0.5, my = 0.5, dmx = 0, dmy = 0;
   let pointer = false;
@@ -206,7 +213,7 @@ function createFluid() {
       gl.uniform2f(loc(p, "u_point"), mx, my);
       gl.uniform2f(loc(p, "u_aspect"), canvas.width / canvas.height, 1);
       gl.uniform3f(loc(p, "u_color"), ...color);
-      gl.uniform1f(loc(p, "u_radius"), SPLAT_RADIUS);
+      gl.uniform1f(loc(p, "u_radius"), radius);
     });
     field.reverse();
   };
@@ -260,8 +267,16 @@ function createFluid() {
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
     gl.clearColor(0, 0, 0, 0);
     gl.clear(gl.COLOR_BUFFER_BIT);
-    if (photo) {
+    if (solid) {
       pass(null, progs.render, (p) => {
+        bindTex(0, dye[0].tex); gl.uniform1i(loc(p, "u_dye"), 0);
+        bindTex(1, textTex); gl.uniform1i(loc(p, "u_photo"), 1);
+        bindTex(2, textTex); gl.uniform1i(loc(p, "u_text"), 2);
+        gl.uniform4f(loc(p, "u_solid"), ...solid, 1);
+      });
+    } else if (photo) {
+      pass(null, progs.render, (p) => {
+        gl.uniform4f(loc(p, "u_solid"), 0, 0, 0, 0);
         bindTex(0, dye[0].tex); gl.uniform1i(loc(p, "u_dye"), 0);
         bindTex(1, photo); gl.uniform1i(loc(p, "u_photo"), 1);
         gl.uniform2f(loc(p, "u_scale"), fit[0], fit[1]);
@@ -293,6 +308,15 @@ function createFluid() {
     const entry = { tex: t, ratio: img.naturalWidth / img.naturalHeight };
     photos.set(img, entry);
     return entry;
+  };
+
+  // The colour a card shows at rest: the first painted background above it
+  const backdrop = (el) => {
+    for (let node = el.parentElement; node; node = node.parentElement) {
+      const [r, g, b, a = 1] = (getComputedStyle(node).backgroundColor.match(/[0-9.]+/g) || []).map(Number);
+      if (b !== undefined && a > 0) return [r / 255, g / 255, b / 255];
+    }
+    return [1, 1, 1];
   };
 
   // The quote's words drawn where they sit at rest, as a mask for the white copy
@@ -329,24 +353,33 @@ function createFluid() {
 
   return {
     canvas,
-    attach(card) {
-      const img = card.querySelector("img");
-      if (!img || !img.complete || !img.naturalWidth) return false;
-      const entry = photoFor(img);
-      if (!entry) return false;
+    attach(card, { erase = false } = {}) {
+      let entry = null;
+      if (!erase) {
+        const img = card.querySelector("img");
+        if (!img || !img.complete || !img.naturalWidth) return false;
+        entry = photoFor(img);
+        if (!entry) return false;
+      }
       const box = card.getBoundingClientRect();
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       canvas.width = Math.max(1, Math.round(box.width * dpr));
       canvas.height = Math.max(1, Math.round(box.height * dpr));
-      const ratio = box.width / box.height;
-      const sx = entry.ratio > ratio ? ratio / entry.ratio : 1;
-      const sy = entry.ratio > ratio ? 1 : entry.ratio / ratio;
-      fit = [sx, sy, (1 - sx) / 2, (1 - sy) / 2];
-      photo = entry.tex;
-      texts = [...card.querySelectorAll("[data-quote-text]")];
+      if (entry) {
+        const ratio = box.width / box.height;
+        const sx = entry.ratio > ratio ? ratio / entry.ratio : 1;
+        const sy = entry.ratio > ratio ? 1 : entry.ratio / ratio;
+        fit = [sx, sy, (1 - sx) / 2, (1 - sy) / 2];
+      }
+      photo = entry ? entry.tex : null;
+      solid = erase ? backdrop(card) : null;
+      // the brush is measured in surface heights and a pillar column is 1.5 × a testimonial card: this draws the testimonials' wake on screen
+      radius = erase ? SPLAT_RADIUS / 2.7 : SPLAT_RADIUS;
+      texts = erase ? [] : [...card.querySelectorAll("[data-quote-text]")];
       quote = texts[0] || null;
       drawText(dpr);
       [...vel, ...pre, ...dye].forEach(clear);
+      canvas.classList.toggle("quote-fluid--under", erase);
       card.append(canvas);
       return true;
     },
@@ -367,21 +400,23 @@ function createFluid() {
 export function initQuoteReveal(root = document) {
   if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const lg = window.matchMedia("(min-width: 992px)");
   let fluid;
 
-  root.querySelectorAll("[data-quote-cards]").forEach((group) => {
-    group.querySelectorAll("[data-quote-card]").forEach((card) => {
-      card.addEventListener("pointerenter", (event) => {
-        if (event.pointerType !== "mouse") return;
-        if (fluid === undefined) fluid = createFluid();
-        if (!fluid) return;
-        if (!fluid.attach(card)) return;
-        fluid.move(event);
-      });
-      card.addEventListener("pointermove", (event) => {
-        if (event.pointerType === "mouse" && fluid?.canvas.parentElement === card) fluid.move(event);
-      });
-      card.addEventListener("pointerleave", () => fluid?.leave());
+  const bind = (card, options = {}) => {
+    card.addEventListener("pointerenter", (event) => {
+      // the erase cards only fill on hover from lg
+      if (event.pointerType !== "mouse" || (options.erase && !lg.matches)) return;
+      if (fluid === undefined) fluid = createFluid();
+      if (!fluid) return;
+      if (!fluid.attach(card, options)) return;
+      fluid.move(event);
     });
-  });
+    card.addEventListener("pointermove", (event) => {
+      if (event.pointerType === "mouse" && fluid?.canvas.parentElement === card) fluid.move(event);
+    });
+    card.addEventListener("pointerleave", () => fluid?.leave());
+  };
+  root.querySelectorAll("[data-quote-cards] [data-quote-card]").forEach((card) => bind(card));
+  root.querySelectorAll("[data-fluid-erase] > *").forEach((card) => bind(card, { erase: true }));
 }

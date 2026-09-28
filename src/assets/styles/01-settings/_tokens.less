@@ -136,6 +136,9 @@
   --header-gutter: 1.875rem;     /* 30: the mobile bar sits wider than the 20 content gutter */
   --header-height-pinned: 5rem;  /* 80: the compact bar that returns on scroll-up from lg */
   --control-height: 3rem;        /* 48 — buttons, tabs, arrows */
+  /* Phone photo + quote slider card (testimonials, educators): 375 × 773, or the screen under the 48 arrows + 20 gap */
+  --quote-card-m: ~"min(100vw * 773 / 375, 100svh - 4.25rem)";
+  --quote-panel-m: calc(var(--quote-card-m) * 361 / 773); /* the quote panel's share, under a 412 photo */
   --marker-size: 1.5625rem;      /* 25 — hotspot dots */
 
   /* Motion */
