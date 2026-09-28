@@ -11,6 +11,7 @@ import { initQuoteReveal } from "./quote-reveal.js";
 import { initMosaicAssembly } from "./mosaic.js";
 import { initPageTransition } from "./transition.js";
 import { initButtons } from "./buttons.js";
+import { initImageCarousels } from "./carousel.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   Anim.init({ after: window.__pageArrival });
@@ -28,6 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initTabArrows();
   initApproachAccordion();
   initAccordions();
+  initImageCarousels();
   initSearch();
   initStickyHeader();
   initHeaderNav();

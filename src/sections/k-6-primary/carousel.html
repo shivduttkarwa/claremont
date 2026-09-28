@@ -1,0 +1,39 @@
+<!-- @wagtail-block: image_carousel
+     label:  CharBlock (the carousel's accessible name)
+     slides: ListBlock(StructBlock(image:ImageChooserBlock, image_m:ImageChooserBlock (phone square), alt:CharBlock))
+     The 1640 × 614 band on the "03- Design 2" K-6 page (2410:8619) with its photo and the three the client linked
+     (2410:8873, 2410:8945, 2429:11177). The arrows step it round, a swipe too; each change cross-fades the photos with
+     the home approach tabs' zoom (the leaving one grows, the arriving one settles). Phones (2571:14041): the arrows
+     above a full-width square. -->
+<section class="image-carousel" aria-roledescription="carousel" aria-label="Life in K–6 at Claremont" data-image-carousel>
+  <div class="image-carousel__arrows arrow-group" data-anim="reveal" data-anim-type="fade">
+    <button class="arrow-btn arrow-btn--prev" type="button" aria-label="Previous photo" data-carousel-prev><svg class="icon"><use href="#icon-arrow-right"></use></svg></button>
+    <button class="arrow-btn arrow-btn--next" type="button" aria-label="Next photo" data-carousel-next><svg class="icon"><use href="#icon-arrow-right"></use></svg></button>
+  </div>
+  <div class="image-carousel__stage" aria-live="polite" data-carousel-stage>
+    <figure class="image-carousel__slide is-active" aria-roledescription="slide" aria-label="1 of 4">
+      <picture>
+        <source media="(min-width: 576px)" srcset="assets/images/k-6-primary/carousel-1.webp" width="1840" height="689">
+        <img src="assets/images/k-6-primary/carousel-1-m.webp" alt="Students sitting on classroom steps holding up their whiteboards to a teacher" width="750" height="750" loading="lazy" decoding="async">
+      </picture>
+    </figure>
+    <figure class="image-carousel__slide" aria-roledescription="slide" aria-label="2 of 4" aria-hidden="true">
+      <picture>
+        <source media="(min-width: 576px)" srcset="assets/images/k-6-primary/carousel-2.webp" width="1840" height="689">
+        <img src="assets/images/k-6-primary/carousel-2-m.webp" alt="Two students in the library, one holding a remote control and the other pointing ahead" width="750" height="750" loading="lazy" decoding="async">
+      </picture>
+    </figure>
+    <figure class="image-carousel__slide" aria-roledescription="slide" aria-label="3 of 4" aria-hidden="true">
+      <picture>
+        <source media="(min-width: 576px)" srcset="assets/images/k-6-primary/carousel-3.webp" width="1840" height="689">
+        <img src="assets/images/k-6-primary/carousel-3-m.webp" alt="A smiling student in the school garden" width="750" height="750" loading="lazy" decoding="async">
+      </picture>
+    </figure>
+    <figure class="image-carousel__slide" aria-roledescription="slide" aria-label="4 of 4" aria-hidden="true">
+      <picture>
+        <source media="(min-width: 576px)" srcset="assets/images/k-6-primary/carousel-4.webp" width="1840" height="689">
+        <img src="assets/images/k-6-primary/carousel-4-m.webp" alt="Students playing on the school’s outdoor court" width="750" height="750" loading="lazy" decoding="async">
+      </picture>
+    </figure>
+  </div>
+</section>

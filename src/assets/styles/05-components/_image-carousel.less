@@ -1,0 +1,70 @@
+// 05-components/_image-carousel.less — full-bleed photo band that steps through its photos (K-6, 2410:8619).
+// The change is the home approach tabs' cross-fade: the leaving photo grows as it fades, the arriving one settles.
+
+.image-carousel {
+  --carousel-fade: calc(var(--duration-slow) * 1.5); // as --approach-fade
+  --carousel-zoom: 1.25;                            // as --approach-zoom
+
+  position: relative;
+  overflow: hidden;
+
+  &__stage {
+    display: grid;
+    aspect-ratio: 1640 / 614;
+    background: var(--color-primary); // as the approach panel: the cross-fade dims through green, never washes to white
+    touch-action: pan-y;
+    @media (max-width: 575.98px) { aspect-ratio: 1; } // the square phone crop, where <picture> serves it
+  }
+
+  &__slide {
+    grid-area: 1 / 1;
+    margin: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: opacity var(--carousel-fade) ease-in-out;
+    img {
+      .img-cover();
+      transform: scale(var(--carousel-zoom));
+      transition: transform var(--carousel-fade) ease-in-out;
+    }
+    &.is-active {
+      z-index: var(--z-content);
+      opacity: 1;
+      img { transform: none; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      &,
+      img { transition-duration: 0.01ms; }
+    }
+  }
+
+  // Desktop: the arrows over the photo, 60 in from the left and 52 from the right, centred on its height
+  &__arrows {
+    @media (min-width: @bp-md) {
+      position: absolute;
+      inset: 50% 3.25rem auto 3.75rem;
+      z-index: var(--z-raised);
+      justify-content: space-between;
+      margin: 0;
+      transform: translateY(-50%);
+      pointer-events: none;
+      .arrow-btn { pointer-events: auto; }
+    }
+  }
+}
+
+// Phones (2571:14041): on Light Blue 50, the arrows across the column 42 from the top, the square photo 51 under them
+@media @upto-md {
+  .image-carousel {
+    padding-top: 2.625rem; // 42
+    background: var(--color-background-alt);
+
+    &__arrows {
+      justify-content: space-between;
+      margin: 0 var(--container-gutter) 3.1875rem; // 51
+    }
+  }
+
+  // the dispositions follow 30 under the photo
+  .image-carousel + .link-grid { padding-top: 1.875rem; }
+}

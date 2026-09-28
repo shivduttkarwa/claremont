@@ -158,6 +158,11 @@
     &:focus-visible::before { opacity: 1; }
   }
   .is-open > .cta-links__link .icon { transform: rotate(90deg); }
+  // each row's reveal leaves a transform on it, so the hovered row itself is lifted for its fill to cover the next row's rule
+  .cta-links__item:has(> .cta-links__link:hover, > .cta-links__link:focus-visible) {
+    position: relative;
+    z-index: var(--z-content);
+  }
 
   .cta-links__panel {
     display: grid;

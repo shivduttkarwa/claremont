@@ -196,3 +196,58 @@
     }
   }
 }
+
+// K-6 teaching teams on phones (2571:14024, rows 2571:14034): Light Blue 50, 60 over a 32 heading with its copy 20 under,
+// the photo full-bleed 60 below, square on phones, then the rows straight under it on Light Blue — a Near Black rule over
+// each and under the last, the whole row the button (26 above and below a 25 title, 309 wide), the open row's copy 28
+// under its title — and no air under the section
+@media @upto-lg {
+  .link-columns--photo {
+    padding-top: 3.75rem; // 60
+
+    .link-columns__header {
+      margin-bottom: 3.75rem; // 60
+      .row { --bs-gutter-y: 1.25rem; } // 20
+      h2 {
+        font-size: 2rem;   // 32
+        line-height: 1.05; // 33.6
+      }
+      p {
+        font-size: 0.9375rem; // 15
+        line-height: 1.5;     // 22.5
+      }
+    }
+
+    .link-columns__item--media {
+      @media @upto-md { aspect-ratio: 1; }
+    }
+
+    .link-columns__item:not(.link-columns__item--media) {
+      padding: 0;
+      border-top: var(--border-width) solid var(--color-text);
+      background: var(--color-secondary);
+      &:last-child { border-bottom: var(--border-width) solid var(--color-text); }
+      &.is-open { background: transparent; } // the open row drops its fill
+    }
+
+    h3 {
+      font-size: var(--font-size-xl); // 25
+      line-height: 1.1;               // 27.5
+    }
+
+    .link-columns__head {
+      min-height: 0;
+      padding: 1.625rem var(--container-gutter); // 26
+      span { max-width: 19.3125rem; } // 309
+      .icon { margin-top: 0; }
+    }
+
+    .link-columns__body {
+      padding-inline: var(--container-gutter);
+      font-size: 0.9375rem; // 15
+      line-height: 1.5;     // 22.5
+      p:first-child { padding-top: 0.125rem; } // 26 + 2: the copy 28 under the title
+      > :last-child { padding-bottom: 1.625rem; } // 26
+    }
+  }
+}
