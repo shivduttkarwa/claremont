@@ -121,6 +121,75 @@
   }
 }
 
+// K-6 academic excellence (1713:10392 and its three open states): the rows are an accordion, one open at a time.
+// The open row's copy starts 26 under its title and ends 30 above the next rule. The arrow points up and right at rest;
+// hovering or focusing a row turns it down and fills the row Light Blue, and the open row keeps it down. 81 of air under the closing rule
+.cta-links--accordion {
+  @media (min-width: @bp-lg) { --cta-pad-bottom: 5.0625rem; } // 81
+  .cta-links__link {
+    width: 100%;
+    border: 0;
+    background: none;
+    text-align: left;
+    position: relative;
+    z-index: var(--z-content); // above the next row, so the fill can cover its rule
+    isolation: isolate;
+    cursor: pointer;
+    // the fill runs 9 past the title on the left, as the dispositions' hover box does, and over the rules above and below
+    &::before {
+      content: "";
+      position: absolute;
+      inset: calc(-1 * var(--border-width)) 0 calc(-1 * var(--border-width)) calc(-1 * var(--cta-fill-bleed, 0rem));
+      z-index: var(--z-behind);
+      background: var(--color-secondary);
+      opacity: 0;
+      transition: opacity var(--duration-base) ease;
+    }
+    @media (min-width: @bp-lg) { --cta-fill-bleed: 0.5625rem; } // 9
+    &:hover,
+    &:focus-visible {
+      padding-inline-start: 0.0625rem;
+      color: var(--color-heading);
+      .icon { transform: rotate(90deg); }
+    }
+    @media (hover: hover) {
+      &:hover::before { opacity: 1; }
+    }
+    &:focus-visible::before { opacity: 1; }
+  }
+  .is-open > .cta-links__link .icon { transform: rotate(90deg); }
+
+  .cta-links__panel {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.45s var(--ease-settle);
+    @media (prefers-reduced-motion: reduce) { transition-duration: 0.01ms; }
+  }
+  .is-open > .cta-links__panel { grid-template-rows: 1fr; }
+
+  .cta-links__body {
+    min-height: 0;
+    overflow: hidden;
+    color: var(--color-text);
+    font-size: 0.9375rem; // 15
+    line-height: 1.5;     // 22.5
+    letter-spacing: var(--letter-spacing-body);
+    > :first-child { padding-top: 0.25rem; } // 18 under the title from the row + 4: Figma's frames put the copy 43–54 under the title
+    > :last-child { margin-bottom: 1.875rem; } // 30 above the next rule
+    p,
+    ul { margin: 0 0 0.625rem; } // paragraph spacing 10
+    ul {
+      padding-left: 1.4em;
+      list-style-type: disc;
+    }
+    strong {
+      font-family: var(--font-ui);
+      font-weight: var(--font-weight-semibold);
+      letter-spacing: var(--letter-spacing-ui);
+    }
+  }
+}
+
 // Phones: 70 of air top and bottom, a 25 heading on one line, then the ruled rows (node 2081:10734)
 @media @upto-lg {
   .cta-links {
@@ -135,5 +204,37 @@
     }
 
     .row { --bs-gutter-y: 0; }
+  }
+}
+
+// Phones (2571:14024): Light Blue 50, 60 over a 32 heading, the copy 20 under it, then the rows 30 below across the
+// full width — 26 above and below each title, the open row's copy 28 under its title — and 50 of air to close
+@media @upto-lg {
+  .cta-links--accordion {
+    padding-block: 3.75rem 3.125rem; // 60 / 50
+    background: var(--color-background-alt);
+
+    h2 {
+      margin-bottom: 1.25rem; // 20
+      font-size: 2rem;        // 32
+      line-height: 1.05;      // 33.6
+    }
+    .cta-links__intro {
+      margin-bottom: 1.875rem; // 30
+      font-size: 0.9375rem;    // 15
+      line-height: 1.5;        // 22.5
+    }
+
+    .cta-links__list { margin-inline: calc(-1 * var(--container-gutter)); }
+    .cta-links__link {
+      padding: 1.625rem var(--container-gutter); // 26
+      &:hover,
+      &:focus-visible { padding-inline-start: var(--container-gutter); }
+    }
+    .cta-links__body {
+      padding-inline: var(--container-gutter);
+      > :first-child { padding-top: 0.125rem; }   // 26 + 2 = the 28
+      > :last-child { margin-bottom: 1.625rem; } // 26
+    }
   }
 }

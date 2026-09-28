@@ -230,6 +230,23 @@ export function initApproachAccordion(root = document) {
   });
 }
 
+// [data-accordion]: one [data-accordion-item] open at a time; its [data-accordion-toggle] opens it or, when open, closes it
+export function initAccordions(root = document) {
+  root.querySelectorAll("[data-accordion]").forEach((list) => {
+    const items = [...list.querySelectorAll("[data-accordion-item]")];
+    items.forEach((item) => {
+      item.querySelector("[data-accordion-toggle]")?.addEventListener("click", () => {
+        const open = !item.classList.contains("is-open");
+        items.forEach((other) => {
+          const on = other === item && open;
+          other.classList.toggle("is-open", on);
+          other.querySelector("[data-accordion-toggle]")?.setAttribute("aria-expanded", String(on));
+        });
+      });
+    });
+  });
+}
+
 // One column open at a time: hover or click opens one from lg (one always stays open), a tap toggles below lg
 export function initRevealColumns(root = document) {
   const desktop = window.matchMedia("(min-width: 992px)");

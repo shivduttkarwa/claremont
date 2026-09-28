@@ -1,8 +1,10 @@
-<!-- @wagtail-block: cta_links (light)
+<!-- @wagtail-block: cta_links (light, accordion)
      title: CharBlock(required)
      intro: TextBlock
-     links: ListBlock(StructBlock(label:CharBlock, page:PageChooserBlock)) -->
-<section class="cta-links cta-links--light" aria-labelledby="excellence-title">
+     items: ListBlock(StructBlock(label:CharBlock, body:RichTextBlock))
+     One row open at a time, the first at rest (Figma 1713:10392, 10535, 10561, 10610): the open row's arrow points up and
+     right, the closed rows' down and right. Phones (2571:14024): the rows run full width on Light Blue 50. -->
+<section class="cta-links cta-links--light cta-links--accordion" aria-labelledby="excellence-title">
   <div class="container">
     <div class="row g-4 row-split">
       <div class="col-lg-6">
@@ -11,11 +13,80 @@
       <div class="col-lg-6">
         <div class="cta-links__aside" data-anim="sequence" data-anim-type="nudge-right" data-anim-stagger=".25">
         <p class="cta-links__intro" data-anim="reveal" data-anim-order="1">When a child is capable of more, they shouldn’t be expected to wait for the class to catch up. That’s why we provide high achieving children with the opportunities they need to enhance their education beyond age expectations. Our teachers actively curate the curriculum to suit each child’s talents. By giving exceptionally capable children the challenges they’re hungry for, we ensure they stay inspired, engaged and excited about what comes next.</p>
-        <ul class="cta-links__list">
-          <li class="cta-links__item" data-anim-item><a class="cta-links__link" href="#">Acceleration programs<svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
-          <li class="cta-links__item" data-anim-item><a class="cta-links__link" href="#">Enrichment programs<svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
-          <li class="cta-links__item" data-anim-item><a class="cta-links__link" href="#">Provisions<svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
-          <li class="cta-links__item" data-anim-item><a class="cta-links__link" href="#">Curriculum differentiation<svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+        <ul class="cta-links__list" data-accordion>
+          <li class="cta-links__item is-open" data-anim-item data-accordion-item>
+            <button class="cta-links__link" type="button" aria-expanded="true" aria-controls="excellence-acceleration" data-accordion-toggle>Acceleration programs<svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button>
+            <div class="cta-links__panel" id="excellence-acceleration">
+              <div class="cta-links__body">
+                <p>If your child is ready, our acceleration programs let them progress through the curriculum at a pace that matches their ability, not their age.</p>
+                <ul>
+                  <li><strong>Flexible ability grouping (K-Year 2)</strong><br>Students who have already achieved the outcomes at their grade level have opportunities to be accelerated in English and Mathematics at their grade levels.</li>
+                  <li><strong>Spelling mastery (Years 3–6)</strong><br>Strong spellers are fast-tracked through advanced spelling skills and rules.</li>
+                  <li><strong>Stage-based mathematics (Years 3–6)</strong><br>Mathematically-gifted children are accelerated and given the opportunity to learn beyond their grade or stage.</li>
+                </ul>
+              </div>
+            </div>
+          </li>
+          <li class="cta-links__item" data-anim-item data-accordion-item>
+            <button class="cta-links__link" type="button" aria-expanded="false" aria-controls="excellence-enrichment" data-accordion-toggle>Enrichment programs<svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button>
+            <div class="cta-links__panel" id="excellence-enrichment">
+              <div class="cta-links__body">
+                <p>For curious children, going faster isn’t always going further. Our enrichment programs allow gifted learners to go deeper, stretching far beyond the standard curriculum.</p>
+                <p><strong>Problem-based learning (K–6)</strong><br>Students tackle real-world problem-solving, often focusing on environmental issues. This program helps them develop collaboration, self-direction and genuine motivation.</p>
+                <p><strong>Excelsior (Years 3–6)</strong><br>For children who race ahead in Spelling Mastery, Excelsior classes offer real-world language and literature challenges designed to spark creative thinking.</p>
+              </div>
+            </div>
+          </li>
+          <li class="cta-links__item" data-anim-item data-accordion-item>
+            <button class="cta-links__link" type="button" aria-expanded="false" aria-controls="excellence-provisions" data-accordion-toggle>Provisions<svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button>
+            <div class="cta-links__panel" id="excellence-provisions">
+              <div class="cta-links__body">
+                <p>Some children need challenges to thrive. Provisions give them exactly that. Chosen by teachers or the students themselves, these include:</p>
+                <ul>
+                  <li>Chess (K-Y6)</li>
+                  <li>G.A.T.E. WAYS Workshops (Science, Mathematics, English, Critical Thinking) (Y1-Y6)</li>
+                  <li>ICAS English Competition (Y2-Y6)</li>
+                  <li>ICAS Mathematics Competition (Y2-Y6)</li>
+                  <li>Debating (Y4-Y6)</li>
+                  <li>Australian Problem-Solving Maths Games Competition (Y3-Y4)</li>
+                  <li>Australian Problem-Solving Maths Olympiad (APSMO) (Y4-Y6)</li>
+                  <li>Ethics Olympiad (Y5-Y6)</li>
+                </ul>
+              </div>
+            </div>
+          </li>
+          <li class="cta-links__item" data-anim-item data-accordion-item>
+            <button class="cta-links__link" type="button" aria-expanded="false" aria-controls="excellence-differentiation" data-accordion-toggle>Curriculum differentiation<svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button>
+            <div class="cta-links__panel" id="excellence-differentiation">
+              <div class="cta-links__body">
+                <p>Gifted learners don’t just need acceleration, they also need to be stretched; and in every direction. Our teachers use ‘curriculum differentiation’ so exceptional children are challenged by what they learn, how they learn, what they create, and where they learn it.</p>
+                <p><strong>Differentiated content</strong></p>
+                <ul>
+                  <li>Abstract concepts and generalisations.</li>
+                  <li>Complex ideas and methodologies.</li>
+                  <li>Diverse learning experiences.</li>
+                </ul>
+                <p><strong>Differentiated thinking</strong></p>
+                <ul>
+                  <li>Introducing higher-order reasoning.</li>
+                  <li>Encouraging open-ended exploration.</li>
+                  <li>Emphasising deep group discussions.</li>
+                </ul>
+                <p><strong>Differentiated creation</strong></p>
+                <ul>
+                  <li>Creating ‘products’ that solve real problems.</li>
+                  <li>Introducing self-selected projects.</li>
+                  <li>Integrating real-world audiences.</li>
+                </ul>
+                <p><strong>Differentiated environments</strong></p>
+                <ul>
+                  <li>That enable learner-centric interactions.</li>
+                  <li>That reward genuine student independence.</li>
+                  <li>That inspire a flexible, open-minded approach to new ideas.</li>
+                </ul>
+              </div>
+            </div>
+          </li>
         </ul>
         </div>
       </div>

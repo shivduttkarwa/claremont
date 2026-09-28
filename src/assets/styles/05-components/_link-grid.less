@@ -71,6 +71,81 @@
   &__label { max-width: var(--link-grid-title-width); }
   &--plain &__link:not([href="#"]) &__label { text-decoration: underline; }
 
+  // Dispositions (1713:10659, hover 1709:10140): each description ends 190 under its rule, 16 above the next;
+  // a hovered cell fills Light Blue from its rule to the next and across the gap on its left, the type held still.
+  // The last row is 202 with no rule under it
+  &--described {
+    @media (min-width: @bp-lg) { --link-grid-pad-bottom: 3.6875rem; } // 59
+  }
+  &--described &__link {
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: auto 1fr;
+    gap: 0 var(--space-2);
+    @media (min-width: @bp-lg) { padding-bottom: 1rem; } // 16
+
+    &::before {
+      content: "";
+      position: absolute;
+      inset: calc(-1 * var(--border-width)) 0 calc(-1 * var(--border-width)) calc(-1 * var(--link-grid-gap)); // over the rules above and below
+      z-index: var(--z-behind);
+      background: var(--color-secondary);
+      opacity: 0;
+      transition: opacity var(--duration-base) ease;
+    }
+    &:hover,
+    &:focus-visible {
+      z-index: var(--z-content); // above the next row, so the fill covers its rule
+      color: var(--color-heading);
+      padding-inline-start: 0;
+      .icon { transform: none; }
+      &::before { opacity: 1; }
+    }
+  }
+  &--described &__text {
+    grid-column: 1 / -1;
+    align-self: end;
+    max-width: 22.1875rem; // 355
+    margin-top: 0.75rem;
+    color: var(--color-text);
+    font-size: 0.9375rem;  // 15
+    line-height: 1.5;      // 22.5
+    letter-spacing: var(--letter-spacing-body);
+  }
+  // With a mouse from lg (1709:10140) only the hovered or focused cell shows its description, rising in with the fill;
+  // the arrows point up and right at rest and turn down and right on the open cell, as on the academic excellence rows.
+  // Touch screens keep every description shown
+  @media @fine-lg {
+    &--described &__link:hover .icon,
+    &--described &__link:focus-visible .icon { transform: rotate(90deg); }
+    &--described &__text {
+      opacity: 0;
+      transform: translateY(0.5rem);
+      transition: opacity var(--duration-base) ease, transform var(--duration-slow) var(--ease-out);
+      @media (prefers-reduced-motion: reduce) { transform: none; }
+    }
+    &--described &__link:hover &__text,
+    &--described &__link:focus-visible &__text {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  &--described &__grid {
+    > li { display: grid; } // the link fills its cell when a longer neighbour grows the row, so its rule and hover box reach the row's foot
+    // the reveal leaves a transform on each cell, so the hovered cell itself is lifted for its fill to cover the next row's rule
+    > li:has(> .link-grid__link:hover, > .link-grid__link:focus-visible) { z-index: var(--z-content); }
+    // each cell has its top rule only, none under the last row (1709:10140)
+    @media (min-width: @bp-lg) {
+      > li:nth-child(3n + 1):nth-last-child(-n + 3) > .link-grid__link,
+      > li:nth-child(3n + 1):nth-last-child(-n + 3) ~ li > .link-grid__link {
+        min-height: 12.625rem; // 202
+        padding-bottom: 0.75rem; // 12: the description still ends 190 under the rule
+      }
+    }
+  }
+
   // Policies: no header, rules from 200 on a 220 pitch, 200 below the last row
   &--plain {
     @media (min-width: @bp-lg) {
