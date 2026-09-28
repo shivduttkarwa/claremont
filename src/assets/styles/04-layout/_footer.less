@@ -270,9 +270,9 @@
     }
 
     &__social {
-      justify-content: center;
+      justify-content: flex-start;
       gap: 1.75rem; // 28 between the 44 anchors puts the glyphs 72 apart
-      margin-left: 0;
+      margin-left: -0.375rem; // the 44 anchors overhang their 32 glyphs by 6: the first glyph meets the column edge
       margin-bottom: -0.375rem;
     }
 
@@ -305,14 +305,9 @@
       letter-spacing: var(--letter-spacing-body);
     }
 
-    // Phones centre the brand block only: the logo, its copy and the two buttons (the client's call)
+    // Phones centre the logo only; its copy, the buttons and the social row keep the column's left edge (the client's call)
     @media @upto-md {
       &__logo { margin-inline: auto; }
-      &__about p {
-        margin-inline: auto;
-        text-align: center;
-      }
-      &__actions { justify-content: center; }
     }
 
     // Tablets and landscape phones: the brand row runs full width, then two aligned columns
