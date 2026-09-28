@@ -8,7 +8,8 @@
      throwing it (pan.js). Hovering or focusing a card slides a Light Blue box with the quote and author up over the photo
      and turns the arrow down; the pointer's wake paints the photo back through the box (quote-reveal.js). Below lg it is
      the Swiper carousel (data-slider-below-lg): on tablets the active card's box is open and the peeking card dims; on
-     phones each card is the photo over the quote panel, the arrows, photo and quote filling one screen.
+     phones each card is the photo over the quote panel, the arrows, photo and quote filling one screen, each photo drifting
+     in a little behind its card's edge (data-slider-parallax) and its quote rising line by line (data-slider-lines).
      locals: id, title, intro (or ""), layout, prev_label, next_label, slides [{ image, alt, width, height, quote, author, role, url, link_label }] -->
 <section class="quote-slider quote-slider--{{ layout }}" aria-labelledby="{{ id }}" data-slider data-slider-below-lg data-pan>
   <div class="container">
@@ -24,7 +25,7 @@
     </div>
   </div>
 
-  <div class="swiper quote-slider__slider" data-slider-dim data-slider-rewind data-slider-open-active data-pan-hover>
+  <div class="swiper quote-slider__slider" data-slider-dim data-slider-open-active data-slider-parallax="35%" data-slider-lines="[data-quote-text]" data-pan-hover>
     <ul class="swiper-wrapper quote-slider__track" data-pan-track data-quote-cards data-anim="sequence" data-anim-type="wipe-up" data-anim-scroll="timed" data-anim-start="top 65%" data-anim-stagger="0.2">
       <each loop="slide in slides">
       <li class="swiper-slide quote-slider__card" data-anim-item data-quote-card>

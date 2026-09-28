@@ -202,7 +202,12 @@
         min-height: 0;
         aspect-ratio: auto;
         background: none;
-        img { opacity: 0.95; }
+        // the parallax drift (slider.js) moves on the slide's own curve, Swiper setting only its duration
+        img {
+          opacity: 0.95;
+          transition-property: transform;
+          transition-timing-function: var(--ease-out);
+        }
         .icon { display: none; }
       }
 
@@ -221,7 +226,7 @@
       &__quote,
       &__author { max-width: none; }
 
-      // on touch (where the active card is the open one) its quote rises in, the author just after; the others wait lowered
+      // on touch (where the active card is the open one) its quote rises in as the card lands, the author just after; the others wait lowered
       @media (hover: none), (pointer: coarse) {
         &__quote,
         &__author {
@@ -235,7 +240,35 @@
           opacity: 1;
           transform: none;
         }
-        &__card.is-open &__author { transition-delay: 0.12s; }
+        &__card.is-open &__quote { transition-delay: 0.15s; }
+        &__card.is-open &__author { transition-delay: 0.27s; }
+      }
+
+      // the line reveal (slide-lines.js) stands in for the rise above
+      &__slider.has-lines {
+        .quote-slider__quote,
+        .quote-slider__author {
+          opacity: 1;
+          transform: none;
+          transition: none;
+        }
+        .slide-line,
+        .slide-line-mask {
+          display: block;
+          text-indent: 0;
+        }
+        // the line boxes are spans too: they keep the author's own face, only the role inside them takes its span style
+        .quote-slider__author .slide-line,
+        .quote-slider__author .slide-line-mask {
+          font-family: inherit;
+          font-weight: inherit;
+          letter-spacing: inherit;
+        }
+        // the display face's descenders reach past its 0.95 line box, so the mask clips a taller box than SplitText's inline overflow
+        .slide-line-mask {
+          overflow: visible !important;
+          clip-path: inset(-0.3em -0.5em);
+        }
       }
     }
   }

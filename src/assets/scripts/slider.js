@@ -2,10 +2,12 @@
  * slider — Swiper carousels for [data-slider] sections: free-width slides with the section's own
  * arrow buttons. data-slider-edge snaps them to the .container edge (from a breakpoint when it names
  * one), data-slider-dim fades the card that is only partly on screen, data-slider-per-view-md shows
- * that many slides from the md breakpoint.
+ * that many slides from the md breakpoint, data-slider-parallax lets each photo drift behind its card edge and data-slider-lines rolls
+ * that copy in line by line, both on phones.
  */
 import Swiper from "swiper";
-import { A11y, Navigation } from "swiper/modules";
+import { A11y, Navigation, Parallax } from "swiper/modules";
+import { slideLines } from "./slide-lines.js";
 
 const breakpoints = { sm: 576, md: 768, lg: 992, xl: 1200, xxl: 1400 };
 
@@ -62,9 +64,24 @@ export function initSliders(root = document) {
       sync(swiper);
     };
 
+    // data-slider-parallax="35%": on phones each photo trails its card by that share, gliding in behind the edge
+    const phoneFx = el.dataset.sliderParallax || el.dataset.sliderLines
+      ? window.matchMedia("(max-width: 767.98px) and (prefers-reduced-motion: no-preference)")
+      : null;
+    const photos = (on) => el.querySelectorAll(".swiper-slide img").forEach((img) => {
+      if (on) return img.setAttribute("data-swiper-parallax", el.dataset.sliderParallax);
+      img.removeAttribute("data-swiper-parallax");
+      img.style.removeProperty("transform");
+      img.style.removeProperty("transition-duration");
+    });
+
     const build = () => {
+      const fx = !!phoneFx?.matches;
+      const drift = fx && !!el.dataset.sliderParallax;
+      if (el.dataset.sliderParallax) photos(drift);
       el.swiper = new Swiper(el, {
-        modules: [Navigation, A11y],
+        modules: drift ? [Navigation, A11y, Parallax] : [Navigation, A11y],
+        parallax: drift,
         speed: 900,
         slidesPerView: el.dataset.sliderPerView ? parseFloat(el.dataset.sliderPerView) : "auto",
         breakpoints: el.dataset.sliderPerViewMd ? { [breakpoints.md]: { slidesPerView: parseFloat(el.dataset.sliderPerViewMd) } } : undefined,
@@ -89,7 +106,22 @@ export function initSliders(root = document) {
       });
       if (el.hasAttribute("data-slider-dim")) dimClipped(el.swiper);
       if (el.hasAttribute("data-slider-open-active")) openActive(el.swiper);
+      if (fx && el.dataset.sliderLines) el.linesOff = slideLines(el.swiper, el.dataset.sliderLines);
     };
+
+    const teardown = () => {
+      el.linesOff?.();
+      el.linesOff = null;
+      el.swiper.destroy(true, true);
+      el.swiper = null;
+      if (el.dataset.sliderParallax) photos(false);
+    };
+
+    phoneFx?.addEventListener("change", () => {
+      if (!el.swiper) return;
+      teardown();
+      build();
+    });
 
     // data-slider-below-lg: one list of items is a slider on phones and tablets only; from lg the
     // stylesheet lays the same slides out itself, so the Swiper is torn down there (styles cleaned)
@@ -97,10 +129,7 @@ export function initSliders(root = document) {
       const phone = window.matchMedia("(max-width: 991.98px)");
       const sync = () => {
         if (phone.matches && !el.swiper) build();
-        else if (!phone.matches && el.swiper) {
-          el.swiper.destroy(true, true);
-          el.swiper = null;
-        }
+        else if (!phone.matches && el.swiper) teardown();
       };
       phone.addEventListener("change", sync);
       sync();
