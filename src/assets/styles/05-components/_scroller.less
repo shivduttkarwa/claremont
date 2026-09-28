@@ -156,7 +156,7 @@
     &:hover,
     &:focus-visible { color: var(--color-white); }
   }
-  &--photos &__card { width: ~"min(22.3125rem, 80vw)"; } // 357, no gutter between photos
+  &--photos &__card { width: ~"var(--pan-card, min(22.3125rem, 80vw))"; } // 357, no gutter between photos; pan.js snaps it to whole pixels from lg
   &--photos &__track { gap: 0; }
 
   // The quote panel: under the photo on phones, the hover box over it with a mouse from lg

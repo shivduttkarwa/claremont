@@ -22,8 +22,8 @@ document.addEventListener("DOMContentLoaded", () => {
   initQuoteReveal();
   initMosaicAssembly();
   initScrollers();
+  initPan(); // before the sliders: the snapped card width must be in place when Swiper measures
   initSliders();
-  initPan();
   initTabArrows();
   initApproachAccordion();
   initSearch();

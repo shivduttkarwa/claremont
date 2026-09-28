@@ -42,7 +42,7 @@
   }
 
   &__slide {
-    width: var(--card-w);
+    width: var(--pan-card, var(--card-w)); // pan.js snaps the card to whole pixels from lg
   }
 
   &__card {

@@ -19,7 +19,12 @@ export function initPan(root = document) {
     let paused = false;
     let running = false;
 
-    const measure = () => { width = cards[0].getBoundingClientRect().width; };
+    // whole pixels, or a fractional card edge shows a flickering hairline; --pan-card on the section is read at every width so the Swiper snaps too
+    const measure = () => {
+      section.style.removeProperty("--pan-card");
+      width = Math.round(cards[0].getBoundingClientRect().width);
+      section.style.setProperty("--pan-card", `${width}px`);
+    };
     // each card sits in its slot moved left by the drift, wrapped so it comes back in from the right
     const render = () => {
       const period = width * cards.length;
@@ -27,7 +32,7 @@ export function initPan(root = document) {
       cards.forEach((card, i) => {
         const slot = i * width;
         const x = ((slot - shift + width) % period + period) % period - width;
-        set[i](x - slot);
+        set[i](Math.round(x - slot));
       });
     };
     const tick = (time, delta) => {
@@ -49,7 +54,7 @@ export function initPan(root = document) {
     // after Swiper has built or torn down on the same change
     const sync = () => requestAnimationFrame(() => (lg.matches ? start() : stop()));
     lg.addEventListener("change", sync);
-    window.addEventListener("resize", () => running && measure());
+    window.addEventListener("resize", measure);
 
     const hover = section.querySelector("[data-pan-hover]") || track;
     hover.addEventListener("pointerenter", (event) => { if (event.pointerType === "mouse") paused = true; });
@@ -62,6 +67,7 @@ export function initPan(root = document) {
     section.querySelector("[data-slider-prev]")?.addEventListener("click", () => stepBy(-1));
     section.querySelector("[data-slider-next]")?.addEventListener("click", () => stepBy(1));
 
+    measure();
     sync();
   });
 }
