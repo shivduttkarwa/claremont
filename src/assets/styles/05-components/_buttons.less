@@ -60,25 +60,9 @@
   .is-disabled > & { display: none; }
 }
 
-// A click throws a few flecks of ink from the pointer (buttons.js)
-.btn-splash {
-  position: fixed;
-  z-index: var(--z-overlay);
-  width: 0;
-  height: 0;
-  pointer-events: none;
-  > span {
-    position: absolute;
-    top: 0;
-    left: 0;
-  }
-}
-
 .btn-primary {
   --btn-ink: var(--color-accent);
   --btn-ink-color: var(--color-primary);
-  --btn-fleck-a: var(--color-accent);
-  --btn-fleck-b: var(--color-secondary);
   --bs-btn-color: var(--color-primary);
   --bs-btn-bg: var(--color-secondary);
   --bs-btn-border-color: var(--color-secondary);
@@ -93,8 +77,6 @@
 .btn-outline-primary {
   --btn-ink: var(--color-primary);
   --btn-ink-color: var(--color-white);
-  --btn-fleck-a: var(--color-primary);
-  --btn-fleck-b: var(--color-secondary);
   --bs-btn-color: var(--color-primary);
   --bs-btn-border-color: var(--color-primary);
   --bs-btn-hover-color: var(--color-white);
@@ -108,8 +90,6 @@
 .btn-outline-light {
   --btn-ink: var(--color-white);
   --btn-ink-color: var(--color-primary);
-  --btn-fleck-a: var(--color-white);
-  --btn-fleck-b: var(--color-accent);
   --bs-btn-color: var(--color-white);
   --bs-btn-border-color: var(--color-white);
   --bs-btn-hover-color: var(--color-primary);
@@ -138,8 +118,6 @@
 .arrow-btn {
   --btn-ink: var(--color-primary);
   --btn-ink-color: var(--color-white);
-  --btn-fleck-a: var(--color-primary);
-  --btn-fleck-b: var(--color-accent);
   position: relative;
   display: inline-flex;
   align-items: center;

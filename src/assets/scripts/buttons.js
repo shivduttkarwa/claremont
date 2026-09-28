@@ -1,13 +1,10 @@
-// buttons — ink bloom: a button's hover colour floods in from where the pointer enters and drains out where it leaves,
-// and a click throws a few flecks of ink from the pointer. The ink is built on first contact, so the markup stays as authored until then.
+// buttons — ink bloom: a button's hover colour floods in from where the pointer enters and drains out where it leaves.
+// The ink is built on first contact, so the markup stays as authored until then.
 const SELECTOR = ".btn, .arrow-btn";
 const DRAIN = 750; // ms, --duration-ink
-const FLECKS = 12;
 
 export function initButtons() {
-  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
   const leftAt = new WeakMap();
-  let pressed = null;
 
   const find = (event) => event.target.closest?.(SELECTOR);
   const inert = (btn) => btn.matches(":disabled, .disabled, .is-disabled");
@@ -58,39 +55,6 @@ export function initButtons() {
     leftAt.set(btn, performance.now());
   };
 
-  const splash = (btn, x, y) => {
-    if (reduced.matches) return;
-    const style = getComputedStyle(btn);
-    const colours = [style.getPropertyValue("--btn-fleck-a").trim(), style.getPropertyValue("--btn-fleck-b").trim()];
-    const unit = parseFloat(getComputedStyle(document.documentElement).fontSize) / 16;
-    const layer = document.createElement("span");
-    layer.className = "btn-splash";
-    layer.setAttribute("aria-hidden", "true");
-    layer.style.left = `${x}px`;
-    layer.style.top = `${y}px`;
-    document.body.append(layer);
-    const done = [];
-    for (let i = 0; i < FLECKS; i++) {
-      const fleck = document.createElement("span");
-      const angle = (i / FLECKS) * Math.PI * 2 + Math.random() * 0.45;
-      const distance = (28 + Math.random() * 30) * unit;
-      const size = (4 + Math.random() * 5) * unit;
-      fleck.style.width = fleck.style.height = `${size}px`;
-      fleck.style.background = colours[i % 2];
-      layer.append(fleck);
-      const dx = Math.cos(angle) * distance;
-      const dy = Math.sin(angle) * distance;
-      done.push(fleck.animate(
-        [
-          { transform: "translate(-50%, -50%) scale(1) rotate(0deg)", opacity: 1 },
-          { transform: `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) scale(0.3) rotate(${90 + Math.random() * 180}deg)`, opacity: 0 },
-        ],
-        { duration: 520 + Math.random() * 180, easing: "cubic-bezier(0.22, 1, 0.36, 1)", fill: "forwards" }
-      ).finished);
-    }
-    Promise.allSettled(done).then(() => layer.remove());
-  };
-
   document.addEventListener("pointerover", (event) => {
     if (event.pointerType !== "mouse") return;
     const btn = find(event);
@@ -113,21 +77,5 @@ export function initButtons() {
   document.addEventListener("focusout", (event) => {
     const btn = find(event);
     if (btn && !btn.matches(":hover")) btn.classList.remove("is-inked");
-  });
-
-  // a mouse splashes on press; a tap waits for the click, so a scroll that starts on a button does not splash
-  document.addEventListener("pointerdown", (event) => {
-    const btn = find(event);
-    pressed = btn && event.pointerType === "mouse" && event.button === 0 && !inert(btn) ? btn : null;
-    if (pressed) splash(btn, event.clientX, event.clientY);
-  });
-  document.addEventListener("click", (event) => {
-    const btn = find(event);
-    const splashed = pressed;
-    pressed = null;
-    if (!btn || btn === splashed || !event.isTrusted || inert(btn)) return;
-    if (event.detail) return splash(btn, event.clientX, event.clientY);
-    const box = btn.getBoundingClientRect();
-    splash(btn, box.left + box.width / 2, box.top + box.height / 2);
   });
 }
