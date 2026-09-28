@@ -32,6 +32,9 @@
   &__item {
     border-top: var(--border-width) solid currentColor;
     &:last-child { border-bottom: var(--border-width) solid currentColor; }
+    // a row that reveals keeps its own layer before, during and after the slide, so its rule is drawn the same
+    // throughout and never snaps sharper as the fade ends
+    &[data-anim] { will-change: transform, opacity; }
   }
 
   &__link {
