@@ -30,13 +30,6 @@
     --header-link-size: ~"clamp(0.9375rem, 0.6394rem + 0.4808vw, 1rem)";  // 15 → 16
     --header-gap: var(--space-3);
   }
-  // Five links (Wylie Cottage joined the four) need about 55 more of the 992–1199 bar, where the root is still 16:
-  // there the logo, gaps and labels grow from a smaller start; from 1200 the 14 root makes room and the above holds
-  @media (min-width: @bp-lg) and (max-width: 1199.98px) {
-    --header-logo-width: ~"clamp(11rem, -8.1695rem + 30.9179vw, 15rem)";  // 176 at 992 → 240 at 1199
-    --header-nav-gap: ~"clamp(0.75rem, -2.8443rem + 5.7971vw, 1.5rem)";   // 12 → 24
-    --header-link-size: ~"clamp(0.875rem, 0.5755rem + 0.4831vw, 0.9375rem)"; // 14 → 15
-  }
 
   // Headroom: once scrolled past, the bar leaves on the way down and slides back in on the way up
   &.is-pinned {
@@ -56,10 +49,6 @@
       --header-right-top: 0;
       .site-header__inner { align-items: center; }
     }
-  }
-  // Below 1200 the pinned bar's 280 logo would push the five links' tools off screen: it keeps the band's logo instead
-  @media (min-width: @bp-lg) and (max-width: 1199.98px) {
-    &.is-pinned { --header-logo-width: ~"clamp(11rem, -8.1695rem + 30.9179vw, 15rem)"; }
   }
   // It was already off screen when it pinned, so it must not be seen sliding away
   @media (min-width: @bp-lg) {
