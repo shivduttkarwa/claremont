@@ -195,6 +195,7 @@ function createFluid() {
   const textTex = texture();
   const textCanvas = document.createElement("canvas");
   let quote = null;
+  let restTop = 0;
   let texts = [];
   let photo = null;
   let solid = null;
@@ -285,7 +286,7 @@ function createFluid() {
         gl.uniform2f(loc(p, "u_halo"), 1.5 / canvas.clientWidth, 1.5 / canvas.clientHeight);
         // the quote may still be rising into place: follow its live offset and fade
         const card = canvas.parentElement.getBoundingClientRect();
-        const shift = quote ? quote.getBoundingClientRect().top - card.top - quote.offsetTop : 0;
+        const shift = quote ? quote.getBoundingClientRect().top - card.top - restTop : 0;
         gl.uniform1f(loc(p, "u_shift"), shift / card.height);
         gl.uniform1f(loc(p, "u_textAlpha"), quote ? parseFloat(getComputedStyle(quote).opacity) : 0);
         gl.uniform4f(loc(p, "u_veil"), ...veil, VEIL);
@@ -319,8 +320,15 @@ function createFluid() {
     return [1, 1, 1];
   };
 
+  // Chrome counts a transformed box as an offsetParent, so the offsets are summed up the chain to the card
+  const restOffset = (el, card) => {
+    let x = 0, y = 0;
+    for (let node = el; node && node !== card; node = node.offsetParent) { x += node.offsetLeft; y += node.offsetTop; }
+    return [x, y];
+  };
+
   // The quote's words drawn where they sit at rest, as a mask for the white copy
-  const drawText = (dpr) => {
+  const drawText = (dpr, card) => {
     textCanvas.width = canvas.width;
     textCanvas.height = canvas.height;
     const ctx = textCanvas.getContext("2d");
@@ -331,6 +339,8 @@ function createFluid() {
       const range = document.createRange();
       for (const el of texts) {
         const origin = el.getBoundingClientRect();
+        const [x0, y0] = restOffset(el, card);
+        if (el === quote) restTop = y0;
         const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
         for (let node = walker.nextNode(); node; node = walker.nextNode()) {
           // each run in its own face: a name may set its title in another
@@ -342,7 +352,7 @@ function createFluid() {
             range.setStart(node, match.index);
             range.setEnd(node, match.index + match[0].length);
             const r = range.getClientRects()[0];
-            if (r) ctx.fillText(match[0], r.left - origin.left + el.offsetLeft, r.top - origin.top + el.offsetTop + ascent);
+            if (r) ctx.fillText(match[0], r.left - origin.left + x0, r.top - origin.top + y0 + ascent);
           }
         }
       }
@@ -377,7 +387,7 @@ function createFluid() {
       radius = erase ? SPLAT_RADIUS / 2.7 : SPLAT_RADIUS;
       texts = erase ? [] : [...card.querySelectorAll("[data-quote-text]")];
       quote = texts[0] || null;
-      drawText(dpr);
+      drawText(dpr, card);
       [...vel, ...pre, ...dye].forEach(clear);
       canvas.classList.toggle("quote-fluid--under", erase);
       card.append(canvas);

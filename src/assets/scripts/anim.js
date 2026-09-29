@@ -267,6 +267,12 @@ function staggerHold(el) {
 
 function setupReveals(root, entrance, scroll) {
   scoped(root, '[data-anim="reveal"]').forEach((el) => {
+    // data-anim-media: the reveal only runs where this query matches at load; elsewhere the element simply shows
+    const media = attr(el, "data-anim-media");
+    if (media && !window.matchMedia(media).matches) {
+      el.removeAttribute("data-anim");
+      return;
+    }
     bind(el);
     const preset = presetOf(el);
     gsap.set(el, preset.from);

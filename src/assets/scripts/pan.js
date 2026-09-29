@@ -39,8 +39,11 @@ export function initPan(root = document) {
         set[i](Math.round(x - slot));
       });
     };
+    // the row holds still until its cards have wiped in, so they rise in order from the left
+    const entered = () =>
+      !track.hasAttribute("data-anim") || track.classList.contains("is-revealed") || document.documentElement.classList.contains("anim-reduced");
     const tick = (time, delta) => {
-      if (!paused && !drag?.active && !reduced.matches) state.travel += (width / CARD_SECONDS) * (delta / 1000);
+      if (!paused && !drag?.active && !reduced.matches && entered()) state.travel += (width / CARD_SECONDS) * (delta / 1000);
       render();
     };
     const start = () => {
