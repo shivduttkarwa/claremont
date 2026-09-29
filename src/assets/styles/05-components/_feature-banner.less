@@ -6,6 +6,9 @@
   --banner-content-width: 33rem;       // 528
   --banner-title-gap: 1.96875rem;      // 31.5 (homepage: 5 + a 15px blank line + 10)
   --banner-actions-gap: 2.28125rem;    // 36.5
+  --banner-shade-angle: 90deg;         // dark on the copy's side
+  --banner-shade-solid: 20.49%;        // 336 of 1640 in from the copy's edge (1619:7155)
+  --banner-shade-clear: 48.35%;        // 793
 
   position: relative;
   isolation: isolate;
@@ -41,8 +44,15 @@
       content: "";
       .cover();
       background: rgba(5, 51, 51, 0.62);
-      @media (min-width: @bp-md) { background: linear-gradient(90deg, rgba(5, 51, 51, 0.7) 0%, rgba(5, 51, 51, 0) 75%); }
+      @media (min-width: @bp-md) { background: linear-gradient(var(--banner-shade-angle), rgba(5, 51, 51, 0.7) 0%, rgba(5, 51, 51, 0) 75%); }
       @media (min-width: @bp-lg) { background: none; }
+    }
+  }
+
+  // Over the photo, under the copy: 33% black from the copy's edge, clear by the middle
+  &--shade &__media::after {
+    @media (min-width: @bp-lg) {
+      background: linear-gradient(var(--banner-shade-angle), var(--color-shade) var(--banner-shade-solid), transparent var(--banner-shade-clear));
     }
   }
 
@@ -53,6 +63,12 @@
     z-index: var(--z-content);
     max-width: var(--banner-content-width);
     @media (min-width: @bp-xxl) { margin-left: -0.1875rem; } // x 197 on every banner
+  }
+
+  &--right { --banner-shade-angle: 270deg; }
+  &--right &__content {
+    margin-left: auto;
+    @media (min-width: @bp-xxl) { margin-right: -1.6875rem; } // x 939 (Design 2 home): the 528 box runs 27 past the container
   }
 
   h2 {

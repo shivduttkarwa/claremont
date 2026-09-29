@@ -3,9 +3,11 @@
      text:  TextBlock
      image: ImageChooserBlock
      cta:   StructBlock(text:CharBlock, url:URLBlock / document:DocumentChooserBlock) — optional
-     locals: id, title, text, image, image_m (phone crop; pass the same file when there is none),
+     align: ChoiceBlock(left | right) — the side the copy sits on over the photo from lg
+     shade: BooleanBlock — a soft dark gradient over the photo on the copy's side, under the copy
+     locals: id, title, text, align, shade, image, image_m (phone crop; pass the same file when there is none),
             width, height, modifier, actions (HTML buttons, or empty) -->
-<section class="feature-banner {{ modifier }}" aria-labelledby="{{ id }}" data-anim-parallax-trigger>
+<section class="feature-banner feature-banner--{{ align }}{{ shade ? ' feature-banner--shade' : '' }} {{ modifier }}" aria-labelledby="{{ id }}" data-anim-parallax-trigger>
   <div class="feature-banner__media" aria-hidden="true">
     <div class="feature-banner__layer" data-anim="parallax" data-anim-centered data-anim-speed="18.75" data-anim-scrub-mobile="0.3">
       <picture>
