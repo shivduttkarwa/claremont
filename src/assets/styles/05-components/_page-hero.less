@@ -140,3 +140,80 @@
     }
   }
 }
+
+// ---------------------------------------------------------------------
+// Below lg the designer redrew this block (the 375 frames' "Mobile header", 2087:12629): the photo sits
+// under the bar, a square on phones, and the title follows on Dark Green, 30 above it and 70 below.
+// The quick links sit on the block's bottom edge, half over the next section, and scroll with the page.
+// ---------------------------------------------------------------------
+@media @upto-lg {
+  .page-hero {
+    --page-hero-subnav-inset: calc(var(--container-gutter) - 0.3125rem); // 15: the row sits 5 wider than the gutter
+    --page-hero-subnav-rest: 1.5rem; // 24 of the 48 row inside the block, 24 over the next section
+
+    z-index: var(--z-content); // lifts the quick links over the section below
+    display: block;
+    min-height: 0;
+    padding: 0;
+    overflow: clip visible; // the links hang below the block; their entrance from the right stays clipped
+    background: var(--color-primary-dark);
+
+    &__media {
+      position: relative;
+      inset: auto;
+      overflow: hidden;
+      aspect-ratio: 1;
+      @media (min-width: @bp-sm) { aspect-ratio: 3 / 2; }
+      &::after { content: none; } // no copy sits on the photo here, so no shade
+    }
+    &__img {
+      height: 100%;
+      object-position: 50% 0;
+    }
+
+    > .container { padding-block: 1.875rem 4.375rem; } // 30, 70
+
+    h1 {
+      max-width: none;
+      font-size: ~"max(3.75rem, var(--font-size-display-inner))"; // 60
+      line-height: 0.7833; // 47: Figma draws its 46.8 line at a whole pixel
+    }
+
+    &__row { display: block; }
+
+    // Enrolment (2149:7437): the two contact lines start 30 under the title, 33 apart, their icons Light Blue
+    &__aside {
+      gap: 0.625rem; // 10
+      margin-top: 1.875rem; // 30
+      font-size: 0.9375rem; // 15
+      li,
+      li + li {
+        gap: 0.625rem; // 10
+        min-height: 0;
+        line-height: 1.5333; // 23: Figma draws the 22.5 line at a whole pixel
+      }
+      a { --tap-size: 1.5rem; } // 24 hit areas, so the two lines' targets do not overlap
+      .icon {
+        width: 1.25rem; // 20
+        height: 1.25rem;
+        margin: 0;
+        color: var(--color-secondary);
+      }
+    }
+
+    &__subnav {
+      display: block;
+      position: absolute;
+      inset: auto 0 0;
+      z-index: var(--z-raised);
+      height: 0;
+      .subnav {
+        position: absolute;
+        inset: auto var(--page-hero-subnav-inset) calc(-1 * var(--page-hero-subnav-rest));
+      }
+    }
+
+    // News article (2149:8660): no photo, the title 150 under the bar
+    &--plain > .container { padding-top: 9.375rem; }
+  }
+}

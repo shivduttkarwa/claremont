@@ -6,7 +6,8 @@
      background: ImageChooserBlock
      quick links come from the subnav site setting (partials/subnav.html)
      The masthead is the photo on phones; the intro sits below it on white and over the photo from lg.
-     On phones the quick links sit on the photo's bottom edge and scroll with the page. -->
+     On phones the quick links sit on the photo's bottom edge and scroll with the page; below lg they fade in
+     left to right as the header items do, and from lg the strip enters from the right. -->
 <section class="hero" aria-labelledby="hero-title" data-anim-parallax-trigger>
   <div class="hero__media" aria-hidden="true">
     <picture>
@@ -47,7 +48,7 @@
     </div>
   </div>
 
-  <div class="hero__subnav" data-anim="sequence" data-anim-type="enter-right" data-anim-tier="hero" data-anim-order="5" data-anim-order-mobile="2" data-anim-stagger="0.08">
+  <div class="hero__subnav" data-anim="sequence" data-anim-type="enter-right" data-anim-type-mobile="fade-soft" data-anim-tier="hero" data-anim-order="5" data-anim-order-mobile="2" data-anim-stagger="0.08" data-anim-stagger-mobile="0.1">
     <include src="partials/subnav.html"></include>
   </div>
 </section>

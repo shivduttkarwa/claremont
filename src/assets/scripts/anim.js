@@ -93,10 +93,10 @@ const orderOf = (el, fallback = 0) =>
     ? number(el, "data-anim-order-mobile", fallback)
     : number(el, "data-anim-order", fallback);
 const leadOf = (el) => number(el, "data-anim-lead", DEFAULTS.entranceLead);
-// Scroll-scrubbed steps may pace differently on phones: a `-mobile` twin of start, end or scrub wins below 992
+// A `-mobile` twin wins below 992: a scrubbed step's start, end or scrub, a step's type, a sequence's stagger
 const variant = (el, name) =>
   window.innerWidth < 992 && el.hasAttribute(`${name}-mobile`) ? `${name}-mobile` : name;
-const presetOf = (el) => REVEAL[attr(el, "data-anim-type", "fade-up")] || REVEAL["fade-up"];
+const presetOf = (el) => REVEAL[attr(el, variant(el, "data-anim-type"), "fade-up")] || REVEAL["fade-up"];
 
 // data-anim-duration / data-anim-delay let a step be timed against its neighbours
 const toVars = (preset, el) => ({
@@ -427,7 +427,7 @@ function setupSequences(root, entrance, scroll) {
       return;
     }
     const presetFor = (item) => REVEAL[item.getAttribute("data-anim-item")] || presetOf(el);
-    const stagger = number(el, "data-anim-stagger", null) ?? DEFAULTS.stagger; // an explicit 0 plays the items together
+    const stagger = number(el, variant(el, "data-anim-stagger"), null) ?? DEFAULTS.stagger; // an explicit 0 plays the items together
     // a CSS transition on an item would smear every frame of the tween, so it is paused until the end
     items.forEach((item) => gsap.set(item, { ...presetFor(item).from, transition: "none" }));
     play(el, {

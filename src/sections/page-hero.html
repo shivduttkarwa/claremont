@@ -3,21 +3,26 @@
      image: ImageChooserBlock
      aside: ListBlock(StructBlock(label:CharBlock, value:CharBlock, url:URLBlock, icon:ChoiceBlock)) — optional contact lines
      quick links come from the subnav site setting (partials/subnav.html)
-     locals: title, image, width, height, aside (HTML list items, or empty), modifier -->
+     Below lg (the 375 frames' "Mobile header", 2087:12629) the photo sits under the bar, a square on phones and 3 : 2
+     from sm, and the title follows on Dark Green; the quick links sit on the block's bottom edge and scroll with the page.
+     locals: title, image, width, height, image_m (the square phone crop, 750 × 750), aside (HTML list items, or empty), modifier -->
 <section class="page-hero {{ modifier }}" aria-labelledby="page-title" data-anim-parallax-trigger>
   <div class="page-hero__media" aria-hidden="true">
-    <img class="page-hero__img" fetchpriority="high" decoding="async" src="{{ image }}" alt="" width="{{ width }}" height="{{ height }}"
-         data-anim="parallax" data-anim-axis="y" data-anim-speed="12" data-anim-reverse data-anim-start="top top" data-anim-disable-mobile>
+    <picture>
+      <source media="(min-width: 576px)" srcset="{{ image }}" width="{{ width }}" height="{{ height }}">
+      <img class="page-hero__img" fetchpriority="high" decoding="async" src="{{ image_m }}" alt="" width="750" height="750"
+           data-anim="parallax" data-anim-axis="y" data-anim-speed="12" data-anim-reverse data-anim-start="top top" data-anim-disable-mobile>
+    </picture>
   </div>
 
   <div class="container">
     <div class="page-hero__row">
       <h1 id="page-title" data-anim="split" data-anim-type="chars" data-anim-tier="hero" data-anim-order="1" data-anim-lead="0.85">{{{ title }}}</h1>
-      <ul class="page-hero__aside" data-anim="reveal" data-anim-tier="hero" data-anim-order="2">{{{ aside }}}</ul>
+      <ul class="page-hero__aside" data-tap-aa data-anim="reveal" data-anim-tier="hero" data-anim-order="2">{{{ aside }}}</ul>
     </div>
   </div>
 
-  <div class="page-hero__subnav" data-anim="sequence" data-anim-type="enter-right" data-anim-tier="hero" data-anim-order="2" data-anim-stagger="0.08">
+  <div class="page-hero__subnav" data-anim="sequence" data-anim-type="enter-right" data-anim-type-mobile="fade-soft" data-anim-tier="hero" data-anim-order="2" data-anim-stagger="0.08" data-anim-stagger-mobile="0.1">
     <include src="partials/subnav.html"></include>
   </div>
 </section>
