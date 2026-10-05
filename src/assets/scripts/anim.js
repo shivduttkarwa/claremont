@@ -55,10 +55,11 @@ const REVEAL = {
 // Split text: characters slide up one after another; lines rise out of a mask. `spread` caps how
 // long the stagger may run in total, so a long title tightens its stagger instead of dragging on.
 // `rise` is the distance in em of the element's font size, so a phone title rises less than the
-// 1640 one (0.38em: 50 at the 131.6 hero, 23 at the 60 phone hero; 0.4em: 14 at the 35 section h2).
+// 1640 one (0.12em: 16 at the 131.6 hero, 7 at the 60 phone hero; 0.2em: 7 at the 35 section h2).
+// `lift` ends the rise early: eased as slowly as the fade, its last pixels land as separate hops after the letter looks still.
 const SPLIT = {
-  "chars":      { from: { autoAlpha: 0 }, rise: 0.38, to: { y: 0, autoAlpha: 1, duration: 0.3, ease: "power1.inOut", stagger: 0.03 }, spread: 0.9 }, // hero titles
-  "chars-soft": { from: { autoAlpha: 0 }, rise: 0.4, to: { y: 0, autoAlpha: 1, duration: 0.25, ease: "power1.inOut", stagger: 0.02 }, spread: 0.5 }, // section titles
+  "chars":      { from: { autoAlpha: 0 }, rise: 0.12, to: { y: 0, autoAlpha: 1, duration: 0.85, ease: "power2.out", stagger: 0.022 }, lift: { duration: 0.4, ease: "power1.out" }, spread: 0.56 }, // hero titles
+  "chars-soft": { from: { autoAlpha: 0 }, rise: 0.2, to: { y: 0, autoAlpha: 1, duration: 0.62, ease: "power2.out", stagger: 0.015 }, lift: { duration: 0.3, ease: "power1.out" }, spread: 0.375 }, // section titles
   "lines":      { from: { y: 30, autoAlpha: 0 }, to: { y: 0, autoAlpha: 1, duration: 0.6, ease: "power1.out", stagger: 0.1 } },
 };
 
@@ -378,17 +379,18 @@ function setupSplits(root, entrance, scroll) {
         const { split, targets } = built || build();
         built = null;
         gsap.set(el, { autoAlpha: 1 }); // the container shows; its pieces carry the hidden state
-        return gsap.to(targets, {
-          ...preset.to,
-          stagger,
-          // the original markup comes back once it has played, so the audited layout is untouched
-          onComplete: () => {
-            el.classList.add("is-revealed");
-            split.revert();
-            el.style.whiteSpace = "";
-            splits.delete(el);
-          },
-        });
+        // the original markup comes back once it has played, so the audited layout is untouched
+        const onComplete = () => {
+          el.classList.add("is-revealed");
+          split.revert();
+          el.style.whiteSpace = "";
+          splits.delete(el);
+        };
+        if (!preset.lift) return gsap.to(targets, { ...preset.to, stagger, onComplete });
+        const { y, ...fade } = preset.to;
+        return gsap.timeline()
+          .to(targets, { ...fade, stagger, onComplete }, 0)
+          .to(targets, { y, ...preset.lift, stagger }, 0);
       },
     }, entrance, scroll);
   });
