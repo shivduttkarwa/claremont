@@ -50,7 +50,7 @@
     color: var(--color-heading);
     font-size: var(--font-size-xl);
     line-height: var(--line-height-snug);
-    transition: color var(--duration-fast) ease, padding-inline-start var(--duration-base) var(--ease-out);
+    transition: color var(--duration-fast) ease;
     @media (min-width: @bp-lg) { min-height: var(--link-grid-row); }
 
     .icon {
@@ -63,7 +63,6 @@
     &:hover,
     &:focus-visible {
       color: var(--color-green-hover);
-      padding-inline-start: var(--space-1);
       .icon { transform: translate(0.25rem, -0.25rem); }
     }
   }
@@ -98,7 +97,6 @@
     &:focus-visible {
       z-index: var(--z-content); // above the next row, so the fill covers its rule
       color: var(--color-heading);
-      padding-inline-start: 0;
       .icon { transform: none; }
       &::before { opacity: 1; }
     }

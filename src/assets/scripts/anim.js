@@ -36,6 +36,7 @@ const REVEAL = {
   "fade-up":    { from: { y: 30, autoAlpha: 0 },                to: { y: 0, autoAlpha: 1 } },
   "fade":       { from: { autoAlpha: 0 },                       to: { autoAlpha: 1 } },
   "fade-soft":  { from: { autoAlpha: 0 },                       to: { autoAlpha: 1, duration: 0.5, ease: "power1.out" } }, // header items
+  "rise-soft":  { from: { y: 14, autoAlpha: 0 },                to: { y: 0, autoAlpha: 1, duration: 0.55, ease: "power2.out" } }, // the quick links below lg
   "from-left":  { from: { x: "-15%", autoAlpha: 0 },            to: { x: "0%", autoAlpha: 1 } },
   "from-right": { from: { x: "15%", autoAlpha: 0 },             to: { x: "0%", autoAlpha: 1 } },
   "enter-right": { from: { x: "110%", autoAlpha: 0 },           to: { x: "0%", autoAlpha: 1, duration: 0.9, ease: "expo.out" } },
@@ -87,15 +88,17 @@ const number = (el, name, fallback) => {
 
 const tierOf = (el) => attr(el, "data-anim-tier", "default");
 const startOf = (el) => attr(el, "data-anim-start", TIER_START[tierOf(el)] || TIER_START.default);
+// below lg; asked as a media query because reading window.innerWidth forces a layout every time
+const phone = typeof window !== "undefined" && window.matchMedia ? window.matchMedia("(max-width: 991.98px)") : { matches: false };
 // data-anim-order-mobile reorders an entrance step where the phone layout stacks things differently
 const orderOf = (el, fallback = 0) =>
-  window.innerWidth < 992 && el.hasAttribute("data-anim-order-mobile")
+  phone.matches && el.hasAttribute("data-anim-order-mobile")
     ? number(el, "data-anim-order-mobile", fallback)
     : number(el, "data-anim-order", fallback);
-const leadOf = (el) => number(el, "data-anim-lead", DEFAULTS.entranceLead);
-// A `-mobile` twin wins below 992: a scrubbed step's start, end or scrub, a step's type, a sequence's stagger
+// A `-mobile` twin wins below 992: a scrubbed step's start, end or scrub, a step's type or lead, a sequence's stagger
 const variant = (el, name) =>
-  window.innerWidth < 992 && el.hasAttribute(`${name}-mobile`) ? `${name}-mobile` : name;
+  phone.matches && el.hasAttribute(`${name}-mobile`) ? `${name}-mobile` : name;
+const leadOf = (el) => number(el, variant(el, "data-anim-lead"), DEFAULTS.entranceLead);
 const presetOf = (el) => REVEAL[attr(el, variant(el, "data-anim-type"), "fade-up")] || REVEAL["fade-up"];
 
 // data-anim-duration / data-anim-delay let a step be timed against its neighbours
@@ -124,7 +127,7 @@ const follow = () => Math.max(0, handoff - gsap.ticker.time);
 // On phones a section's copy follows its title: the nearest split before it in the same `main > *` block.
 // An ancestor with data-anim-titles-first="off" switches that off (the home page, choreographed per block).
 const titleDurations = new WeakMap(); // split -> how long its animation runs
-const titlesFirst = (el) => window.innerWidth < 992 && !el.closest('[data-anim-titles-first="off"]');
+const titlesFirst = (el) => phone.matches && !el.closest('[data-anim-titles-first="off"]');
 function titleFor(el) {
   const section = el.closest("main > *");
   if (!section) return null;
@@ -207,7 +210,10 @@ function play(el, step, entrance, scroll, hold = orderOf(el) * DEFAULTS.stagger)
     entrance.push({ order: orderOf(el), lead: leadOf(el), ...step });
     return;
   }
-  scroll.push(() => scrollStep(el, step.animation, hold + titleHold(el)));
+  const create = () => scrollStep(el, step.animation, hold + titleHold(el));
+  // a title already on screen is split with the entrance's own, before anything moves
+  if (step.prepare && el.getBoundingClientRect().top < window.innerHeight) create.prepare = step.prepare;
+  scroll.push(create);
 }
 
 function playEntrance(steps, root) {
@@ -231,8 +237,10 @@ function playEntrance(steps, root) {
         titleEnd = Math.max(titleEnd, at + step.duration);
       });
     });
-  // scroll steps already in view follow as the last step, but never while a title is still rising
-  if (root === document) handoff = gsap.ticker.time + Math.max(0, tl.duration() - DEFAULTS.entranceLead, titleEnd);
+  // scroll steps already in view follow as the last step, but never while a title is still rising;
+  // on phones they wait for the whole entrance, so the copy under a hero comes after its quick links
+  const lead = phone.matches ? 0 : DEFAULTS.entranceLead;
+  if (root === document) handoff = gsap.ticker.time + Math.max(0, tl.duration() - lead, titleEnd);
 }
 
 // data-anim-group -> tag direct children as staggered reveals (auto ordering)
@@ -318,24 +326,37 @@ function glyphBoxes(el) {
 
 // Boxed words run a little wider than the kerned text, so a full line would wrap its last word while split.
 // The split keeps the original line breaks instead: no wrapping, and a <br> wherever a line used to start.
+// Both read every box first and write afterwards: a read after each write is a full layout per word or letter,
+// which on a phone froze the page for several frames whenever a title was split while another was still moving.
 function keepLines(el, split, boxes) {
   const index = new Map(split.chars.map((char, i) => [char, i]));
   el.style.whiteSpace = "nowrap";
-  let prev = null;
-  split.words.forEach((word) => {
-    const first = index.get(word.querySelector(".anim-char"));
-    if (first === undefined) return;
-    if (prev && boxes[first].top > boxes[prev.first].top + 1 && word.getBoundingClientRect().top <= prev.word.getBoundingClientRect().top + 1) {
-      word.before(document.createElement("br"));
+  const words = split.words
+    .map((word) => ({ word, first: index.get(word.querySelector(".anim-char")) }))
+    .filter((item) => item.first !== undefined);
+  const tops = words.map((item) => item.word.getBoundingClientRect().top);
+  words.forEach((item, i) => {
+    const prev = words[i - 1];
+    if (prev && boxes[item.first].top > boxes[prev.first].top + 1 && tops[i] <= tops[i - 1] + 1) {
+      item.word.before(document.createElement("br"));
     }
-    prev = { word, first };
   });
 }
 
 // Boxing each character loses the kerning between pairs; nudge every box back to where its glyph sat.
+// A margin moves its letter and the rest of the line, so each letter takes only what the one before it left over.
 function keepKerning(chars, boxes) {
+  const now = chars.map((char) => char.getBoundingClientRect());
+  let line = null;
+  let carried = 0;
   chars.forEach((char, i) => {
-    const nudge = boxes[i].left - char.getBoundingClientRect().left;
+    if (line === null || Math.abs(now[i].top - line) > 1) {
+      line = now[i].top;
+      carried = 0;
+    }
+    const owed = boxes[i].left - now[i].left;
+    const nudge = owed - carried;
+    carried = owed;
     if (Math.abs(nudge) > 0.01) char.style.marginLeft = `${nudge}px`;
   });
 }
@@ -367,6 +388,8 @@ function setupSplits(root, entrance, scroll) {
       }
       splits.set(el, split);
       const from = preset.rise ? { ...preset.from, y: parseFloat(getComputedStyle(el).fontSize) * preset.rise } : preset.from;
+      // read every transform first: gsap.set would read each letter back after writing the one before, a layout apiece
+      targets.forEach((target) => gsap.getProperty(target, "y"));
       gsap.set(targets, from);
       return { split, targets };
     };
@@ -412,7 +435,7 @@ function setupSequences(root, entrance, scroll) {
     const items = Array.from(el.querySelectorAll("[data-anim-item]")).filter(
       (item) => item.closest('[data-anim="sequence"]') === el && item.getClientRects().length
     );
-    const mobile = window.innerWidth < 992;
+    const mobile = phone.matches;
     if (!items.length || (mobile && el.hasAttribute("data-anim-disable-mobile"))) {
       el.classList.add("is-revealed");
       return;
@@ -449,7 +472,7 @@ function setupSequences(root, entrance, scroll) {
 function setupParallax(root) {
   scoped(root, '[data-anim="parallax"]').forEach((el) => {
     bind(el);
-    if (el.hasAttribute("data-anim-disable-mobile") && window.innerWidth < 992) return;
+    if (el.hasAttribute("data-anim-disable-mobile") && phone.matches) return;
     const axis = attr(el, "data-anim-axis", "y");
     const speed = number(el, variant(el, "data-anim-speed"), 0);
     const reverse = el.hasAttribute("data-anim-reverse");
@@ -514,6 +537,7 @@ function prepareAll(root, opts = {}) {
     immediate = false;
   }
   entrance.forEach((step) => step.prepare?.());
+  scroll.forEach((create) => create.prepare?.());
   return () => {
     playEntrance(entrance, root);
     scroll.forEach((create) => create());

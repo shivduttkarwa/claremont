@@ -155,7 +155,7 @@
     display: block;
     min-height: 0;
     padding: 0;
-    overflow: clip visible; // the links hang below the block; their entrance from the right stays clipped
+    overflow: visible; // the links hang below the block. Not `clip visible`: Safari then cuts a fading link off at the block's edge
     background: var(--color-primary-dark);
 
     &__media {
