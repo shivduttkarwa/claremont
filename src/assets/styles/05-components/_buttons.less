@@ -11,16 +11,14 @@
   --bs-btn-border-radius: var(--radius-none);
   --bs-btn-focus-box-shadow: none;
   --btn-ring: var(--bs-btn-border-color);
-  position: relative;
   border: 0;
   box-shadow: inset 0 0 0 var(--bs-btn-border-width) var(--btn-ring);
   letter-spacing: var(--letter-spacing-body);
   white-space: nowrap;
   transition:
-    color var(--duration-fast) ease,
-    background-color var(--duration-fast) ease,
-    box-shadow var(--duration-fast) ease,
-    transform var(--duration-fast) var(--ease-out),
+    color var(--duration-base) ease,
+    background-color var(--duration-base) ease,
+    box-shadow var(--duration-base) ease,
     scale var(--duration-base) var(--ease-out);
   &:hover { --btn-ring: var(--bs-btn-hover-border-color); }
   &:focus-visible { --btn-ring: var(--bs-btn-hover-border-color); }
@@ -30,53 +28,21 @@
   &:disabled,
   &.disabled { --btn-ring: var(--bs-btn-disabled-border-color); }
   &:active { scale: 0.97; }
-  // once buttons.js has built the ink, it carries the hover colours and the button itself holds still
-  &.has-ink {
-    --bs-btn-hover-color: var(--bs-btn-color);
-    --bs-btn-hover-bg: var(--bs-btn-bg);
-    --bs-btn-hover-border-color: var(--bs-btn-border-color);
-  }
-}
-
-// The hover colour, flooding in from where the pointer enters and draining out where it leaves (buttons.js)
-.btn__ink {
-  position: absolute;
-  inset: 0;
-  display: inherit;
-  align-items: inherit;
-  justify-content: inherit;
-  gap: inherit;
-  padding: inherit;
-  background: var(--btn-ink);
-  color: var(--btn-ink-color);
-  clip-path: ~"circle(0 at var(--ink-x, 50%) var(--ink-y, 50%))";
-  transition: clip-path var(--duration-ink) var(--ease-out);
-  pointer-events: none;
-  @media (prefers-reduced-motion: reduce) { transition-duration: 0.01ms; }
-  .is-inked > & { clip-path: ~"circle(150% at var(--ink-x, 50%) var(--ink-y, 50%))"; }
-  .is-placing > & { transition: none; }
-  :disabled > &,
-  .disabled > &,
-  .is-disabled > & { display: none; }
 }
 
 .btn-primary {
-  --btn-ink: var(--color-accent);
-  --btn-ink-color: var(--color-primary);
   --bs-btn-color: var(--color-primary);
   --bs-btn-bg: var(--color-secondary);
   --bs-btn-border-color: var(--color-secondary);
   --bs-btn-hover-color: var(--color-primary);
-  --bs-btn-hover-bg: var(--color-blue-hover);
-  --bs-btn-hover-border-color: var(--color-blue-hover);
+  --bs-btn-hover-bg: var(--color-accent);
+  --bs-btn-hover-border-color: var(--color-accent);
   --bs-btn-active-color: var(--color-primary);
-  --bs-btn-active-bg: var(--color-blue-hover);
-  --bs-btn-active-border-color: var(--color-blue-hover);
+  --bs-btn-active-bg: var(--color-accent);
+  --bs-btn-active-border-color: var(--color-accent);
 }
 
 .btn-outline-primary {
-  --btn-ink: var(--color-primary);
-  --btn-ink-color: var(--color-white);
   --bs-btn-color: var(--color-primary);
   --bs-btn-border-color: var(--color-primary);
   --bs-btn-hover-color: var(--color-white);
@@ -88,8 +54,6 @@
 }
 
 .btn-outline-light {
-  --btn-ink: var(--color-white);
-  --btn-ink-color: var(--color-primary);
   --bs-btn-color: var(--color-white);
   --bs-btn-border-color: var(--color-white);
   --bs-btn-hover-color: var(--color-primary);
@@ -109,30 +73,24 @@
   .icon {
     width: 1rem;
     height: 1rem;
-    transition: transform var(--duration-base) var(--ease-out);
   }
-  &:hover .icon { transform: translateY(0.125rem); }
 }
 
 // Square arrow buttons (carousel / tab navigation)
 .arrow-btn {
-  --btn-ink: var(--color-primary);
-  --btn-ink-color: var(--color-white);
-  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: var(--control-height);
   height: var(--control-height);
   padding: 0;
-  overflow: hidden;
   border: 0;
   background: var(--color-secondary);
   color: var(--color-primary);
   cursor: pointer;
   transition:
-    background-color var(--duration-fast) ease,
-    color var(--duration-fast) ease,
+    background-color var(--duration-base) ease,
+    color var(--duration-base) ease,
     scale var(--duration-base) var(--ease-out);
   &:active { scale: 0.97; }
 
@@ -140,22 +98,19 @@
     width: 1.25rem; // 20: the 19-unit glyph lands on Figma's 18.6 × 18.3 arrow
     height: 1.25rem;
     margin-top: 0.0625rem; // Chrome snaps the glyph to whole pixels; one down puts the shaft on Figma's row 24.7
-    transition: transform var(--duration-base) var(--ease-out);
   }
   &--prev .icon { transform: rotate(180deg); }
 
-  &:not(.has-ink):focus-visible {
+  &:focus-visible {
     background: var(--color-primary);
     color: var(--color-white);
   }
   // A tapped arrow stays on screen, so hover only styles devices that really hover
   @media (hover: hover) {
-    &:not(.has-ink):hover {
+    &:not(:disabled, .is-disabled):hover {
       background: var(--color-primary);
       color: var(--color-white);
     }
-    &--next:not(.has-ink):hover .icon { transform: translateX(0.1875rem); }
-    &--prev:not(.has-ink):hover .icon { transform: rotate(180deg) translateX(0.1875rem); }
   }
 
   &:disabled,
@@ -163,21 +118,6 @@
     opacity: 0.4;
     cursor: default;
   }
-}
-
-// Under the ink the arrow loops: out one side while its twin comes in from the other
-.arrow-btn__glyph {
-  display: inline-grid;
-  > .icon {
-    grid-area: 1 / 1;
-    transition: translate var(--duration-ink) var(--ease-out);
-    @media (prefers-reduced-motion: reduce) { transition-duration: 0.01ms; }
-  }
-  > .icon + .icon { translate: calc(-1 * var(--control-height)) 0; }
-  .arrow-btn--prev & > .icon + .icon { translate: var(--control-height) 0; }
-  .is-inked & > .icon:first-child { translate: var(--control-height) 0; }
-  .is-inked.arrow-btn--prev & > .icon:first-child { translate: calc(-1 * var(--control-height)) 0; }
-  .is-inked & > .icon + .icon { translate: none; }
 }
 
 // Pair of arrows: 18 apart, and 3 past the content edge (x 1329 → 1443)
