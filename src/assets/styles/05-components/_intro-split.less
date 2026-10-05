@@ -26,7 +26,11 @@
   }
   &--wide-lead h2 {
     max-width: 39.125rem; // 626
-    @media @upto-xxl { br { display: none; } } // the designed break needs the whole 626 box; narrower columns wrap on their own
+    // the designed break needs the whole 626 box; narrower columns wrap on their own, 40 short of the copy beside them
+    @media @upto-xxl {
+      br { display: none; }
+      @media (min-width: @bp-lg) { max-width: ~"calc(100% - 2.5rem)"; }
+    }
   }
 
   // Right column starts at x 824, four past the half-way line

@@ -274,9 +274,7 @@
     max-width: var(--hotspot-measure);
     padding-bottom: var(--space-3);
     @media (min-width: @bp-lg) {
-      --hotspot-card-shift: -0.75rem;         // 12: slides in from the marker side
-      --hotspot-card-clip: inset(0 100% 0 0); // wipes open from the marker side
-      --hotspot-card-time: calc(var(--duration-slow) * 1.5);
+      --hotspot-card-time: var(--duration-slow);
       display: block;
       position: absolute;
       top: 0.0625rem;
@@ -285,28 +283,22 @@
       padding-bottom: 0;
       opacity: 0;
       visibility: hidden;
-      clip-path: var(--hotspot-card-clip);
-      transform: translateX(var(--hotspot-card-shift));
+      transform: translateY(0.9375rem); // 15: it fades up as the rest of the copy does; the rise lands before the fade ends
       transition:
-        opacity var(--hotspot-card-time) var(--ease-out),
-        clip-path var(--hotspot-card-time) var(--ease-out),
-        transform var(--hotspot-card-time) var(--ease-out),
+        opacity var(--hotspot-card-time) ease,
+        transform calc(var(--hotspot-card-time) * 0.65) ease-out,
         visibility 0s linear var(--hotspot-card-time);
     }
   }
   &--flip &__card,
   &.is-swapped &__card {
     @media (min-width: @bp-lg) {
-      --hotspot-card-shift: 0.75rem;
-      --hotspot-card-clip: inset(0 0 0 100%);
       left: auto;
       right: calc(100% + 0.5625rem);
     }
   }
   @media (min-width: @bp-lg) {
     &--flip.is-swapped &__card {
-      --hotspot-card-shift: -0.75rem;
-      --hotspot-card-clip: inset(0 100% 0 0);
       left: calc(100% + 0.5625rem);
       right: auto;
     }
@@ -324,7 +316,6 @@
     display: block;
     opacity: 1;
     visibility: visible;
-    clip-path: inset(0);
     transform: none;
     transition-delay: 0s;
   }
@@ -357,13 +348,15 @@
 
 // ---------------------------------------------------------------------
 // Phones: the designer redrew this block as an accordion (canvas 1619:1791, node 2101:13731).
-// Four ruled rows on blue under one photo; the open row turns pale and unfolds its topics, and
-// each topic unfolds its own copy. Both unfold through a grid row that grows from 0fr to 1fr.
+// Four ruled rows on blue under one photo; the open row turns pale and unfolds its topics, and each
+// topic unfolds its own copy. Both unfold through one grid row growing from 0fr to 1fr on --ease-settle while
+// the content fades in. Nothing else moves with it: the spacing sits inside the fold, a fold above the tapped
+// row shuts at once (ui.js holds the row in place), and no curve with a long tail, which is what made the rows shiver.
 // ---------------------------------------------------------------------
 @media @upto-lg {
   .approach {
     --approach-pad-top: 0;
-    --approach-open-time: var(--duration-slow);
+    --approach-open-time: calc(var(--duration-base) + 0.1s); // 0.45s
 
     &__bar { display: none; }
 
@@ -434,9 +427,9 @@
     }
     #pane-teaching &__media { display: block; }
 
-    // Closed: a 0fr row with no padding. Open: the topics start 28 under the title and the pane
-    // ends 26 under the last one. Visibility waits for the fold so nothing hidden can take focus.
-    // Nested under .tab-pane to outrank the desktop cross-fade's opacity-only transition.
+    // Closed: a 0fr row, hidden once folded so nothing in it can take focus. Open: the topics start 28 under
+    // the title and the pane ends 26 under the last one (margins on the first and last topic, inside the fold).
+    // Nested under .tab-pane to outrank the desktop cross-fade's transition.
     .tab-pane .approach__overlay {
       order: 2;
       display: grid;
@@ -444,18 +437,20 @@
       padding: 0;
       overflow: hidden;
       visibility: hidden;
+      opacity: 0;
       transition:
-        grid-template-rows var(--approach-open-time) var(--ease-out),
-        padding var(--approach-open-time) var(--ease-out),
+        grid-template-rows var(--approach-open-time) var(--ease-settle),
+        opacity var(--approach-open-time) ease,
         visibility 0s linear var(--approach-open-time);
       > .container { display: none; } // the row header already carries the topic title
     }
     .tab-pane.is-open .approach__overlay {
       grid-template-rows: 1fr;
-      padding: 0.125rem 0 1.625rem; // 2 on top of the row's 26; 26
       visibility: visible;
+      opacity: 1;
       transition-delay: 0s;
     }
+    .tab-pane.is-snapping .approach__overlay { transition: none; }
   }
 
   .hotspots {
@@ -518,7 +513,11 @@
       color: var(--color-text);
     }
 
-    // The copy unfolds like the pane does, 16 under its title once open
+    // 2 above the first topic and 26 under the last, inside the pane's fold
+    &:first-child { margin-top: 0.125rem; }
+    &:last-child { margin-bottom: 1.625rem; }
+
+    // The copy unfolds like the pane does, 16 under its title (a spacer inside the fold)
     &__card,
     &.is-open &__card {
       display: grid;
@@ -527,16 +526,23 @@
       margin-top: 0;
       padding-bottom: 0;
       visibility: hidden;
+      opacity: 0;
       transition:
-        grid-template-rows var(--approach-open-time) var(--ease-out),
-        margin-top var(--approach-open-time) var(--ease-out),
+        grid-template-rows var(--approach-open-time) var(--ease-settle),
+        opacity var(--approach-open-time) ease,
         visibility 0s linear var(--approach-open-time);
     }
     &.is-open &__card {
       grid-template-rows: 1fr;
-      margin-top: var(--space-2); // 16
       visibility: visible;
+      opacity: 1;
       transition-delay: 0s;
+    }
+    &.is-snapping &__card { transition: none; }
+    &__text::before {
+      content: "";
+      display: block;
+      height: var(--space-2); // 16
     }
     &__title { display: none; } // the marker label is the heading on phones
     &__text {

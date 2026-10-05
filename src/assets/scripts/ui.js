@@ -17,6 +17,21 @@ export function initCurrentNav(root = document) {
   });
 }
 
+// A fold shutting above a tapped control would carry it away from the finger. Those folds (`folds`: the open
+// ones of the same list) shut at once and the page is scrolled by however far the control moved, so it stays
+// put while its own fold opens smoothly (Safari has no scroll anchoring of its own)
+function holdInPlace(control, folds, change) {
+  const above = folds.filter((fold) => fold.compareDocumentPosition(control) & Node.DOCUMENT_POSITION_FOLLOWING && !fold.contains(control));
+  above.forEach((fold) => fold.classList.add("is-snapping"));
+  const before = control.getBoundingClientRect().top;
+  change();
+  const moved = control.getBoundingClientRect().top - before;
+  requestAnimationFrame(() => requestAnimationFrame(() => above.forEach((fold) => fold.classList.remove("is-snapping"))));
+  if (Math.abs(moved) < 1) return;
+  if (Anim.lenis) Anim.lenis.scrollTo(window.scrollY + moved, { immediate: true, force: true });
+  else window.scrollBy(0, moved);
+}
+
 // Open one hotspot of a group (or none) and close the rest
 export function openHotspot(group, open) {
   group.querySelectorAll("[data-hotspot]").forEach((item) => {
@@ -83,7 +98,8 @@ export function initHotspots(root = document) {
       const toggle = event.target.closest("[data-hotspot-toggle]");
       if (!toggle) return;
       const item = toggle.closest("[data-hotspot]");
-      openHotspot(group, item.classList.contains("is-open") ? null : item);
+      const open = [...group.querySelectorAll("[data-hotspot].is-open")];
+      holdInPlace(toggle, open, () => openHotspot(group, item.classList.contains("is-open") ? null : item));
     });
     group.addEventListener("keydown", (event) => {
       if (event.key === "Escape") openHotspot(group, null);
@@ -219,11 +235,11 @@ export function initApproachAccordion(root = document) {
       if (!toggle) return;
       const pane = toggle.closest(".tab-pane");
       const open = !pane.classList.contains("is-open");
-      wrap.querySelectorAll(".tab-pane").forEach((other) => {
+      holdInPlace(toggle, [...wrap.querySelectorAll(".tab-pane.is-open")], () => wrap.querySelectorAll(".tab-pane").forEach((other) => {
         const on = other === pane && open;
         other.classList.toggle("is-open", on);
         other.querySelector("[data-approach-toggle]")?.setAttribute("aria-expanded", String(on));
-      });
+      }));
       // reveals folded away at load are only set up once they have a box
       if (open) Anim.add(pane);
     });

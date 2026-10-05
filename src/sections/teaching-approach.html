@@ -6,7 +6,7 @@
        hotspots: ListBlock(StructBlock(x:DecimalBlock, y:DecimalBlock, title:CharBlock, text:TextBlock))
      ))
      Marker positions render as --x / --y custom properties (modifier classes here; inline vars in Wagtail).
-     The hotspot that is open by default carries data-anim-item="wipe-right" on its card so it unfolds after its marker.
+     The hotspot that is open by default carries data-anim-item="fade-up" on its card so it fades up after its marker.
      The first tab's six topics and their copy come from the phone accordion frame (2101:13731); its seven rows
      repeat "Teacher collaboration" once, so the bodies are paired by label. ASSUMPTION: every hotspot on tabs 2–4
      carries placeholder copy; those tabs use photos from the Figma Photography canvas. -->
@@ -44,7 +44,7 @@
           <ol class="hotspots" data-hotspots data-anim="sequence" data-anim-type="pop" data-anim-start="top 45%" data-anim-stagger="0.08" data-anim-disable-mobile>
             <li class="hotspot hotspot--1 is-open" data-hotspot>
               <button class="hotspot__marker" data-anim-item type="button" aria-expanded="true" aria-controls="hotspot-1" data-hotspot-toggle><span class="hotspot__label">Research informed practices</span></button>
-              <div class="hotspot__card" id="hotspot-1" data-anim-item="wipe-right">
+              <div class="hotspot__card" id="hotspot-1" data-anim-item="fade-up">
                 <h3 class="hotspot__title">Research informed practices</h3>
                 <p class="hotspot__text">Our approach to educational innovation is grounded in research-informed practices to ensure we offer the best environment for students to learn. We’re not beholden to legacy systems, frameworks or thinking. We don’t just encourage our students to learn, we’re open to learning ourselves.</p>
               </div>
@@ -103,7 +103,7 @@
           <ol class="hotspots" data-hotspots data-anim="sequence" data-anim-type="pop" data-anim-tier="hero" data-anim-order="1" data-anim-stagger="0.08" data-anim-disable-mobile>
             <li class="hotspot hotspot--1 is-open" data-hotspot>
               <button class="hotspot__marker" data-anim-item type="button" aria-expanded="true" aria-controls="hotspot-7" data-hotspot-toggle><span class="hotspot__label">Immersive technology</span></button>
-              <div class="hotspot__card" id="hotspot-7" data-anim-item="wipe-right">
+              <div class="hotspot__card" id="hotspot-7" data-anim-item="fade-up">
                 <h3 class="hotspot__title">Immersive technology</h3>
                 <p class="hotspot__text">Placeholder copy. Virtual reality and coding tools bring big ideas within reach.</p>
               </div>
@@ -160,7 +160,7 @@
           <ol class="hotspots" data-hotspots data-anim="sequence" data-anim-type="pop" data-anim-tier="hero" data-anim-order="1" data-anim-stagger="0.08" data-anim-disable-mobile>
             <li class="hotspot hotspot--1 is-open" data-hotspot>
               <button class="hotspot__marker" data-anim-item type="button" aria-expanded="true" aria-controls="hotspot-13" data-hotspot-toggle><span class="hotspot__label">Calm reading corners</span></button>
-              <div class="hotspot__card" id="hotspot-13" data-anim-item="wipe-right">
+              <div class="hotspot__card" id="hotspot-13" data-anim-item="fade-up">
                 <h3 class="hotspot__title">Calm reading corners</h3>
                 <p class="hotspot__text">Placeholder copy. Quiet places to settle, breathe and lose yourself in a book.</p>
               </div>
@@ -217,7 +217,7 @@
           <ol class="hotspots" data-hotspots data-anim="sequence" data-anim-type="pop" data-anim-tier="hero" data-anim-order="1" data-anim-stagger="0.08" data-anim-disable-mobile>
             <li class="hotspot hotspot--1 is-open" data-hotspot>
               <button class="hotspot__marker" data-anim-item type="button" aria-expanded="true" aria-controls="hotspot-19" data-hotspot-toggle><span class="hotspot__label">Whole-school gatherings</span></button>
-              <div class="hotspot__card" id="hotspot-19" data-anim-item="wipe-right">
+              <div class="hotspot__card" id="hotspot-19" data-anim-item="fade-up">
                 <h3 class="hotspot__title">Whole-school gatherings</h3>
                 <p class="hotspot__text">Placeholder copy. Assemblies where every year group learns from each other.</p>
               </div>

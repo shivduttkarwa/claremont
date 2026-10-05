@@ -33,7 +33,7 @@ const SCRUB = { distance: 0.28, smooth: 0.4 };
 
 // Every preset fades (autoAlpha) so the CSS FOUC guard works uniformly.
 const REVEAL = {
-  "fade-up":    { from: { y: 30, autoAlpha: 0 },                to: { y: 0, autoAlpha: 1 } },
+  "fade-up":    { from: { y: 15, autoAlpha: 0 },                to: { y: 0, autoAlpha: 1 } },
   "fade":       { from: { autoAlpha: 0 },                       to: { autoAlpha: 1 } },
   "fade-soft":  { from: { autoAlpha: 0 },                       to: { autoAlpha: 1, duration: 0.5, ease: "power1.out" } }, // header items
   "rise-soft":  { from: { y: 14, autoAlpha: 0 },                to: { y: 0, autoAlpha: 1, duration: 0.55, ease: "power2.out" } }, // the quick links below lg
@@ -44,7 +44,6 @@ const REVEAL = {
   "swing-in":   { from: { xPercent: 92, yPercent: -145, rotation: 90, autoAlpha: 0 }, to: { xPercent: 0, yPercent: 0, rotation: 0, autoAlpha: 1, duration: 1.2, ease: "power3.out" } },
   "drop":       { from: { y: -48, autoAlpha: 0 },               to: { y: 0, autoAlpha: 1, duration: 0.6, ease: "back.out(1.4)" } },
   "pop":        { from: { scale: 0, autoAlpha: 0 },             to: { scale: 1, autoAlpha: 1, duration: 0.6, ease: "back.out(2)" } },
-  "wipe-right": { from: { clipPath: "inset(0% 100% 0% 0%)", x: -12, autoAlpha: 0 }, to: { clipPath: "inset(0% 0% 0% 0%)", x: 0, autoAlpha: 1, duration: 0.9, ease: "power3.out" } },
   // a crisp wipe from the bottom edge up, no fade: visibility flips as the tween starts
   "wipe-up":    { from: { clipPath: "inset(100% 0% 0% 0%)", visibility: "hidden" }, to: { clipPath: "inset(0% 0% 0% 0%)", visibility: "inherit", duration: 1.1, ease: "power3.out" } },
   "scale":      { from: { scale: 1.12, autoAlpha: 0 },          to: { scale: 1, autoAlpha: 1, duration: 1.1, ease: "power4.out" } },
@@ -200,7 +199,18 @@ function scrollStep(el, animation, hold) {
     },
   });
   triggers.set(el, st);
-  if (st.scroll() >= st.start || onScreen()) playNow(st);
+  if (!(st.scroll() >= st.start || onScreen())) return;
+  const wait = follow();
+  if (!wait) return playNow(st);
+  // On screen while the entrance still runs: it plays when that ends. The trigger stays alive until then, so a
+  // reader who scrolls down straight away sees it follow the scroll like any other step, not a blank section.
+  gsap.delayedCall(wait, () => {
+    if (!triggers.has(el)) return;
+    st.kill();
+    triggers.delete(el);
+    gsap.killTweensOf(timeline());
+    timeline().play();
+  });
 }
 
 // Hero-tier steps join the entrance timeline; the rest follow the scroll. Their triggers are created
@@ -244,13 +254,20 @@ function playEntrance(steps, root) {
 }
 
 // data-anim-group -> tag direct children as staggered reveals (auto ordering)
+const groupItems = new WeakMap(); // a group's item -> all of that group's items
+
 function expandGroups(root) {
   scoped(root, "[data-anim-group]").forEach((group) => {
     const type = group.getAttribute("data-anim-group") || "fade-up";
-    Array.from(group.children).forEach((child, i) => {
+    // a display: contents child has no box to animate, so its children are the items (the mosaic's slides from lg)
+    const items = Array.from(group.children).flatMap((child) =>
+      getComputedStyle(child).display === "contents" ? Array.from(child.children) : [child]
+    );
+    items.forEach((child, i) => {
       if (child.hasAttribute("data-anim") || child.hasAttribute("data-anim-item")) return; // an item belongs to its sequence
       child.setAttribute("data-anim", "reveal");
       child.setAttribute("data-anim-type", type);
+      groupItems.set(child, items);
       if (!child.hasAttribute("data-anim-order")) {
         child.setAttribute("data-anim-order", String(i));
         child.setAttribute(AUTO_ORDER, "");
@@ -267,7 +284,7 @@ const revealStep = (el) => ({
 // A group's auto order is only a stagger index, so it restarts on each row; a hand-written one stays absolute.
 function staggerHold(el) {
   if (!el.hasAttribute(AUTO_ORDER)) return orderOf(el) * DEFAULTS.stagger;
-  const row = Array.from(el.parentElement.children).filter(
+  const row = (groupItems.get(el) || Array.from(el.parentElement.children)).filter(
     (item) => item.hasAttribute(AUTO_ORDER) && Math.abs(item.offsetTop - el.offsetTop) < 2
   );
   const last = row.length - 1;
@@ -338,7 +355,9 @@ function keepLines(el, split, boxes) {
   words.forEach((item, i) => {
     const prev = words[i - 1];
     if (prev && boxes[item.first].top > boxes[prev.first].top + 1 && tops[i] <= tops[i - 1] + 1) {
-      item.word.before(document.createElement("br"));
+      const br = document.createElement("br");
+      br.style.display = "inline"; // a heading may hide its own designed <br> at this width; this one must still break
+      item.word.before(br);
     }
   });
 }

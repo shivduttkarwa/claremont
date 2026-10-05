@@ -7,7 +7,6 @@ import { initAccordions, initApproachAccordion, initCurrentNav, initHotspots, in
 import { initSearch } from "./search.js";
 import { initSliders } from "./slider.js";
 import { initPan } from "./pan.js";
-import { initMosaicAssembly } from "./mosaic.js";
 import { initPageTransition } from "./transition.js";
 import { initImageCarousels } from "./carousel.js";
 
@@ -19,7 +18,6 @@ document.addEventListener("DOMContentLoaded", () => {
   initQuoteCards();
   initRevealColumns();
   initRevealCards();
-  initMosaicAssembly();
   initScrollers();
   initPan(); // before the sliders: the snapped card width must be in place when Swiper measures
   initSliders();
