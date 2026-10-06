@@ -1,7 +1,9 @@
 <!-- @wagtail-block: cta_links (roomy, with button)
      title: CharBlock(required)
-     links: ListBlock(StructBlock(label:CharBlock, document:DocumentChooserBlock / page:PageChooserBlock))
-     cta:   StructBlock(text:CharBlock, url:URLBlock) -->
+     items: ListBlock(StructBlock(label:CharBlock, body:RichTextBlock))
+     cta:   StructBlock(text:CharBlock, url:URLBlock)
+     The rows are the fold (_fold.less, initFolds): Figma 1801:5705 (1640) and 2149:7929 (375) draw Term Dates open with its four
+     terms, 30 above the closing rule, and the button 36 under it; every row is shut at rest and a click opens one. The fee schedule's copy is placeholder. -->
 <section class="cta-links cta-links--roomy cta-links--with-actions" aria-labelledby="fees-title">
   <div class="container">
     <div class="row g-4 row-split">
@@ -10,9 +12,26 @@
       </div>
       <div class="col-lg-6">
         <div class="cta-links__aside">
-        <ul class="fold">
-          <li class="fold__item" data-anim="reveal" data-anim-type="fade"><a class="fold__row" href="#">2027 Fee Schedule<svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
-          <li class="fold__item" data-anim="reveal" data-anim-type="fade"><a class="fold__row" href="#">Term Dates<svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+        <ul class="fold" data-fold>
+          <li class="fold__item" data-anim="reveal" data-anim-type="fade">
+            <button class="fold__row" type="button" aria-expanded="false" aria-controls="fees-schedule">2027 Fee Schedule<svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button>
+            <div class="fold__panel" id="fees-schedule">
+              <div class="fold__body">
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec nunc congue, ultricies felis at, malesuada erat. Morbi nisi nulla, blandit eget dolor id, aliquam vehicula dolor sagittis eleifend.</p>
+              </div>
+            </div>
+          </li>
+          <li class="fold__item" data-anim="reveal" data-anim-type="fade">
+            <button class="fold__row" type="button" aria-expanded="false" aria-controls="fees-dates">Term Dates<svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button>
+            <div class="fold__panel" id="fees-dates">
+              <div class="fold__body">
+                <p>Term 1: Monday 1 February to Friday 9 April (10 weeks)</p>
+                <p>Term 2: Wednesday 28 April to Friday 25 June (9 weeks)</p>
+                <p>Term 3: Monday 20 July to Friday 24 September (10 weeks)</p>
+                <p>Term 4: Tuesday 12 October to Wednesday 1 December (8 weeks)</p>
+              </div>
+            </div>
+          </li>
         </ul>
         <div class="cta-links__actions" data-anim="reveal" data-anim-type="fade-up">
           <a class="btn btn-primary" href="#apply">Apply to enrol</a>

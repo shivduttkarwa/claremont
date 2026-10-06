@@ -71,7 +71,20 @@
 @media @upto-lg {
   .intro-split {
     padding-block: 3.75rem; // 60
-    .row { --bs-gutter-y: 1.875rem; } // 30 between the statement and the copy
+    .row { --bs-gutter-y: 1.875rem; } // 30 between the statement and the copy, and under the copy before the buttons
+    // Where the columns stack, the buttons follow the copy (the enrolment frame's Button Row, 2149:7446, sits 30 under it):
+    // the statement's column dissolves so its two children are rows of their own, and the buttons take the last place
+    .row > .col-lg-6:first-child {
+      display: contents;
+      > * { // each child takes the row's own gutter, as the column did (`.row > *` reads the DOM, not the box tree)
+        width: 100%;
+        max-width: 100%;
+        margin-top: var(--bs-gutter-y);
+        padding-inline: calc(var(--bs-gutter-x) * 0.5);
+      }
+    }
+    &__actions { order: 1; }
+    .intro-split__body > p:last-child { margin-bottom: 0; } // the copy ends 30 above the buttons and 60 above the band's foot
     @media @upto-md {
       h2 {
         font-size: 2.5rem;  // 40

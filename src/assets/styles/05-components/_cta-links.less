@@ -24,8 +24,29 @@
     @media (min-width: @bp-lg) { margin: var(--cta-list-offset) 0 0 var(--cta-list-inset); }
   }
 
-  // the rows are the fold (_fold.less); the block only sets their pitch
+  // the rows are the fold (_fold.less); the block only sets their pitch, the hover (the arrow turns, nothing else changes:
+  // the fill and Dark Green title of 1680:5968 were taken out on 2026-10-06) and the open copy's type (1801:5705: 15 / 22.5,
+  // white on the green band, 527 wide, each term its own paragraph 10 apart)
+  .fold { --fold-hover: currentColor; }
   .fold__row { padding: var(--cta-row-pad-y) var(--cta-row-pad-x); }
+  .fold__body {
+    padding-inline: var(--cta-row-pad-x); // the copy starts and ends with its title
+    color: var(--color-white);
+    font-size: 0.9375rem; // 15
+    line-height: 1.5;     // 22.5
+    letter-spacing: var(--letter-spacing-body);
+    p,
+    ul { margin: 0 0 0.625rem; } // paragraph spacing 10
+    ul {
+      padding-left: 1.4em;
+      list-style-type: disc;
+    }
+    strong {
+      font-family: var(--font-ui);
+      font-weight: var(--font-weight-semibold);
+      letter-spacing: var(--letter-spacing-ui);
+    }
+  }
 
   &__intro {
     max-width: 37.5rem;
@@ -52,9 +73,17 @@
       gap: var(--space-1);
       padding-inline-start: 0.0625rem;
     }
+    .fold__body {
+      max-width: 32.9375rem; // 527
+      padding-inline-start: 0.0625rem; // the copy at 826 with the title
+    }
   }
+  // Fees and dates (1801:5705): the button 36 under the closing rule and 103 of band below it
   &--with-actions {
-    @media (min-width: @bp-lg) { --cta-pad-bottom: 5.25rem; } // 84
+    @media (min-width: @bp-lg) {
+      --cta-pad-bottom: 6.4375rem; // 103
+      .cta-links__actions { margin-top: 2.25rem; } // 36
+    }
   }
 
   // On white: green copy and rules. K-6: heading at 75, copy at (824, 84), list at 244, 124 below.
@@ -75,6 +104,7 @@
     .cta-links__intro { color: var(--color-text); }
     .fold { --fold-hover: var(--color-green-hover); }
     .fold__row { padding-inline: 0.0625rem 0.5rem; }
+    .fold__body { color: var(--color-text); }
   }
 }
 
@@ -87,23 +117,6 @@
     --fold-hover: var(--color-heading);
     --fold-fill: var(--color-secondary);
     @media (min-width: @bp-lg) { --fold-fill-bleed: 0.5625rem; } // 9
-  }
-  .fold__body {
-    color: var(--color-text);
-    font-size: 0.9375rem; // 15
-    line-height: 1.5;     // 22.5
-    letter-spacing: var(--letter-spacing-body);
-    p,
-    ul { margin: 0 0 0.625rem; } // paragraph spacing 10
-    ul {
-      padding-left: 1.4em;
-      list-style-type: disc;
-    }
-    strong {
-      font-family: var(--font-ui);
-      font-weight: var(--font-weight-semibold);
-      letter-spacing: var(--letter-spacing-ui);
-    }
   }
 }
 
@@ -121,6 +134,16 @@
     }
 
     .row { --bs-gutter-y: 0; }
+
+    // the green lists keep their rows in the gutter (2149:7929): the open copy 20 under its title, 18 above the next
+    // rule, the button 40 under the list
+    .fold__body {
+      --fold-body-top: 0.125rem;    // 18 + 2 = the 20
+      --fold-body-bottom: 1.125rem; // 18
+      padding-inline: var(--cta-row-pad-x);
+      line-height: 1.5333;          // 23: Figma draws the 22.5 line at a whole pixel
+    }
+    .cta-links__actions { margin-top: 2.5rem; } // 40
   }
 }
 

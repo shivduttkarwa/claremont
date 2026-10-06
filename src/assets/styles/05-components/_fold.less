@@ -63,18 +63,20 @@
   }
 
   // hover and focus change the colour and show the fill where a block gives one, nothing moves; a link row nudges
-  // its arrow, a fold row turns it only once it is open
+  // its arrow, a fold row turns it down as the frames' hover state does (1680:5968), and keeps it down while open
   &:focus-visible {
     color: var(--fold-hover);
     &::after { opacity: 1; }
   }
   a&:focus-visible .icon { transform: translate(0.25rem, -0.25rem); }
+  button&:focus-visible .icon { transform: rotate(90deg); }
   @media (hover: hover) {
     &:hover {
       color: var(--fold-hover);
       &::after { opacity: 1; }
     }
     a&:hover .icon { transform: translate(0.25rem, -0.25rem); }
+    button&:hover .icon { transform: rotate(90deg); }
   }
 }
 .fold__row[aria-expanded="true"] .icon { transform: rotate(90deg); } // the button's own state: a heading may wrap it
