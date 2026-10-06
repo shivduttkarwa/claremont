@@ -48,8 +48,8 @@ html.lenis body { height: auto; }
 
 // Ruled rows that slide in one by one (data-anim-type="nudge-right"), and the ruled cards that fade up as a group:
 // each keeps its own layer before, during and after the move, so its rule is drawn the same throughout and never
-// snaps sharper as the fade ends
-[data-anim="reveal"][data-anim-type="nudge-right"],
+// snaps sharper as the fade ends. Not the approach rows: a layer beside the pane folding under it shivered on iPhone
+[data-anim="reveal"][data-anim-type="nudge-right"]:not(.approach__row),
 .link-columns__item,
 .link-grid__grid > li,
 .scroller__card { will-change: transform, opacity; }

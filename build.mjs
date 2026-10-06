@@ -221,7 +221,8 @@ async function run() {
 
   await jsCtx.watch();
   const bs = browserSync.create();
-  bs.init({ server: DIST, notify: false, open: false, ui: false });
+  // no ghost mode: syncing scroll and clicks between a phone and a desktop tab made the phone jump about
+  bs.init({ server: DIST, notify: false, open: false, ui: false, ghostMode: false });
 
   chokidar.watch(`${SRC}/**/*.html`).on("change", async () => {
     await buildHtml();

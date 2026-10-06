@@ -348,21 +348,20 @@
 
 // ---------------------------------------------------------------------
 // Phones: the designer redrew this block as an accordion (canvas 1619:1791, node 2101:13731).
-// Four ruled rows on blue under one photo; the open row turns pale and unfolds its topics, and each
-// topic unfolds its own copy. Both unfold through one grid row growing from 0fr to 1fr on --ease-settle while
-// the content fades in. Nothing else moves with it: the spacing sits inside the fold, a fold above the tapped
-// row shuts at once (ui.js holds the row in place), and no curve with a long tail, which is what made the rows shiver.
+// Four ruled rows on blue under one photo; the open row turns pale and shows its topics, and each topic shows its
+// own copy. The folds open and shut at once: every height transition on them shivered on iPhone Safari while the
+// same fold is fine on the other pages (2026-10-06), so only the copy fades in, the arrow turns and the pane's colour fades.
 // ---------------------------------------------------------------------
 @media @upto-lg {
   .approach {
     --approach-pad-top: 0;
-    --approach-open-time: calc(var(--duration-base) + 0.1s); // 0.45s
+    --approach-open-time: calc(var(--duration-base) + 0.1s); // 0.45s: the arrow and the pane's colour
 
     &__bar { display: none; }
 
     .tab-content {
       display: block;
-      overflow-x: clip; // the rows wait for their reveal 15% to the right, past the phone's edge
+      overflow-x: clip; // the rows wait for their reveal 40 to the right, past the phone's edge, as the CTA links do
       background: var(--color-secondary);
     }
 
@@ -427,39 +426,30 @@
     }
     #pane-teaching &__media { display: block; }
 
-    // Closed: a 0fr row, hidden once folded so nothing in it can take focus. Open: the topics start 28 under
-    // the title and the pane ends 26 under the last one (margins on the first and last topic, inside the fold).
-    // Nested under .tab-pane to outrank the desktop cross-fade's transition.
+    // Closed: no height, hidden so nothing in it can take focus. Open: the topics start 28 under the title and
+    // the pane ends 26 under the last one (margins on the first and last topic). Nested under .tab-pane to outrank
+    // the desktop cross-fade's transition.
     .tab-pane .approach__overlay {
       order: 2;
-      display: grid;
-      grid-template-rows: 0fr;
+      height: 0;
       padding: 0;
       overflow: hidden;
       visibility: hidden;
-      opacity: 0;
-      transition:
-        grid-template-rows var(--approach-open-time) var(--ease-settle),
-        opacity var(--approach-open-time) ease,
-        visibility 0s linear var(--approach-open-time);
+      transition: none;
       > .container { display: none; } // the row header already carries the topic title
     }
     .tab-pane.is-open .approach__overlay {
-      grid-template-rows: 1fr;
+      height: auto;
       visibility: visible;
-      opacity: 1;
-      transition-delay: 0s;
     }
-    .tab-pane.is-snapping .approach__overlay { transition: none; }
+    .tab-pane.is-open .hotspots { opacity: 1; }
   }
 
   .hotspots {
-    display: flex;
-    flex-direction: column;
-    gap: 1.75rem; // 28
-    min-height: 0;
     margin: 0;
     padding-inline: var(--container-gutter);
+    opacity: 0;
+    transition: opacity var(--duration-base) ease;
   }
 
   .hotspot {
@@ -467,6 +457,7 @@
 
     border: 0;
     &:last-child { border: 0; }
+    & + & { margin-top: 1.75rem; } // 28
 
     // The +/− sits in a 25 yellow disc on the left: ::before is the disc with the horizontal bar
     // baked into it, ::after is the stroke that turns it into a plus when the item is closed.
@@ -517,28 +508,23 @@
     &:first-child { margin-top: 0.125rem; }
     &:last-child { margin-bottom: 1.625rem; }
 
-    // The copy unfolds like the pane does, 16 under its title (a spacer inside the fold)
+    // The copy shows at once, 16 under its title (a spacer inside the card), and fades in
     &__card,
     &.is-open &__card {
-      display: grid;
-      grid-template-rows: 0fr;
+      display: block;
+      height: 0;
       max-width: none;
       margin-top: 0;
       padding-bottom: 0;
+      overflow: hidden;
       visibility: hidden;
-      opacity: 0;
-      transition:
-        grid-template-rows var(--approach-open-time) var(--ease-settle),
-        opacity var(--approach-open-time) ease,
-        visibility 0s linear var(--approach-open-time);
+      transition: none;
     }
     &.is-open &__card {
-      grid-template-rows: 1fr;
+      height: auto;
       visibility: visible;
-      opacity: 1;
-      transition-delay: 0s;
     }
-    &.is-snapping &__card { transition: none; }
+    &.is-open &__text { opacity: 1; }
     &__text::before {
       content: "";
       display: block;
@@ -546,8 +532,8 @@
     }
     &__title { display: none; } // the marker label is the heading on phones
     &__text {
-      min-height: 0;
-      overflow: hidden;
+      opacity: 0;
+      transition: opacity var(--duration-base) ease;
       font-size: 0.9375rem; // 15
       line-height: var(--hotspot-line);
       letter-spacing: var(--letter-spacing-body);
