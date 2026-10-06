@@ -47,6 +47,13 @@
       padding-inline: var(--articles-text-inset);
       transition: color var(--duration-fast) ease;
     }
+  }
+
+  // the headline and date together, filling the card so the date keeps the foot; on phones the pair reveals on its own
+  &__copy {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
 
     &:hover,
     &:focus-visible {
@@ -94,5 +101,53 @@
     gap: 1.125rem;
     margin-top: var(--articles-pager-gap);
     @media (min-width: @bp-xxl) { margin-right: 0.0625rem; } // arrow at x 1391 → 1439
+  }
+}
+
+// Phones (news M 2149:8421): the cards stack full-bleed straight under the intro, each a 375 x 216 photo over a caption
+// padded 30 / 20 (the 25 headline, the 15 date 50 under it with the 26 arrow at the gutter's edge), no gaps and no rules;
+// the pager sits right under the last card with 20 of air above and below it. Tablets keep the two-column grid.
+@media @upto-md {
+  .article-grid {
+    position: relative;
+    isolation: isolate;
+    padding-block: 0;
+    // the first card sits flush under the green intro and fades in like the rest: a strip of the band's green, the photo's
+    // exact size, sits behind it so the band carries on while the photo arrives instead of a white gap opening under it
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto;
+      z-index: var(--z-behind);
+      aspect-ratio: 375 / 216;
+      background: var(--color-primary);
+    }
+
+    &__grid {
+      gap: 0;
+      margin-inline: calc(-1 * var(--container-gutter));
+    }
+    &__card::after { display: none; }
+    &__media { aspect-ratio: 375 / 216; }
+    &__card h3 {
+      margin: 1.875rem 0 0; // 30
+      padding-inline: var(--container-gutter);
+    }
+    &__meta {
+      align-items: center;
+      margin-top: 3.125rem; // 50
+      padding: 0 var(--container-gutter) 1.875rem; // 30 under the row
+      font-size: 0.9375rem; // 15
+      line-height: 1.5;     // 22.5
+      .icon {
+        width: 1.625rem; // 26
+        height: 1.625rem;
+        margin: 0;
+      }
+    }
+    &__pager {
+      margin-top: 0;
+      padding-block: 1.25rem; // 20
+    }
   }
 }
