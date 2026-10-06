@@ -71,8 +71,13 @@
 }
 
 // A photo layer that overhangs its frame by @travel above and below, for a centred parallax (data-anim-centered).
-// data-anim-speed = @travel / (100% + 2 × @travel): 10% of overhang is a speed of 8.33.
+// The travel as a share of the layer's own height, @travel / (100% + 2 × @travel), is both the CSS animation's
+// --parallax-from / --parallax-to and the markup's data-anim-speed for the GSAP fallback: 30% of overhang is 18.75.
 .parallax-layer(@travel: 10%) {
+  @speed: percentage((unit(@travel) / (100 + 2 * unit(@travel))));
+  @back: (-1 * @speed); // LESS leaves maths inside a custom property unevaluated
+  --parallax-from: @back;
+  --parallax-to: @speed;
   position: absolute;
   top: -@travel;
   left: 0;

@@ -45,7 +45,11 @@
     height: 123.7%;
     object-fit: cover;
     object-position: 70% 0;
-    @media (min-width: @bp-lg) { object-position: 50% 0; }
+    @media (min-width: @bp-lg) {
+      --parallax-to: -12%; // data-anim-speed 12, reversed: up by its spare height as the block leaves
+      object-position: 50% 0;
+      will-change: transform;
+    }
   }
 
   > .container {

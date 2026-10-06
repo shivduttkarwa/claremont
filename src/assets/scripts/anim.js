@@ -491,6 +491,8 @@ function setupSequences(root, entrance, scroll) {
 function setupParallax(root) {
   scoped(root, '[data-anim="parallax"]').forEach((el) => {
     bind(el);
+    // the stylesheet runs it as a scroll-driven animation where the browser has them (06-animation/_parallax.less)
+    if (getComputedStyle(el).animationName.split(",").some((name) => name.trim() === "parallax-y")) return;
     if (el.hasAttribute("data-anim-disable-mobile") && phone.matches) return;
     const axis = attr(el, "data-anim-axis", "y");
     const speed = number(el, variant(el, "data-anim-speed"), 0);

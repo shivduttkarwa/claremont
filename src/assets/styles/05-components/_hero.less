@@ -73,8 +73,10 @@
     object-fit: cover;
     object-position: 50% 0;
     @media (min-width: @bp-lg) {
+      --parallax-to: -12%; // data-anim-speed 12, reversed: up by its spare height as the block leaves
       height: 124.34%; // export is 1842 × 1650 against the 1842 × 1327 frame crop
       object-position: 50% 50%; // the kids' faces stay where Figma has them when a wider screen crops the photo
+      will-change: transform;
     }
   }
 

@@ -1,0 +1,28 @@
+// 06-animation/_parallax.less — the parallax as a scroll-driven CSS animation wherever the browser has them. The
+// compositor reads the block's true position every frame, so the photo tracks the finger with no lag or main-thread
+// stepping, and follows a fold opening above it instead of standing still and then easing to the re-measured place.
+// The travel comes from the block (--parallax-from / --parallax-to: the layer mixin, the hero photos) and the range
+// from the same attributes anim.js reads; anim.js skips any element whose computed animation is `parallax-y` and
+// keeps its GSAP scrub for the rest. Reduced motion runs neither.
+
+@keyframes parallax-y {
+  from { transform: translate3d(0, var(--parallax-from, 0%), 0); }
+  to { transform: translate3d(0, var(--parallax-to, 0%), 0); }
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    // the block is the subject (its media box clips with overflow: hidden, which would make it the layer's scroller)
+    [data-anim-parallax-trigger] { view-timeline: --parallax block; }
+
+    [data-anim="parallax"] {
+      animation: parallax-y linear both;
+      animation-timeline: --parallax;
+      animation-range: cover; // top bottom → bottom top
+      &[data-anim-start="top top"] { animation-range: exit; } // top top → bottom top: still at the top of the page
+      &[data-anim-disable-mobile] {
+        @media @upto-lg { animation: none; }
+      }
+    }
+  }
+}
