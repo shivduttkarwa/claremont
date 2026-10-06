@@ -66,7 +66,10 @@
 
   &__card {
     position: relative;
-    width: var(--pan-card, var(--card-w)); // pan.js snaps the card to whole pixels from lg
+    width: var(--pan-card, var(--card-w)); // pan.js snaps the card to whole device pixels (436.8 CSS px at 125% scaling)
+    // the pan moves every card every frame: on its own layer each is drawn once and only moved, so the first frames
+    // do not stutter while the photos are rasterised again
+    @media (min-width: @bp-lg) { will-change: transform; }
     // Dim the child, not the card: the reveal animation leaves an inline opacity on the card itself
     > * { transition: opacity var(--duration-base) ease; }
   }

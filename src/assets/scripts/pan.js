@@ -6,6 +6,15 @@ const CARD_SECONDS = 7; // one card width of drift
 const STEP = { duration: 0.9, ease: "power2.out" };
 const DRAG_START = 6; // px before a press becomes a drag, so a click on a card still clicks
 const GLIDE = 1;
+const RAMP = 1.2; // seconds the drift takes to reach its speed once the cards are in, so it does not jolt off
+const MAX_DELTA = 34; // ms: a long frame (the wipe's last clear, a tab coming back) must not jump the row
+
+// whole device pixels: at 125% display scaling a whole CSS pixel is 1.25 device pixels, and a card edge moved to a
+// point between two of them is anti-aliased, which shows as a hairline between the photos that flickers as the row moves
+const snap = (px) => {
+  const dpr = window.devicePixelRatio || 1;
+  return Math.round(px * dpr) / dpr;
+};
 
 export function initPan(root = document) {
   const lg = window.matchMedia("(min-width: 992px)");
@@ -20,13 +29,14 @@ export function initPan(root = document) {
     let width = 0;
     let paused = false;
     let running = false;
+    let startAt = 0;
     let drag = null;
     let dragged = false;
 
-    // whole pixels, or a fractional card edge shows a flickering hairline; --pan-card on the section is read at every width so the Swiper snaps too
+    // --pan-card on the section is read at every width so the Swiper snaps too
     const measure = () => {
       section.style.removeProperty("--pan-card");
-      width = Math.round(cards[0].getBoundingClientRect().width);
+      width = snap(cards[0].getBoundingClientRect().width);
       section.style.setProperty("--pan-card", `${width}px`);
     };
     // each card sits in its slot moved left by the drift, wrapped so it comes back in from the right
@@ -36,19 +46,24 @@ export function initPan(root = document) {
       cards.forEach((card, i) => {
         const slot = i * width;
         const x = ((slot - shift + width) % period + period) % period - width;
-        set[i](Math.round(x - slot));
+        set[i](snap(x - slot));
       });
     };
     // the row holds still until its cards have wiped in, so they rise in order from the left
     const entered = () =>
       !track.hasAttribute("data-anim") || track.classList.contains("is-revealed") || document.documentElement.classList.contains("anim-reduced");
     const tick = (time, delta) => {
-      if (!paused && !drag?.active && !reduced.matches && entered()) state.travel += (width / CARD_SECONDS) * (delta / 1000);
+      if (!paused && !drag?.active && !reduced.matches && entered()) {
+        startAt ||= time;
+        const ramp = gsap.utils.clamp(0, 1, (time - startAt) / RAMP);
+        state.travel += (width / CARD_SECONDS) * ramp * ramp * (3 - 2 * ramp) * (Math.min(delta, MAX_DELTA) / 1000);
+      }
       render();
     };
     const start = () => {
       if (running) return;
       running = true;
+      startAt = 0;
       measure();
       gsap.ticker.add(tick);
     };

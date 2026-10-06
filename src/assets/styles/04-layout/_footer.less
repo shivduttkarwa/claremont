@@ -150,17 +150,16 @@
       gap: var(--space-1); // 8
       min-height: var(--tap-size);
       @media @fine-xl { min-height: 0; }
-      transition: padding-inline-start var(--duration-base) var(--ease-out), color var(--duration-fast) ease;
+      transition: color var(--duration-fast) ease;
       .icon {
         width: 0.75rem;
         height: 0.75rem;
         transition: transform var(--duration-base) var(--ease-out);
       }
-      // the CTA lists' hover: the whole link steps right and the chevron a little further
+      // hover: only the chevron steps right, the label stays put
       &:hover,
       &:focus-visible {
-        padding-inline-start: var(--space-1);
-        .icon { transform: translateX(0.1875rem); }
+        .icon { transform: translateX(0.25rem); }
       }
     }
   }
