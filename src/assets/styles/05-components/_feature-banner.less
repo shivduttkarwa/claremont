@@ -111,6 +111,14 @@
 // Phones: the home banner is redrawn as a square photo with the copy in a dark block beneath it
 // (node 2081:10708) rather than laid over the photo.
 // ---------------------------------------------------------------------
+// The banner is a compositor layer (its photo moves under a clip). Where it meets another dark band on a fractional edge,
+// a fractional device ratio (DevTools at 75%, a desktop at 125%) anti-aliases its bottom row and lets the page's white
+// through as a hairline; a 1px shadow in the next band's colour covers that row and lands on the band unseen.
+@media @upto-lg {
+  .feature-banner:has(+ .cta-row),
+  .feature-banner:has(+ .cta-links) { box-shadow: 0 0.0625rem 0 var(--color-primary); }
+}
+
 @media @upto-lg {
   .feature-banner--stacked {
     display: block;
