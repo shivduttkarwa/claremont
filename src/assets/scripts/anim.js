@@ -52,15 +52,16 @@ const REVEAL = {
   "clip":       { from: { "--anim-clip": "100%", autoAlpha: 0 }, to: { "--anim-clip": "0%", autoAlpha: 1, duration: 1.1, ease: "power3.out" } },
 };
 
-// Split text: characters slide up one after another; lines rise out of a mask. `spread` caps how
-// long the stagger may run in total, so a long title tightens its stagger instead of dragging on.
+// Split text: characters slide up one after another; lines rise and fade in, 0.15s apart, with no mask (the reference
+// site's section titles, ref/wcc .split-text-lines-js: the rise over 0.6s, the fade over 0.5s from 0.1s in, both
+// power1.out; the reference rises 30, here the lines rise the 15 of every fade-up so a title moves like the copy under it). `spread` caps how long a stagger may run in total, so a long title tightens its stagger instead of dragging on.
 // `rise` is the distance in em of the element's font size, so a phone title rises less than the
 // 1640 one (0.12em: 16 at the 131.6 hero, 7 at the 60 phone hero; 0.2em: 7 at the 35 section h2).
 // `lift` ends the rise early: eased as slowly as the fade, its last pixels land as separate hops after the letter looks still.
 const SPLIT = {
   "chars":      { from: { autoAlpha: 0 }, rise: 0.12, to: { y: 0, autoAlpha: 1, duration: 0.85, ease: "power2.out", stagger: 0.022 }, lift: { duration: 0.4, ease: "power1.out" }, spread: 0.56 }, // hero titles
   "chars-soft": { from: { autoAlpha: 0 }, rise: 0.2, to: { y: 0, autoAlpha: 1, duration: 0.62, ease: "power2.out", stagger: 0.015 }, lift: { duration: 0.3, ease: "power1.out" }, spread: 0.375 }, // section titles
-  "lines":      { from: { y: 30, autoAlpha: 0 }, to: { y: 0, autoAlpha: 1, duration: 0.6, ease: "power1.out", stagger: 0.1 } },
+  "lines":      { from: { y: 15, autoAlpha: 0 }, to: { y: 0, duration: 0.6, ease: "power1.out", stagger: 0.15 }, fade: { autoAlpha: 1, duration: 0.5, ease: "power1.out", delay: 0.1 } }, // section titles below lg
 };
 
 // Scroll tiers start once the element's top is this far up the viewport; data-anim-start overrides it
@@ -383,7 +384,7 @@ function keepKerning(chars, boxes) {
 function setupSplits(root, entrance, scroll) {
   scoped(root, '[data-anim="split"]').forEach((el) => {
     bind(el);
-    const type = attr(el, "data-anim-type", "lines");
+    const type = attr(el, variant(el, "data-anim-type"), "lines"); // data-anim-type-mobile: the phone titles rise as lines
     const preset = SPLIT[type] || SPLIT.lines;
     const isChars = preset !== SPLIT.lines;
     const count = isChars
@@ -398,7 +399,7 @@ function setupSplits(root, entrance, scroll) {
         el,
         isChars
           ? { type: "words,chars", wordsClass: "anim-word", charsClass: "anim-char" }
-          : { type: "lines", linesClass: "anim-line", mask: "lines", tag: "span" }
+          : { type: "lines", linesClass: "anim-line", tag: "span" }
       );
       const targets = isChars ? split.chars : split.lines;
       if (boxes && boxes.length === targets.length) {
@@ -428,6 +429,12 @@ function setupSplits(root, entrance, scroll) {
           el.style.whiteSpace = "";
           splits.delete(el);
         };
+        if (preset.fade) {
+          const { delay, ...fade } = preset.fade;
+          return gsap.timeline()
+            .to(targets, { ...preset.to, stagger, onComplete }, 0)
+            .to(targets, { ...fade, stagger }, delay);
+        }
         if (!preset.lift) return gsap.to(targets, { ...preset.to, stagger, onComplete });
         const { y, ...fade } = preset.to;
         return gsap.timeline()
