@@ -20,6 +20,16 @@
     background-color var(--duration-base) ease,
     box-shadow var(--duration-base) ease;
 
+  // The bar paints one pixel above its own box: a sticky bar at a fractional scroll position lets a hairline of the page
+  // show above it on phones
+  &::before {
+    content: "";
+    position: absolute;
+    inset: auto 0 100%;
+    height: 0.0625rem;
+    background: inherit;
+  }
+
   // The full bar only fits a 992 screen with the logo, links and gaps all at their smallest; they grow to the xl measures by 1200
   @media (min-width: @bp-lg) {
     position: absolute;
@@ -70,7 +80,14 @@
   }
   .has-search-open &.is-pinned { transform: none; }
   // the phone menu opens under the bar (--z-header sits above it): a bar that had scrolled away comes back for it
+  // (initMenu also marks it shown, since the hidden state's own rule outranks this one)
   .has-menu-open &.is-pinned { transform: none; }
+  // The pinned bar's shadow goes the moment the panel starts to open and only returns once it has gone, or it draws a
+  // line between the bar and the panel of the same green under it (the durations follow the transition list above)
+  &.is-pinned:has(~ .site-menu:is(.showing, .show)) {
+    box-shadow: none;
+    transition-duration: var(--duration-slow), var(--duration-base), 0s;
+  }
   @media (min-width: @bp-xl) { --header-gap: var(--space-4); }
   @media (min-width: @bp-xxl) {
     --header-logo-width: 20.0625rem; // 321: the 334 frame shows the artwork at 96.11%
@@ -215,10 +232,12 @@
     @media (prefers-reduced-motion: reduce) { transition: none; }
   }
 
-  // 2087:12254 centres the list in the space under the bar; auto margins give way to scrolling on short screens
+  // 2087:12254 centres the list in the space under the bar; auto margins give way to scrolling on short screens, and that
+  // scrolling stays inside the panel (initMenu stops touch scrolling at the document while the menu is open)
   .offcanvas-body {
     display: flex;
     flex-direction: column;
+    overscroll-behavior: contain;
     padding: calc(var(--header-height) + env(safe-area-inset-top, 0px) + 3.75rem) var(--container-gutter) 3.75rem; // under the bar, then 60 of air
     padding-bottom: ~"max(3.75rem, env(safe-area-inset-bottom))";
   }
@@ -294,3 +313,4 @@
     }
   }
 }
+

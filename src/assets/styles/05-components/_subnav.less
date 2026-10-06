@@ -37,12 +37,14 @@
       justify-content: flex-start;
       gap: var(--space-2); // icon 1470 → 1490, label at 1506
       padding-inline: 1.125rem var(--space-2);
-      // sits past the screen edge and follows the strip in, so the stretch leaves no gap on the right
+      // sits past the screen edge and follows the strip in, so the stretch leaves no gap on the right. It starts a pixel
+      // inside the chip: two boxes meeting edge to edge on a fractional device pixel (the chip is translated, and 125%
+      // scaling makes the 18 a 22.5) each draw that column half-covered, and the photo shows through as a dark hairline
       &::after {
         content: "";
         position: absolute;
-        inset: 0 auto 0 100%;
-        width: calc(var(--subnav-stretch) * 2); // twice the stretch, so the back-out overshoot is covered too
+        inset: 0 auto 0 calc(100% - var(--border-width));
+        width: calc(var(--subnav-stretch) * 2 + var(--border-width)); // twice the stretch, so the back-out overshoot is covered too
         background: inherit;
       }
     }

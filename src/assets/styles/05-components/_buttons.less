@@ -113,9 +113,12 @@
     }
   }
 
+  // disabled: the colours fade, not the element. A reveal leaves an inline opacity on the arrow while it plays, which
+  // would show a disabled prev arrow as live until the reveal hands the opacity back
   &:disabled,
   &.is-disabled {
-    opacity: 0.4;
+    background: ~"color-mix(in srgb, var(--color-secondary) 40%, transparent)";
+    color: ~"color-mix(in srgb, var(--color-primary) 40%, transparent)";
     cursor: default;
   }
 }

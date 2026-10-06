@@ -230,18 +230,29 @@ export function initApproachAccordion(root = document) {
   });
 }
 
-// The phone menu opens under the bar: html carries has-menu-open while it is open, so the bar stays on top
-// and its hamburger reads as an X (both in _header.less)
+// The phone menu opens under the bar: html carries has-menu-open while it is open, so the bar stays on top and its
+// hamburger reads as an X (both in _header.less). The page is held still under it by stopping touch scrolling at the
+// document while the menu is open, except where the panel itself has room to scroll (its own overscroll is contained in
+// CSS). Bootstrap's own hold, overflow: hidden on the body (data-bs-scroll is on), is not used: with the root clipping
+// overflow it turns the body into a scroll container, and the sticky bar then sticks to the body's top, off screen
 export function initMenu(root = document) {
   const panel = root.querySelector(".site-menu");
   if (!panel) return;
   const header = document.querySelector(".site-header");
-  panel.addEventListener("show.bs.offcanvas", () => document.documentElement.classList.add("has-menu-open"));
-  panel.addEventListener("hide.bs.offcanvas", () => {
-    document.documentElement.classList.remove("has-menu-open");
-    // a bar that was scrolled away stays in view as the menu rolls up, as if the reader had just scrolled up
+  const html = document.documentElement;
+  const scroller = panel.querySelector(".offcanvas-body");
+  const hold = (event) => {
+    if (scroller?.contains(event.target) && scroller.scrollHeight > scroller.clientHeight) return;
+    event.preventDefault();
+  };
+  panel.addEventListener("show.bs.offcanvas", () => {
+    html.classList.add("has-menu-open");
+    // a bar that had scrolled away comes back for the menu, as if the reader had just scrolled up, and stays once it shuts
     if (header?.classList.contains("is-pinned")) header.classList.add("is-shown");
+    document.addEventListener("touchmove", hold, { passive: false });
   });
+  panel.addEventListener("hide.bs.offcanvas", () => html.classList.remove("has-menu-open"));
+  panel.addEventListener("hidden.bs.offcanvas", () => document.removeEventListener("touchmove", hold));
 }
 
 // The rows around a fold move without a scroll, so their scroll reveals are brought up to date once it has settled

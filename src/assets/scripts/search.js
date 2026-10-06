@@ -143,8 +143,6 @@ export function initSearch(root = document) {
     if (meta) meta.textContent = text;
   };
 
-  const setFilled = () => form.classList.toggle("is-filled", input.value.trim() !== "");
-
   const setExpanded = (on) => openers.forEach((el) => el.setAttribute("aria-expanded", on ? "true" : "false"));
 
   const clear = () => {
@@ -277,7 +275,6 @@ export function initSearch(root = document) {
   });
 
   input.addEventListener("input", () => {
-    setFilled();
     if (!input.value.trim()) clear();
   });
 

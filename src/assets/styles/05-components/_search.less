@@ -70,14 +70,16 @@
     &::placeholder { color: var(--color-primary); opacity: 1; }
     &::-webkit-search-cancel-button,
     &::-webkit-search-decoration { appearance: none; }
-    &:focus-visible { outline: none; } // the arrow turning Light Blue is the focus cue (2125:14365)
+    &:focus-visible { outline: none; } // the overlay's one field, focused on open: the caret is its cue (2125:14070)
   }
 
-  // Yellow at rest; Light Blue once the field is filled or focused (2125:14365), and under the mouse
+  // The arrow is the slider's next arrow (2125:14314): Yellow with the Dark Green glyph at rest, whatever the field is
+  // doing; Light Blue while clicked (2125:14377), and the same plain fade under the mouse and on keyboard focus
   &__form &__submit {
     flex: 0 0 auto;
     background: var(--color-accent);
     color: var(--color-primary);
+    &:active,
     &:focus-visible {
       background: var(--color-secondary);
       color: var(--color-primary);
@@ -89,8 +91,6 @@
       }
     }
   }
-  &__form.is-filled &__submit,
-  &__form:focus-within &__submit { background: var(--color-secondary); }
 
   // Results (no Figma state: a plain list in the site's tokens until Wagtail renders them)
   &__results {
