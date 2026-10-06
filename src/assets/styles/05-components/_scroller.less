@@ -42,9 +42,12 @@
     flex: 0 0 auto;
     width: ~"min(var(--scroller-card), 80vw)";
     scroll-snap-align: start;
-    // Dim the child, not the card: the reveal animation leaves an inline opacity on the card itself
-    > * { transition: opacity var(--duration-base) ease, background-color var(--duration-base) ease; }
-    &.is-clipped > * { opacity: var(--scroller-dim); }
+    // Dim the title and the copy: not the card (the reveal leaves an inline opacity on it) and not the fold panel
+    // (a transition set there replaces the fold's own, and the card then snaps open instead of unfolding)
+    > h3,
+    .scroller__text { transition: opacity var(--duration-base) ease; }
+    &.is-clipped > h3,
+    &.is-clipped .scroller__text { opacity: var(--scroller-dim); }
     // Figma rules each link card 2 wide, 1 in from its right edge, beside the 1 gap
     @media (min-width: @bp-lg) {
       &::after {
@@ -67,8 +70,12 @@
     --fold-body-top: 0;
     --fold-body-bottom: 0;
   }
+  // from lg the cards sit edge to edge with no rules (a transparent one would still take its pixel); below lg they keep
+  // the fold's rules, which this selector would otherwise take off the last card's top too
   &--reveal &__card,
-  &--reveal &__card:last-child { border: 0; } // the cards sit edge to edge, no rules (a transparent one would still take its pixel)
+  &--reveal &__card:last-child {
+    @media (min-width: @bp-lg) { border: 0; }
+  }
   &__card {
     display: flex;
     flex-direction: column;
@@ -134,13 +141,9 @@
     }
 
     .scroller__track {
-      --fold-rule: var(--color-text);
+      --fold-rule: var(--color-text); // the fold's own rules, above every row and under the last
       --fold-body-top: 0.125rem;    // 26 + 2: the copy 28 under the title
       --fold-body-bottom: 1.625rem; // 26
-    }
-    .scroller__card {
-      border-top: var(--border-width) solid var(--fold-rule);
-      &:last-child { border-bottom: var(--border-width) solid var(--fold-rule); }
     }
     .scroller__card {
       display: block;
@@ -148,7 +151,8 @@
       min-height: 0;
       padding: 0;
       background: none;
-      &.is-clipped > * { opacity: 1; }
+      &.is-clipped > h3,
+      &.is-clipped .scroller__text { opacity: 1; }
 
       h3 {
         font-size: var(--font-size-xl); // 25

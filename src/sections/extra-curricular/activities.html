@@ -1,7 +1,7 @@
 <!-- @wagtail-block: scroller (link cards)
      title: CharBlock(required)
      cards: ListBlock(StructBlock(title:CharBlock, text:TextBlock(optional), page:PageChooserBlock))
-     Card copy from Figma 1747:1159, sitting at the card foot; Languages is still “(TBC)” there, so it has none.
+     Card copy from Figma 1747:1159, sitting at the card foot; Languages is still “(TBC)” there, so it carries placeholder copy.
      The cards are the fold (_fold.less, initFolds, .fold--hover): with a mouse from lg the first is open at rest and the one
      under the mouse after, on touch every card shows its copy; below lg the row is an accordion (Figma 2149:6282), the first open. -->
 <section class="scroller scroller--reveal" aria-labelledby="activities-title" data-scroller>
@@ -21,6 +21,6 @@
     <li class="scroller__card fold__item"><h3><button class="fold__row" type="button" aria-expanded="false" aria-controls="activity-coding-camp"><span>Coding camp</span><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button></h3><div class="fold__panel" id="activity-coding-camp"><div class="fold__body"><p class="scroller__text">At Code Camp, students in Years 2-6 dive into coding, Minecraft engineering, animation, design and robotics.</p></div></div></li>
     <li class="scroller__card fold__item"><h3><button class="fold__row" type="button" aria-expanded="false" aria-controls="activity-chess-club"><span>Chess club</span><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button></h3><div class="fold__panel" id="activity-chess-club"><div class="fold__body"><p class="scroller__text">At Chess Club, students sharpen their strategy with coaching from the Sydney Academy of Chess, while lunchtime chess classes prepares keen players to represent Claremont at the annual schools’ competition.</p></div></div></li>
     <li class="scroller__card fold__item"><h3><button class="fold__row" type="button" aria-expanded="false" aria-controls="activity-debating"><span>Debating</span><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button></h3><div class="fold__panel" id="activity-debating"><div class="fold__body"><p class="scroller__text">Through debating, students can build confidence and discover their voice, supported by debating coaching from Masters Academy.</p></div></div></li>
-    <li class="scroller__card fold__item"><h3><button class="fold__row" type="button"><span>Languages</span><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button></h3></li>
+    <li class="scroller__card fold__item"><h3><button class="fold__row" type="button" aria-expanded="false" aria-controls="activity-languages"><span>Languages</span><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button></h3><div class="fold__panel" id="activity-languages"><div class="fold__body"><p class="scroller__text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec nunc congue, ultricies felis at, malesuada erat. Morbi nisi nulla, blandit eget dolor id, aliquam vehicula dolor sagittis eleifend.</p></div></div></li>
   </ul>
 </section>
