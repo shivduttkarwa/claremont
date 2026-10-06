@@ -231,8 +231,12 @@
       border: 0;
       background: none;
       color: var(--color-white);
-      transition: transform var(--duration-fast) var(--ease-out);
-      &:hover { transform: scale(1.1); }
+      transition: color var(--duration-fast) ease;
+      &:active,
+      &:focus-visible { color: var(--color-accent); }
+      @media (hover: hover) {
+        &:hover { color: var(--color-accent); }
+      }
       &--back {
         width: var(--search-back-size);
         height: var(--search-back-size);

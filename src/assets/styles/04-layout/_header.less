@@ -69,6 +69,8 @@
     }
   }
   .has-search-open &.is-pinned { transform: none; }
+  // the phone menu opens under the bar (--z-header sits above it): a bar that had scrolled away comes back for it
+  .has-menu-open &.is-pinned { transform: none; }
   @media (min-width: @bp-xl) { --header-gap: var(--space-4); }
   @media (min-width: @bp-xxl) {
     --header-logo-width: 20.0625rem; // 321: the 334 frame shows the artwork at 96.11%
@@ -184,42 +186,41 @@
       height: var(--border-width-thick);
       margin-left: auto; // bars sit flush to the 30 gutter; the 44 hit area grows inwards
       background: var(--color-white);
-      transition: transform var(--duration-fast) ease;
+      transition: transform var(--duration-menu-icon) ease-in-out;
+      @media (prefers-reduced-motion: reduce) { transition: none; }
     }
-    &:hover span:first-child { transform: translateX(-0.125rem); }
-    &:hover span:last-child { transform: translateX(0.125rem); }
+    // open: the outer bars meet in the middle as an X, as on the reference menu. The middle bar is out of the way
+    // before they fold (fading it under the crossing bars left its ends lingering) and fades back in once they are level
+    span:nth-child(2) { transition: opacity var(--duration-fast) ease-in-out var(--duration-menu-icon); }
+    .has-menu-open & span:nth-child(1) { transform: translateY(0.5625rem) rotate(45deg); } // 9: a bar and a gap
+    .has-menu-open & span:nth-child(2) { opacity: 0; transition-duration: 0s; transition-delay: 0s; } // gone at once
+    .has-menu-open & span:nth-child(3) { transform: translateY(-0.5625rem) rotate(-45deg); }
     @media (min-width: @bp-lg) { display: none; }
   }
 }
 
 // Mobile menu (Bootstrap offcanvas, themed via --bs-offcanvas-* in 01-settings)
 .site-menu {
-  --header-logo-width: ~"min(15.5rem, 66vw)"; // the open panel keeps the bar's logo
-  --header-logo-top: 0;
   background: var(--color-primary-dark);
   &:focus-visible { outline: 0; } // Bootstrap focuses the panel itself on open
 
-  // The panel repeats the 72 bar, then 60 of air before the links
-  .offcanvas-header {
-    justify-content: space-between;
-    min-height: var(--header-height);
-    padding: 0.3125rem var(--header-gutter); // 5 / 30: the 62 logo fills the 72 bar
-    padding-top: ~"max(0.3125rem, env(safe-area-inset-top))";
+  // Revealed under the bar by a clip edge running down over 0.4s on the reference's curve, and rolling back up the same
+  // way (ref/wcc .header-full-menu). Bootstrap only toggles the classes and waits for this transition.
+  &.offcanvas-top {
+    transform: none;
+    clip-path: inset(0 0 100% 0);
+    transition: clip-path var(--duration-menu) var(--ease-menu);
+    &.showing,
+    &.show:not(.hiding) { clip-path: inset(0 0 0 0); }
+    @media (prefers-reduced-motion: reduce) { transition: none; }
   }
+
   // 2087:12254 centres the list in the space under the bar; auto margins give way to scrolling on short screens
   .offcanvas-body {
     display: flex;
     flex-direction: column;
-    padding: 3.75rem var(--container-gutter);
+    padding: calc(var(--header-height) + env(safe-area-inset-top, 0px) + 3.75rem) var(--container-gutter) 3.75rem; // under the bar, then 60 of air
     padding-bottom: ~"max(3.75rem, env(safe-area-inset-bottom))";
-  }
-  .btn-close {
-    width: var(--tap-size);
-    height: var(--tap-size);
-    padding: 0;
-    margin: 0 -0.6875rem 0 auto; // the 22 glyph sits flush to the 30 gutter
-    background-size: 1.375rem;   // 22
-    opacity: 1;
   }
   &__nav {
     display: flex;
@@ -235,13 +236,13 @@
     gap: var(--space-2);
     min-height: var(--tap-size);
     padding-block: 1.125rem; // 18
-    border-top: var(--border-width) solid currentColor;
+    border-top: var(--border-width) solid var(--color-white); // the rules belong to the list and stay white as a row turns yellow
     font-size: var(--font-size-xl);
     line-height: 1.75rem; // 28: Figma's whole-pixel text box, so the rows land 65.2 apart
     letter-spacing: var(--letter-spacing-body);
     color: var(--color-white);
-    transition: color var(--duration-fast) ease, padding-inline-start var(--duration-base) var(--ease-out);
-    &:last-child { border-bottom: var(--border-width) solid currentColor; }
+    transition: color var(--duration-fast) ease;
+    &:last-child { border-bottom: var(--border-width) solid var(--color-white); }
 
     .icon {
       flex: 0 0 auto;
@@ -251,11 +252,15 @@
       transition: transform var(--duration-base) var(--ease-out);
     }
 
-    &:hover,
-    &[aria-current="page"] {
-      color: var(--color-secondary);
-      padding-inline-start: var(--space-1);
-      .icon { transform: translate(0.25rem, -0.25rem); }
+    // yellow like the header links while pressed, focused or current; the arrow nudges only for hover and focus,
+    // where the state is held (a tap is too short: the nudge would start and snap straight back)
+    &[aria-current="page"],
+    &:active,
+    &:focus-visible { color: var(--color-accent); }
+    &:focus-visible .icon { transform: translate(0.25rem, -0.25rem); }
+    @media (hover: hover) {
+      &:hover { color: var(--color-accent); }
+      &:hover .icon { transform: translate(0.25rem, -0.25rem); }
     }
   }
 
@@ -279,9 +284,13 @@
     border: 0;
     background: none;
     color: var(--color-white);
-    transition: transform var(--duration-fast) var(--ease-out);
+    transition: color var(--duration-fast) ease;
     .icon { width: 1.6875rem; height: 1.6875rem; }        // search 27 × 27
     &--secondary .icon { width: 1.5rem; height: 1.875rem; } // pin 24 × 30
-    &:hover { transform: scale(1.1); }
+    &:active,
+    &:focus-visible { color: var(--color-accent); }
+    @media (hover: hover) {
+      &:hover { color: var(--color-accent); }
+    }
   }
 }

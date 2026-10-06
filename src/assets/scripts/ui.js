@@ -228,6 +228,20 @@ export function initApproachAccordion(root = document) {
   });
 }
 
+// The phone menu opens under the bar: html carries has-menu-open while it is open, so the bar stays on top
+// and its hamburger reads as an X (both in _header.less)
+export function initMenu(root = document) {
+  const panel = root.querySelector(".site-menu");
+  if (!panel) return;
+  const header = document.querySelector(".site-header");
+  panel.addEventListener("show.bs.offcanvas", () => document.documentElement.classList.add("has-menu-open"));
+  panel.addEventListener("hide.bs.offcanvas", () => {
+    document.documentElement.classList.remove("has-menu-open");
+    // a bar that was scrolled away stays in view as the menu rolls up, as if the reader had just scrolled up
+    if (header?.classList.contains("is-pinned")) header.classList.add("is-shown");
+  });
+}
+
 // [data-accordion]: one [data-accordion-item] open at a time; its [data-accordion-toggle] opens it or, when open, closes it
 export function initAccordions(root = document) {
   root.querySelectorAll("[data-accordion]").forEach((list) => {

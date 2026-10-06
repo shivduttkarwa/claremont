@@ -60,14 +60,11 @@
   }
 }
 
-// Bootstrap sets the close button's ring on the element itself, so it is cleared there
-.btn-close { --bs-btn-close-focus-shadow: none; }
-
 // Offcanvas (mobile menu)
 .offcanvas {
   --bs-offcanvas-bg: var(--color-primary);
   --bs-offcanvas-color: var(--color-white);
-  --bs-offcanvas-width: 100%; /* the phone menu is a full-screen panel; it never opens above lg */
+  --bs-offcanvas-height: 100%; /* the phone menu is a full-screen panel revealed under the bar; it never opens above lg */
   --bs-offcanvas-padding-x: var(--space-3);
   --bs-offcanvas-padding-y: var(--space-3);
   --bs-offcanvas-border-width: 0;
