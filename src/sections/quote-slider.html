@@ -8,8 +8,8 @@
      throwing it (pan.js). Hovering or focusing a card slides a Light Blue box with the quote and author up over the photo
      and turns the arrow down. Below lg it is
      the Swiper carousel (data-slider-below-lg): on tablets the active card's box is open and the peeking card dims; on
-     phones each card is the photo over the quote panel, the arrows, photo and quote filling one screen, each photo drifting
-     in a little behind its card's edge (data-slider-parallax) and its quote rising line by line (data-slider-lines).
+     phones each card is the photo over the quote panel, the arrows, photo and quote filling one screen: a plain Swiper,
+     the cards fading up on scroll as the pillars do.
      locals: id, title, intro (or ""), layout, prev_label, next_label, slides [{ image, alt, width, height, quote, author, role, url, link_label }] -->
 <section class="quote-slider quote-slider--{{ layout }}" aria-labelledby="{{ id }}" data-slider data-slider-below-lg data-pan>
   <div class="container">
@@ -25,8 +25,8 @@
     </div>
   </div>
 
-  <div class="swiper quote-slider__slider" data-slider-dim data-slider-open-active data-slider-parallax="35%" data-slider-lines="[data-quote-text]" data-pan-hover>
-    <ul class="swiper-wrapper quote-slider__track" data-pan-track data-quote-cards data-anim="sequence" data-anim-type="wipe-up" data-anim-scroll="timed" data-anim-start="top 65%" data-anim-stagger="0.2">
+  <div class="swiper quote-slider__slider" data-slider-dim data-slider-open-active data-pan-hover>
+    <ul class="swiper-wrapper quote-slider__track" data-pan-track data-quote-cards data-anim="sequence" data-anim-type="wipe-up" data-anim-type-mobile="fade-up" data-anim-scroll="timed" data-anim-start="top 65%" data-anim-stagger="0.2">
       <each loop="slide in slides">
       <li class="swiper-slide quote-slider__card" data-anim-item data-quote-card>
         <if condition="slide.url">
@@ -36,9 +36,9 @@
         <div class="quote-slider__photo"><img src="{{ slide.image }}" alt="{{ slide.alt }}" width="{{ slide.width }}" height="{{ slide.height }}" loading="lazy" decoding="async"></div>
         </else>
         <div class="quote-slider__caption">
-          <div class="quote-slider__text" data-anim="reveal" data-anim-type="fade-up" data-anim-media="(max-width: 767.98px)">
-            <blockquote class="quote-slider__quote" data-quote-text>{{ slide.quote }}</blockquote>
-            <if condition="slide.author"><p class="quote-slider__author" data-quote-text>{{ slide.author }}<if condition="slide.role"><br><span>{{ slide.role }}</span></if></p></if>
+          <div class="quote-slider__text">
+            <blockquote class="quote-slider__quote">{{ slide.quote }}</blockquote>
+            <if condition="slide.author"><p class="quote-slider__author">{{ slide.author }}<if condition="slide.role"><br><span>{{ slide.role }}</span></if></p></if>
           </div>
         </div>
       </li>
