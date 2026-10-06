@@ -464,7 +464,7 @@ function setupSequences(root, entrance, scroll) {
       el.classList.add("is-revealed");
       items.forEach((item) => {
         item.setAttribute("data-anim", "reveal");
-        item.setAttribute("data-anim-type", item.getAttribute("data-anim-item") || attr(el, "data-anim-type", "fade-up"));
+        item.setAttribute("data-anim-type", item.getAttribute("data-anim-item") || attr(el, variant(el, "data-anim-type"), "fade-up"));
       });
       return;
     }

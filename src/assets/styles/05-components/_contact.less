@@ -86,7 +86,7 @@
       line-height: var(--line-height-body);
       letter-spacing: var(--letter-spacing-body);
       color: var(--color-text);
-      transition: border-color var(--duration-fast) ease;
+      transition: border-color var(--duration-fast) ease, box-shadow var(--duration-fast) ease;
       &::placeholder { color: var(--color-muted); }
       &:focus {
         border-color: var(--color-primary);
@@ -103,8 +103,9 @@
         height: 7.4375rem;
         min-height: 7.4375rem;
         padding-top: 5.5rem;
+        transition: border-color var(--duration-fast) ease, box-shadow var(--duration-fast) ease, padding-top var(--duration-base) var(--ease-out);
         &:focus,
-        &:not(:placeholder-shown) { padding-top: 0.5rem; }
+        &:not(:placeholder-shown) { padding-top: 0.5rem; } // the placeholder rises from the last line to the first
       }
     }
   }

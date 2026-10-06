@@ -194,12 +194,17 @@
       font-size: 0.9375rem; // 15
       line-height: 1.5333;  // 23: Figma draws the 22.5 line at a whole pixel
       transition: opacity var(--duration-base) ease;
+      // the 28 above the copy sits inside the fold, so it opens and shuts with the row instead of snapping
+      &::before {
+        content: "";
+        display: block;
+        height: 1.75rem; // 28
+      }
     }
 
     .scroller__card.is-open {
       .scroller__panel { grid-template-rows: 1fr; }
       .scroller__text {
-        padding-top: 1.75rem; // 28
         opacity: 1;
         transition-delay: 0.1s;
       }
