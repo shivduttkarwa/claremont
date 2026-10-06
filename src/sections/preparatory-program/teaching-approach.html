@@ -1,45 +1,45 @@
 <!-- @wagtail-block: approach_columns
      title: CharBlock(required)
      items: ListBlock(StructBlock(title:CharBlock, body:RichTextBlock))
-     One column open at a time (Figma 1638:5169, 1680:6364, 1680:6398, 1680:6432): the first at rest; from lg
-     hovering, focusing or clicking a column opens it, below lg the columns stack as an accordion (initRevealColumns). -->
-<section class="link-columns link-columns--reveal bg-light" aria-labelledby="prep-approach-title" data-reveal-columns>
+     The columns are the fold (_fold.less, initFolds, .fold--hover): one open at a time, the first at rest (Figma 1638:5169,
+     1680:6364, 1680:6398, 1680:6432); from lg the one under the mouse opens, below lg they stack as an accordion. -->
+<section class="link-columns link-columns--reveal bg-light" aria-labelledby="prep-approach-title">
   <div class="container">
     <div class="link-columns__header">
       <h2 id="prep-approach-title" data-anim="split" data-anim-type="chars-soft">Our teaching approach</h2>
     </div>
   </div>
-  <div class="link-columns__grid" data-anim-group="fade-up">
-    <div class="link-columns__item">
-      <h3><button class="link-columns__head" type="button" aria-expanded="false" aria-controls="prep-approach-wellbeing"><span>Wellbeing</span><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button></h3>
-      <div class="link-columns__panel" id="prep-approach-wellbeing">
-        <div class="link-columns__body">
+  <div class="link-columns__grid fold fold--hover" data-fold data-anim-group="nudge-right">
+    <div class="link-columns__item fold__item is-open">
+      <h3><button class="link-columns__head fold__row" type="button" aria-expanded="true" aria-controls="prep-approach-wellbeing"><span>Wellbeing</span><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button></h3>
+      <div class="fold__panel" id="prep-approach-wellbeing">
+        <div class="fold__body">
           <p>Every child deserves to feel confident, connected and safe. Our Preparatory Wellbeing Program gives them the tools they need to feel all three.</p>
           <p>Kimochis® Social and Emotional Learning helps children to understand and manage their emotions. The program teaches children to respond constructively to challenging situations and make responsible decisions.</p>
           <p>Developed by the Office of the Children’s Guardian for children aged 2–6, the SAFE Series teaches personal safety in language a young child can actually use. Children learn what a boundary is, how to notice when something doesn’t feel right, and that asking for help is always the right thing to do.</p>
         </div>
       </div>
     </div>
-    <div class="link-columns__item link-columns__item--body-301">
-      <h3><button class="link-columns__head" type="button" aria-expanded="false" aria-controls="prep-approach-program"><span>Program</span><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button></h3>
-      <div class="link-columns__panel" id="prep-approach-program">
-        <div class="link-columns__body">
+    <div class="link-columns__item fold__item link-columns__item--body-301">
+      <h3><button class="link-columns__head fold__row" type="button" aria-expanded="false" aria-controls="prep-approach-program"><span>Program</span><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button></h3>
+      <div class="fold__panel" id="prep-approach-program">
+        <div class="fold__body">
           <p>At Claremont, school readiness begins with our Preparatory Program, designed to provide children with a strong foundation for a successful transition to school. Our educational program is informed by current research and best practice in Early Childhood education, with our units of inquiry drawing on the principles of Reggio Emilia within an Australian context. Our curriculum is designed around a three-week cycle, providing children with diverse indoor and outdoor learning contexts that encourage curiosity, exploration, collaboration and play-based learning.</p>
         </div>
       </div>
     </div>
-    <div class="link-columns__item link-columns__item--body-284">
-      <h3><button class="link-columns__head" type="button" aria-expanded="false" aria-controls="prep-approach-specialist"><span>Specialist teachers</span><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button></h3>
-      <div class="link-columns__panel" id="prep-approach-specialist">
-        <div class="link-columns__body">
+    <div class="link-columns__item fold__item link-columns__item--body-284">
+      <h3><button class="link-columns__head fold__row" type="button" aria-expanded="false" aria-controls="prep-approach-specialist"><span>Specialist teachers</span><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button></h3>
+      <div class="fold__panel" id="prep-approach-specialist">
+        <div class="fold__body">
           <p>Our Preparatory students participate in a range of specialist learning experiences that extend their learning and develop their skills, interests and confidence. Specialist classes include <strong>PE, Music, Library Literature</strong> and <strong>Library Borrowing.</strong></p>
         </div>
       </div>
     </div>
-    <div class="link-columns__item">
-      <h3><button class="link-columns__head" type="button" aria-expanded="false" aria-controls="prep-approach-hours"><span>School Hours and Extended Care</span><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button></h3>
-      <div class="link-columns__panel" id="prep-approach-hours">
-        <div class="link-columns__body">
+    <div class="link-columns__item fold__item">
+      <h3><button class="link-columns__head fold__row" type="button" aria-expanded="false" aria-controls="prep-approach-hours"><span>School Hours and Extended Care</span><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button></h3>
+      <div class="fold__panel" id="prep-approach-hours">
+        <div class="fold__body">
           <p><strong>Days:</strong> Five-day core program, or limited two-day (Thu–Fri) and three-day (Mon-Wed) options.</p>
           <p><strong>Hours:</strong> Drop off to main campus from 8:15am or directly to Wylie Cottage from 8:40am. Our Preparatory program begins at 9:00am and concludes at 3:00pm.</p>
           <p><strong>Extended care:</strong> Before and after school 7am-6:00pm, via TeamKids.</p>

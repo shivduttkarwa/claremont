@@ -69,78 +69,54 @@
 
   &__label { max-width: var(--link-grid-title-width); }
 
-  // Dispositions (1713:10659, hover 1709:10140): each description ends 190 under its rule, 16 above the next;
-  // a hovered cell fills Light Blue from its rule to the next and across the gap on its left, the type held still.
-  // The last row is 202 with no rule under it
+  // Dispositions (1713:10659, hover 1709:10140): the rows are the fold (_fold.less, .fold--hover). From lg each cell keeps
+  // its height and shows its description in place at the foot, the first at rest and the one under the mouse after, with the
+  // Light Blue fill from its rule to the next and across the gap on its left; each description ends 190 under its rule,
+  // 16 above the next, and the last row is 202 with no rule under it. Below lg they are the phone accordion (2571:14047)
   &--described {
     @media (min-width: @bp-lg) { --link-grid-pad-bottom: 3.6875rem; } // 59
-  }
-  &--described &__link {
-    position: relative;
-    isolation: isolate;
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    grid-template-rows: auto 1fr;
-    gap: 0 var(--space-2);
-    @media (min-width: @bp-lg) { padding-bottom: 1rem; } // 16
-
-    &::before {
-      content: "";
-      position: absolute;
-      inset: calc(-1 * var(--border-width)) 0 calc(-1 * var(--border-width)) calc(-1 * var(--link-grid-gap)); // over the rules above and below
-      z-index: var(--z-behind);
-      background: var(--color-secondary);
-      opacity: 0;
-      transition: opacity var(--duration-base) ease;
+    .fold {
+      --fold-rule: var(--color-primary);
+      --fold-hover: var(--color-heading);
+      --fold-fill: var(--color-secondary);
+      --fold-body-top: 0.75rem;         // 12 under the title
+      --fold-body-bottom: var(--space-3);
+      @media (min-width: @bp-lg) {
+        --fold-fill-bleed: var(--link-grid-gap);
+        --fold-body-bottom: 1rem;       // 16
+      }
     }
-    &:hover,
-    &:focus-visible {
-      z-index: var(--z-content); // above the next row, so the fill covers its rule
+    .fold__item {
+      display: grid;
+      grid-template-rows: auto 1fr; // the description sits at the cell foot
+      &:last-child { border-bottom: 0; }
+      @media (min-width: @bp-lg) { min-height: var(--link-grid-row); }
+    }
+    .fold__row {
+      .tap-area(); // the title row is 37 tall; the hit area grows, the cell does not
+      align-items: flex-start;
+      padding: 0.625rem 0.5rem 0 0; // title 11 below the 1px rule, arrow 8 in
       color: var(--color-heading);
-      .icon { transform: none; }
-      &::before { opacity: 1; }
+    }
+    .fold__panel {
+      align-self: end;
+      @media (min-width: @bp-lg) { grid-template-rows: 1fr; } // the cell keeps its height: the copy only fades up in place
+    }
+    @media (min-width: @bp-lg) {
+      .fold__item:nth-child(3n + 1):nth-last-child(-n + 3),
+      .fold__item:nth-child(3n + 1):nth-last-child(-n + 3) ~ .fold__item {
+        --fold-body-bottom: 0.75rem; // 12: the description still ends 190 under the rule
+        min-height: 12.625rem;       // 202
+      }
     }
   }
   &--described &__text {
-    grid-column: 1 / -1;
-    align-self: end;
     max-width: 22.1875rem; // 355
-    margin-top: 0.75rem;
+    margin: 0;
     color: var(--color-text);
     font-size: 0.9375rem;  // 15
     line-height: 1.5;      // 22.5
     letter-spacing: var(--letter-spacing-body);
-  }
-  // With a mouse from lg (1709:10140) only the hovered or focused cell shows its description, rising in with the fill;
-  // the arrows point up and right at rest and turn down and right on the open cell, as on the academic excellence rows.
-  // Touch screens keep every description shown
-  @media @fine-lg {
-    &--described &__link:hover .icon,
-    &--described &__link:focus-visible .icon { transform: rotate(90deg); }
-    &--described &__text {
-      opacity: 0;
-      transform: translateY(0.5rem);
-      transition: opacity var(--duration-base) ease, transform var(--duration-slow) var(--ease-out);
-      @media (prefers-reduced-motion: reduce) { transform: none; }
-    }
-    &--described &__link:hover &__text,
-    &--described &__link:focus-visible &__text {
-      opacity: 1;
-      transform: none;
-    }
-  }
-  &--described &__grid {
-    > li { display: grid; } // the link fills its cell when a longer neighbour grows the row, so its rule and hover box reach the row's foot
-    // the reveal leaves a transform on each cell, so the hovered cell itself is lifted for its fill to cover the next row's rule
-    > li:has(> .link-grid__link:hover, > .link-grid__link:focus-visible) { z-index: var(--z-content); }
-    // each cell has its top rule only, none under the last row (1709:10140)
-    @media (min-width: @bp-lg) {
-      > li:nth-child(3n + 1):nth-last-child(-n + 3) > .link-grid__link,
-      > li:nth-child(3n + 1):nth-last-child(-n + 3) ~ li > .link-grid__link {
-        min-height: 12.625rem; // 202
-        padding-bottom: 0.75rem; // 12: the description still ends 190 under the rule
-      }
-    }
   }
 
   // Policies: no header, rules from 200 on a 220 pitch, 200 below the last row
@@ -153,5 +129,49 @@
     .link-grid__grid {
       @media (min-width: @bp-xxl) { margin-inline: 0; } // rules run x 200 → 1440
     }
+  }
+}
+
+// Phones (2571:14043, rows 2571:14048): 30 under the carousel, a 32 heading with its copy 20 under, the rows 30 below across
+// the full width on Light Blue 50 — 26 above and below a 25 title, the open row filled Light Blue with its copy 28 under
+// the title and 26 above the next rule — and 50 of air to close
+@media @upto-lg {
+  .link-grid--described {
+    padding-block: 1.875rem 3.125rem; // 30 / 50
+
+    .link-grid__header {
+      margin-bottom: 1.875rem; // 30
+      .row { --bs-gutter-y: 1.25rem; } // 20
+      h2 {
+        font-size: 2rem;   // 32
+        line-height: 1.05; // 33.6
+      }
+      p {
+        font-size: 0.9375rem; // 15
+        line-height: 1.5;     // 22.5
+      }
+    }
+
+    .link-grid__grid {
+      grid-template-columns: minmax(0, 1fr);
+      margin-inline: calc(-1 * var(--container-gutter));
+    }
+    .fold { --fold-rule: var(--color-heading); }
+    .fold__item {
+      display: block;
+      transition: background-color var(--duration-fold) ease;
+      &:last-child { border-bottom: var(--border-width) solid var(--fold-rule); }
+      &.is-open { background: var(--color-secondary); }
+    }
+    .fold__row {
+      align-items: center;
+      padding: 1.625rem var(--container-gutter); // 26
+    }
+    .fold__body {
+      --fold-body-top: 0.125rem;    // 26 + 2 = the 28
+      --fold-body-bottom: 1.625rem; // 26
+      padding-inline: var(--container-gutter);
+    }
+    .link-grid__label { max-width: 19.3125rem; } // 309
   }
 }

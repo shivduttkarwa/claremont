@@ -2,8 +2,8 @@
      title: CharBlock(required)
      intro: TextBlock
      items: ListBlock(StructBlock(label:CharBlock, body:RichTextBlock))
-     One row open at a time, the first at rest (Figma 1713:10392, 10535, 10561, 10610): the open row's arrow points up and
-     right, the closed rows' down and right. Phones (2571:14024): the rows run full width on Light Blue 50. -->
+     The rows are the fold (_fold.less, initFolds): one open at a time, the first at rest (Figma 1713:10392, 10535, 10561, 10610),
+     the open row's arrow pointing down and right. Phones (2571:14024): the rows run full width on Light Blue 50. -->
 <section class="cta-links cta-links--light cta-links--accordion" aria-labelledby="excellence-title">
   <div class="container">
     <div class="row g-4 row-split">
@@ -13,11 +13,11 @@
       <div class="col-lg-6">
         <div class="cta-links__aside">
         <p class="cta-links__intro" data-anim="reveal" data-anim-order="1">When a child is capable of more, they shouldn’t be expected to wait for the class to catch up. That’s why we provide high achieving children with the opportunities they need to enhance their education beyond age expectations. Our teachers actively curate the curriculum to suit each child’s talents. By giving exceptionally capable children the challenges they’re hungry for, we ensure they stay inspired, engaged and excited about what comes next.</p>
-        <ul class="cta-links__list" data-accordion>
-          <li class="cta-links__item is-open" data-anim="reveal" data-anim-type="nudge-right" data-accordion-item>
-            <button class="cta-links__link" type="button" aria-expanded="true" aria-controls="excellence-acceleration" data-accordion-toggle>Acceleration programs<svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button>
-            <div class="cta-links__panel" id="excellence-acceleration">
-              <div class="cta-links__body">
+        <ul class="fold" data-fold>
+          <li class="fold__item is-open" data-anim="reveal" data-anim-type="nudge-right">
+            <button class="fold__row" type="button" aria-expanded="true" aria-controls="excellence-acceleration">Acceleration programs<svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button>
+            <div class="fold__panel" id="excellence-acceleration">
+              <div class="fold__body">
                 <p>If your child is ready, our acceleration programs let them progress through the curriculum at a pace that matches their ability, not their age.</p>
                 <ul>
                   <li><strong>Flexible ability grouping (K-Year 2)</strong><br>Students who have already achieved the outcomes at their grade level have opportunities to be accelerated in English and Mathematics at their grade levels.</li>
@@ -27,20 +27,20 @@
               </div>
             </div>
           </li>
-          <li class="cta-links__item" data-anim="reveal" data-anim-type="nudge-right" data-accordion-item>
-            <button class="cta-links__link" type="button" aria-expanded="false" aria-controls="excellence-enrichment" data-accordion-toggle>Enrichment programs<svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button>
-            <div class="cta-links__panel" id="excellence-enrichment">
-              <div class="cta-links__body">
+          <li class="fold__item" data-anim="reveal" data-anim-type="nudge-right">
+            <button class="fold__row" type="button" aria-expanded="false" aria-controls="excellence-enrichment">Enrichment programs<svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button>
+            <div class="fold__panel" id="excellence-enrichment">
+              <div class="fold__body">
                 <p>For curious children, going faster isn’t always going further. Our enrichment programs allow gifted learners to go deeper, stretching far beyond the standard curriculum.</p>
                 <p><strong>Problem-based learning (K–6)</strong><br>Students tackle real-world problem-solving, often focusing on environmental issues. This program helps them develop collaboration, self-direction and genuine motivation.</p>
                 <p><strong>Excelsior (Years 3–6)</strong><br>For children who race ahead in Spelling Mastery, Excelsior classes offer real-world language and literature challenges designed to spark creative thinking.</p>
               </div>
             </div>
           </li>
-          <li class="cta-links__item" data-anim="reveal" data-anim-type="nudge-right" data-accordion-item>
-            <button class="cta-links__link" type="button" aria-expanded="false" aria-controls="excellence-provisions" data-accordion-toggle>Provisions<svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button>
-            <div class="cta-links__panel" id="excellence-provisions">
-              <div class="cta-links__body">
+          <li class="fold__item" data-anim="reveal" data-anim-type="nudge-right">
+            <button class="fold__row" type="button" aria-expanded="false" aria-controls="excellence-provisions">Provisions<svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button>
+            <div class="fold__panel" id="excellence-provisions">
+              <div class="fold__body">
                 <p>Some children need challenges to thrive. Provisions give them exactly that. Chosen by teachers or the students themselves, these include:</p>
                 <ul>
                   <li>Chess (K-Y6)</li>
@@ -55,10 +55,10 @@
               </div>
             </div>
           </li>
-          <li class="cta-links__item" data-anim="reveal" data-anim-type="nudge-right" data-accordion-item>
-            <button class="cta-links__link" type="button" aria-expanded="false" aria-controls="excellence-differentiation" data-accordion-toggle>Curriculum differentiation<svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button>
-            <div class="cta-links__panel" id="excellence-differentiation">
-              <div class="cta-links__body">
+          <li class="fold__item" data-anim="reveal" data-anim-type="nudge-right">
+            <button class="fold__row" type="button" aria-expanded="false" aria-controls="excellence-differentiation">Curriculum differentiation<svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button>
+            <div class="fold__panel" id="excellence-differentiation">
+              <div class="fold__body">
                 <p>Gifted learners don’t just need acceleration, they also need to be stretched; and in every direction. Our teachers use ‘curriculum differentiation’ so exceptional children are challenged by what they learn, how they learn, what they create, and where they learn it.</p>
                 <p><strong>Differentiated content</strong></p>
                 <ul>

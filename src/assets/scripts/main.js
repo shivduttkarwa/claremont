@@ -3,7 +3,7 @@
  */
 import "bootstrap/js/dist/offcanvas";
 import { Anim } from "./anim.js";
-import { initAccordions, initApproachAccordion, initCurrentNav, initHotspots, initMenu, initPlaceholderLinks, initQuoteCards, initRevealCards, initRevealColumns, initScrollers, initStickyHeader, initTabArrows } from "./ui.js";
+import { initApproachAccordion, initCurrentNav, initFolds, initHotspots, initMenu, initPlaceholderLinks, initQuoteCards, initScrollers, initStickyHeader, initTabArrows } from "./ui.js";
 import { initSearch } from "./search.js";
 import { initSliders } from "./slider.js";
 import { initPan } from "./pan.js";
@@ -16,14 +16,12 @@ document.addEventListener("DOMContentLoaded", () => {
   initPlaceholderLinks();
   initHotspots();
   initQuoteCards();
-  initRevealColumns();
-  initRevealCards();
   initScrollers();
   initPan(); // before the sliders: the snapped card width must be in place when Swiper measures
   initSliders();
   initTabArrows();
   initApproachAccordion();
-  initAccordions();
+  initFolds();
   initImageCarousels();
   initSearch();
   initStickyHeader();

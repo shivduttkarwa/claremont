@@ -47,7 +47,7 @@
     &.is-clipped > * { opacity: var(--scroller-dim); }
     // Figma rules each link card 2 wide, 1 in from its right edge, beside the 1 gap
     @media (min-width: @bp-lg) {
-      &:has(> .scroller__link)::after {
+      &::after {
         content: "";
         position: absolute;
         top: 0;
@@ -60,13 +60,20 @@
     }
   }
 
-  // Blue link card: title at (25, 21), arrow frame 20 down and 16 in from the right, copy 37 above the foot
-  &__link {
+  // Blue card: title at (25, 21), arrow frame 20 down and 16 in from the right, copy 37 above the foot. The card is the
+  // fold (_fold.less, .fold--hover): with a mouse from lg the first is open at rest and the one under the mouse after
+  &--reveal &__track {
+    --fold-hover: var(--color-heading);
+    --fold-body-top: 0;
+    --fold-body-bottom: 0;
+  }
+  &--reveal &__card,
+  &--reveal &__card:last-child { border: 0; } // the cards sit edge to edge, no rules (a transparent one would still take its pixel)
+  &__card {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     gap: var(--space-4);
-    height: 100%;
     min-height: 16rem;
     padding: 1.3125rem 1rem 2.3125rem 1.5625rem;
     background: var(--color-secondary);
@@ -74,48 +81,20 @@
     @media (min-width: @bp-lg) { min-height: var(--scroller-card-height); }
 
     h3 {
-      max-width: 16.125rem; // 258
+      max-width: none;
       margin: 0;
       font-size: var(--font-size-h2);
       line-height: var(--line-height-heading);
     }
-    .icon {
-      flex: none;
-      width: 2rem;
-      height: 1.625rem;
-      margin: -0.0625rem -0.375rem 0 0;
-      transition: transform var(--duration-base) var(--ease-out);
+    .fold__row {
+      align-items: flex-start;
+      min-height: var(--tap-size);
+      padding: 0;
+      font: inherit;
+      letter-spacing: inherit;
+      span { max-width: 16.125rem; } // 258
+      .icon { margin: -0.0625rem -0.375rem 0 0; }
     }
-    &:hover,
-    &:focus-visible { color: var(--color-heading); }
-  }
-
-  &__head {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: var(--space-2);
-  }
-
-  // With a mouse from lg only the open card shows its copy, which rises from the card foot
-  @media @fine-lg {
-    &__panel {
-      display: grid;
-      grid-template-rows: 0fr;
-      transition: grid-template-rows var(--duration-slow) var(--ease-out);
-    }
-    &__text {
-      min-height: 0;
-      overflow: hidden;
-      opacity: 0;
-      transition: opacity var(--duration-base) ease;
-    }
-    &__card.is-open &__panel { grid-template-rows: 1fr; }
-    &__card.is-open &__text {
-      opacity: 1;
-      transition-delay: 0.1s;
-    }
-    &__card.is-open &__link .icon { transform: rotate(90deg); }
   }
 
   &__text {
@@ -154,61 +133,43 @@
       background: var(--color-secondary);
     }
 
-    .scroller__card {
-      width: auto;
-      &.is-clipped > * { opacity: 1; }
+    .scroller__track {
+      --fold-rule: var(--color-text);
+      --fold-body-top: 0.125rem;    // 26 + 2: the copy 28 under the title
+      --fold-body-bottom: 1.625rem; // 26
     }
-
-    .scroller__link {
+    .scroller__card {
+      border-top: var(--border-width) solid var(--fold-rule);
+      &:last-child { border-bottom: var(--border-width) solid var(--fold-rule); }
+    }
+    .scroller__card {
       display: block;
-      height: auto;
+      width: auto;
       min-height: 0;
-      padding: 1.625rem var(--container-gutter); // 26
-      border-top: var(--border-width) solid var(--color-text);
+      padding: 0;
       background: none;
+      &.is-clipped > * { opacity: 1; }
 
       h3 {
-        max-width: none;
         font-size: var(--font-size-xl); // 25
         line-height: 1.12;              // 28: Figma draws its 27.5 line at a whole pixel
       }
-      .icon {
-        width: 1.625rem; // 26
-        height: 1.625rem;
-        margin: 0;
-        transition: transform var(--duration-slow) var(--ease-out);
+      .fold__row {
+        align-items: center;
+        padding: 1.625rem var(--container-gutter); // 26
+        span { max-width: none; }
+        .icon {
+          width: 1.625rem; // 26
+          height: 1.625rem;
+          margin: 0;
+        }
       }
     }
-
-    .scroller__panel {
-      display: grid;
-      grid-template-rows: 0fr;
-      transition: grid-template-rows var(--duration-slow) var(--ease-out);
-    }
-
+    .fold__body { padding-inline: var(--container-gutter); }
     .scroller__text {
-      min-height: 0;
       max-width: none;
-      overflow: hidden;
-      opacity: 0;
       font-size: 0.9375rem; // 15
       line-height: 1.5333;  // 23: Figma draws the 22.5 line at a whole pixel
-      transition: opacity var(--duration-base) ease;
-      // the 28 above the copy sits inside the fold, so it opens and shuts with the row instead of snapping
-      &::before {
-        content: "";
-        display: block;
-        height: 1.75rem; // 28
-      }
-    }
-
-    .scroller__card.is-open {
-      .scroller__panel { grid-template-rows: 1fr; }
-      .scroller__text {
-        opacity: 1;
-        transition-delay: 0.1s;
-      }
-      .scroller__link .icon { transform: rotate(90deg); }
     }
   }
 }

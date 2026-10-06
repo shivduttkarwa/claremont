@@ -28,6 +28,38 @@
   }
 }
 
+// The ruled fold's motion, shared by 05-components/_fold.less and the home approach's phone accordion (_approach.less):
+// a panel that opens as a grid row from 0fr to 1fr while its copy fades up a little, and is hidden once shut so nothing
+// in it can take focus. The clip sits on the panel, not the body: WebKit sizes the grid item at the fraction squared mid-fold.
+.fold-panel() {
+  display: grid;
+  grid-template-rows: 0fr;
+  overflow: hidden;
+  visibility: hidden;
+  transition: grid-template-rows var(--duration-fold) var(--ease-settle), visibility 0s linear var(--duration-fold);
+  @media (prefers-reduced-motion: reduce) { transition-duration: 0.01ms, 0s; }
+}
+.fold-panel-open() {
+  grid-template-rows: 1fr;
+  visibility: visible;
+  transition-delay: 0s;
+}
+.fold-body() {
+  min-height: 0;
+  opacity: 0;
+  transform: translateY(var(--fold-lift, 0.375rem)); // 6: the copy's rise as it fades in
+  transition: opacity var(--duration-fast) ease, transform var(--duration-fold) var(--ease-out);
+  @media (prefers-reduced-motion: reduce) {
+    transform: none;
+    transition: none;
+  }
+}
+.fold-body-open() {
+  opacity: 1;
+  transform: none;
+  transition: opacity var(--duration-base) ease 0.1s, transform var(--duration-fold) var(--ease-out);
+}
+
 // Oversize a parallax image by its travel so the scrub never exposes the section behind it.
 .parallax-media(@travel) {
   position: absolute;

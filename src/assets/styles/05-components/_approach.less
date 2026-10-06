@@ -348,14 +348,13 @@
 
 // ---------------------------------------------------------------------
 // Phones: the designer redrew this block as an accordion (canvas 1619:1791, node 2101:13731).
-// Four ruled rows on blue under one photo; the open row turns pale and shows its topics, and each topic shows its
-// own copy. The folds open and shut at once: every height transition on them shivered on iPhone Safari while the
-// same fold is fine on the other pages (2026-10-06), so only the copy fades in, the arrow turns and the pane's colour fades.
+// Four ruled rows on blue under one photo; the open row turns pale and unfolds its topics, and each topic unfolds its
+// own copy. Both are the site's fold (the .fold-panel() / .fold-body() mixins _fold.less uses): the desktop tabs and
+// hotspots share these elements in another layout, so the block keeps its own selectors and scripts instead of the fold__ classes.
 // ---------------------------------------------------------------------
 @media @upto-lg {
   .approach {
     --approach-pad-top: 0;
-    --approach-open-time: calc(var(--duration-base) + 0.1s); // 0.45s: the arrow and the pane's colour
 
     &__bar { display: none; }
 
@@ -370,7 +369,7 @@
       flex-direction: column;
       grid-area: auto;
       opacity: 1;
-      transition: background-color var(--approach-open-time) ease;
+      transition: background-color var(--duration-fold) ease;
       &:last-child { border-bottom: var(--border-width) solid var(--color-text); }
       &.is-open { background: var(--color-background-alt); }
     }
@@ -399,7 +398,7 @@
         flex: 0 0 auto;
         width: 1.625rem; // 26
         height: 1.625rem;
-        transition: transform var(--approach-open-time) var(--ease-out);
+        transition: transform var(--duration-fold) var(--ease-out);
       }
     }
     .tab-pane.is-open &__row .icon { transform: rotate(90deg); } // ↗ turns to ↘
@@ -426,30 +425,22 @@
     }
     #pane-teaching &__media { display: block; }
 
-    // Closed: no height, hidden so nothing in it can take focus. Open: the topics start 28 under the title and
-    // the pane ends 26 under the last one (margins on the first and last topic). Nested under .tab-pane to outrank
-    // the desktop cross-fade's transition.
+    // The pane's fold: the topics start 28 under the title and the pane ends 26 under the last one (margins on the
+    // first and last topic, inside the fold). Nested under .tab-pane to outrank the desktop cross-fade's transition.
     .tab-pane .approach__overlay {
+      .fold-panel();
       order: 2;
-      height: 0;
       padding: 0;
-      overflow: hidden;
-      visibility: hidden;
-      transition: none;
       > .container { display: none; } // the row header already carries the topic title
     }
-    .tab-pane.is-open .approach__overlay {
-      height: auto;
-      visibility: visible;
-    }
-    .tab-pane.is-open .hotspots { opacity: 1; }
+    .tab-pane.is-open .approach__overlay { .fold-panel-open(); }
+    .tab-pane.is-open .hotspots { .fold-body-open(); }
   }
 
   .hotspots {
+    .fold-body();
     margin: 0;
     padding-inline: var(--container-gutter);
-    opacity: 0;
-    transition: opacity var(--duration-base) ease;
   }
 
   .hotspot {
@@ -508,23 +499,16 @@
     &:first-child { margin-top: 0.125rem; }
     &:last-child { margin-bottom: 1.625rem; }
 
-    // The copy shows at once, 16 under its title (a spacer inside the card), and fades in
+    // The topic's fold: the copy 16 under its title (a spacer inside the card)
     &__card,
     &.is-open &__card {
-      display: block;
-      height: 0;
+      .fold-panel();
       max-width: none;
       margin-top: 0;
       padding-bottom: 0;
-      overflow: hidden;
-      visibility: hidden;
-      transition: none;
     }
-    &.is-open &__card {
-      height: auto;
-      visibility: visible;
-    }
-    &.is-open &__text { opacity: 1; }
+    &.is-open &__card { .fold-panel-open(); }
+    &.is-open &__text { .fold-body-open(); }
     &__text::before {
       content: "";
       display: block;
@@ -532,8 +516,7 @@
     }
     &__title { display: none; } // the marker label is the heading on phones
     &__text {
-      opacity: 0;
-      transition: opacity var(--duration-base) ease;
+      .fold-body();
       font-size: 0.9375rem; // 15
       line-height: var(--hotspot-line);
       letter-spacing: var(--letter-spacing-body);

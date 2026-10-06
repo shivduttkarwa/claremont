@@ -7,8 +7,6 @@
   --cta-list-inset: 0rem;        // list x relative to the half-way line
   --cta-row-pad-y: 1.15rem;      // 65.2 row pitch
   --cta-row-pad-x: 0.5rem;       // 8
-  --cta-icon-width: 2rem;        // 32 symbol (Figma frame is 26)
-  --cta-icon-height: 1.625rem;   // 26
 
   padding-block: var(--space-8);
   overflow-x: clip; // the links wait for their reveal 40 to the right, past a phone's edge
@@ -26,39 +24,8 @@
     @media (min-width: @bp-lg) { margin: var(--cta-list-offset) 0 0 var(--cta-list-inset); }
   }
 
-  &__list { .reset-list(); }
-
-  // the closing rule rides on the last row so the whole ruled block travels with the reveal
-  &__item {
-    border-top: var(--border-width) solid currentColor;
-    &:last-child { border-bottom: var(--border-width) solid currentColor; }
-  }
-
-  &__link {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--space-2);
-    padding: var(--cta-row-pad-y) var(--cta-row-pad-x);
-    color: var(--color-white);
-    font-size: var(--font-size-xl);
-    line-height: var(--line-height-snug);
-    letter-spacing: var(--letter-spacing-body);
-    transition: color var(--duration-fast) ease;
-
-    .icon {
-      width: var(--cta-icon-width);
-      height: var(--cta-icon-height);
-      margin-right: -0.375rem; // the 32 symbol overhangs Figma's 26 frame by 6
-      transition: transform var(--duration-base) var(--ease-out);
-    }
-
-    &:hover,
-    &:focus-visible {
-      color: var(--color-secondary);
-      .icon { transform: translate(0.25rem, -0.25rem); }
-    }
-  }
+  // the rows are the fold (_fold.less); the block only sets their pitch
+  .fold__row { padding: var(--cta-row-pad-y) var(--cta-row-pad-x); }
 
   &__intro {
     max-width: 37.5rem;
@@ -81,7 +48,7 @@
       --cta-list-inset: 0.3125rem;
       --cta-row-pad-x: 0rem;
     }
-    .cta-links__link {
+    .fold__row {
       gap: var(--space-1);
       padding-inline-start: 0.0625rem;
     }
@@ -106,74 +73,26 @@
       color: var(--color-heading);
     }
     .cta-links__intro { color: var(--color-text); }
-    .cta-links__link {
-      padding-inline: 0.0625rem 0.5rem;
-      color: var(--color-heading);
-      &:hover,
-      &:focus-visible { color: var(--color-green-hover); }
-    }
+    .fold { --fold-hover: var(--color-green-hover); }
+    .fold__row { padding-inline: 0.0625rem 0.5rem; }
   }
 }
 
-// K-6 academic excellence (1713:10392 and its three open states): the rows are an accordion, one open at a time.
-// The open row's copy starts 26 under its title and ends 30 above the next rule. The arrow points up and right at rest;
-// hovering or focusing a row turns it down and fills the row Light Blue, and the open row keeps it down. 81 of air under the closing rule
+// K-6 academic excellence (1713:10392 and its three open states): the rows fold, one open at a time, the first at rest.
+// The open row's copy starts 26 under its title and ends 30 above the next rule; hovering or focusing a row fills it
+// Light Blue, 9 past the title on the left as the dispositions' hover box does; 81 of air under the closing rule
 .cta-links--accordion {
   @media (min-width: @bp-lg) { --cta-pad-bottom: 5.0625rem; } // 81
-  .cta-links__link {
-    width: 100%;
-    border: 0;
-    background: none;
-    text-align: left;
-    position: relative;
-    z-index: var(--z-content); // above the next row, so the fill can cover its rule
-    isolation: isolate;
-    cursor: pointer;
-    // the fill runs 9 past the title on the left, as the dispositions' hover box does, and over the rules above and below
-    &::before {
-      content: "";
-      position: absolute;
-      inset: calc(-1 * var(--border-width)) 0 calc(-1 * var(--border-width)) calc(-1 * var(--cta-fill-bleed, 0rem));
-      z-index: var(--z-behind);
-      background: var(--color-secondary);
-      opacity: 0;
-      transition: opacity var(--duration-base) ease;
-    }
-    @media (min-width: @bp-lg) { --cta-fill-bleed: 0.5625rem; } // 9
-    &:hover,
-    &:focus-visible {
-      color: var(--color-heading);
-      .icon { transform: rotate(90deg); }
-    }
-    @media (hover: hover) {
-      &:hover::before { opacity: 1; }
-    }
-    &:focus-visible::before { opacity: 1; }
+  .fold {
+    --fold-hover: var(--color-heading);
+    --fold-fill: var(--color-secondary);
+    @media (min-width: @bp-lg) { --fold-fill-bleed: 0.5625rem; } // 9
   }
-  .is-open > .cta-links__link .icon { transform: rotate(90deg); }
-  // each row's reveal leaves a transform on it, so the hovered row itself is lifted for its fill to cover the next row's rule
-  .cta-links__item:has(> .cta-links__link:hover, > .cta-links__link:focus-visible) {
-    position: relative;
-    z-index: var(--z-content);
-  }
-
-  .cta-links__panel {
-    display: grid;
-    grid-template-rows: 0fr;
-    transition: grid-template-rows 0.45s var(--ease-settle);
-    @media (prefers-reduced-motion: reduce) { transition-duration: 0.01ms; }
-  }
-  .is-open > .cta-links__panel { grid-template-rows: 1fr; }
-
-  .cta-links__body {
-    min-height: 0;
-    overflow: hidden;
+  .fold__body {
     color: var(--color-text);
     font-size: 0.9375rem; // 15
     line-height: 1.5;     // 22.5
     letter-spacing: var(--letter-spacing-body);
-    > :first-child { padding-top: 0.25rem; } // 18 under the title from the row + 4: Figma's frames put the copy 43–54 under the title
-    > :last-child { margin-bottom: 1.875rem; } // 30 above the next rule
     p,
     ul { margin: 0 0 0.625rem; } // paragraph spacing 10
     ul {
@@ -223,14 +142,12 @@
       line-height: 1.5;        // 22.5
     }
 
-    .cta-links__list { margin-inline: calc(-1 * var(--container-gutter)); }
-    .cta-links__link {
-      padding: 1.625rem var(--container-gutter); // 26
-    }
-    .cta-links__body {
+    .fold { margin-inline: calc(-1 * var(--container-gutter)); }
+    .fold__row { padding: 1.625rem var(--container-gutter); } // 26
+    .fold__body {
+      --fold-body-top: 0.125rem;    // 26 + 2 = the 28
+      --fold-body-bottom: 1.625rem; // 26
       padding-inline: var(--container-gutter);
-      > :first-child { padding-top: 0.125rem; }   // 26 + 2 = the 28
-      > :last-child { margin-bottom: 1.625rem; } // 26
     }
   }
 }

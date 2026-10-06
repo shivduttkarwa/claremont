@@ -84,6 +84,7 @@ export function initHotspots(root = document) {
       if (!toggle) return;
       const item = toggle.closest("[data-hotspot]");
       openHotspot(group, item.classList.contains("is-open") ? null : item);
+      settleReveals(item.querySelector(".hotspot__card"));
     });
     group.addEventListener("keydown", (event) => {
       if (event.key === "Escape") openHotspot(group, null);
@@ -224,6 +225,7 @@ export function initApproachAccordion(root = document) {
         other.classList.toggle("is-open", on);
         other.querySelector("[data-approach-toggle]")?.setAttribute("aria-expanded", String(on));
       });
+      settleReveals(pane.querySelector(".approach__overlay"));
     });
   });
 }
@@ -242,78 +244,35 @@ export function initMenu(root = document) {
   });
 }
 
-// [data-accordion]: one [data-accordion-item] open at a time; its [data-accordion-toggle] opens it or, when open, closes it
-export function initAccordions(root = document) {
-  root.querySelectorAll("[data-accordion]").forEach((list) => {
-    const items = [...list.querySelectorAll("[data-accordion-item]")];
-    items.forEach((item) => {
-      item.querySelector("[data-accordion-toggle]")?.addEventListener("click", () => {
-        const open = !item.classList.contains("is-open");
-        items.forEach((other) => {
-          const on = other === item && open;
-          other.classList.toggle("is-open", on);
-          other.querySelector("[data-accordion-toggle]")?.setAttribute("aria-expanded", String(on));
-        });
-      });
-    });
-  });
+// The rows around a fold move without a scroll, so their scroll reveals are brought up to date once it has settled
+function settleReveals(panel) {
+  const settle = panel ? parseFloat(getComputedStyle(panel).transitionDuration) * 1000 : 0;
+  setTimeout(() => Anim.refresh(), settle + 50);
 }
 
-// One column open at a time: hover or click opens one from lg (one always stays open), a tap toggles below lg
-export function initRevealColumns(root = document) {
-  const desktop = window.matchMedia("(min-width: 992px)");
-  const mouse = window.matchMedia("(hover: hover) and (pointer: fine)");
-  root.querySelectorAll("[data-reveal-columns]").forEach((section) => {
-    const items = [...section.querySelectorAll(".link-columns__item:has([aria-expanded])")];
-    const open = (item, on = true) => {
+// [data-fold]: the ruled fold (_fold.less). One row open at a time; a row's button opens it, or shuts it when open.
+// .fold--hover also opens a row under the mouse from lg and keeps one open there (the columns and the activity cards)
+export function initFolds(root = document) {
+  const mouse = window.matchMedia("(min-width: 992px) and (hover: hover) and (pointer: fine)");
+  root.querySelectorAll("[data-fold]").forEach((list) => {
+    const items = [...list.querySelectorAll(".fold__item")].filter((item) => item.closest("[data-fold]") === list);
+    const rowOf = (item) => [...item.querySelectorAll(".fold__row[aria-expanded]")].find((row) => row.closest(".fold__item") === item);
+    const hover = list.classList.contains("fold--hover");
+    const setOpen = (open) => {
       items.forEach((other) => {
-        const state = other === item && on;
-        other.classList.toggle("is-open", state);
-        other.querySelector("[aria-expanded]")?.setAttribute("aria-expanded", String(state));
+        const on = other === open;
+        other.classList.toggle("is-open", on);
+        rowOf(other)?.setAttribute("aria-expanded", String(on));
       });
     };
-    items.forEach((item) => {
-      item.querySelector("[aria-expanded]")?.addEventListener("click", () => {
-        open(item, desktop.matches || !item.classList.contains("is-open"));
-      });
-      item.addEventListener("mouseenter", () => {
-        if (desktop.matches && mouse.matches) open(item);
-      });
+    list.addEventListener("click", (event) => {
+      const row = event.target.closest(".fold__row[aria-expanded]");
+      if (!row || row.closest("[data-fold]") !== list) return;
+      const item = row.closest(".fold__item");
+      setOpen(item.classList.contains("is-open") && !(hover && mouse.matches) ? null : item);
+      settleReveals(item.querySelector(":scope > .fold__panel"));
     });
-    items[0]?.parentElement.addEventListener("mouseleave", () => {
-      if (desktop.matches && mouse.matches) open(null);
-    });
-  });
-}
-
-// Cards whose copy shows on the open one only: with a mouse from lg all rest closed and hover or
-// focus opens one; below lg the cards are an accordion, so a tap toggles the copy instead of following the link
-export function initRevealCards(root = document) {
-  const mouse = window.matchMedia("(min-width: 992px) and (hover: hover) and (pointer: fine)");
-  const phone = window.matchMedia("(max-width: 991.98px)");
-  root.querySelectorAll("[data-reveal-cards]").forEach((track) => {
-    const cards = [...track.children];
-    const links = cards.map((card) => card.querySelector("a"));
-    const open = (card) => cards.forEach((other) => other.classList.toggle("is-open", other === card));
-    const sync = () =>
-      cards.forEach((card, i) => {
-        if (phone.matches && card.querySelector(".scroller__panel")) links[i].setAttribute("aria-expanded", String(card.classList.contains("is-open")));
-        else links[i].removeAttribute("aria-expanded");
-      });
-    track.addEventListener("mouseleave", () => mouse.matches && !track.contains(document.activeElement) && open(null));
-    cards.forEach((card, i) => {
-      card.addEventListener("mouseenter", () => mouse.matches && open(card));
-      card.addEventListener("focusin", () => mouse.matches && open(card));
-      links[i].addEventListener("click", (event) => {
-        if (!phone.matches || !card.querySelector(".scroller__panel")) return;
-        event.preventDefault();
-        if (card.classList.contains("is-open")) card.classList.remove("is-open");
-        else open(card);
-        sync();
-      });
-    });
-    phone.addEventListener("change", sync);
-    sync();
+    if (hover) items.forEach((item) => item.addEventListener("mouseenter", () => { if (mouse.matches) setOpen(item); }));
   });
 }
 

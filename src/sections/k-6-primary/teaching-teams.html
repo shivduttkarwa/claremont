@@ -3,9 +3,9 @@
      intro: TextBlock (optional, shown right of the title)
      image: ImageChooserBlock (optional, photo column first)
      items: ListBlock(StructBlock(title:CharBlock, body:RichTextBlock))
-     One column open at a time (Figma 1709:10317, 1709:10346, 1713:10369), the first at rest; see initRevealColumns.
+     The columns are the fold (_fold.less, initFolds, .fold--hover): one open at a time, the first at rest (Figma 1709:10317, 1709:10346, 1713:10369).
      Phones (2571:14024, rows 2571:14034): heading and copy, the square photo full-bleed, then the rows on Light Blue. -->
-<section class="link-columns link-columns--reveal link-columns--photo bg-light" aria-labelledby="teams-title" data-reveal-columns>
+<section class="link-columns link-columns--reveal link-columns--photo bg-light" aria-labelledby="teams-title">
   <div class="container">
     <div class="link-columns__header link-columns__header--split">
       <div class="row g-4 row-split">
@@ -18,30 +18,30 @@
       </div>
     </div>
   </div>
-  <div class="link-columns__grid" data-anim-group="fade-up">
+  <div class="link-columns__grid fold fold--hover" data-fold data-anim-group="nudge-right">
     <div class="link-columns__item link-columns__item--media">
       <img src="assets/images/k-6-primary/team.webp" alt="A Claremont teacher helping a student with her work" width="820" height="1120" loading="lazy" decoding="async">
     </div>
-    <div class="link-columns__item link-columns__item--body-323">
-      <h3><button class="link-columns__head" type="button" aria-expanded="false" aria-controls="teams-classroom"><span>Classroom teachers</span><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button></h3>
-      <div class="link-columns__panel" id="teams-classroom">
-        <div class="link-columns__body">
+    <div class="link-columns__item fold__item is-open link-columns__item--body-323">
+      <h3><button class="link-columns__head fold__row" type="button" aria-expanded="true" aria-controls="teams-classroom"><span>Classroom teachers</span><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button></h3>
+      <div class="fold__panel" id="teams-classroom">
+        <div class="fold__body">
           <p>Our Classroom Teachers identify each child’s readiness level and tailor learning experiences to match. Students are often grouped based on their point of need, interests, and learner profiles, allowing for personalised learning. Teachers implement tiered tasks, providing common content with varying levels of support, challenge, and complexity. Regular monitoring and assessment ensure that each student’s progress is closely tracked.</p>
         </div>
       </div>
     </div>
-    <div class="link-columns__item link-columns__item--body-301">
-      <h3><button class="link-columns__head" type="button" aria-expanded="false" aria-controls="teams-enrichment"><span>Learning enrichment teachers</span><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button></h3>
-      <div class="link-columns__panel" id="teams-enrichment">
-        <div class="link-columns__body">
+    <div class="link-columns__item fold__item link-columns__item--body-301">
+      <h3><button class="link-columns__head fold__row" type="button" aria-expanded="false" aria-controls="teams-enrichment"><span>Learning enrichment teachers</span><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button></h3>
+      <div class="fold__panel" id="teams-enrichment">
+        <div class="fold__body">
           <p>Our learning enrichment teachers collaborate with our classroom teachers. They focus on small groups of students who require either support or extension in English and Mathematics. These teachers assist with curriculum planning, deliver intensive reading interventions, conduct assessments and screenings, and help evaluate lessons and student outcomes.</p>
         </div>
       </div>
     </div>
-    <div class="link-columns__item link-columns__item--body-311">
-      <h3><button class="link-columns__head" type="button" aria-expanded="false" aria-controls="teams-assistants"><span>Teachers and learning assistants</span><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button></h3>
-      <div class="link-columns__panel" id="teams-assistants">
-        <div class="link-columns__body">
+    <div class="link-columns__item fold__item link-columns__item--body-311">
+      <h3><button class="link-columns__head fold__row" type="button" aria-expanded="false" aria-controls="teams-assistants"><span>Teachers and learning assistants</span><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button></h3>
+      <div class="fold__panel" id="teams-assistants">
+        <div class="fold__body">
           <p>Our Teaching and Learning Assistants support both Classroom and Learning Enrichment Teachers by helping students develop independent learning skills and take ownership of their tasks. They also deliver targeted reading interventions to small groups in collaboration with Learning Enrichment Teachers.</p>
         </div>
       </div>
