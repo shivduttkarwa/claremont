@@ -109,7 +109,10 @@
 
 // ---------------------------------------------------------------------
 // Phones: the home banner is redrawn as a square photo with the copy in a dark block beneath it
-// (node 2081:10708) rather than laid over the photo.
+// (node 2081:10708) rather than laid over the photo. --stacked-cta is the frames' other panel under a square photo,
+// the "Container" CTA component (policies M 2149:8690, 2573:15095): Dark Green, 70 of air above a 32 / 33.6 sans title,
+// the copy 20 under it at 16 / 24, the button 60 under the copy and the block ending 25 under the button, where the
+// next band of the same green starts.
 // ---------------------------------------------------------------------
 // The banner is a compositor layer (its photo moves under a clip). Where it meets another dark band on a fractional edge,
 // a fractional device ratio (DevTools at 75%, a desktop at 125%) anti-aliases its bottom row and lets the page's white
@@ -150,5 +153,28 @@
       font-size: 0.9375rem; // 15
       line-height: 1.5;     // 22.5
     }
+  }
+
+  .feature-banner--stacked-cta {
+    background: var(--color-primary);
+
+    > .container { padding-block: 4.375rem 1.5625rem; } // 70 / 25
+
+    h2 {
+      margin-bottom: 1.25rem; // 20
+      font-family: var(--font-body);
+      font-size: 2rem;     // 32
+      line-height: 1.05;   // 33.6
+      letter-spacing: var(--letter-spacing-body);
+    }
+
+    .feature-banner__text {
+      font-family: var(--font-ui);
+      font-size: 1rem;    // 16
+      line-height: 1.5;   // 24
+      letter-spacing: var(--letter-spacing-ui);
+    }
+
+    .feature-banner__actions { margin-top: 3.75rem; } // 60
   }
 }
