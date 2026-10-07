@@ -429,6 +429,8 @@
     // first and last topic, inside the fold). Nested under .tab-pane to outrank the desktop cross-fade's transition.
     .tab-pane .approach__overlay {
       .fold-panel();
+      position: static; // no stacking context: Safari layers a clipping one while a topic in it animates, and the list shivers on iPhone
+      z-index: auto;
       order: 2;
       padding: 0;
       > .container { display: none; } // the row header already carries the topic title
