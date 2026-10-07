@@ -40,10 +40,31 @@ const dimClipped = (swiper) => {
   update();
 };
 
+// The .swiper box clips the slides waiting off to the side, so a lazy photo there is not fetched until it slides in
+const loadAhead = (section) => {
+  const photos = section.querySelectorAll('.swiper-slide img[loading="lazy"]');
+  if (!photos.length) return;
+  const load = () => photos.forEach((img) => {
+    img.loading = "eager";
+    img.decode?.().catch(() => {});
+  });
+  if (!("IntersectionObserver" in window)) return load();
+  const watcher = new IntersectionObserver(
+    (entries) => {
+      if (!entries.some((entry) => entry.isIntersecting)) return;
+      watcher.disconnect();
+      load();
+    },
+    { rootMargin: "200% 0px" }
+  );
+  watcher.observe(section);
+};
+
 export function initSliders(root = document) {
   root.querySelectorAll("[data-slider]").forEach((section) => {
     const el = section.querySelector(".swiper");
     if (!el) return;
+    loadAhead(section);
     // data-slider-edge="md" keeps the .container-edge snap for tablets and up: phones run full-bleed
     const edgeOn = () => {
       const value = el.getAttribute("data-slider-edge");
