@@ -223,6 +223,19 @@
 
       &__quote,
       &__author { max-width: none; }
+
+      // the deck (_deck.less): the panel's blue sits under every card's copy, so one fades out over it before the next fades in
+      &__slider.is-deck &__track {
+        grid-template-rows: ~"minmax(0, 1fr) auto";
+        height: var(--quote-card-m);
+        &::before {
+          content: "";
+          grid-area: ~"2 / 1";
+          background: var(--color-secondary);
+        }
+      }
+      &__slider.is-deck &__caption { background: none; }
+      &__slider.is-deck .deck__shot { background: var(--color-background); } // under the 95% photo, as the page was
     }
   }
 

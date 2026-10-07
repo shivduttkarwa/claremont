@@ -8,8 +8,9 @@
      throwing it (pan.js). Hovering or focusing a card slides a Light Blue box with the quote and author up over the photo
      and turns the arrow down. Below lg it is
      the Swiper carousel (data-slider-below-lg): on tablets the active card's box is open and the peeking card dims; on
-     phones each card is the photo over the quote panel, the arrows, photo and quote filling one screen: a plain Swiper,
-     the cards fading up on scroll as the pillars do.
+     phones each card is the photo over the quote panel, the arrows, photo and quote filling one screen: the cards are one
+     stacked deck (data-slider-deck) and change as ref/wcc's split slider does, the next photo wiping up over the last
+     while the copy fades out and in.
      locals: id, title, intro (or ""), layout, prev_label, next_label, slides [{ image, alt, width, height, quote, author, role, url, link_label }] -->
 <section class="quote-slider quote-slider--{{ layout }}" aria-labelledby="{{ id }}" data-slider data-slider-below-lg data-pan>
   <div class="container">
@@ -25,18 +26,18 @@
     </div>
   </div>
 
-  <div class="swiper quote-slider__slider" data-slider-dim data-slider-open-active data-pan-hover>
+  <div class="swiper quote-slider__slider" data-slider-dim data-slider-open-active data-slider-deck data-pan-hover>
     <ul class="swiper-wrapper quote-slider__track" data-pan-track data-quote-cards data-anim="sequence" data-anim-type="wipe-up" data-anim-type-mobile="fade-up" data-anim-mobile="each" data-anim-scroll="timed" data-anim-start="top 65%" data-anim-stagger="0.2">
       <each loop="slide in slides">
       <li class="swiper-slide quote-slider__card" data-anim-item data-quote-card>
         <if condition="slide.url">
-        <a class="quote-slider__photo" href="{{ slide.url }}" aria-label="{{ slide.link_label }}"><img src="{{ slide.image }}" alt="{{ slide.alt }}" width="{{ slide.width }}" height="{{ slide.height }}" loading="lazy" decoding="async"><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+        <a class="quote-slider__photo deck__frame" href="{{ slide.url }}" aria-label="{{ slide.link_label }}"><span class="deck__shot"><img src="{{ slide.image }}" alt="{{ slide.alt }}" width="{{ slide.width }}" height="{{ slide.height }}" loading="lazy" decoding="async"></span><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
         </if>
         <else>
-        <div class="quote-slider__photo"><img src="{{ slide.image }}" alt="{{ slide.alt }}" width="{{ slide.width }}" height="{{ slide.height }}" loading="lazy" decoding="async"></div>
+        <div class="quote-slider__photo deck__frame"><span class="deck__shot"><img src="{{ slide.image }}" alt="{{ slide.alt }}" width="{{ slide.width }}" height="{{ slide.height }}" loading="lazy" decoding="async"></span></div>
         </else>
         <div class="quote-slider__caption">
-          <div class="quote-slider__text" data-anim="reveal" data-anim-type="fade-up" data-anim-media="(max-width: 767.98px)">
+          <div class="quote-slider__text deck__copy" data-anim="reveal" data-anim-type="fade-up" data-anim-media="(max-width: 767.98px)">
             <blockquote class="quote-slider__quote">{{ slide.quote }}</blockquote>
             <if condition="slide.author"><p class="quote-slider__author">{{ slide.author }}<if condition="slide.role"><br><span>{{ slide.role }}</span></if></p></if>
           </div>

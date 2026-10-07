@@ -60,6 +60,88 @@ const loadAhead = (section) => {
   watcher.observe(section);
 };
 
+const SWIPE = 40; // px of sideways travel that counts as a swipe
+
+// data-slider-deck: below md the slides are one stacked deck. The stylesheet draws the change; this names the states
+const buildDeck = (section, el) => {
+  const slides = [...el.querySelectorAll(".swiper-slide")];
+  const buttons = [section.querySelector("[data-slider-prev]"), section.querySelector("[data-slider-next]")];
+  let current = 0;
+  let queued = null;
+  let timer = 0;
+  let start = null;
+
+  const show = (index) => {
+    const to = Math.max(0, Math.min(slides.length - 1, index));
+    // one change at a time: a tap during it is kept and played next
+    if (timer) {
+      queued = to;
+      return;
+    }
+    const from = current;
+    current = to;
+    slides.forEach((slide, i) => {
+      slide.classList.toggle("is-active", i === to);
+      slide.classList.toggle("is-before", i < to);
+      slide.classList.toggle("is-leaving", i === from && from !== to);
+      if (i === to) slide.removeAttribute("aria-hidden");
+      else slide.setAttribute("aria-hidden", "true");
+    });
+    buttons.forEach((button, i) => {
+      const off = i ? to === slides.length - 1 : to === 0;
+      button?.classList.toggle("is-disabled", off);
+      if (button) button.disabled = off;
+    });
+    if (from === to) return;
+    timer = setTimeout(() => {
+      timer = 0;
+      slides[from].classList.remove("is-leaving");
+      const next = queued;
+      queued = null;
+      if (next !== null && next !== current) show(next);
+    }, parseFloat(getComputedStyle(el).getPropertyValue("--deck-time")) * 1000 || 0);
+  };
+  const back = () => show(current - 1);
+  const forward = () => show(current + 1);
+  const down = (event) => {
+    if (event.pointerType !== "mouse") start = { x: event.clientX, y: event.clientY };
+  };
+  const up = (event) => {
+    if (!start) return;
+    const dx = event.clientX - start.x;
+    const dy = event.clientY - start.y;
+    start = null;
+    if (Math.abs(dx) > SWIPE && Math.abs(dx) > Math.abs(dy)) show(current + (dx < 0 ? 1 : -1));
+  };
+  const cancel = () => { start = null; };
+
+  el.classList.add("is-deck");
+  show(0);
+  buttons[0]?.addEventListener("click", back);
+  buttons[1]?.addEventListener("click", forward);
+  el.addEventListener("pointerdown", down);
+  el.addEventListener("pointerup", up);
+  el.addEventListener("pointercancel", cancel);
+
+  return () => {
+    clearTimeout(timer);
+    buttons[0]?.removeEventListener("click", back);
+    buttons[1]?.removeEventListener("click", forward);
+    el.removeEventListener("pointerdown", down);
+    el.removeEventListener("pointerup", up);
+    el.removeEventListener("pointercancel", cancel);
+    el.classList.remove("is-deck");
+    slides.forEach((slide) => {
+      slide.classList.remove("is-active", "is-before", "is-leaving");
+      slide.removeAttribute("aria-hidden");
+    });
+    buttons.forEach((button) => {
+      button?.classList.remove("is-disabled");
+      if (button) button.disabled = false;
+    });
+  };
+};
+
 export function initSliders(root = document) {
   root.querySelectorAll("[data-slider]").forEach((section) => {
     const el = section.querySelector(".swiper");
@@ -121,11 +203,21 @@ export function initSliders(root = document) {
     // stylesheet lays the same slides out itself, so the Swiper is torn down there (styles cleaned)
     if (section.hasAttribute("data-slider-below-lg")) {
       const phone = window.matchMedia("(max-width: 991.98px)");
+      const deck = el.hasAttribute("data-slider-deck") ? window.matchMedia("(max-width: 767.98px)") : null;
+      let undeck = null;
       const sync = () => {
-        if (phone.matches && !el.swiper) build();
+        const stacked = !!deck?.matches;
+        if (stacked && el.swiper) teardown();
+        if (!stacked && undeck) {
+          undeck();
+          undeck = null;
+        }
+        if (stacked) undeck ||= buildDeck(section, el);
+        else if (phone.matches && !el.swiper) build();
         else if (!phone.matches && el.swiper) teardown();
       };
       phone.addEventListener("change", sync);
+      deck?.addEventListener("change", sync);
       sync();
       return;
     }
