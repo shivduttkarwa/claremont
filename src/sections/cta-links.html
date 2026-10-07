@@ -1,7 +1,7 @@
 <!-- @wagtail-block: cta_links
      title: CharBlock(required)
-     items: ListBlock(StructBlock(label:CharBlock, body:RichTextBlock))
-     The rows are the fold (_fold.less, initFolds), every row shut at rest, a click opens one; the copy here is placeholder. -->
+     links: ListBlock(StructBlock(label:CharBlock, page:PageChooserBlock))
+     The rows are the fold's link rows (_fold.less): each goes to its page. -->
 <section class="cta-links" aria-labelledby="cta-title">
   <div class="container">
     <div class="row g-4 row-split">
@@ -10,31 +10,10 @@
       </div>
       <div class="col-lg-6">
         <div class="cta-links__aside">
-          <ul class="fold" data-fold>
-            <li class="fold__item" data-anim="reveal" data-anim-type="fade">
-              <button class="fold__row" type="button" aria-expanded="false" aria-controls="start-preparatory">Preparatory Program<svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button>
-              <div class="fold__panel" id="start-preparatory">
-              <div class="fold__body">
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec nunc congue, ultricies felis at, malesuada erat. Morbi nisi nulla, blandit eget dolor id, aliquam vehicula dolor sagittis eleifend.</p>
-              </div>
-            </div>
-          </li>
-            <li class="fold__item" data-anim="reveal" data-anim-type="fade">
-              <button class="fold__row" type="button" aria-expanded="false" aria-controls="start-k-6">K-6 Primary<svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button>
-              <div class="fold__panel" id="start-k-6">
-              <div class="fold__body">
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec nunc congue, ultricies felis at, malesuada erat. Morbi nisi nulla, blandit eget dolor id, aliquam vehicula dolor sagittis eleifend.</p>
-              </div>
-            </div>
-          </li>
-            <li class="fold__item" data-anim="reveal" data-anim-type="fade">
-              <button class="fold__row" type="button" aria-expanded="false" aria-controls="start-tour">Book a tour<svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button>
-              <div class="fold__panel" id="start-tour">
-              <div class="fold__body">
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec nunc congue, ultricies felis at, malesuada erat. Morbi nisi nulla, blandit eget dolor id, aliquam vehicula dolor sagittis eleifend.</p>
-              </div>
-            </div>
-          </li>
+          <ul class="fold">
+            <li class="fold__item" data-anim="reveal" data-anim-type="fade"><a class="fold__row" href="preparatory-program.html">Preparatory Program<svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+            <li class="fold__item" data-anim="reveal" data-anim-type="fade"><a class="fold__row" href="k-6-primary.html">K-6 Primary<svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+            <li class="fold__item" data-anim="reveal" data-anim-type="fade"><a class="fold__row" href="contact-us.html#book-a-tour">Book a tour<svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
           </ul>
         </div>
       </div>
