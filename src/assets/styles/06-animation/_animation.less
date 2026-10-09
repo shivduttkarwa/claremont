@@ -50,9 +50,12 @@ html.lenis body { height: auto; }
 // each keeps its own layer before, during and after the move, so its rule is drawn the same throughout and never
 // snaps sharper as the fade ends. Not the approach rows: a layer beside the pane folding under it shivered on iPhone
 [data-anim="reveal"][data-anim-type="nudge-right"]:not(.approach__row),
-.link-columns__item,
 .link-grid__grid > li,
 .scroller__card { will-change: transform, opacity; }
+// only while stacked: side by side, each column's layer is rounded to the pixel grid on its own and leaves a hairline beside the open fill
+@media @upto-lg {
+  .link-columns__item { will-change: transform, opacity; }
+}
 
 // --- Reduced motion safety net --------------------------------------
 @media (prefers-reduced-motion: reduce) {

@@ -40,6 +40,8 @@
   }
 
   &__link {
+    position: relative;
+    isolation: isolate;
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
@@ -50,7 +52,6 @@
     color: var(--color-heading);
     font-size: var(--font-size-xl);
     line-height: var(--line-height-snug);
-    transition: color var(--duration-fast) ease;
     @media (min-width: @bp-lg) { min-height: var(--link-grid-row); }
 
     .icon {
@@ -60,10 +61,28 @@
       transition: transform var(--duration-base) var(--ease-out);
     }
 
-    &:hover,
+    // hover (1885:8652) with the dispositions' fill, as asked: Light Blue from 1 above the rule to the next rule and across
+    // the gap on the left, the arrow turned down; no underline
+    &::before {
+      content: "";
+      position: absolute;
+      inset: calc(-2 * var(--border-width)) 0 0 calc(-1 * var(--link-grid-gap));
+      z-index: var(--z-behind);
+      background: var(--color-secondary);
+      opacity: 0;
+      transition: opacity var(--duration-base) ease;
+    }
     &:focus-visible {
-      color: var(--color-green-hover);
-      .icon { transform: translate(0.25rem, -0.25rem); }
+      color: var(--color-heading);
+      &::before { opacity: 1; }
+      .icon { transform: rotate(90deg); }
+    }
+    @media (hover: hover) {
+      &:hover {
+        color: var(--color-heading);
+        &::before { opacity: 1; }
+        .icon { transform: rotate(90deg); }
+      }
     }
   }
 
@@ -90,13 +109,32 @@
       display: grid;
       grid-template-rows: auto 1fr; // the description sits at the cell foot
       &:last-child { border-bottom: 0; }
-      @media (min-width: @bp-lg) { min-height: var(--link-grid-row); }
+      @media (min-width: @bp-lg) {
+        position: relative;
+        isolation: isolate;
+        min-height: var(--link-grid-row);
+        will-change: auto; // a layer per cell is rounded to the pixel grid on its own, away from the next cell's rule
+        // the open cell's fill: 417 x 207, from 1 above its own rule to the next rule (1709:10228)
+        &::before {
+          content: "";
+          position: absolute;
+          inset: calc(-2 * var(--border-width)) 0 0 calc(-1 * var(--fold-fill-bleed));
+          z-index: var(--z-behind);
+          background: var(--fold-fill);
+          opacity: 0;
+          transition: opacity var(--duration-base) ease;
+        }
+        &.is-open::before { opacity: 1; }
+      }
     }
     .fold__row {
       .tap-area(); // the title row is 37 tall; the hit area grows, the cell does not
       align-items: flex-start;
       padding: 0.625rem 0.5rem 0 0; // title 11 below the 1px rule, arrow 8 in
       color: var(--color-heading);
+      @media (min-width: @bp-lg) {
+        &::after { content: none; }
+      }
     }
     .fold__panel {
       align-self: end;
@@ -125,9 +163,11 @@
       --link-grid-pad-top: 12.5rem;
       --link-grid-pad-bottom: 12.5rem;
       --link-grid-row: 13.75rem;
+      --link-grid-gap: 0.5rem; // 8: three 408 cells
     }
     .link-grid__grid {
       @media (min-width: @bp-xxl) { margin-inline: 0; } // rules run x 200 → 1440
+      > li { display: grid; } // the link fills its cell, so the hover fill runs to the next rule
     }
   }
 }
