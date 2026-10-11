@@ -1,0 +1,785 @@
+diff --git a/src/assets/scripts/anim.js b/src/assets/scripts/anim.js
+index 4b8e327..dbcacc1 100644
+--- a/src/assets/scripts/anim.js
++++ b/src/assets/scripts/anim.js
+@@ -31,6 +31,19 @@ const DEFAULTS = {
+ // viewport, trailing the scroll by `smooth` seconds, and stay revealed once they reach the end.
+ const SCRUB = { distance: 0.28, smooth: 0.4 };
+ 
++// Knobs for `wave-in` (the Mina Wylie photo). "% of the way in" is the share of its path already travelled.
++const WAVE = {
++  x: 120,               // start, % of its own width: + from the right, - from the left
++  y: 0,                 // start, % of its own height: + from below, - from above
++  scale: [1, 0.8, 1], // entering, smallest, at rest
++  zoomOutAt: 12,        // % of the way in where it starts to shrink
++  zoomInAt: 70,         // % of the way in where it is smallest and starts to grow
++  fadeBy: 8,            // % of the way in by which it is fully visible
++  ease: "power1.out",   // how the travel slows into place ("none" = even speed)
++};
++const WAVE_FRAMES = [[WAVE.fadeBy, { autoAlpha: 1 }], [WAVE.zoomOutAt, { scale: WAVE.scale[0] }], [WAVE.zoomInAt, { scale: WAVE.scale[1] }], [100, { scale: WAVE.scale[2] }]]
++  .reduce((frames, [at, vars]) => ({ ...frames, [`${at}%`]: { ...frames[`${at}%`], ...vars } }), { easeEach: "sine.inOut" });
++
+ // Every preset fades (autoAlpha) so the CSS FOUC guard works uniformly.
+ const REVEAL = {
+   "fade-up":    { from: { y: 15, autoAlpha: 0 },                to: { y: 0, autoAlpha: 1 } },
+@@ -41,7 +54,7 @@ const REVEAL = {
+   "from-right": { from: { x: "15%", autoAlpha: 0 },             to: { x: "0%", autoAlpha: 1 } },
+   "enter-right": { from: { x: "110%", autoAlpha: 0 },           to: { x: "0%", autoAlpha: 1, duration: 0.9, ease: "expo.out" } },
+   "nudge-right": { from: { x: 40, autoAlpha: 0 },               to: { x: 0, autoAlpha: 1 } },
+-  "swing-in":   { from: { xPercent: 92, yPercent: -145, rotation: 90, autoAlpha: 0 }, to: { xPercent: 0, yPercent: 0, rotation: 0, autoAlpha: 1, duration: 1.2, ease: "power3.out" } },
++  "wave-in":    { from: { xPercent: WAVE.x, yPercent: WAVE.y, scale: WAVE.scale[0], autoAlpha: 0 }, to: { xPercent: 0, yPercent: 0, keyframes: WAVE_FRAMES, duration: 1.2, ease: WAVE.ease } },
+   "drop":       { from: { y: -48, autoAlpha: 0 },               to: { y: 0, autoAlpha: 1, duration: 0.6, ease: "back.out(1.4)" } },
+   "pop":        { from: { autoAlpha: 0 },                       to: { autoAlpha: 1, duration: 0.6, ease: "power2.out" } },
+   // a crisp wipe from the bottom edge up, no fade: visibility flips as the tween starts
+diff --git a/src/assets/scripts/search.js b/src/assets/scripts/search.js
+index 0fa1568..92a34b2 100644
+--- a/src/assets/scripts/search.js
++++ b/src/assets/scripts/search.js
+@@ -114,6 +114,20 @@ export function initSearch(root = document) {
+   let failed = false;
+   let lastFocus = null;
+   let hideTimer;
++  let lockTimer;
++  const html = document.documentElement;
++
++  // Once the wash is up the page is locked: its scrollbar goes and the width it leaves is kept clear (_base.less)
++  const lock = () => {
++    const width = html.getBoundingClientRect().width;
++    html.classList.add("is-scroll-locked");
++    html.style.setProperty("--scrollbar-size", `${html.getBoundingClientRect().width - width}px`);
++  };
++  const unlock = () => {
++    clearTimeout(lockTimer);
++    html.classList.remove("is-scroll-locked");
++    html.style.removeProperty("--scrollbar-size");
++  };
+ 
+   // A script tag rather than fetch(): file:// blocks cross-origin fetches, and the
+   // built site is previewed from disk.
+@@ -161,6 +175,7 @@ export function initSearch(root = document) {
+ 
+     const hits = rank(query, records || []);
+     results.hidden = false;
++    results.scrollTop = 0;
+ 
+     if (!hits.length) {
+       const text = failed
+@@ -210,13 +225,11 @@ export function initSearch(root = document) {
+       }
+     }
+ 
+-    // Stopping Lenis clips the page scrollbar; the header and bar pad by its width so they do not slide
+-    const html = document.documentElement;
+-    html.style.setProperty("--scrollbar-size", `${window.innerWidth - html.clientWidth}px`);
+     box.hidden = false;
+     html.classList.add("has-search-open");
+     setExpanded(true);
+     Anim.stop();
++    lockTimer = setTimeout(lock, 400);
+     requestAnimationFrame(() => {
+       box.classList.add("is-open");
+       input.focus();
+@@ -230,13 +243,17 @@ export function initSearch(root = document) {
+   const close = () => {
+     if (box.hidden) return;
+     box.classList.remove("is-open");
+-    document.documentElement.classList.remove("has-search-open");
++    unlock();
+     setExpanded(false);
+-    Anim.start();
+-    const done = () => {
+-      box.hidden = true;
+-      document.documentElement.style.removeProperty("--scrollbar-size");
++    // Only the wash's own fade ends it: a button's colour change inside finishes sooner and would cut the fade short.
++    // The header stays above the wash until then (has-search-open), or the wash would cover it for the length of the fade
++    const done = (event) => {
++      if (event && (event.target !== box || event.propertyName !== "opacity")) return;
++      clearTimeout(hideTimer);
+       box.removeEventListener("transitionend", done);
++      box.hidden = true;
++      html.classList.remove("has-search-open");
++      Anim.start();
+     };
+     box.addEventListener("transitionend", done);
+     hideTimer = setTimeout(done, 400);
+@@ -282,6 +299,13 @@ export function initSearch(root = document) {
+     if (event.target.closest("a")) close();
+   });
+ 
++  // A list too short to scroll would hand the wheel or swipe on to the page behind
++  const hold = (event) => {
++    if (results.scrollHeight <= results.clientHeight && event.cancelable) event.preventDefault();
++  };
++  results.addEventListener("wheel", hold, { passive: false });
++  results.addEventListener("touchmove", hold, { passive: false });
++
+   box.addEventListener("keydown", (event) => {
+     if (event.key === "Escape") {
+       event.preventDefault();
+diff --git a/src/assets/styles/01-settings/_tokens.less b/src/assets/styles/01-settings/_tokens.less
+index 1719a56..7fb86d1 100644
+--- a/src/assets/styles/01-settings/_tokens.less
++++ b/src/assets/styles/01-settings/_tokens.less
+@@ -43,6 +43,9 @@
+   --color-line: var(--color-blue);
+   --color-background: var(--color-white);
+   --color-background-alt: var(--color-blue-light);
++  /* Chrome and Edge's own scrollbar greys: only the ends of the search overlay's scrollbar fade, never the bar's resting colours */
++  --scrollbar-thumb: #8b8b8b;
++  --scrollbar-track: #fcfcfc;
+ 
+   /* Interaction states (derived, not in Figma) */
+   --color-blue-tint: #e6f2ff;
+diff --git a/src/assets/styles/03-base/_base.less b/src/assets/styles/03-base/_base.less
+index 7f45d67..fc9a0a9 100644
+--- a/src/assets/styles/03-base/_base.less
++++ b/src/assets/styles/03-base/_base.less
+@@ -25,6 +25,23 @@ html {
+ // The root clips too: a phone browser pans to whatever sits past the edge when only body clips
+ html { overflow-x: clip; }
+ 
++// The browser's own scrollbar in its own colours, only thinner. The two colours are registered so the search overlay
++// can fade the bar out and back (_search.less)
++@property --scrollbar-thumb { syntax: "<color>"; inherits: true; initial-value: transparent; }
++@property --scrollbar-track { syntax: "<color>"; inherits: true; initial-value: transparent; }
++html {
++  scrollbar-width: thin;
++  transition: --scrollbar-thumb var(--duration-base) var(--ease-out), --scrollbar-track var(--duration-base) var(--ease-out);
++  @media (prefers-reduced-motion: reduce) { transition: none; }
++}
++
++// A locked page loses its scrollbar; its width (--scrollbar-size, set by the script that locks) is kept clear so nothing
++// shifts. A margin, not padding: the body clips at its own edge, so nothing that overhangs the page shows in that strip
++html.is-scroll-locked {
++  overflow: clip;
++  body { margin-right: var(--scrollbar-size, 0); }
++}
++
+ body {
+   background: var(--color-background);
+   color: var(--color-text);
+diff --git a/src/assets/styles/04-layout/_header.less b/src/assets/styles/04-layout/_header.less
+index eb793b0..81fd4a5 100644
+--- a/src/assets/styles/04-layout/_header.less
++++ b/src/assets/styles/04-layout/_header.less
+@@ -70,13 +70,12 @@
+   .container-edge { --edge-gutter: var(--header-gutter); }
+ 
+   // Figma 2125:14070 keeps the bar in view above the search wash: fixed sits where absolute did at scroll 0.
+-  // The page scrollbar is clipped while it is open, so its width is padded back to hold the nav still.
+   @media (min-width: @bp-lg) {
+     .has-search-open & {
+       position: fixed;
+       z-index: calc(var(--z-overlay) + 1);
+-      padding-right: var(--scrollbar-size, 0);
+     }
++    .is-scroll-locked & { padding-right: var(--scrollbar-size, 0); } // the locked page's scrollbar width, so the nav holds still
+   }
+   .has-search-open &.is-pinned { transform: none; }
+   // the phone menu opens under the bar (--z-header sits above it): a bar that had scrolled away comes back for it
+@@ -181,6 +180,32 @@
+     .tap-area();
+     .icon { width: 1.25rem; height: 1.25rem; }          // search 20 × 20
+     &--secondary .icon { width: 1.125rem; height: 1.375rem; } // pin 18 × 22
++    // search and close swap by fading through: one glyph is gone before the other comes up, and nothing turns
++    --tool-swap-out: calc(var(--duration-fast) / 2);
++    .icon {
++      transition: opacity var(--duration-fast) ease var(--tool-swap-out), transform var(--duration-fast) ease var(--tool-swap-out);
++      @media (prefers-reduced-motion: reduce) { transition: none; }
++    }
++    .site-header__tool-close {
++      position: absolute;
++      inset: 0;
++      width: 1.5625rem; // 25: the close's 1.6 stroke lands at the search glyph's 2
++      height: 1.5625rem;
++      margin: auto;
++    }
++    .site-header__tool-close,
++    &[aria-expanded="true"] .icon {
++      opacity: 0;
++      transform: scale(0.9);
++      transition-duration: var(--tool-swap-out);
++      transition-delay: 0s;
++    }
++    &[aria-expanded="true"] .site-header__tool-close {
++      opacity: 1;
++      transform: none;
++      transition-duration: var(--duration-fast);
++      transition-delay: var(--tool-swap-out);
++    }
+     &:hover,
+     &:focus-visible { color: var(--color-accent); }
+     @media (min-width: @bp-lg) { display: inline-flex; }
+diff --git a/src/assets/styles/05-components/_article.less b/src/assets/styles/05-components/_article.less
+index 6347fc3..dd88cbb 100644
+--- a/src/assets/styles/05-components/_article.less
++++ b/src/assets/styles/05-components/_article.less
+@@ -65,7 +65,7 @@
+     &:focus-visible {
+       color: var(--color-text);
+       .arrow-btn {
+-        background: var(--color-primary);
++        --btn-plate: var(--color-primary);
+         color: var(--color-white);
+       }
+     }
+diff --git a/src/assets/styles/05-components/_buttons.less b/src/assets/styles/05-components/_buttons.less
+index 680b209..97a2e76 100644
+--- a/src/assets/styles/05-components/_buttons.less
++++ b/src/assets/styles/05-components/_buttons.less
+@@ -1,5 +1,32 @@
+ // 05-components/_buttons.less — Bootstrap buttons re-themed via --bs-btn-*
+ 
++// A click presses the button to 97%, but only its plate (::after: the fill, and the ring on .btn), drawn in by a clip.
++// Scaled along with it, the label and icon are drawn afresh as the press settles and again as it ends, and hop a pixel
++// wherever the root or the display is scaled; a layer of their own stops the hop but leaves them soft at rest. A clip
++// moves by fractions of a pixel (an inset steps in whole ones, which read as a snap) and takes no layer, so the label
++// keeps its sharp edges. The fill is --btn-plate, never a background on the button itself, which would sit still behind it
++// It goes in on a plain ease-out over --duration-base and settles back out over --duration-slow: the first version ran both
++// ways on --ease-out, most of the move inside the first 70ms, which read as a snap
++.press-plate() {
++  --press-time: var(--duration-slow);
++  --press-ease: var(--ease-settle);
++  position: relative;
++  isolation: isolate;
++  &::after {
++    content: "";
++    position: absolute;
++    inset: 0;
++    z-index: -1;
++    background-color: var(--btn-plate);
++    clip-path: inset(-0.0625rem); // a pixel clear of the plate at rest, so its own edges are drawn, not the clip's
++  }
++  &:not(:disabled, .disabled, .is-disabled):active {
++    --press-time: var(--duration-base);
++    --press-ease: ease-out;
++    &::after { clip-path: ~"inset(max(1.5%, 0.09375rem))"; } // 1.5 at least, or a square arrow barely moves
++  }
++}
++
+ .btn {
+   --bs-btn-font-family: var(--font-body);
+   --bs-btn-font-size: var(--font-size-md);
+@@ -11,23 +38,36 @@
+   --bs-btn-border-radius: var(--radius-none);
+   --bs-btn-focus-box-shadow: none;
+   --btn-ring: var(--bs-btn-border-color);
++  --btn-plate: var(--bs-btn-bg);
++  .press-plate();
+   border: 0;
+-  box-shadow: inset 0 0 0 var(--bs-btn-border-width) var(--btn-ring);
++  background-color: transparent !important; // Bootstrap fills the button in every state; the plate carries the fill
+   letter-spacing: var(--letter-spacing-body);
+   white-space: nowrap;
+-  transition:
+-    color var(--duration-base) ease,
+-    background-color var(--duration-base) ease,
+-    box-shadow var(--duration-base) ease,
+-    scale var(--duration-base) var(--ease-out);
+-  &:hover { --btn-ring: var(--bs-btn-hover-border-color); }
+-  &:focus-visible { --btn-ring: var(--bs-btn-hover-border-color); }
++  transition: color var(--duration-base) ease;
++  &::after {
++    box-shadow: inset 0 0 0 var(--bs-btn-border-width) var(--btn-ring);
++    transition:
++      background-color var(--duration-base) ease,
++      box-shadow var(--duration-base) ease,
++      clip-path var(--press-time) var(--press-ease);
++  }
++  &:hover,
++  &:focus-visible {
++    --btn-ring: var(--bs-btn-hover-border-color);
++    --btn-plate: var(--bs-btn-hover-bg);
++  }
+   &.active,
+   &:active,
+-  &.show { --btn-ring: var(--bs-btn-active-border-color); }
++  &.show {
++    --btn-ring: var(--bs-btn-active-border-color);
++    --btn-plate: var(--bs-btn-active-bg);
++  }
+   &:disabled,
+-  &.disabled { --btn-ring: var(--bs-btn-disabled-border-color); }
+-  &:active { scale: 0.97; }
++  &.disabled {
++    --btn-ring: var(--bs-btn-disabled-border-color);
++    --btn-plate: var(--bs-btn-disabled-bg);
++  }
+ }
+ 
+ .btn-primary {
+@@ -66,14 +106,33 @@
+ 
+ // Label + trailing icon (Download): 158 wide = 24 + label + 9 + 36 icon frame + 14
+ .btn-icon {
++  --btn-icon-size: 1rem; // 16
+   display: inline-flex;
+   align-items: center;
+   gap: 1.1875rem;
+   padding-right: 1.5rem;
+   .icon {
+-    width: 1rem;
+-    height: 1rem;
++    width: var(--btn-icon-size);
++    height: var(--btn-icon-size);
++  }
++
++  // The Download arrow drops out through its tray and comes back in from above, once per hover (asked for; the tray
++  // is a symbol of its own and holds still)
++  @media (hover: hover) {
++    &:hover &__arrow { animation: btn-icon-drop var(--duration-slow); }
+   }
++  &:focus-visible &__arrow { animation: btn-icon-drop var(--duration-slow); }
++  @media (prefers-reduced-motion: reduce) {
++    &:hover &__arrow,
++    &:focus-visible &__arrow { animation: none; }
++  }
++}
++
++@keyframes btn-icon-drop {
++  0% { transform: none; animation-timing-function: var(--ease-in); }
++  45% { transform: translateY(var(--btn-icon-size)); animation-timing-function: step-end; }
++  46% { transform: translateY(calc(-1 * var(--btn-icon-size))); animation-timing-function: var(--ease-out); }
++  100% { transform: none; }
+ }
+ 
+ // Square arrow buttons (carousel / tab navigation)
+@@ -85,14 +144,17 @@
+   height: var(--control-height);
+   padding: 0;
+   border: 0;
+-  background: var(--color-secondary);
++  --btn-plate: var(--color-secondary);
++  .press-plate();
++  background: none;
+   color: var(--color-primary);
+   cursor: pointer;
+-  transition:
+-    background-color var(--duration-base) ease,
+-    color var(--duration-base) ease,
+-    scale var(--duration-base) var(--ease-out);
+-  &:active { scale: 0.97; }
++  transition: color var(--duration-base) ease;
++  &::after {
++    transition:
++      background-color var(--duration-base) ease,
++      clip-path var(--press-time) var(--press-ease);
++  }
+ 
+   .icon {
+     width: 1.25rem; // 20: the 19-unit glyph lands on Figma's 18.6 × 18.3 arrow
+@@ -102,13 +164,13 @@
+   &--prev .icon { transform: rotate(180deg); }
+ 
+   &:focus-visible {
+-    background: var(--color-primary);
++    --btn-plate: var(--color-primary);
+     color: var(--color-white);
+   }
+   // A tapped arrow stays on screen, so hover only styles devices that really hover
+   @media (hover: hover) {
+     &:not(:disabled, .is-disabled):hover {
+-      background: var(--color-primary);
++      --btn-plate: var(--color-primary);
+       color: var(--color-white);
+     }
+   }
+@@ -117,7 +179,7 @@
+   // would show a disabled prev arrow as live until the reveal hands the opacity back
+   &:disabled,
+   &.is-disabled {
+-    background: ~"color-mix(in srgb, var(--color-secondary) 40%, transparent)";
++    --btn-plate: ~"color-mix(in srgb, var(--color-secondary) 40%, transparent)";
+     color: ~"color-mix(in srgb, var(--color-primary) 40%, transparent)";
+     cursor: default;
+   }
+diff --git a/src/assets/styles/05-components/_contact.less b/src/assets/styles/05-components/_contact.less
+index 1b41003..ff6be7d 100644
+--- a/src/assets/styles/05-components/_contact.less
++++ b/src/assets/styles/05-components/_contact.less
+@@ -7,6 +7,9 @@
+   --contact-row: var(--tap-size);   // 44 on touch, 35 as designed for a mouse
+   --contact-field-gap: 1.9375rem;   // 31
+   --contact-rule: var(--color-text);
++  --contact-line: var(--border-width-thick);
++  // a whole pixel where the root is scaled, or the focus line is a row heavier on one field than the next
++  @supports (width: round(down, 3rem, 1px)) { --contact-line: ~"round(nearest, var(--border-width-thick), 1px)"; }
+ 
+   padding-block: var(--space-8);
+   @media (min-width: @bp-lg) { padding-block: var(--contact-pad-top) var(--contact-pad-bottom); }
+@@ -77,21 +80,31 @@
+     .form-control {
+       padding: 0.625rem 0;
+       @media @fine-lg { padding: 0 0 0.46875rem; } // rule 31 under the value top
++      // The rule and the focus line are both backgrounds on the border's row. The line grows from the left as the rule gives
++      // way to the right, so they are never stacked: at a scaled root they snap to different rows and the rule showed under the line
+       border-width: 0 0 var(--border-width);
+-      border-color: var(--contact-rule);
++      border-color: transparent;
+       border-radius: var(--radius-none);
+-      background: transparent;
++      background-color: transparent;
++      background-image: linear-gradient(var(--color-primary), var(--color-primary)), linear-gradient(var(--contact-rule), var(--contact-rule));
++      background-repeat: no-repeat;
++      background-position: left bottom, right bottom;
++      background-size: 0 var(--contact-line), 100% var(--border-width);
++      background-origin: border-box;
++      background-clip: border-box;
+       font-size: var(--font-size-md);
+       @media @fine-lg { font-size: var(--font-size-base); }
+       line-height: var(--line-height-body);
+       letter-spacing: var(--letter-spacing-body);
+       color: var(--color-text);
+-      transition: border-color var(--duration-fast) ease, box-shadow var(--duration-fast) ease;
++      transition: background-size var(--duration-fold) var(--ease-settle);
+       &::placeholder { color: var(--color-muted); }
+       &:focus {
+-        border-color: var(--color-primary);
+-        box-shadow: 0 var(--border-width) 0 0 var(--color-primary);
++        border-color: transparent;
++        background-size: 100% var(--contact-line), 0 var(--border-width);
++        box-shadow: none;
+       }
++      @media (prefers-reduced-motion: reduce) { transition: none; }
+     }
+ 
+     textarea.form-control {
+@@ -103,7 +116,7 @@
+         height: 7.4375rem;
+         min-height: 7.4375rem;
+         padding-top: 5.5rem;
+-        transition: border-color var(--duration-fast) ease, box-shadow var(--duration-fast) ease, padding-top var(--duration-base) var(--ease-out);
++        transition: background-size var(--duration-fold) var(--ease-settle), padding-top var(--duration-base) var(--ease-out);
+         &:focus,
+         &:not(:placeholder-shown) { padding-top: 0.5rem; } // the placeholder rises from the last line to the first
+       }
+diff --git a/src/assets/styles/05-components/_search.less b/src/assets/styles/05-components/_search.less
+index 797b205..9a05957 100644
+--- a/src/assets/styles/05-components/_search.less
++++ b/src/assets/styles/05-components/_search.less
+@@ -2,6 +2,14 @@
+ // wash over the page with the header showing through and a 768 bar at the nav's left edge. Phone (2125:14449): a solid
+ // panel with the bar centred, a back arrow and the search glyph lit beneath it.
+ 
++// A browser cannot fade its own scrollbar, so from opening until the wash has gone the bar is given its usual greys as
++// colours (pixel for pixel the same in Chrome and Edge), and those fade to Dark Green and back with the wash
++html.has-search-open { scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track); }
++html:has(.search.is-open) {
++  --scrollbar-thumb: var(--color-green-dark);
++  --scrollbar-track: var(--color-green-dark);
++}
++
+ .search {
+   --search-bar-width: 48rem;             // 768
+   --search-bar-top: 6.6875rem;           // 107
+@@ -14,11 +22,10 @@
+   position: fixed;
+   inset: 0;
+   z-index: var(--z-overlay);
+-  padding-right: var(--scrollbar-size, 0); // the clipped page scrollbar's width, so the bar holds still
+-  overflow-y: auto;
+-  overscroll-behavior: contain;
+-  .hide-scrollbar();
+-  background: ~"color-mix(in srgb, var(--color-green-dark) 90%, transparent)";
++  // the wash eases into Dark Green over five scrollbar widths at its right edge, where the bar (or, once the page is
++  // locked, the place it left, which the wash then covers) is that green too, so no seam shows; no scrollbar, no fade
++  padding-right: var(--scrollbar-size, 0);
++  background: ~"linear-gradient(to left, var(--color-green-dark) var(--scrollbar-size, 0rem), color-mix(in srgb, var(--color-green-dark) 90%, transparent) calc((100vw - 100%) * 5 + var(--scrollbar-size, 0rem) * 6))";
+   color: var(--color-white);
+   opacity: 0;
+   transition: opacity var(--duration-base) var(--ease-out);
+@@ -26,11 +33,8 @@
+   &[hidden] { display: none; }
+   &.is-open { opacity: 1; }
+ 
+-  // A hair taller than the viewport makes the overlay its own scroller: wheel and touch stay inside it
+-  // (overscroll-behavior), the page keeps its scrollbar and the header above does not shift
+   &__panel {
+-    min-height: ~"calc(100% + 0.0625rem)";
+-    padding-bottom: var(--space-8);
++    height: 100%;
+     transform: translateY(-0.5rem);
+     transition: transform var(--duration-base) var(--ease-out);
+     .is-open & { transform: none; }
+@@ -40,15 +44,19 @@
+   &__top,
+   &__tools { display: none; }
+ 
+-  // The bar and its results share one column under the header tools
++  // The bar and its results share one column under the header tools; the bar holds still and only the results scroll
+   &__body {
++    display: flex;
++    flex-direction: column;
+     width: var(--search-bar-width);
++    height: 100%;
+     margin: 0 calc(var(--header-gutter) + var(--search-bar-inset)) 0 auto;
+     padding-top: var(--search-bar-top);
+   }
+ 
+   &__form {
+     display: flex;
++    flex: none;
+     gap: var(--space-1); // 8
+   }
+ 
+@@ -77,24 +85,31 @@
+   // doing; Light Blue while clicked (2125:14377), and the same plain fade under the mouse and on keyboard focus
+   &__form &__submit {
+     flex: 0 0 auto;
+-    background: var(--color-accent);
++    --btn-plate: var(--color-accent);
+     color: var(--color-primary);
+     &:active,
+     &:focus-visible {
+-      background: var(--color-secondary);
++      --btn-plate: var(--color-secondary);
+       color: var(--color-primary);
+     }
+     @media (hover: hover) {
+       &:hover {
+-        background: var(--color-secondary);
++        --btn-plate: var(--color-secondary);
+         color: var(--color-primary);
+       }
+     }
+   }
+ 
+-  // Results (no Figma state: a plain list in the site's tokens until Wagtail renders them)
++  // Results (no Figma state: a plain list in the site's tokens until Wagtail renders them). They scroll in their own
++  // box, fading out as they reach the bar
+   &__results {
+-    margin-top: var(--space-4);
++    flex: 0 1 auto;
++    min-height: 0;
++    padding: var(--space-4) 0 var(--space-8);
++    overflow-y: auto;
++    overscroll-behavior: contain;
++    .hide-scrollbar();
++    mask-image: linear-gradient(to bottom, transparent, var(--color-white) var(--space-2));
+     &[hidden] { display: none; }
+   }
+ 
+@@ -171,16 +186,26 @@
+     --search-go-size: 1.6875rem;   // 27
+     --header-logo-width: ~"min(13.28125rem, 59vw)"; // the top row repeats the bar's logo
+     --header-logo-top: 0;
++    --search-body-top: 3.75rem;    // 60
++    --search-body-bottom: ~"max(3.75rem, env(safe-area-inset-bottom))"; // 60
+     background: var(--color-green-dark);
+ 
++    // on a short screen (a phone on its side) the results take the air around the tools
++    @media (max-height: 31.25rem) {
++      &:has(.search__results:not([hidden])) {
++        --search-body-top: var(--space-3);
++        --search-tools-top: var(--space-2);
++      }
++    }
++
+     .search__panel {
+       display: flex;
+       flex-direction: column;
+-      padding-bottom: 0;
+     }
+ 
+     .search__top {
+       display: flex;
++      flex: none;
+       align-items: center;
+       justify-content: space-between;
+       min-height: var(--header-height);
+@@ -203,18 +228,24 @@
+     }
+ 
+     .search__body {
+-      flex: 1 0 auto;
+-      display: flex;
+-      flex-direction: column;
++      flex: 1 1 auto;
+       justify-content: center;
+       width: auto;
++      height: auto;
++      min-height: 0;
+       margin: 0;
+-      padding: 3.75rem var(--container-gutter); // 60
+-      padding-bottom: ~"max(3.75rem, env(safe-area-inset-bottom))";
++      padding: var(--search-body-top) var(--container-gutter) var(--search-body-bottom);
++    }
++
++    // the list runs on through the panel's bottom padding to the edge of the screen
++    .search__results {
++      margin-bottom: calc(-1 * var(--search-body-bottom));
++      padding-bottom: var(--search-body-bottom);
+     }
+ 
+     .search__tools {
+       display: flex;
++      flex: none;
+       align-items: center;
+       justify-content: center;
+       gap: var(--search-tools-gap);
+diff --git a/src/assets/styles/05-components/_split-feature.less b/src/assets/styles/05-components/_split-feature.less
+index 21ac660..d26da19 100644
+--- a/src/assets/styles/05-components/_split-feature.less
++++ b/src/assets/styles/05-components/_split-feature.less
+@@ -36,7 +36,7 @@
+     p { margin-bottom: var(--split-paragraph-gap); }
+   }
+ 
+-  // The slot stays untransformed so the scrubbed reveal can trigger from it; the figure inside swings
++  // The slot stays untransformed so the scrubbed reveal can trigger from it; the figure inside slides in
+   &__media {
+     max-width: 28rem;
+     margin: var(--space-4) auto 0;
+diff --git a/src/assets/styles/06-animation/_animation.less b/src/assets/styles/06-animation/_animation.less
+index fb17d9c..42306cb 100644
+--- a/src/assets/styles/06-animation/_animation.less
++++ b/src/assets/styles/06-animation/_animation.less
+@@ -43,7 +43,6 @@ html.lenis,
+ html.lenis body { height: auto; }
+ .lenis.lenis-smooth { scroll-behavior: auto !important; }
+ .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+-.lenis.lenis-stopped { overflow: clip; }
+ .lenis.lenis-smooth iframe { pointer-events: none; }
+ 
+ // Ruled rows that slide in one by one (data-anim-type="nudge-right"), and the ruled cards that fade up as a group:
+diff --git a/src/assets/styles/06-animation/_page-transition.less b/src/assets/styles/06-animation/_page-transition.less
+index ed44ce1..425c31f 100644
+--- a/src/assets/styles/06-animation/_page-transition.less
++++ b/src/assets/styles/06-animation/_page-transition.less
+@@ -9,6 +9,16 @@
+ 
+ ::view-transition { background: var(--color-primary-dark); }
+ 
++// A page's snapshot includes its scrollbar's place, painted blank, which shows as a pale strip down the right edge of
++// the page that settles back. That page's box stops short of it (--page-scrollbar, from the head script) and crops it
++.page-snapshot-crop() {
++  width: calc(100% - var(--page-scrollbar, 0rem) - var(--border-width)); // and a pixel more: scaled, the edge blends with the next column
++  height: 100%;
++  overflow: clip; // a snapshot overflows its box unless told to clip
++  object-fit: none;
++  object-position: left top;
++}
++
+ ::view-transition-group(root) { animation-duration: var(--page-slide-total); }
+ 
+ // The default cross-fade blends the two pages with plus-lighter, which would wash out the overlap
+@@ -24,6 +34,7 @@
+   animation-name: page-recede;
+   animation-duration: var(--page-slide-total);
+   animation-timing-function: var(--ease-out);
++  .page-snapshot-crop();
+ }
+ 
+ // The corners hold still: animating border-radius takes the whole slide off the compositor, where the new page's script stalls it
+@@ -38,6 +49,7 @@
+ html:active-view-transition-type(back) {
+   &::view-transition-old(root) {
+     z-index: 1;
++    width: 100%;
+     animation-name: page-slide-out;
+     animation-duration: var(--page-slide);
+     animation-timing-function: var(--ease-page);
+@@ -51,6 +63,7 @@ html:active-view-transition-type(back) {
+     animation-timing-function: var(--ease-out);
+     border-radius: 0;
+     box-shadow: none;
++    .page-snapshot-crop();
+   }
+ }
+ 
+diff --git a/src/partials/head.html b/src/partials/head.html
+index 2209e58..7631c52 100644
+--- a/src/partials/head.html
++++ b/src/partials/head.html
+@@ -19,6 +19,14 @@
+       }, { once: true });
+       requestAnimationFrame(function () { resolve(null); });
+     });
++    // the page left hands on its scrollbar's width, so the transition can crop the blank strip out of its snapshot
++    // (read on every reveal: a page brought back by the back button is not loaded again)
++    addEventListener("pageswap", function () {
++      try { sessionStorage.setItem("page-scrollbar", Math.ceil(innerWidth - d.getBoundingClientRect().width) + "px"); } catch (e) {}
++    });
++    addEventListener("pagereveal", function () {
++      try { d.style.setProperty("--page-scrollbar", sessionStorage.getItem("page-scrollbar") || "0px"); } catch (e) {}
++    });
+     // if the bundle never runs, drop the guard rather than leave the page hidden
+     addEventListener("load", function () {
+       setTimeout(function () { if (!d.hasAttribute("data-anim-live")) d.classList.remove("anim-ready"); }, 800);
+diff --git a/src/partials/header.html b/src/partials/header.html
+index 92ff81e..cf08ae7 100644
+--- a/src/partials/header.html
++++ b/src/partials/header.html
+@@ -17,6 +17,7 @@
+         <div class="site-header__tools">
+           <button class="site-header__tool" type="button" aria-label="Search" data-search-open aria-haspopup="dialog" aria-controls="site-search" data-anim-item>
+             <svg class="icon"><use href="#icon-search"></use></svg>
++            <svg class="icon site-header__tool-close" aria-hidden="true"><use href="#icon-close"></use></svg>
+           </button>
+           <a class="site-header__tool site-header__tool--secondary" href="contact-us.html" aria-label="Find us" data-anim-item>
+             <svg class="icon"><use href="#icon-location"></use></svg>
+diff --git a/src/partials/icons.html b/src/partials/icons.html
+index a124a78..d8c2f67 100644
+--- a/src/partials/icons.html
++++ b/src/partials/icons.html
+@@ -104,9 +104,11 @@
+   <symbol id="icon-bolt" viewBox="0 0 23 29" fill="none">
+     <path d="M16.6373 3.69911C16.7858 3.26622 16.787 2.79427 16.6405 2.36063C16.4941 1.92699 16.2088 1.5574 15.8313 1.31244C15.4539 1.06748 15.0067 0.961682 14.5632 1.0124C14.1196 1.06312 13.706 1.26734 13.3901 1.59159L1.5771 13.7426C1.30166 14.0257 1.11403 14.3865 1.03794 14.7794C0.961861 15.1722 1.00074 15.5794 1.14967 15.9496C1.2986 16.3197 1.55088 16.636 1.87461 16.8587C2.19835 17.0813 2.57899 17.2001 2.96841 17.2002H8.22124C8.32609 17.2004 8.42937 17.2263 8.52245 17.276C8.61553 17.3256 8.69569 17.3974 8.75623 17.4855C8.81676 17.5735 8.85591 17.6752 8.87039 17.782C8.88487 17.8888 8.87426 17.9977 8.83946 18.0994L6.36267 25.3009C6.2141 25.7339 6.21302 26.2061 6.35962 26.6398C6.50622 27.0736 6.79178 27.4432 7.16946 27.6881C7.54714 27.9329 7.99452 28.0385 8.43819 27.9874C8.88187 27.9364 9.2955 27.7317 9.61124 27.4071L21.4242 15.2561C21.6993 14.9728 21.8865 14.612 21.9623 14.2192C22.0381 13.8265 21.999 13.4195 21.85 13.0496C21.7009 12.6797 21.4487 12.3635 21.125 12.1411C20.8013 11.9186 20.4208 11.7999 20.0316 11.7998H14.7853C14.6802 11.7999 14.5766 11.7741 14.4832 11.7245C14.3898 11.6749 14.3094 11.6029 14.2487 11.5147C14.188 11.4264 14.1487 11.3244 14.1343 11.2174C14.1199 11.1103 14.1307 11.0012 14.1658 10.8993L16.6373 3.69911Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+   </symbol>
+-  <symbol id="icon-download" viewBox="10.39 -7.78 15.49 15.38" fill="none">
++  <symbol id="icon-download-arrow" viewBox="10.39 -7.78 15.49 15.38" fill="none">
+     <path fill="currentColor" fill-rule="nonzero" transform="matrix(1.00000 0.00000 0.00000 1.00000 18.137 -7.182)" d="M-0.6 11.03C-0.6 11.3614 -0.331371 11.63 0 11.63C0.331371 11.63 0.6 11.3614 0.6 11.03L0 11.03L-0.6 11.03ZM0.6 0C0.6 -0.331371 0.331371 -0.6 0 -0.6C-0.331371 -0.6 -0.6 -0.331371 -0.6 0L0 0L0.6 0ZM0 11.03L0.6 11.03L0.6 0L0 0L-0.6 0L-0.6 11.03L0 11.03Z"/>
+     <path fill="currentColor" fill-rule="nonzero" transform="matrix(1.00000 0.00000 0.00000 1.00000 12.008 -0.879)" d="M0.366649 -0.47494C0.104347 -0.677435 -0.272445 -0.628952 -0.47494 -0.366649C-0.677435 -0.104347 -0.628952 0.272445 -0.366649 0.47494L0 0L0.366649 -0.47494ZM6.12331 4.72714L5.75666 5.20208C5.97265 5.36882 6.27396 5.36882 6.48996 5.20208L6.12331 4.72714ZM12.6133 0.47494C12.8756 0.272445 12.924 -0.104347 12.7216 -0.366649C12.5191 -0.628952 12.1423 -0.677435 11.88 -0.47494L12.2466 0L12.6133 0.47494ZM0 0L-0.366649 0.47494L5.75666 5.20208L6.12331 4.72714L6.48996 4.2522L0.366649 -0.47494L0 0ZM6.12331 4.72714L6.48996 5.20208L12.6133 0.47494L12.2466 0L11.88 -0.47494L5.75666 4.2522L6.12331 4.72714Z"/>
++  </symbol>
++  <symbol id="icon-download-tray" viewBox="10.39 -7.78 15.49 15.38" fill="none">
+     <path fill="currentColor" fill-rule="nonzero" transform="matrix(1.00000 0.00000 0.00000 1.00000 10.992 7.000)" d="M14.2877 0.6C14.6191 0.6 14.8877 0.331371 14.8877 0C14.8877 -0.331371 14.6191 -0.6 14.2877 -0.6L14.2877 0L14.2877 0.6ZM0 -0.6C-0.331371 -0.6 -0.6 -0.331371 -0.6 0C-0.6 0.331371 -0.331371 0.6 0 0.6L0 0L0 -0.6ZM14.2877 0L14.2877 -0.6L0 -0.6L0 0L0 0.6L14.2877 0.6L14.2877 0Z"/>
+   </symbol>
+   <symbol id="icon-contact-phone" viewBox="3.72 3.01 22.19 22.17" fill="none">
+diff --git a/src/partials/search.html b/src/partials/search.html
+index e51c81c..e71e864 100644
+--- a/src/partials/search.html
++++ b/src/partials/search.html
+@@ -3,7 +3,7 @@
+      Phone: 2125:14449 "claremont homepage M": a solid panel with the bar centred, a back arrow and the search glyph lit.
+      The form GETs `q` to the Wagtail search view once it exists (set `action`); until then scripts/search.js
+      intercepts submit and lists matches from the build-time index as a stand-in. Figma draws no results state. -->
+-<div class="search" id="site-search" role="dialog" aria-modal="true" aria-label="Search Claremont College" data-search data-lenis-prevent hidden>
++<div class="search" id="site-search" role="dialog" aria-modal="true" aria-label="Search Claremont College" data-search hidden>
+   <div class="search__panel">
+     <div class="search__top">
+       <a class="site-header__logo" href="index.html">
+@@ -33,7 +33,7 @@
+         </button>
+       </div>
+ 
+-      <div class="search__results" data-search-results hidden>
++      <div class="search__results" data-search-results data-lenis-prevent hidden>
+         <p class="search__meta" data-search-meta></p>
+         <ol class="search__list" data-search-list></ol>
+       </div>
+diff --git a/src/policies.html b/src/policies.html
+index 0a7ac58..79851bb 100644
+--- a/src/policies.html
++++ b/src/policies.html
+@@ -36,7 +36,7 @@
+       "modifier": "feature-banner--y237 feature-banner--stacked feature-banner--stacked-cta",
+       "title": "School Annual Report 2025",
+       "text": "A full and open account of our results, our progress, and where we’re headed next.",
+-      "actions": "<a class=\"btn btn-primary btn-icon\" href=\"#\">Download<svg class=\"icon\" aria-hidden=\"true\"><use href=\"#icon-download\"></use></svg></a>",
++      "actions": "<a class=\"btn btn-primary btn-icon\" href=\"#\">Download<svg class=\"icon\" aria-hidden=\"true\"><use href=\"#icon-download-tray\"></use><use class=\"btn-icon__arrow\" href=\"#icon-download-arrow\"></use></svg></a>",
+       "image": "assets/images/policies/banner.webp",
+       "image_m": "assets/images/policies/banner-m.webp",
+       "width": "1840",
+diff --git a/src/sections/preparatory-program/mina-wylie.html b/src/sections/preparatory-program/mina-wylie.html
+index 8bf352f..d56d9b4 100644
+--- a/src/sections/preparatory-program/mina-wylie.html
++++ b/src/sections/preparatory-program/mina-wylie.html
+@@ -11,7 +11,7 @@
+     </div>
+   </div>
+   <div class="split-feature__media" data-anim-trigger>
+-    <figure class="split-feature__photo" data-anim="reveal" data-anim-type="swing-in" data-anim-scrub="1" data-anim-start="top 70%" data-anim-end="top 25%" data-anim-start-mobile="top 90%" data-anim-end-mobile="top 45%">
++    <figure class="split-feature__photo" data-anim="reveal" data-anim-type="wave-in" data-anim-scrub="1" data-anim-start="top 70%" data-anim-end="top 25%" data-anim-start-mobile="top 90%" data-anim-end-mobile="top 45%">
+       <img src="assets/images/preparatory-program/mina-wylie.webp" alt="Archival black and white portrait of swimmer Mina Wylie" width="1392" height="1218" loading="lazy" decoding="async">
+     </figure>
+   </div>

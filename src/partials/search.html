@@ -3,7 +3,7 @@
      Phone: 2125:14449 "claremont homepage M": a solid panel with the bar centred, a back arrow and the search glyph lit.
      The form GETs `q` to the Wagtail search view once it exists (set `action`); until then scripts/search.js
      intercepts submit and lists matches from the build-time index as a stand-in. Figma draws no results state. -->
-<div class="search" id="site-search" role="dialog" aria-modal="true" aria-label="Search Claremont College" data-search data-lenis-prevent hidden>
+<div class="search" id="site-search" role="dialog" aria-modal="true" aria-label="Search Claremont College" data-search hidden>
   <div class="search__panel">
     <div class="search__top">
       <a class="site-header__logo" href="index.html">
@@ -33,7 +33,7 @@
         </button>
       </div>
 
-      <div class="search__results" data-search-results hidden>
+      <div class="search__results" data-search-results data-lenis-prevent hidden>
         <p class="search__meta" data-search-meta></p>
         <ol class="search__list" data-search-list></ol>
       </div>

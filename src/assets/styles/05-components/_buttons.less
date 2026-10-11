@@ -1,5 +1,32 @@
 // 05-components/_buttons.less — Bootstrap buttons re-themed via --bs-btn-*
 
+// A click presses the button to 97%, but only its plate (::after: the fill, and the ring on .btn), drawn in by a clip.
+// Scaled along with it, the label and icon are drawn afresh as the press settles and again as it ends, and hop a pixel
+// wherever the root or the display is scaled; a layer of their own stops the hop but leaves them soft at rest. A clip
+// moves by fractions of a pixel (an inset steps in whole ones, which read as a snap) and takes no layer, so the label
+// keeps its sharp edges. The fill is --btn-plate, never a background on the button itself, which would sit still behind it
+// It goes in on a plain ease-out over --duration-base and settles back out over --duration-slow: the first version ran both
+// ways on --ease-out, most of the move inside the first 70ms, which read as a snap
+.press-plate() {
+  --press-time: var(--duration-slow);
+  --press-ease: var(--ease-settle);
+  position: relative;
+  isolation: isolate;
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-color: var(--btn-plate);
+    clip-path: inset(-0.0625rem); // a pixel clear of the plate at rest, so its own edges are drawn, not the clip's
+  }
+  &:not(:disabled, .disabled, .is-disabled):active {
+    --press-time: var(--duration-base);
+    --press-ease: ease-out;
+    &::after { clip-path: ~"inset(max(1.5%, 0.09375rem))"; } // 1.5 at least, or a square arrow barely moves
+  }
+}
+
 .btn {
   --bs-btn-font-family: var(--font-body);
   --bs-btn-font-size: var(--font-size-md);
@@ -11,23 +38,36 @@
   --bs-btn-border-radius: var(--radius-none);
   --bs-btn-focus-box-shadow: none;
   --btn-ring: var(--bs-btn-border-color);
+  --btn-plate: var(--bs-btn-bg);
+  .press-plate();
   border: 0;
-  box-shadow: inset 0 0 0 var(--bs-btn-border-width) var(--btn-ring);
+  background-color: transparent !important; // Bootstrap fills the button in every state; the plate carries the fill
   letter-spacing: var(--letter-spacing-body);
   white-space: nowrap;
-  transition:
-    color var(--duration-base) ease,
-    background-color var(--duration-base) ease,
-    box-shadow var(--duration-base) ease,
-    scale var(--duration-base) var(--ease-out);
-  &:hover { --btn-ring: var(--bs-btn-hover-border-color); }
-  &:focus-visible { --btn-ring: var(--bs-btn-hover-border-color); }
+  transition: color var(--duration-base) ease;
+  &::after {
+    box-shadow: inset 0 0 0 var(--bs-btn-border-width) var(--btn-ring);
+    transition:
+      background-color var(--duration-base) ease,
+      box-shadow var(--duration-base) ease,
+      clip-path var(--press-time) var(--press-ease);
+  }
+  &:hover,
+  &:focus-visible {
+    --btn-ring: var(--bs-btn-hover-border-color);
+    --btn-plate: var(--bs-btn-hover-bg);
+  }
   &.active,
   &:active,
-  &.show { --btn-ring: var(--bs-btn-active-border-color); }
+  &.show {
+    --btn-ring: var(--bs-btn-active-border-color);
+    --btn-plate: var(--bs-btn-active-bg);
+  }
   &:disabled,
-  &.disabled { --btn-ring: var(--bs-btn-disabled-border-color); }
-  &:active { scale: 0.97; }
+  &.disabled {
+    --btn-ring: var(--bs-btn-disabled-border-color);
+    --btn-plate: var(--bs-btn-disabled-bg);
+  }
 }
 
 .btn-primary {
@@ -66,14 +106,33 @@
 
 // Label + trailing icon (Download): 158 wide = 24 + label + 9 + 36 icon frame + 14
 .btn-icon {
+  --btn-icon-size: 1rem; // 16
   display: inline-flex;
   align-items: center;
   gap: 1.1875rem;
   padding-right: 1.5rem;
   .icon {
-    width: 1rem;
-    height: 1rem;
+    width: var(--btn-icon-size);
+    height: var(--btn-icon-size);
   }
+
+  // The Download arrow drops out through its tray and comes back in from above, once per hover (asked for; the tray
+  // is a symbol of its own and holds still)
+  @media (hover: hover) {
+    &:hover &__arrow { animation: btn-icon-drop var(--duration-slow); }
+  }
+  &:focus-visible &__arrow { animation: btn-icon-drop var(--duration-slow); }
+  @media (prefers-reduced-motion: reduce) {
+    &:hover &__arrow,
+    &:focus-visible &__arrow { animation: none; }
+  }
+}
+
+@keyframes btn-icon-drop {
+  0% { transform: none; animation-timing-function: var(--ease-in); }
+  45% { transform: translateY(var(--btn-icon-size)); animation-timing-function: step-end; }
+  46% { transform: translateY(calc(-1 * var(--btn-icon-size))); animation-timing-function: var(--ease-out); }
+  100% { transform: none; }
 }
 
 // Square arrow buttons (carousel / tab navigation)
@@ -85,14 +144,17 @@
   height: var(--control-height);
   padding: 0;
   border: 0;
-  background: var(--color-secondary);
+  --btn-plate: var(--color-secondary);
+  .press-plate();
+  background: none;
   color: var(--color-primary);
   cursor: pointer;
-  transition:
-    background-color var(--duration-base) ease,
-    color var(--duration-base) ease,
-    scale var(--duration-base) var(--ease-out);
-  &:active { scale: 0.97; }
+  transition: color var(--duration-base) ease;
+  &::after {
+    transition:
+      background-color var(--duration-base) ease,
+      clip-path var(--press-time) var(--press-ease);
+  }
 
   .icon {
     width: 1.25rem; // 20: the 19-unit glyph lands on Figma's 18.6 × 18.3 arrow
@@ -102,13 +164,13 @@
   &--prev .icon { transform: rotate(180deg); }
 
   &:focus-visible {
-    background: var(--color-primary);
+    --btn-plate: var(--color-primary);
     color: var(--color-white);
   }
   // A tapped arrow stays on screen, so hover only styles devices that really hover
   @media (hover: hover) {
     &:not(:disabled, .is-disabled):hover {
-      background: var(--color-primary);
+      --btn-plate: var(--color-primary);
       color: var(--color-white);
     }
   }
@@ -117,7 +179,7 @@
   // would show a disabled prev arrow as live until the reveal hands the opacity back
   &:disabled,
   &.is-disabled {
-    background: ~"color-mix(in srgb, var(--color-secondary) 40%, transparent)";
+    --btn-plate: ~"color-mix(in srgb, var(--color-secondary) 40%, transparent)";
     color: ~"color-mix(in srgb, var(--color-primary) 40%, transparent)";
     cursor: default;
   }

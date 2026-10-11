@@ -70,13 +70,12 @@
   .container-edge { --edge-gutter: var(--header-gutter); }
 
   // Figma 2125:14070 keeps the bar in view above the search wash: fixed sits where absolute did at scroll 0.
-  // The page scrollbar is clipped while it is open, so its width is padded back to hold the nav still.
   @media (min-width: @bp-lg) {
     .has-search-open & {
       position: fixed;
       z-index: calc(var(--z-overlay) + 1);
-      padding-right: var(--scrollbar-size, 0);
     }
+    .is-scroll-locked & { padding-right: var(--scrollbar-size, 0); } // the locked page's scrollbar width, so the nav holds still
   }
   .has-search-open &.is-pinned { transform: none; }
   // the phone menu opens under the bar (--z-header sits above it): a bar that had scrolled away comes back for it
@@ -181,6 +180,32 @@
     .tap-area();
     .icon { width: 1.25rem; height: 1.25rem; }          // search 20 × 20
     &--secondary .icon { width: 1.125rem; height: 1.375rem; } // pin 18 × 22
+    // search and close swap by fading through: one glyph is gone before the other comes up, and nothing turns
+    --tool-swap-out: calc(var(--duration-fast) / 2);
+    .icon {
+      transition: opacity var(--duration-fast) ease var(--tool-swap-out), transform var(--duration-fast) ease var(--tool-swap-out);
+      @media (prefers-reduced-motion: reduce) { transition: none; }
+    }
+    .site-header__tool-close {
+      position: absolute;
+      inset: 0;
+      width: 1.5625rem; // 25: the close's 1.6 stroke lands at the search glyph's 2
+      height: 1.5625rem;
+      margin: auto;
+    }
+    .site-header__tool-close,
+    &[aria-expanded="true"] .icon {
+      opacity: 0;
+      transform: scale(0.9);
+      transition-duration: var(--tool-swap-out);
+      transition-delay: 0s;
+    }
+    &[aria-expanded="true"] .site-header__tool-close {
+      opacity: 1;
+      transform: none;
+      transition-duration: var(--duration-fast);
+      transition-delay: var(--tool-swap-out);
+    }
     &:hover,
     &:focus-visible { color: var(--color-accent); }
     @media (min-width: @bp-lg) { display: inline-flex; }

@@ -7,6 +7,9 @@
   --contact-row: var(--tap-size);   // 44 on touch, 35 as designed for a mouse
   --contact-field-gap: 1.9375rem;   // 31
   --contact-rule: var(--color-text);
+  --contact-line: var(--border-width-thick);
+  // a whole pixel where the root is scaled, or the focus line is a row heavier on one field than the next
+  @supports (width: round(down, 3rem, 1px)) { --contact-line: ~"round(nearest, var(--border-width-thick), 1px)"; }
 
   padding-block: var(--space-8);
   @media (min-width: @bp-lg) { padding-block: var(--contact-pad-top) var(--contact-pad-bottom); }
@@ -77,21 +80,31 @@
     .form-control {
       padding: 0.625rem 0;
       @media @fine-lg { padding: 0 0 0.46875rem; } // rule 31 under the value top
+      // The rule and the focus line are both backgrounds on the border's row. The line grows from the left as the rule gives
+      // way to the right, so they are never stacked: at a scaled root they snap to different rows and the rule showed under the line
       border-width: 0 0 var(--border-width);
-      border-color: var(--contact-rule);
+      border-color: transparent;
       border-radius: var(--radius-none);
-      background: transparent;
+      background-color: transparent;
+      background-image: linear-gradient(var(--color-primary), var(--color-primary)), linear-gradient(var(--contact-rule), var(--contact-rule));
+      background-repeat: no-repeat;
+      background-position: left bottom, right bottom;
+      background-size: 0 var(--contact-line), 100% var(--border-width);
+      background-origin: border-box;
+      background-clip: border-box;
       font-size: var(--font-size-md);
       @media @fine-lg { font-size: var(--font-size-base); }
       line-height: var(--line-height-body);
       letter-spacing: var(--letter-spacing-body);
       color: var(--color-text);
-      transition: border-color var(--duration-fast) ease, box-shadow var(--duration-fast) ease;
+      transition: background-size var(--duration-fold) var(--ease-settle);
       &::placeholder { color: var(--color-muted); }
       &:focus {
-        border-color: var(--color-primary);
-        box-shadow: 0 var(--border-width) 0 0 var(--color-primary);
+        border-color: transparent;
+        background-size: 100% var(--contact-line), 0 var(--border-width);
+        box-shadow: none;
       }
+      @media (prefers-reduced-motion: reduce) { transition: none; }
     }
 
     textarea.form-control {
@@ -103,7 +116,7 @@
         height: 7.4375rem;
         min-height: 7.4375rem;
         padding-top: 5.5rem;
-        transition: border-color var(--duration-fast) ease, box-shadow var(--duration-fast) ease, padding-top var(--duration-base) var(--ease-out);
+        transition: background-size var(--duration-fold) var(--ease-settle), padding-top var(--duration-base) var(--ease-out);
         &:focus,
         &:not(:placeholder-shown) { padding-top: 0.5rem; } // the placeholder rises from the last line to the first
       }

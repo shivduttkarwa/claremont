@@ -19,6 +19,14 @@
       }, { once: true });
       requestAnimationFrame(function () { resolve(null); });
     });
+    // the page left hands on its scrollbar's width, so the transition can crop the blank strip out of its snapshot
+    // (read on every reveal: a page brought back by the back button is not loaded again)
+    addEventListener("pageswap", function () {
+      try { sessionStorage.setItem("page-scrollbar", Math.ceil(innerWidth - d.getBoundingClientRect().width) + "px"); } catch (e) {}
+    });
+    addEventListener("pagereveal", function () {
+      try { d.style.setProperty("--page-scrollbar", sessionStorage.getItem("page-scrollbar") || "0px"); } catch (e) {}
+    });
     // if the bundle never runs, drop the guard rather than leave the page hidden
     addEventListener("load", function () {
       setTimeout(function () { if (!d.hasAttribute("data-anim-live")) d.classList.remove("anim-ready"); }, 800);

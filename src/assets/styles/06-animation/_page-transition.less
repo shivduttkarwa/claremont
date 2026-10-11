@@ -9,6 +9,16 @@
 
 ::view-transition { background: var(--color-primary-dark); }
 
+// A page's snapshot includes its scrollbar's place, painted blank, which shows as a pale strip down the right edge of
+// the page that settles back. That page's box stops short of it (--page-scrollbar, from the head script) and crops it
+.page-snapshot-crop() {
+  width: calc(100% - var(--page-scrollbar, 0rem) - var(--border-width)); // and a pixel more: scaled, the edge blends with the next column
+  height: 100%;
+  overflow: clip; // a snapshot overflows its box unless told to clip
+  object-fit: none;
+  object-position: left top;
+}
+
 ::view-transition-group(root) { animation-duration: var(--page-slide-total); }
 
 // The default cross-fade blends the two pages with plus-lighter, which would wash out the overlap
@@ -24,6 +34,7 @@
   animation-name: page-recede;
   animation-duration: var(--page-slide-total);
   animation-timing-function: var(--ease-out);
+  .page-snapshot-crop();
 }
 
 // The corners hold still: animating border-radius takes the whole slide off the compositor, where the new page's script stalls it
@@ -38,6 +49,7 @@
 html:active-view-transition-type(back) {
   &::view-transition-old(root) {
     z-index: 1;
+    width: 100%;
     animation-name: page-slide-out;
     animation-duration: var(--page-slide);
     animation-timing-function: var(--ease-page);
@@ -51,6 +63,7 @@ html:active-view-transition-type(back) {
     animation-timing-function: var(--ease-out);
     border-radius: 0;
     box-shadow: none;
+    .page-snapshot-crop();
   }
 }
 

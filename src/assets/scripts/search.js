@@ -114,6 +114,20 @@ export function initSearch(root = document) {
   let failed = false;
   let lastFocus = null;
   let hideTimer;
+  let lockTimer;
+  const html = document.documentElement;
+
+  // Once the wash is up the page is locked: its scrollbar goes and the width it leaves is kept clear (_base.less)
+  const lock = () => {
+    const width = html.getBoundingClientRect().width;
+    html.classList.add("is-scroll-locked");
+    html.style.setProperty("--scrollbar-size", `${html.getBoundingClientRect().width - width}px`);
+  };
+  const unlock = () => {
+    clearTimeout(lockTimer);
+    html.classList.remove("is-scroll-locked");
+    html.style.removeProperty("--scrollbar-size");
+  };
 
   // A script tag rather than fetch(): file:// blocks cross-origin fetches, and the
   // built site is previewed from disk.
@@ -161,6 +175,7 @@ export function initSearch(root = document) {
 
     const hits = rank(query, records || []);
     results.hidden = false;
+    results.scrollTop = 0;
 
     if (!hits.length) {
       const text = failed
@@ -210,13 +225,11 @@ export function initSearch(root = document) {
       }
     }
 
-    // Stopping Lenis clips the page scrollbar; the header and bar pad by its width so they do not slide
-    const html = document.documentElement;
-    html.style.setProperty("--scrollbar-size", `${window.innerWidth - html.clientWidth}px`);
     box.hidden = false;
     html.classList.add("has-search-open");
     setExpanded(true);
     Anim.stop();
+    lockTimer = setTimeout(lock, 400);
     requestAnimationFrame(() => {
       box.classList.add("is-open");
       input.focus();
@@ -230,13 +243,17 @@ export function initSearch(root = document) {
   const close = () => {
     if (box.hidden) return;
     box.classList.remove("is-open");
-    document.documentElement.classList.remove("has-search-open");
+    unlock();
     setExpanded(false);
-    Anim.start();
-    const done = () => {
-      box.hidden = true;
-      document.documentElement.style.removeProperty("--scrollbar-size");
+    // Only the wash's own fade ends it: a button's colour change inside finishes sooner and would cut the fade short.
+    // The header stays above the wash until then (has-search-open), or the wash would cover it for the length of the fade
+    const done = (event) => {
+      if (event && (event.target !== box || event.propertyName !== "opacity")) return;
+      clearTimeout(hideTimer);
       box.removeEventListener("transitionend", done);
+      box.hidden = true;
+      html.classList.remove("has-search-open");
+      Anim.start();
     };
     box.addEventListener("transitionend", done);
     hideTimer = setTimeout(done, 400);
@@ -281,6 +298,13 @@ export function initSearch(root = document) {
   list.addEventListener("click", (event) => {
     if (event.target.closest("a")) close();
   });
+
+  // A list too short to scroll would hand the wheel or swipe on to the page behind
+  const hold = (event) => {
+    if (results.scrollHeight <= results.clientHeight && event.cancelable) event.preventDefault();
+  };
+  results.addEventListener("wheel", hold, { passive: false });
+  results.addEventListener("touchmove", hold, { passive: false });
 
   box.addEventListener("keydown", (event) => {
     if (event.key === "Escape") {

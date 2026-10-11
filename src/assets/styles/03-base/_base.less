@@ -25,6 +25,23 @@ html {
 // The root clips too: a phone browser pans to whatever sits past the edge when only body clips
 html { overflow-x: clip; }
 
+// The browser's own scrollbar in its own colours, only thinner. The two colours are registered so the search overlay
+// can fade the bar out and back (_search.less)
+@property --scrollbar-thumb { syntax: "<color>"; inherits: true; initial-value: transparent; }
+@property --scrollbar-track { syntax: "<color>"; inherits: true; initial-value: transparent; }
+html {
+  scrollbar-width: thin;
+  transition: --scrollbar-thumb var(--duration-base) var(--ease-out), --scrollbar-track var(--duration-base) var(--ease-out);
+  @media (prefers-reduced-motion: reduce) { transition: none; }
+}
+
+// A locked page loses its scrollbar; its width (--scrollbar-size, set by the script that locks) is kept clear so nothing
+// shifts. A margin, not padding: the body clips at its own edge, so nothing that overhangs the page shows in that strip
+html.is-scroll-locked {
+  overflow: clip;
+  body { margin-right: var(--scrollbar-size, 0); }
+}
+
 body {
   background: var(--color-background);
   color: var(--color-text);
