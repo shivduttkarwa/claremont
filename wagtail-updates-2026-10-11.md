@@ -41,7 +41,7 @@ Nothing here changes Wagtail models, StreamField block definitions, images, font
 
 Pick the option that matches how the Wagtail project gets its front-end assets.
 
-**Option A: Wagtail serves the compiled files.** In the static repo run `npm run build`, then copy these two files over the ones Wagtail serves:
+**Option A: Wagtail serves the compiled files.** The production build is committed in the static repo under `dist/`, so no build step is needed. Copy these two files over the ones Wagtail serves (run `npm run build` first only if you have changed the sources yourself):
 
 - `dist/assets/css/main.css`
 - `dist/assets/js/main.js`
