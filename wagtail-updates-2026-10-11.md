@@ -3,13 +3,13 @@
 Date: 2026-10-11
 Source of truth: the static cutup repo, `static/claremont`
 Baseline: commit `97891e4` ("Dispositions and policies cells fill on hover; column hairline gone"). Everything below is the difference between that commit and the current working copy.
-Companion file: `wagtail-updates-2026-10-11.patch` (same folder) is the full `git diff` of `src/` for these updates, 18 files.
+Companion file: `wagtail-updates-2026-10-11.patch` (same folder) is the full `git diff` of `src/` for these updates, 19 files.
 
 ## Purpose
 
-The Claremont site was converted to Wagtail from the static cutup. After that conversion, eight front-end updates were made in the static repo. This file tells you exactly what to change in the Wagtail project so it matches.
+The Claremont site was converted to Wagtail from the static cutup. After that conversion, twelve front-end updates were made in the static repo. This file tells you exactly what to change in the Wagtail project so it matches.
 
-Nothing here changes Wagtail models, StreamField block definitions, images, fonts or npm dependencies. The work is: updated CSS and JS, plus six small template edits.
+Nothing here changes Wagtail models, StreamField block definitions, images, fonts or npm dependencies. The work is: updated CSS and JS, plus seven small template edits.
 
 ## Instructions for the agent doing the port
 
@@ -20,7 +20,7 @@ Nothing here changes Wagtail models, StreamField block definitions, images, font
 5. If a Wagtail copy of a file has local changes (most likely `search.js`), merge the change shown here into it. Do not overwrite the file.
 6. If something in the Wagtail project does not match what this file describes, stop and report it rather than guessing.
 
-## The eight updates
+## The twelve updates
 
 | # | Update | Static files changed (under `src/`) | Wagtail work |
 | --- | --- | --- | --- |
@@ -32,6 +32,10 @@ Nothing here changes Wagtail models, StreamField block definitions, images, font
 | 6 | Page transition: no blank strip down the right of the outgoing page | `partials/head.html`, `_page-transition.less` | Template edit 3, CSS |
 | 7 | Download button: the arrow drops on hover | `partials/icons.html`, `policies.html`, `_buttons.less` | Template edits 4 and 5, CSS |
 | 8 | Button press: only the button's background presses in, so the label and arrow no longer shift | `_buttons.less`, `_search.less`, `_article.less` | CSS only |
+| 9 | Home page: the quick links (Book a tour, Apply to enrol, Contact us) enter 0.2s earlier on desktop | `sections/home-hero.html` | Template edit 7 |
+| 10 | Copy that rises as it fades in no longer shivers: the rise lands early and moves in whole pixels | `assets/scripts/anim.js` | JS only |
+| 11 | Inner pages: the quick links follow the hero title with no pause, by one rule in the entrance timeline | `assets/scripts/anim.js` | JS only |
+| 12 | Phone search: the site's own header stays in place and its menu icon becomes the close | `assets/scripts/search.js`, `_header.less`, `_search.less` | CSS and JS only |
 
 ## 1. Assets: CSS and JS
 
@@ -66,7 +70,7 @@ Scripts (`src/assets/scripts/`):
 
 ## 2. Template edits
 
-Six edits. Each lists the static file, a string to search for in the Wagtail templates, and the exact change.
+Seven edits. Each lists the static file, a string to search for in the Wagtail templates, and the exact change.
 
 ### Edit 1. Header: add the close icon to the desktop search button
 
@@ -205,6 +209,27 @@ After: `data-anim-type="wave-in"`
 
 The `swing-in` preset has been removed from `anim.js`. If the template keeps the old value, the photo silently falls back to a plain fade-up.
 
+### Edit 7. Home hero: the quick links enter earlier on desktop
+
+Static file: `src/sections/home-hero.html` (the home hero block)
+Find in Wagtail: `hero__subnav`
+
+Add one attribute, `data-anim-lead="0.6"`, to the wrapper around the quick links. Leave the other attributes as they are, including `data-anim-lead-mobile`.
+
+Before:
+
+```html
+<div class="hero__subnav" data-anim="sequence" data-anim-type="enter-right" data-anim-type-mobile="rise-soft" data-anim-tier="hero" data-anim-order="5" data-anim-order-mobile="2" data-anim-stagger="0.08" data-anim-stagger-mobile="0.08" data-anim-lead-mobile="0.7">
+```
+
+After:
+
+```html
+<div class="hero__subnav" data-anim="sequence" data-anim-type="enter-right" data-anim-type-mobile="rise-soft" data-anim-tier="hero" data-anim-order="5" data-anim-order-mobile="2" data-anim-stagger="0.08" data-anim-stagger-mobile="0.08" data-anim-lead="0.6" data-anim-lead-mobile="0.7">
+```
+
+This is the home page only. The inner page hero (`page-hero__subnav`) needs no template change: its timing now comes from a rule in `anim.js` (update 11).
+
 ## 3. Script changes in detail
 
 Only needed for Option B, or if the Wagtail copy of a script was modified. The `.patch` file has the same hunks with full context.
@@ -239,6 +264,60 @@ const WAVE_FRAMES = [[WAVE.fadeBy, { autoAlpha: 1 }], [WAVE.zoomOutAt, { scale: 
 ```
 
 The `WAVE` values were tuned by hand. Copy them exactly.
+
+Three further changes in the same file (updates 10 and 11):
+
+3. In `DEFAULTS`, one new entry after `entranceLead`:
+
+```js
+titleLead: 0.6, // the step after a hero title: its last letters read as landed this long before they stop fading, so no pause
+```
+
+4. Above `const REVEAL = {`, a constant and a helper, and the `fade-up` preset rewritten to use them:
+
+```js
+// Copy is drawn on whole pixels, so a lift eased as slowly as the fade arrives as separate 1px hops after the copy looks
+// still, and stacked paragraphs take them at different moments. The lift therefore lands early, under the fade, and
+// moves in whole pixels so every line steps on the same frame
+const LIFT = 15;
+const whole = (ease, distance) => {
+  const curve = gsap.parseEase(ease);
+  return (progress) => Math.round(curve(progress) * distance) / distance;
+};
+```
+
+```js
+// before
+"fade-up":    { from: { y: 15, autoAlpha: 0 },                to: { y: 0, autoAlpha: 1 } },
+// after
+"fade-up":    { from: { y: LIFT, autoAlpha: 0 },              to: { autoAlpha: 1, keyframes: { "57%": { y: 0, ease: whole("power1.out", LIFT) }, ease: "none" } } },
+```
+
+5. The entrance timeline picks the lead itself where the markup names none. `leadOf` returns `null` in that case, and `playEntrance` uses `titleLead` for the step after a hero title and `entranceLead` otherwise:
+
+```js
+// before
+const leadOf = (el) => number(el, variant(el, "data-anim-lead"), DEFAULTS.entranceLead);
+// after
+const leadOf = (el) => {
+  const name = variant(el, "data-anim-lead");
+  return el.hasAttribute(name) ? number(el, name, DEFAULTS.entranceLead) : null;
+};
+```
+
+```js
+// in playEntrance, before
+.forEach((order, i) => {
+  const group = steps.filter((step) => step.order === order);
+  const lead = Math.max(...group.map((step) => step.lead));
+// after
+.forEach((order, i, orders) => {
+  const group = steps.filter((step) => step.order === order);
+  // whatever follows a hero title starts as the title finishes, on every page; a lead in the markup still wins
+  const afterTitle = i > 0 && steps.some((step) => step.order === orders[i - 1] && step.deferred);
+  const usual = afterTitle ? DEFAULTS.titleLead : DEFAULTS.entranceLead;
+  const lead = Math.max(...group.map((step) => step.lead ?? usual));
+```
 
 ### `src/assets/scripts/search.js`
 
@@ -342,6 +421,40 @@ results.addEventListener("wheel", hold, { passive: false });
 results.addEventListener("touchmove", hold, { passive: false });
 ```
 
+**f. The header's menu button becomes the close while the search is open** (update 12; the button only shows below the `lg` breakpoint).
+
+A new reference next to `menuPanel`:
+
+```js
+const burger = root.querySelector(".site-header__toggle");
+```
+
+A new helper after `setExpanded`:
+
+```js
+// Below lg the site's bar stays above the panel and its burger, folded to an X, closes the search. It stops being the
+// menu's toggle meanwhile: Bootstrap answers that attribute on the document, ahead of any listener on the button
+const setBurger = (on) => {
+  if (!burger) return;
+  burger.classList.toggle("is-close", on);
+  burger.setAttribute("aria-label", on ? "Close search" : "Menu");
+  if (on) burger.removeAttribute("data-bs-toggle");
+  else burger.setAttribute("data-bs-toggle", "offcanvas");
+};
+```
+
+It is called as `setBurger(true);` in `open()` right after `setExpanded(true);`, and as `setBurger(false);` in `close()` right after `setExpanded(false);`. A click listener is added after the `closers.forEach(...)` line:
+
+```js
+if (burger) {
+  burger.addEventListener("click", () => {
+    if (burger.classList.contains("is-close")) close();
+  });
+}
+```
+
+In `close()`, the focus fallback now uses the same reference: `[...openers, burger].find(visible)`.
+
 ## 4. Style changes per file
 
 Only needed for Option B. Copy the whole file unless the Wagtail copy has local edits.
@@ -350,8 +463,8 @@ Only needed for Option B. Copy the whole file unless the Wagtail copy has local 
 | --- | --- | --- |
 | `01-settings/_tokens.less` | Two new tokens in `:root`: `--scrollbar-thumb: #8b8b8b` and `--scrollbar-track: #fcfcfc`. They are only the end colours of the search overlay's scrollbar fade; the scrollbar is not coloured at rest | 2 |
 | `03-base/_base.less` | `scrollbar-width: thin` on `html`; `@property` registrations for the two scrollbar colours and a transition on them; new `html.is-scroll-locked` rule (`overflow: clip`, and `margin-right: var(--scrollbar-size)` on `body`) | 2, 4 |
-| `04-layout/_header.less` | Search and close icon swap on `.site-header__tool`, driven by `[aria-expanded="true"]`; `padding-right: var(--scrollbar-size)` on the header while `.is-scroll-locked` (from the `lg` breakpoint) | 2, 3 |
-| `05-components/_search.less` | The overlay no longer scrolls: `.search__body` is a flex column and `.search__results` is the scroller, with a top fade mask. New rules `html.has-search-open` and `html:has(.search.is-open)` fade the scrollbar. The overlay background is a gradient that deepens at its right edge. Matching changes in the phone block. The submit button sets `--btn-plate` | 2, 8 |
+| `04-layout/_header.less` | Search and close icon swap on `.site-header__tool`, driven by `[aria-expanded="true"]`; `padding-right: var(--scrollbar-size)` on the header while `.is-scroll-locked` (from the `lg` breakpoint). While `.has-search-open`, the header's `z-index` is above the overlay at every width (it was desktop only), with no shadow below `lg`; the menu button also folds to an X when it has the class `is-close` | 2, 3, 12 |
+| `05-components/_search.less` | The overlay no longer scrolls: `.search__body` is a flex column and `.search__results` is the scroller, with a top fade mask. New rules `html.has-search-open` and `html:has(.search.is-open)` fade the scrollbar. The overlay background is a gradient that deepens at its right edge. Matching changes in the phone block, where `.search__top` (the panel's own logo and close row) is now `visibility: hidden` and only keeps its room. The submit button sets `--btn-plate` | 2, 8, 12 |
 | `06-animation/_animation.less` | One rule removed: `.lenis.lenis-stopped { overflow: clip; }` | 2 |
 | `05-components/_contact.less` | The field rule and the focus line are drawn as two background layers so the line can grow from the left; new local property `--contact-line` | 5 |
 | `06-animation/_page-transition.less` | New mixin `.page-snapshot-crop()`, applied to `::view-transition-old(root)` and, for a back navigation, to `::view-transition-new(root)` | 6 |
@@ -365,6 +478,8 @@ Only needed for Option B. Copy the whole file unless the Wagtail copy has local 
 - **`#icon-download`.** The symbol is gone. Every reference must become the two-`<use>` markup in edit 5.
 - **`data-lenis-prevent`.** It must be on `.search__results` and not on `.search` (edit 2).
 - **`swing-in`.** The preset is gone; the template must say `wave-in` (edit 6).
+- **Phone header markup.** The menu button must keep the class `site-header__toggle` and `data-bs-toggle="offcanvas"` in the template; `search.js` removes and restores that attribute while the search is open. The overlay's `.search__top` row stays in the markup: CSS hides it on phones and it still reserves the space under the header.
+- **Inner page quick links.** Do not add a `data-anim-lead` to `page-hero__subnav`; the timeline rule in `anim.js` sets it. A value in the template would override the rule.
 - **CSS and JS must ship together.** The new `search.js` relies on the new `html.is-scroll-locked`, `has-search-open` and `--scrollbar-size` rules. Deploying one without the other brings back a visible shift when the search opens.
 - **Head script and CSS must ship together.** The page-transition crop reads `--page-scrollbar`, which only the new inline script sets. Without the script the crop is simply zero (the old strip shows); nothing errors.
 
@@ -383,4 +498,8 @@ Use a desktop browser with a visible scrollbar. Chrome on Windows shows the most
 - [ ] **Page transition:** moving between pages, and using the browser back button, the outgoing page shows no pale strip down its right edge.
 - [ ] **Download button** (Policies page): on hover the arrow drops through the line and returns from the top.
 - [ ] **Button press:** clicking any button or slider arrow presses its background in gently; the label and arrow do not move.
+- [ ] **Home quick links:** on the home page at desktop width, the three quick links start sliding in just after the hero button starts to appear.
+- [ ] **Copy entrance:** on the home page, the line "Where progress is personal." and the paragraphs under it rise and fade in cleanly, with no slow one-pixel shiver at the end.
+- [ ] **Inner page quick links:** on any inner page at desktop width, the quick links slide in as the hero title finishes, with no pause and not while the title is still clearly animating. The timing is the same on every inner page.
+- [ ] **Phone search:** on a phone, open the menu, then the search. The header does not change (same logo, same size); only the menu icon is an X. Tapping the X closes the search and does not open the menu.
 - [ ] **No empty icons:** a project-wide search for `icon-download"` (with the closing quote) finds nothing; only `icon-download-arrow` and `icon-download-tray` remain.

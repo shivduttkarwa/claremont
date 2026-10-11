@@ -107,6 +107,7 @@ export function initSearch(root = document) {
   const closers = box.querySelectorAll("[data-search-close]");
   const backs = box.querySelectorAll("[data-search-back]");
   const menuPanel = root.querySelector(".offcanvas");
+  const burger = root.querySelector(".site-header__toggle");
   if (!form || !input || !results || !list) return;
 
   let records = null;
@@ -158,6 +159,16 @@ export function initSearch(root = document) {
   };
 
   const setExpanded = (on) => openers.forEach((el) => el.setAttribute("aria-expanded", on ? "true" : "false"));
+
+  // Below lg the site's bar stays above the panel and its burger, folded to an X, closes the search. It stops being the
+  // menu's toggle meanwhile: Bootstrap answers that attribute on the document, ahead of any listener on the button
+  const setBurger = (on) => {
+    if (!burger) return;
+    burger.classList.toggle("is-close", on);
+    burger.setAttribute("aria-label", on ? "Close search" : "Menu");
+    if (on) burger.removeAttribute("data-bs-toggle");
+    else burger.setAttribute("data-bs-toggle", "offcanvas");
+  };
 
   const clear = () => {
     list.innerHTML = "";
@@ -228,6 +239,7 @@ export function initSearch(root = document) {
     box.hidden = false;
     html.classList.add("has-search-open");
     setExpanded(true);
+    setBurger(true);
     Anim.stop();
     lockTimer = setTimeout(lock, 400);
     requestAnimationFrame(() => {
@@ -245,6 +257,7 @@ export function initSearch(root = document) {
     box.classList.remove("is-open");
     unlock();
     setExpanded(false);
+    setBurger(false);
     // Only the wash's own fade ends it: a button's colour change inside finishes sooner and would cut the fade short.
     // The header stays above the wash until then (has-search-open), or the wash would cover it for the length of the fade
     const done = (event) => {
@@ -259,7 +272,7 @@ export function initSearch(root = document) {
     hideTimer = setTimeout(done, 400);
 
     // The phone menu's search button is gone by now; the burger stands in for it
-    const target = visible(lastFocus) ? lastFocus : [...openers, root.querySelector(".site-header__toggle")].find(visible);
+    const target = visible(lastFocus) ? lastFocus : [...openers, burger].find(visible);
     if (target && target.focus) target.focus();
   };
 
@@ -272,6 +285,11 @@ export function initSearch(root = document) {
     })
   );
   closers.forEach((el) => el.addEventListener("click", close));
+  if (burger) {
+    burger.addEventListener("click", () => {
+      if (burger.classList.contains("is-close")) close();
+    });
+  }
 
   // The phone panel's back arrow returns to the menu it was opened from
   backs.forEach((el) =>

@@ -1,8 +1,16 @@
 diff --git a/src/assets/scripts/anim.js b/src/assets/scripts/anim.js
-index 4b8e327..dbcacc1 100644
+index 4b8e327..e30cb0c 100644
 --- a/src/assets/scripts/anim.js
 +++ b/src/assets/scripts/anim.js
-@@ -31,6 +31,19 @@ const DEFAULTS = {
+@@ -24,6 +24,7 @@ const DEFAULTS = {
+   stagger: 0.1,
+   spread: 0.6, // the longest a batch of staggered reveals may run in total
+   entranceLead: 0.4, // an entrance step starts this long before the previous one ends
++  titleLead: 0.6, // the step after a hero title: its last letters read as landed this long before they stop fading, so no pause
+   lenis: { duration: 1.2, smoothWheel: true, wheelMultiplier: 0.8, touchMultiplier: 1.5 },
+ };
+ 
+@@ -31,9 +32,31 @@ const DEFAULTS = {
  // viewport, trailing the scroll by `smooth` seconds, and stay revealed once they reach the end.
  const SCRUB = { distance: 0.28, smooth: 0.4 };
  
@@ -19,10 +27,23 @@ index 4b8e327..dbcacc1 100644
 +const WAVE_FRAMES = [[WAVE.fadeBy, { autoAlpha: 1 }], [WAVE.zoomOutAt, { scale: WAVE.scale[0] }], [WAVE.zoomInAt, { scale: WAVE.scale[1] }], [100, { scale: WAVE.scale[2] }]]
 +  .reduce((frames, [at, vars]) => ({ ...frames, [`${at}%`]: { ...frames[`${at}%`], ...vars } }), { easeEach: "sine.inOut" });
 +
++// Copy is drawn on whole pixels, so a lift eased as slowly as the fade arrives as separate 1px hops after the copy looks
++// still, and stacked paragraphs take them at different moments. The lift therefore lands early, under the fade, and
++// moves in whole pixels so every line steps on the same frame
++const LIFT = 15;
++const whole = (ease, distance) => {
++  const curve = gsap.parseEase(ease);
++  return (progress) => Math.round(curve(progress) * distance) / distance;
++};
++
  // Every preset fades (autoAlpha) so the CSS FOUC guard works uniformly.
  const REVEAL = {
-   "fade-up":    { from: { y: 15, autoAlpha: 0 },                to: { y: 0, autoAlpha: 1 } },
-@@ -41,7 +54,7 @@ const REVEAL = {
+-  "fade-up":    { from: { y: 15, autoAlpha: 0 },                to: { y: 0, autoAlpha: 1 } },
++  "fade-up":    { from: { y: LIFT, autoAlpha: 0 },              to: { autoAlpha: 1, keyframes: { "57%": { y: 0, ease: whole("power1.out", LIFT) }, ease: "none" } } },
+   "fade":       { from: { autoAlpha: 0 },                       to: { autoAlpha: 1 } },
+   "fade-soft":  { from: { autoAlpha: 0 },                       to: { autoAlpha: 1, duration: 0.5, ease: "power1.out" } }, // header items
+   "rise-soft":  { from: { y: 14, autoAlpha: 0 },                to: { y: 0, autoAlpha: 1, duration: 0.55, ease: "power2.out" } }, // the quick links below lg
+@@ -41,7 +64,7 @@ const REVEAL = {
    "from-right": { from: { x: "15%", autoAlpha: 0 },             to: { x: "0%", autoAlpha: 1 } },
    "enter-right": { from: { x: "110%", autoAlpha: 0 },           to: { x: "0%", autoAlpha: 1, duration: 0.9, ease: "expo.out" } },
    "nudge-right": { from: { x: 40, autoAlpha: 0 },               to: { x: 0, autoAlpha: 1 } },
@@ -31,11 +52,47 @@ index 4b8e327..dbcacc1 100644
    "drop":       { from: { y: -48, autoAlpha: 0 },               to: { y: 0, autoAlpha: 1, duration: 0.6, ease: "back.out(1.4)" } },
    "pop":        { from: { autoAlpha: 0 },                       to: { autoAlpha: 1, duration: 0.6, ease: "power2.out" } },
    // a crisp wipe from the bottom edge up, no fade: visibility flips as the tween starts
+@@ -98,7 +121,11 @@ const orderOf = (el, fallback = 0) =>
+ // A `-mobile` twin wins below 992: a scrubbed step's start, end or scrub, a step's type or lead, a sequence's stagger
+ const variant = (el, name) =>
+   phone.matches && el.hasAttribute(`${name}-mobile`) ? `${name}-mobile` : name;
+-const leadOf = (el) => number(el, variant(el, "data-anim-lead"), DEFAULTS.entranceLead);
++// null where the markup names no lead: the entrance timeline then picks its own (see playEntrance)
++const leadOf = (el) => {
++  const name = variant(el, "data-anim-lead");
++  return el.hasAttribute(name) ? number(el, name, DEFAULTS.entranceLead) : null;
++};
+ const presetOf = (el) => REVEAL[attr(el, variant(el, "data-anim-type"), "fade-up")] || REVEAL["fade-up"];
+ 
+ // data-anim-duration / data-anim-delay let a step be timed against its neighbours
+@@ -234,9 +261,12 @@ function playEntrance(steps, root) {
+   let titleEnd = 0; // when the last hero title has finished splitting
+   [...new Set(steps.map((step) => step.order))]
+     .sort((a, b) => a - b)
+-    .forEach((order, i) => {
++    .forEach((order, i, orders) => {
+       const group = steps.filter((step) => step.order === order);
+-      const lead = Math.max(...group.map((step) => step.lead));
++      // whatever follows a hero title starts as the title finishes, on every page; a lead in the markup still wins
++      const afterTitle = i > 0 && steps.some((step) => step.order === orders[i - 1] && step.deferred);
++      const usual = afterTitle ? DEFAULTS.titleLead : DEFAULTS.entranceLead;
++      const lead = Math.max(...group.map((step) => step.lead ?? usual));
+       const at = i ? Math.max(0, tl.duration() - lead) : 0;
+       group.forEach((step) => {
+         if (!step.deferred) {
 diff --git a/src/assets/scripts/search.js b/src/assets/scripts/search.js
-index 0fa1568..92a34b2 100644
+index 0fa1568..eeca44f 100644
 --- a/src/assets/scripts/search.js
 +++ b/src/assets/scripts/search.js
-@@ -114,6 +114,20 @@ export function initSearch(root = document) {
+@@ -107,6 +107,7 @@ export function initSearch(root = document) {
+   const closers = box.querySelectorAll("[data-search-close]");
+   const backs = box.querySelectorAll("[data-search-back]");
+   const menuPanel = root.querySelector(".offcanvas");
++  const burger = root.querySelector(".site-header__toggle");
+   if (!form || !input || !results || !list) return;
+ 
+   let records = null;
+@@ -114,6 +115,20 @@ export function initSearch(root = document) {
    let failed = false;
    let lastFocus = null;
    let hideTimer;
@@ -56,7 +113,24 @@ index 0fa1568..92a34b2 100644
  
    // A script tag rather than fetch(): file:// blocks cross-origin fetches, and the
    // built site is previewed from disk.
-@@ -161,6 +175,7 @@ export function initSearch(root = document) {
+@@ -145,6 +160,16 @@ export function initSearch(root = document) {
+ 
+   const setExpanded = (on) => openers.forEach((el) => el.setAttribute("aria-expanded", on ? "true" : "false"));
+ 
++  // Below lg the site's bar stays above the panel and its burger, folded to an X, closes the search. It stops being the
++  // menu's toggle meanwhile: Bootstrap answers that attribute on the document, ahead of any listener on the button
++  const setBurger = (on) => {
++    if (!burger) return;
++    burger.classList.toggle("is-close", on);
++    burger.setAttribute("aria-label", on ? "Close search" : "Menu");
++    if (on) burger.removeAttribute("data-bs-toggle");
++    else burger.setAttribute("data-bs-toggle", "offcanvas");
++  };
++
+   const clear = () => {
+     list.innerHTML = "";
+     setMeta("");
+@@ -161,6 +186,7 @@ export function initSearch(root = document) {
  
      const hits = rank(query, records || []);
      results.hidden = false;
@@ -64,7 +138,7 @@ index 0fa1568..92a34b2 100644
  
      if (!hits.length) {
        const text = failed
-@@ -210,13 +225,11 @@ export function initSearch(root = document) {
+@@ -210,13 +236,12 @@ export function initSearch(root = document) {
        }
      }
  
@@ -74,12 +148,13 @@ index 0fa1568..92a34b2 100644
      box.hidden = false;
      html.classList.add("has-search-open");
      setExpanded(true);
++    setBurger(true);
      Anim.stop();
 +    lockTimer = setTimeout(lock, 400);
      requestAnimationFrame(() => {
        box.classList.add("is-open");
        input.focus();
-@@ -230,13 +243,17 @@ export function initSearch(root = document) {
+@@ -230,19 +255,24 @@ export function initSearch(root = document) {
    const close = () => {
      if (box.hidden) return;
      box.classList.remove("is-open");
@@ -90,6 +165,7 @@ index 0fa1568..92a34b2 100644
 -    const done = () => {
 -      box.hidden = true;
 -      document.documentElement.style.removeProperty("--scrollbar-size");
++    setBurger(false);
 +    // Only the wash's own fade ends it: a button's colour change inside finishes sooner and would cut the fade short.
 +    // The header stays above the wash until then (has-search-open), or the wash would cover it for the length of the fade
 +    const done = (event) => {
@@ -102,7 +178,26 @@ index 0fa1568..92a34b2 100644
      };
      box.addEventListener("transitionend", done);
      hideTimer = setTimeout(done, 400);
-@@ -282,6 +299,13 @@ export function initSearch(root = document) {
+ 
+     // The phone menu's search button is gone by now; the burger stands in for it
+-    const target = visible(lastFocus) ? lastFocus : [...openers, root.querySelector(".site-header__toggle")].find(visible);
++    const target = visible(lastFocus) ? lastFocus : [...openers, burger].find(visible);
+     if (target && target.focus) target.focus();
+   };
+ 
+@@ -255,6 +285,11 @@ export function initSearch(root = document) {
+     })
+   );
+   closers.forEach((el) => el.addEventListener("click", close));
++  if (burger) {
++    burger.addEventListener("click", () => {
++      if (burger.classList.contains("is-close")) close();
++    });
++  }
+ 
+   // The phone panel's back arrow returns to the menu it was opened from
+   backs.forEach((el) =>
+@@ -282,6 +317,13 @@ export function initSearch(root = document) {
      if (event.target.closest("a")) close();
    });
  
@@ -159,25 +254,31 @@ index 7f45d67..fc9a0a9 100644
    background: var(--color-background);
    color: var(--color-text);
 diff --git a/src/assets/styles/04-layout/_header.less b/src/assets/styles/04-layout/_header.less
-index eb793b0..81fd4a5 100644
+index eb793b0..3c1f594 100644
 --- a/src/assets/styles/04-layout/_header.less
 +++ b/src/assets/styles/04-layout/_header.less
-@@ -70,13 +70,12 @@
+@@ -70,13 +70,14 @@
    .container-edge { --edge-gutter: var(--header-gutter); }
  
    // Figma 2125:14070 keeps the bar in view above the search wash: fixed sits where absolute did at scroll 0.
 -  // The page scrollbar is clipped while it is open, so its width is padded back to hold the nav still.
++  // Below lg the bar is the search panel's top row too: it stays above the panel as it is, and its burger is the close
++  .has-search-open & { z-index: calc(var(--z-overlay) + 1); }
++  @media @upto-lg {
++    .has-search-open &.is-pinned { box-shadow: none; } // no line between the bar and the panel of the same green
++  }
    @media (min-width: @bp-lg) {
-     .has-search-open & {
-       position: fixed;
-       z-index: calc(var(--z-overlay) + 1);
+-    .has-search-open & {
+-      position: fixed;
+-      z-index: calc(var(--z-overlay) + 1);
 -      padding-right: var(--scrollbar-size, 0);
-     }
+-    }
++    .has-search-open & { position: fixed; }
 +    .is-scroll-locked & { padding-right: var(--scrollbar-size, 0); } // the locked page's scrollbar width, so the nav holds still
    }
    .has-search-open &.is-pinned { transform: none; }
    // the phone menu opens under the bar (--z-header sits above it): a bar that had scrolled away comes back for it
-@@ -181,6 +180,32 @@
+@@ -181,6 +182,32 @@
      .tap-area();
      .icon { width: 1.25rem; height: 1.25rem; }          // search 20 × 20
      &--secondary .icon { width: 1.125rem; height: 1.375rem; } // pin 18 × 22
@@ -210,6 +311,22 @@ index eb793b0..81fd4a5 100644
      &:hover,
      &:focus-visible { color: var(--color-accent); }
      @media (min-width: @bp-lg) { display: inline-flex; }
+@@ -209,9 +236,12 @@
+     // open: the outer bars meet in the middle as an X, as on the reference menu. The middle bar is out of the way
+     // before they fold (fading it under the crossing bars left its ends lingering) and fades back in once they are level
+     span:nth-child(2) { transition: opacity var(--duration-fast) ease-in-out var(--duration-menu-icon); }
+-    .has-menu-open & span:nth-child(1) { transform: translateY(0.5625rem) rotate(45deg); } // 9: a bar and a gap
+-    .has-menu-open & span:nth-child(2) { opacity: 0; transition-duration: 0s; transition-delay: 0s; } // gone at once
+-    .has-menu-open & span:nth-child(3) { transform: translateY(-0.5625rem) rotate(-45deg); }
++    .has-menu-open & span:nth-child(1),
++    &.is-close span:nth-child(1) { transform: translateY(0.5625rem) rotate(45deg); } // 9: a bar and a gap
++    .has-menu-open & span:nth-child(2),
++    &.is-close span:nth-child(2) { opacity: 0; transition-duration: 0s; transition-delay: 0s; } // gone at once
++    .has-menu-open & span:nth-child(3),
++    &.is-close span:nth-child(3) { transform: translateY(-0.5625rem) rotate(-45deg); }
+     @media (min-width: @bp-lg) { display: none; }
+   }
+ }
 diff --git a/src/assets/styles/05-components/_article.less b/src/assets/styles/05-components/_article.less
 index 6347fc3..dd88cbb 100644
 --- a/src/assets/styles/05-components/_article.less
@@ -454,7 +571,7 @@ index 1b41003..ff6be7d 100644
          &:not(:placeholder-shown) { padding-top: 0.5rem; } // the placeholder rises from the last line to the first
        }
 diff --git a/src/assets/styles/05-components/_search.less b/src/assets/styles/05-components/_search.less
-index 797b205..9a05957 100644
+index 797b205..738a441 100644
 --- a/src/assets/styles/05-components/_search.less
 +++ b/src/assets/styles/05-components/_search.less
 @@ -2,6 +2,14 @@
@@ -559,7 +676,7 @@ index 797b205..9a05957 100644
      &[hidden] { display: none; }
    }
  
-@@ -171,16 +186,26 @@
+@@ -171,16 +186,28 @@
      --search-go-size: 1.6875rem;   // 27
      --header-logo-width: ~"min(13.28125rem, 59vw)"; // the top row repeats the bar's logo
      --header-logo-top: 0;
@@ -581,13 +698,15 @@ index 797b205..9a05957 100644
 -      padding-bottom: 0;
      }
  
++    // only the room for the site's own bar, which stays above the panel; a second, smaller bar is not drawn here
      .search__top {
        display: flex;
 +      flex: none;
++      visibility: hidden;
        align-items: center;
        justify-content: space-between;
        min-height: var(--header-height);
-@@ -203,18 +228,24 @@
+@@ -203,18 +230,24 @@
      }
  
      .search__body {
@@ -770,6 +889,19 @@ index 0a7ac58..79851bb 100644
        "image": "assets/images/policies/banner.webp",
        "image_m": "assets/images/policies/banner-m.webp",
        "width": "1840",
+diff --git a/src/sections/home-hero.html b/src/sections/home-hero.html
+index a8ba6dd..8077539 100644
+--- a/src/sections/home-hero.html
++++ b/src/sections/home-hero.html
+@@ -48,7 +48,7 @@
+     </div>
+   </div>
+ 
+-  <div class="hero__subnav" data-anim="sequence" data-anim-type="enter-right" data-anim-type-mobile="rise-soft" data-anim-tier="hero" data-anim-order="5" data-anim-order-mobile="2" data-anim-stagger="0.08" data-anim-stagger-mobile="0.08" data-anim-lead-mobile="0.7">
++  <div class="hero__subnav" data-anim="sequence" data-anim-type="enter-right" data-anim-type-mobile="rise-soft" data-anim-tier="hero" data-anim-order="5" data-anim-order-mobile="2" data-anim-stagger="0.08" data-anim-stagger-mobile="0.08" data-anim-lead="0.6" data-anim-lead-mobile="0.7">
+     <include src="partials/subnav.html"></include>
+   </div>
+ </section>
 diff --git a/src/sections/preparatory-program/mina-wylie.html b/src/sections/preparatory-program/mina-wylie.html
 index 8bf352f..d56d9b4 100644
 --- a/src/sections/preparatory-program/mina-wylie.html

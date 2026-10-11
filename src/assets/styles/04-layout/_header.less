@@ -70,11 +70,13 @@
   .container-edge { --edge-gutter: var(--header-gutter); }
 
   // Figma 2125:14070 keeps the bar in view above the search wash: fixed sits where absolute did at scroll 0.
+  // Below lg the bar is the search panel's top row too: it stays above the panel as it is, and its burger is the close
+  .has-search-open & { z-index: calc(var(--z-overlay) + 1); }
+  @media @upto-lg {
+    .has-search-open &.is-pinned { box-shadow: none; } // no line between the bar and the panel of the same green
+  }
   @media (min-width: @bp-lg) {
-    .has-search-open & {
-      position: fixed;
-      z-index: calc(var(--z-overlay) + 1);
-    }
+    .has-search-open & { position: fixed; }
     .is-scroll-locked & { padding-right: var(--scrollbar-size, 0); } // the locked page's scrollbar width, so the nav holds still
   }
   .has-search-open &.is-pinned { transform: none; }
@@ -234,9 +236,12 @@
     // open: the outer bars meet in the middle as an X, as on the reference menu. The middle bar is out of the way
     // before they fold (fading it under the crossing bars left its ends lingering) and fades back in once they are level
     span:nth-child(2) { transition: opacity var(--duration-fast) ease-in-out var(--duration-menu-icon); }
-    .has-menu-open & span:nth-child(1) { transform: translateY(0.5625rem) rotate(45deg); } // 9: a bar and a gap
-    .has-menu-open & span:nth-child(2) { opacity: 0; transition-duration: 0s; transition-delay: 0s; } // gone at once
-    .has-menu-open & span:nth-child(3) { transform: translateY(-0.5625rem) rotate(-45deg); }
+    .has-menu-open & span:nth-child(1),
+    &.is-close span:nth-child(1) { transform: translateY(0.5625rem) rotate(45deg); } // 9: a bar and a gap
+    .has-menu-open & span:nth-child(2),
+    &.is-close span:nth-child(2) { opacity: 0; transition-duration: 0s; transition-delay: 0s; } // gone at once
+    .has-menu-open & span:nth-child(3),
+    &.is-close span:nth-child(3) { transform: translateY(-0.5625rem) rotate(-45deg); }
     @media (min-width: @bp-lg) { display: none; }
   }
 }

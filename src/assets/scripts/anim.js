@@ -24,6 +24,7 @@ const DEFAULTS = {
   stagger: 0.1,
   spread: 0.6, // the longest a batch of staggered reveals may run in total
   entranceLead: 0.4, // an entrance step starts this long before the previous one ends
+  titleLead: 0.6, // the step after a hero title: its last letters read as landed this long before they stop fading, so no pause
   lenis: { duration: 1.2, smoothWheel: true, wheelMultiplier: 0.8, touchMultiplier: 1.5 },
 };
 
@@ -44,9 +45,18 @@ const WAVE = {
 const WAVE_FRAMES = [[WAVE.fadeBy, { autoAlpha: 1 }], [WAVE.zoomOutAt, { scale: WAVE.scale[0] }], [WAVE.zoomInAt, { scale: WAVE.scale[1] }], [100, { scale: WAVE.scale[2] }]]
   .reduce((frames, [at, vars]) => ({ ...frames, [`${at}%`]: { ...frames[`${at}%`], ...vars } }), { easeEach: "sine.inOut" });
 
+// Copy is drawn on whole pixels, so a lift eased as slowly as the fade arrives as separate 1px hops after the copy looks
+// still, and stacked paragraphs take them at different moments. The lift therefore lands early, under the fade, and
+// moves in whole pixels so every line steps on the same frame
+const LIFT = 15;
+const whole = (ease, distance) => {
+  const curve = gsap.parseEase(ease);
+  return (progress) => Math.round(curve(progress) * distance) / distance;
+};
+
 // Every preset fades (autoAlpha) so the CSS FOUC guard works uniformly.
 const REVEAL = {
-  "fade-up":    { from: { y: 15, autoAlpha: 0 },                to: { y: 0, autoAlpha: 1 } },
+  "fade-up":    { from: { y: LIFT, autoAlpha: 0 },              to: { autoAlpha: 1, keyframes: { "57%": { y: 0, ease: whole("power1.out", LIFT) }, ease: "none" } } },
   "fade":       { from: { autoAlpha: 0 },                       to: { autoAlpha: 1 } },
   "fade-soft":  { from: { autoAlpha: 0 },                       to: { autoAlpha: 1, duration: 0.5, ease: "power1.out" } }, // header items
   "rise-soft":  { from: { y: 14, autoAlpha: 0 },                to: { y: 0, autoAlpha: 1, duration: 0.55, ease: "power2.out" } }, // the quick links below lg
@@ -111,7 +121,11 @@ const orderOf = (el, fallback = 0) =>
 // A `-mobile` twin wins below 992: a scrubbed step's start, end or scrub, a step's type or lead, a sequence's stagger
 const variant = (el, name) =>
   phone.matches && el.hasAttribute(`${name}-mobile`) ? `${name}-mobile` : name;
-const leadOf = (el) => number(el, variant(el, "data-anim-lead"), DEFAULTS.entranceLead);
+// null where the markup names no lead: the entrance timeline then picks its own (see playEntrance)
+const leadOf = (el) => {
+  const name = variant(el, "data-anim-lead");
+  return el.hasAttribute(name) ? number(el, name, DEFAULTS.entranceLead) : null;
+};
 const presetOf = (el) => REVEAL[attr(el, variant(el, "data-anim-type"), "fade-up")] || REVEAL["fade-up"];
 
 // data-anim-duration / data-anim-delay let a step be timed against its neighbours
@@ -247,9 +261,12 @@ function playEntrance(steps, root) {
   let titleEnd = 0; // when the last hero title has finished splitting
   [...new Set(steps.map((step) => step.order))]
     .sort((a, b) => a - b)
-    .forEach((order, i) => {
+    .forEach((order, i, orders) => {
       const group = steps.filter((step) => step.order === order);
-      const lead = Math.max(...group.map((step) => step.lead));
+      // whatever follows a hero title starts as the title finishes, on every page; a lead in the markup still wins
+      const afterTitle = i > 0 && steps.some((step) => step.order === orders[i - 1] && step.deferred);
+      const usual = afterTitle ? DEFAULTS.titleLead : DEFAULTS.entranceLead;
+      const lead = Math.max(...group.map((step) => step.lead ?? usual));
       const at = i ? Math.max(0, tl.duration() - lead) : 0;
       group.forEach((step) => {
         if (!step.deferred) {

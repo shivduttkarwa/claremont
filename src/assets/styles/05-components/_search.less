@@ -203,9 +203,11 @@ html:has(.search.is-open) {
       flex-direction: column;
     }
 
+    // only the room for the site's own bar, which stays above the panel; a second, smaller bar is not drawn here
     .search__top {
       display: flex;
       flex: none;
+      visibility: hidden;
       align-items: center;
       justify-content: space-between;
       min-height: var(--header-height);
