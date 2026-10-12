@@ -32,21 +32,8 @@ const DEFAULTS = {
 // viewport, trailing the scroll by `smooth` seconds, and stay revealed once they reach the end.
 const SCRUB = { distance: 0.28, smooth: 0.4 };
 
-// Knobs for `wave-in` (the Mina Wylie photo). "% of the way in" is the share of its path already travelled.
-const WAVE = {
-  x: 120,               // start, % of its own width: + from the right, - from the left
-  y: 0,                 // start, % of its own height: + from below, - from above
-  scale: [0.45, 0.45, 1], // entering, smallest, at rest
-  zoomOutAt: 30,        // % of the way in where it starts to shrink (it is off the right edge until about 35)
-  zoomInAt: 75,         // % of the way in where it is smallest and starts to grow
-  fadeBy: 8,            // % of the way in by which it is fully visible
-  ease: "power1.out",   // how the travel slows into place ("none" = even speed)
-};
-// `swing-in` (preparatory-program-v2.html): the photo swings down from the top right; the 2026-09-23 version travelled 92 / -145 with a quarter turn
+// `swing-in` (the Mina Wylie photo) swings down from the top right: start as % of its own width / height, and the turn in degrees
 const SWING = { x: 20, y: -25, rotation: 18, ease: "power3.out" };
-const waveFrames = (w) => [[w.fadeBy, { autoAlpha: 1 }], [w.zoomOutAt, { scale: w.scale[0] }], [w.zoomInAt, { scale: w.scale[1] }], [100, { scale: w.scale[2] }]]
-  .reduce((frames, [at, vars]) => ({ ...frames, [`${at}%`]: { ...frames[`${at}%`], ...vars } }), { easeEach: "sine.inOut" });
-const wavePreset = (w) => ({ from: { xPercent: w.x, yPercent: w.y, scale: w.scale[0], autoAlpha: 0 }, to: { xPercent: 0, yPercent: 0, keyframes: waveFrames(w), duration: 1.2, ease: w.ease } });
 
 // Copy is drawn on whole pixels, so a lift eased as slowly as the fade arrives as separate 1px hops after the copy looks
 // still, and stacked paragraphs take them at different moments. The lift therefore lands early, under the fade, and
@@ -67,7 +54,6 @@ const REVEAL = {
   "from-right": { from: { x: "15%", autoAlpha: 0 },             to: { x: "0%", autoAlpha: 1 } },
   "enter-right": { from: { x: "110%", autoAlpha: 0 },           to: { x: "0%", autoAlpha: 1, duration: 0.9, ease: "expo.out" } },
   "nudge-right": { from: { x: 40, autoAlpha: 0 },               to: { x: 0, autoAlpha: 1 } },
-  "wave-in":    wavePreset(WAVE),
   "swing-in":   { from: { xPercent: SWING.x, yPercent: SWING.y, rotation: SWING.rotation, autoAlpha: 0 }, to: { xPercent: 0, yPercent: 0, rotation: 0, autoAlpha: 1, duration: 1.2, ease: SWING.ease } },
   "drop":       { from: { y: -48, autoAlpha: 0 },               to: { y: 0, autoAlpha: 1, duration: 0.6, ease: "back.out(1.4)" } },
   "pop":        { from: { autoAlpha: 0 },                       to: { autoAlpha: 1, duration: 0.6, ease: "power2.out" } },

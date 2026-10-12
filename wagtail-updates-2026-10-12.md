@@ -1,15 +1,23 @@
 # Claremont: front-end updates to port into the Wagtail build
 
-Date: 2026-10-11
+Date: 2026-10-12 (first issued 2026-10-11; see "Revisions since the 2026-10-11 version" below)
 Source of truth: the static cutup repo, `static/claremont`
 Baseline: commit `97891e4` ("Dispositions and policies cells fill on hover; column hairline gone"). Everything below is the difference between that commit and the current working copy.
-Companion file: `wagtail-updates-2026-10-11.patch` (same folder) is the full `git diff` of `src/` for these updates, 19 files.
+Companion file: `wagtail-updates-2026-10-12.patch` (same folder) is the full `git diff` of `src/` for these updates, 17 files.
 
 ## Purpose
 
 The Claremont site was converted to Wagtail from the static cutup. After that conversion, twelve front-end updates were made in the static repo. This file tells you exactly what to change in the Wagtail project so it matches.
 
-Nothing here changes Wagtail models, StreamField block definitions, images, fonts or npm dependencies. The work is: updated CSS and JS, plus seven small template edits.
+Nothing here changes Wagtail models, StreamField block definitions, images, fonts or npm dependencies. The work is: updated CSS and JS, plus six small template edits.
+
+## Revisions since the 2026-10-11 version
+
+Only for a port that already followed the 2026-10-11 issue of this file. Three things changed on 2026-10-12; the rest of this document is updated to match and needs no reconciling.
+
+- **Mina Wylie photo (update 1).** The slide-and-zoom entry (`wave-in`) was dropped. The photo swings in from the top right again, as it did before, over a much shorter distance. If you applied the earlier edit 6 and changed `data-anim-type` to `wave-in`, change it back to `swing-in`. In `anim.js` the `WAVE` / `WAVE_FRAMES` block and the `"wave-in"` entry are gone; the `"swing-in"` entry now reads its start from a `SWING` object (section 3).
+- **Contact form (update 5).** The focus line grows out from the middle of the field to both ends, not from the left. CSS only: take the current `_contact.less`.
+- **Built files.** `dist/` is no longer committed in the static repo. Section 1 says where to get `main.css` and `main.js` now.
 
 ## Instructions for the agent doing the port
 
@@ -24,11 +32,11 @@ Nothing here changes Wagtail models, StreamField block definitions, images, font
 
 | # | Update | Static files changed (under `src/`) | Wagtail work |
 | --- | --- | --- | --- |
-| 1 | Mina Wylie photo slides in from the right with a zoom, instead of swinging in from the top | `sections/preparatory-program/mina-wylie.html`, `assets/scripts/anim.js`, `assets/styles/05-components/_split-feature.less` (comment only) | Template edit 6, JS |
+| 1 | Mina Wylie photo swings in from the top right over a short distance (it used to travel from off the page, turning a quarter turn) | `assets/scripts/anim.js` | JS only (template edit 6 is a check) |
 | 2 | Search overlay: the page no longer shifts when it opens, the page is locked while it is open, the scrollbar fades with the overlay, and only the results list scrolls | `partials/search.html`, `assets/scripts/search.js`, `_search.less`, `_header.less`, `_base.less`, `_tokens.less`, `_animation.less` | Template edit 2, CSS, JS |
 | 3 | Header search icon turns into a close icon while the search is open | `partials/header.html`, `_header.less` | Template edit 1, CSS |
 | 4 | Page scrollbar is the browser default, only thinner | `_base.less` | CSS only |
-| 5 | Contact form: the focus line grows from left to right | `_contact.less` | CSS only |
+| 5 | Contact form: the focus line grows out from the middle of the field to both ends | `_contact.less` | CSS only |
 | 6 | Page transition: no blank strip down the right of the outgoing page | `partials/head.html`, `_page-transition.less` | Template edit 3, CSS |
 | 7 | Download button: the arrow drops on hover | `partials/icons.html`, `policies.html`, `_buttons.less` | Template edits 4 and 5, CSS |
 | 8 | Button press: only the button's background presses in, so the label and arrow no longer shift | `_buttons.less`, `_search.less`, `_article.less` | CSS only |
@@ -41,10 +49,10 @@ Nothing here changes Wagtail models, StreamField block definitions, images, font
 
 Pick the option that matches how the Wagtail project gets its front-end assets.
 
-**Option A: Wagtail serves the compiled files.** The production build is committed in the static repo under `dist/`, so no build step is needed. Copy these two files over the ones Wagtail serves (run `npm run build` first only if you have changed the sources yourself):
+**Option A: Wagtail serves the compiled files.** Take the two built files and copy them over the ones Wagtail serves. `dist/` is not committed in the static repo, so get them one of two ways:
 
-- `dist/assets/css/main.css`
-- `dist/assets/js/main.js`
+- Build them: in the static repo run `npm ci` and then `npm run build`, and take `dist/assets/css/main.css` and `dist/assets/js/main.js`.
+- Download them from the GitHub Pages deploy, which rebuilds from source on every push to `main` and is live about a minute after the push: `https://shivduttkarwa.github.io/claremont/assets/css/main.css` and `https://shivduttkarwa.github.io/claremont/assets/js/main.js`. Pages caches files for ten minutes, so if a download looks stale, retry after that.
 
 That covers every style and script change in this document. Skip to section 2.
 
@@ -59,7 +67,6 @@ Styles (`src/assets/styles/`):
 - `05-components/_buttons.less`
 - `05-components/_contact.less`
 - `05-components/_search.less`
-- `05-components/_split-feature.less`
 - `06-animation/_animation.less`
 - `06-animation/_page-transition.less`
 
@@ -197,17 +204,12 @@ After:
 
 The class `btn-icon__arrow` on the second `<use>` is what the hover animation targets. Search the whole Wagtail project for any other `#icon-download` reference and update it the same way; a leftover reference renders an empty icon.
 
-### Edit 6. Mina Wylie section: animation name
+### Edit 6. Mina Wylie section: check the animation name
 
 Static file: `src/sections/preparatory-program/mina-wylie.html` (Wagtail block: `split_feature`)
-Find in Wagtail: `split-feature__photo` or `swing-in`
+Find in Wagtail: `split-feature__photo`
 
-On the photo `<figure>`, change one attribute value. Leave every other attribute as it is.
-
-Before: `data-anim-type="swing-in"`
-After: `data-anim-type="wave-in"`
-
-The `swing-in` preset has been removed from `anim.js`. If the template keeps the old value, the photo silently falls back to a plain fade-up.
+No change is needed: the photo `<figure>` keeps `data-anim-type="swing-in"`, as it had before these updates. Check that it still says so. The 2026-10-11 issue of this file asked for `wave-in` here; that preset no longer exists in `anim.js`, and a template that names it gets a plain fade-up instead of the swing.
 
 ### Edit 7. Home hero: the quick links enter earlier on desktop
 
@@ -236,34 +238,24 @@ Only needed for Option B, or if the Wagtail copy of a script was modified. The `
 
 ### `src/assets/scripts/anim.js`
 
-Two changes:
+Two changes for the Mina Wylie photo:
 
-1. A new settings object `WAVE` and a derived `WAVE_FRAMES`, placed directly above `const REVEAL = {`.
-2. In `REVEAL`, the `"swing-in"` entry is replaced by `"wave-in"`.
+1. A new settings object `SWING`, placed directly above `const REVEAL = {`.
+2. In `REVEAL`, the `"swing-in"` entry reads its start position and turn from `SWING` instead of carrying the old literal values.
 
 ```js
-// Knobs for `wave-in` (the Mina Wylie photo). "% of the way in" is the share of its path already travelled.
-const WAVE = {
-  x: 120,               // start, % of its own width: + from the right, - from the left
-  y: 0,                 // start, % of its own height: + from below, - from above
-  scale: [1, 0.8, 1], // entering, smallest, at rest
-  zoomOutAt: 12,        // % of the way in where it starts to shrink
-  zoomInAt: 70,         // % of the way in where it is smallest and starts to grow
-  fadeBy: 8,            // % of the way in by which it is fully visible
-  ease: "power1.out",   // how the travel slows into place ("none" = even speed)
-};
-const WAVE_FRAMES = [[WAVE.fadeBy, { autoAlpha: 1 }], [WAVE.zoomOutAt, { scale: WAVE.scale[0] }], [WAVE.zoomInAt, { scale: WAVE.scale[1] }], [100, { scale: WAVE.scale[2] }]]
-  .reduce((frames, [at, vars]) => ({ ...frames, [`${at}%`]: { ...frames[`${at}%`], ...vars } }), { easeEach: "sine.inOut" });
+// `swing-in` (the Mina Wylie photo) swings down from the top right: start as % of its own width / height, and the turn in degrees
+const SWING = { x: 20, y: -25, rotation: 18, ease: "power3.out" };
 ```
 
 ```js
-// removed
+// before
 "swing-in":   { from: { xPercent: 92, yPercent: -145, rotation: 90, autoAlpha: 0 }, to: { xPercent: 0, yPercent: 0, rotation: 0, autoAlpha: 1, duration: 1.2, ease: "power3.out" } },
-// added in its place
-"wave-in":    { from: { xPercent: WAVE.x, yPercent: WAVE.y, scale: WAVE.scale[0], autoAlpha: 0 }, to: { xPercent: 0, yPercent: 0, keyframes: WAVE_FRAMES, duration: 1.2, ease: WAVE.ease } },
+// after
+"swing-in":   { from: { xPercent: SWING.x, yPercent: SWING.y, rotation: SWING.rotation, autoAlpha: 0 }, to: { xPercent: 0, yPercent: 0, rotation: 0, autoAlpha: 1, duration: 1.2, ease: SWING.ease } },
 ```
 
-The `WAVE` values were tuned by hand. Copy them exactly.
+The `SWING` values were tuned by hand with the client. Copy them exactly. There is no `WAVE`, `WAVE_FRAMES` or `"wave-in"` in the file; if a copy of `anim.js` from the 2026-10-11 issue has them, remove them.
 
 Three further changes in the same file (updates 10 and 11):
 
@@ -466,18 +458,17 @@ Only needed for Option B. Copy the whole file unless the Wagtail copy has local 
 | `04-layout/_header.less` | Search and close icon swap on `.site-header__tool`, driven by `[aria-expanded="true"]`; `padding-right: var(--scrollbar-size)` on the header while `.is-scroll-locked` (from the `lg` breakpoint). While `.has-search-open`, the header's `z-index` is above the overlay at every width (it was desktop only), with no shadow below `lg`; the menu button also folds to an X when it has the class `is-close` | 2, 3, 12 |
 | `05-components/_search.less` | The overlay no longer scrolls: `.search__body` is a flex column and `.search__results` is the scroller, with a top fade mask. New rules `html.has-search-open` and `html:has(.search.is-open)` fade the scrollbar. The overlay background is a gradient that deepens at its right edge. Matching changes in the phone block, where `.search__top` (the panel's own logo and close row) is now `visibility: hidden` and only keeps its room. The submit button sets `--btn-plate` | 2, 8, 12 |
 | `06-animation/_animation.less` | One rule removed: `.lenis.lenis-stopped { overflow: clip; }` | 2 |
-| `05-components/_contact.less` | The field rule and the focus line are drawn as two background layers so the line can grow from the left; new local property `--contact-line` | 5 |
+| `05-components/_contact.less` | The field rule and the focus line are drawn as background layers: the line is centred and grows out to both ends, and the rule is two halves that give way to the edges ahead of it; new local property `--contact-line` | 5 |
 | `06-animation/_page-transition.less` | New mixin `.page-snapshot-crop()`, applied to `::view-transition-old(root)` and, for a back navigation, to `::view-transition-new(root)` | 6 |
 | `05-components/_buttons.less` | New mixin `.press-plate()` used by `.btn` and `.arrow-btn`: the fill and outline are drawn on `::after` and the click press acts on that only. New press timing. New `btn-icon-drop` keyframes for the Download arrow | 7, 8 |
 | `05-components/_article.less` | The arrow button override sets `--btn-plate` instead of `background` | 8 |
-| `05-components/_split-feature.less` | Comment wording only | 1 |
 
 ## 5. Things that break if missed
 
 - **Button fills.** A button's fill is now the custom property `--btn-plate`, drawn on `::after`. `.btn` itself has `background-color: transparent !important`. Any Wagtail-side CSS that sets `background` or `background-color` directly on `.btn` or `.arrow-btn` will stop showing; change it to set `--btn-plate`. Theming through Bootstrap's `--bs-btn-*` variables still works unchanged.
 - **`#icon-download`.** The symbol is gone. Every reference must become the two-`<use>` markup in edit 5.
 - **`data-lenis-prevent`.** It must be on `.search__results` and not on `.search` (edit 2).
-- **`swing-in`.** The preset is gone; the template must say `wave-in` (edit 6).
+- **`swing-in`.** The Mina Wylie photo's template must keep `data-anim-type="swing-in"`. `wave-in` does not exist in `anim.js` and would fall back to a plain fade-up (edit 6).
 - **Phone header markup.** The menu button must keep the class `site-header__toggle` and `data-bs-toggle="offcanvas"` in the template; `search.js` removes and restores that attribute while the search is open. The overlay's `.search__top` row stays in the markup: CSS hides it on phones and it still reserves the space under the header.
 - **Inner page quick links.** Do not add a `data-anim-lead` to `page-hero__subnav`; the timeline rule in `anim.js` sets it. A value in the template would override the rule.
 - **CSS and JS must ship together.** The new `search.js` relies on the new `html.is-scroll-locked`, `has-search-open` and `--scrollbar-size` rules. Deploying one without the other brings back a visible shift when the search opens.
@@ -487,14 +478,14 @@ Only needed for Option B. Copy the whole file unless the Wagtail copy has local 
 
 Use a desktop browser with a visible scrollbar. Chrome on Windows shows the most.
 
-- [ ] **Mina Wylie photo** (Preparatory Program page): scrolling to the section, the photo comes in from the right, shrinks slightly, then grows to full size and lands in place.
+- [ ] **Mina Wylie photo** (Preparatory Program page): scrolling to the section, the photo swings down into place from a little above and to the right, straightening as it settles. It starts inside the band, not from off the page.
 - [ ] **Search opens without a shift:** clicking the header search icon moves nothing on the page, and the scrollbar fades out with the overlay.
 - [ ] **Search locks the page:** while it is open, the mouse wheel does not scroll the page and nothing appears at the right edge to drag.
 - [ ] **Search results:** after a search, the list scrolls under the search bar while the header and the bar stay still. Check on a phone as well.
 - [ ] **Search closes cleanly:** the header does not blink and the scrollbar fades back in.
 - [ ] **Search icon:** it becomes a close icon while the search is open, and back.
 - [ ] **Scrollbar:** the page scrollbar is the browser's default look, thinner than before.
-- [ ] **Contact form:** focusing each field draws a green line from left to right, the same weight on all four fields.
+- [ ] **Contact form:** focusing each field draws a green line that grows out from the middle of the field to both ends, the same weight on all four fields.
 - [ ] **Page transition:** moving between pages, and using the browser back button, the outgoing page shows no pale strip down its right edge.
 - [ ] **Download button** (Policies page): on hover the arrow drops through the line and returns from the top.
 - [ ] **Button press:** clicking any button or slider arrow presses its background in gently; the label and arrow do not move.

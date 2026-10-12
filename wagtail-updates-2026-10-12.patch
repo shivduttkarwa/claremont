@@ -1,5 +1,5 @@
 diff --git a/src/assets/scripts/anim.js b/src/assets/scripts/anim.js
-index 4b8e327..e30cb0c 100644
+index 4b8e327..014b1c6 100644
 --- a/src/assets/scripts/anim.js
 +++ b/src/assets/scripts/anim.js
 @@ -24,6 +24,7 @@ const DEFAULTS = {
@@ -10,22 +10,12 @@ index 4b8e327..e30cb0c 100644
    lenis: { duration: 1.2, smoothWheel: true, wheelMultiplier: 0.8, touchMultiplier: 1.5 },
  };
  
-@@ -31,9 +32,31 @@ const DEFAULTS = {
+@@ -31,9 +32,21 @@ const DEFAULTS = {
  // viewport, trailing the scroll by `smooth` seconds, and stay revealed once they reach the end.
  const SCRUB = { distance: 0.28, smooth: 0.4 };
  
-+// Knobs for `wave-in` (the Mina Wylie photo). "% of the way in" is the share of its path already travelled.
-+const WAVE = {
-+  x: 120,               // start, % of its own width: + from the right, - from the left
-+  y: 0,                 // start, % of its own height: + from below, - from above
-+  scale: [1, 0.8, 1], // entering, smallest, at rest
-+  zoomOutAt: 12,        // % of the way in where it starts to shrink
-+  zoomInAt: 70,         // % of the way in where it is smallest and starts to grow
-+  fadeBy: 8,            // % of the way in by which it is fully visible
-+  ease: "power1.out",   // how the travel slows into place ("none" = even speed)
-+};
-+const WAVE_FRAMES = [[WAVE.fadeBy, { autoAlpha: 1 }], [WAVE.zoomOutAt, { scale: WAVE.scale[0] }], [WAVE.zoomInAt, { scale: WAVE.scale[1] }], [100, { scale: WAVE.scale[2] }]]
-+  .reduce((frames, [at, vars]) => ({ ...frames, [`${at}%`]: { ...frames[`${at}%`], ...vars } }), { easeEach: "sine.inOut" });
++// `swing-in` (the Mina Wylie photo) swings down from the top right: start as % of its own width / height, and the turn in degrees
++const SWING = { x: 20, y: -25, rotation: 18, ease: "power3.out" };
 +
 +// Copy is drawn on whole pixels, so a lift eased as slowly as the fade arrives as separate 1px hops after the copy looks
 +// still, and stacked paragraphs take them at different moments. The lift therefore lands early, under the fade, and
@@ -43,16 +33,16 @@ index 4b8e327..e30cb0c 100644
    "fade":       { from: { autoAlpha: 0 },                       to: { autoAlpha: 1 } },
    "fade-soft":  { from: { autoAlpha: 0 },                       to: { autoAlpha: 1, duration: 0.5, ease: "power1.out" } }, // header items
    "rise-soft":  { from: { y: 14, autoAlpha: 0 },                to: { y: 0, autoAlpha: 1, duration: 0.55, ease: "power2.out" } }, // the quick links below lg
-@@ -41,7 +64,7 @@ const REVEAL = {
+@@ -41,7 +54,7 @@ const REVEAL = {
    "from-right": { from: { x: "15%", autoAlpha: 0 },             to: { x: "0%", autoAlpha: 1 } },
    "enter-right": { from: { x: "110%", autoAlpha: 0 },           to: { x: "0%", autoAlpha: 1, duration: 0.9, ease: "expo.out" } },
    "nudge-right": { from: { x: 40, autoAlpha: 0 },               to: { x: 0, autoAlpha: 1 } },
 -  "swing-in":   { from: { xPercent: 92, yPercent: -145, rotation: 90, autoAlpha: 0 }, to: { xPercent: 0, yPercent: 0, rotation: 0, autoAlpha: 1, duration: 1.2, ease: "power3.out" } },
-+  "wave-in":    { from: { xPercent: WAVE.x, yPercent: WAVE.y, scale: WAVE.scale[0], autoAlpha: 0 }, to: { xPercent: 0, yPercent: 0, keyframes: WAVE_FRAMES, duration: 1.2, ease: WAVE.ease } },
++  "swing-in":   { from: { xPercent: SWING.x, yPercent: SWING.y, rotation: SWING.rotation, autoAlpha: 0 }, to: { xPercent: 0, yPercent: 0, rotation: 0, autoAlpha: 1, duration: 1.2, ease: SWING.ease } },
    "drop":       { from: { y: -48, autoAlpha: 0 },               to: { y: 0, autoAlpha: 1, duration: 0.6, ease: "back.out(1.4)" } },
    "pop":        { from: { autoAlpha: 0 },                       to: { autoAlpha: 1, duration: 0.6, ease: "power2.out" } },
    // a crisp wipe from the bottom edge up, no fade: visibility flips as the tween starts
-@@ -98,7 +121,11 @@ const orderOf = (el, fallback = 0) =>
+@@ -98,7 +111,11 @@ const orderOf = (el, fallback = 0) =>
  // A `-mobile` twin wins below 992: a scrubbed step's start, end or scrub, a step's type or lead, a sequence's stagger
  const variant = (el, name) =>
    phone.matches && el.hasAttribute(`${name}-mobile`) ? `${name}-mobile` : name;
@@ -65,7 +55,7 @@ index 4b8e327..e30cb0c 100644
  const presetOf = (el) => REVEAL[attr(el, variant(el, "data-anim-type"), "fade-up")] || REVEAL["fade-up"];
  
  // data-anim-duration / data-anim-delay let a step be timed against its neighbours
-@@ -234,9 +261,12 @@ function playEntrance(steps, root) {
+@@ -234,9 +251,12 @@ function playEntrance(steps, root) {
    let titleEnd = 0; // when the last hero title has finished splitting
    [...new Set(steps.map((step) => step.order))]
      .sort((a, b) => a - b)
@@ -511,7 +501,7 @@ index 680b209..97a2e76 100644
      cursor: default;
    }
 diff --git a/src/assets/styles/05-components/_contact.less b/src/assets/styles/05-components/_contact.less
-index 1b41003..ff6be7d 100644
+index 1b41003..b12a7c1 100644
 --- a/src/assets/styles/05-components/_contact.less
 +++ b/src/assets/styles/05-components/_contact.less
 @@ -7,6 +7,9 @@
@@ -528,18 +518,18 @@ index 1b41003..ff6be7d 100644
      .form-control {
        padding: 0.625rem 0;
        @media @fine-lg { padding: 0 0 0.46875rem; } // rule 31 under the value top
-+      // The rule and the focus line are both backgrounds on the border's row. The line grows from the left as the rule gives
-+      // way to the right, so they are never stacked: at a scaled root they snap to different rows and the rule showed under the line
++      // The rule and the focus line are both backgrounds on the border's row. The line grows out from the middle as the two
++      // halves of the rule give way to the edges, so they are never stacked: at a scaled root they snap to different rows and the rule showed under the line
        border-width: 0 0 var(--border-width);
 -      border-color: var(--contact-rule);
 +      border-color: transparent;
        border-radius: var(--radius-none);
 -      background: transparent;
 +      background-color: transparent;
-+      background-image: linear-gradient(var(--color-primary), var(--color-primary)), linear-gradient(var(--contact-rule), var(--contact-rule));
++      background-image: linear-gradient(var(--color-primary), var(--color-primary)), linear-gradient(var(--contact-rule), var(--contact-rule)), linear-gradient(var(--contact-rule), var(--contact-rule));
 +      background-repeat: no-repeat;
-+      background-position: left bottom, right bottom;
-+      background-size: 0 var(--contact-line), 100% var(--border-width);
++      background-position: center bottom, left bottom, right bottom;
++      background-size: 0 var(--contact-line), 50% var(--border-width), 50% var(--border-width);
 +      background-origin: border-box;
 +      background-clip: border-box;
        font-size: var(--font-size-md);
@@ -554,7 +544,7 @@ index 1b41003..ff6be7d 100644
 -        border-color: var(--color-primary);
 -        box-shadow: 0 var(--border-width) 0 0 var(--color-primary);
 +        border-color: transparent;
-+        background-size: 100% var(--contact-line), 0 var(--border-width);
++        background-size: 100% var(--contact-line), 0 var(--border-width), 0 var(--border-width);
 +        box-shadow: none;
        }
 +      @media (prefers-reduced-motion: reduce) { transition: none; }
@@ -736,19 +726,6 @@ index 797b205..738a441 100644
        align-items: center;
        justify-content: center;
        gap: var(--search-tools-gap);
-diff --git a/src/assets/styles/05-components/_split-feature.less b/src/assets/styles/05-components/_split-feature.less
-index 21ac660..d26da19 100644
---- a/src/assets/styles/05-components/_split-feature.less
-+++ b/src/assets/styles/05-components/_split-feature.less
-@@ -36,7 +36,7 @@
-     p { margin-bottom: var(--split-paragraph-gap); }
-   }
- 
--  // The slot stays untransformed so the scrubbed reveal can trigger from it; the figure inside swings
-+  // The slot stays untransformed so the scrubbed reveal can trigger from it; the figure inside slides in
-   &__media {
-     max-width: 28rem;
-     margin: var(--space-4) auto 0;
 diff --git a/src/assets/styles/06-animation/_animation.less b/src/assets/styles/06-animation/_animation.less
 index fb17d9c..42306cb 100644
 --- a/src/assets/styles/06-animation/_animation.less
@@ -902,16 +879,3 @@ index a8ba6dd..8077539 100644
      <include src="partials/subnav.html"></include>
    </div>
  </section>
-diff --git a/src/sections/preparatory-program/mina-wylie.html b/src/sections/preparatory-program/mina-wylie.html
-index 8bf352f..d56d9b4 100644
---- a/src/sections/preparatory-program/mina-wylie.html
-+++ b/src/sections/preparatory-program/mina-wylie.html
-@@ -11,7 +11,7 @@
-     </div>
-   </div>
-   <div class="split-feature__media" data-anim-trigger>
--    <figure class="split-feature__photo" data-anim="reveal" data-anim-type="swing-in" data-anim-scrub="1" data-anim-start="top 70%" data-anim-end="top 25%" data-anim-start-mobile="top 90%" data-anim-end-mobile="top 45%">
-+    <figure class="split-feature__photo" data-anim="reveal" data-anim-type="wave-in" data-anim-scrub="1" data-anim-start="top 70%" data-anim-end="top 25%" data-anim-start-mobile="top 90%" data-anim-end-mobile="top 45%">
-       <img src="assets/images/preparatory-program/mina-wylie.webp" alt="Archival black and white portrait of swimmer Mina Wylie" width="1392" height="1218" loading="lazy" decoding="async">
-     </figure>
-   </div>
