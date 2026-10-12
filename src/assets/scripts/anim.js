@@ -36,7 +36,7 @@ const SCRUB = { distance: 0.28, smooth: 0.4 };
 const WAVE = {
   x: 120,               // start, % of its own width: + from the right, - from the left
   y: 0,                 // start, % of its own height: + from below, - from above
-  scale: [0.75, 0.55, 1], // entering, smallest, at rest
+  scale: [0.45, 0.45, 1], // entering, smallest, at rest
   zoomOutAt: 30,        // % of the way in where it starts to shrink (it is off the right edge until about 35)
   zoomInAt: 75,         // % of the way in where it is smallest and starts to grow
   fadeBy: 8,            // % of the way in by which it is fully visible
@@ -65,8 +65,6 @@ const REVEAL = {
   "enter-right": { from: { x: "110%", autoAlpha: 0 },           to: { x: "0%", autoAlpha: 1, duration: 0.9, ease: "expo.out" } },
   "nudge-right": { from: { x: 40, autoAlpha: 0 },               to: { x: 0, autoAlpha: 1 } },
   "wave-in":    { from: { xPercent: WAVE.x, yPercent: WAVE.y, scale: WAVE.scale[0], autoAlpha: 0 }, to: { xPercent: 0, yPercent: 0, keyframes: WAVE_FRAMES, duration: 1.2, ease: WAVE.ease } },
-  // the Mina Wylie photo's entry before 2026-10-11, kept on preparatory-program-v2.html
-  "swing-in":   { from: { xPercent: 92, yPercent: -145, rotation: 90, autoAlpha: 0 }, to: { xPercent: 0, yPercent: 0, rotation: 0, autoAlpha: 1, duration: 1.2, ease: "power3.out" } },
   "drop":       { from: { y: -48, autoAlpha: 0 },               to: { y: 0, autoAlpha: 1, duration: 0.6, ease: "back.out(1.4)" } },
   "pop":        { from: { autoAlpha: 0 },                       to: { autoAlpha: 1, duration: 0.6, ease: "power2.out" } },
   // a crisp wipe from the bottom edge up, no fade: visibility flips as the tween starts
