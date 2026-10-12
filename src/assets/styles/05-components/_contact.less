@@ -80,16 +80,16 @@
     .form-control {
       padding: 0.625rem 0;
       @media @fine-lg { padding: 0 0 0.46875rem; } // rule 31 under the value top
-      // The rule and the focus line are both backgrounds on the border's row. The line grows from the left as the rule gives
-      // way to the right, so they are never stacked: at a scaled root they snap to different rows and the rule showed under the line
+      // The rule and the focus line are both backgrounds on the border's row. The line grows out from the middle as the two
+      // halves of the rule give way to the edges, so they are never stacked: at a scaled root they snap to different rows and the rule showed under the line
       border-width: 0 0 var(--border-width);
       border-color: transparent;
       border-radius: var(--radius-none);
       background-color: transparent;
-      background-image: linear-gradient(var(--color-primary), var(--color-primary)), linear-gradient(var(--contact-rule), var(--contact-rule));
+      background-image: linear-gradient(var(--color-primary), var(--color-primary)), linear-gradient(var(--contact-rule), var(--contact-rule)), linear-gradient(var(--contact-rule), var(--contact-rule));
       background-repeat: no-repeat;
-      background-position: left bottom, right bottom;
-      background-size: 0 var(--contact-line), 100% var(--border-width);
+      background-position: center bottom, left bottom, right bottom;
+      background-size: 0 var(--contact-line), 50% var(--border-width), 50% var(--border-width);
       background-origin: border-box;
       background-clip: border-box;
       font-size: var(--font-size-md);
@@ -101,7 +101,7 @@
       &::placeholder { color: var(--color-muted); }
       &:focus {
         border-color: transparent;
-        background-size: 100% var(--contact-line), 0 var(--border-width);
+        background-size: 100% var(--contact-line), 0 var(--border-width), 0 var(--border-width);
         box-shadow: none;
       }
       @media (prefers-reduced-motion: reduce) { transition: none; }
