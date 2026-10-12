@@ -6,3 +6,4 @@ dist/**/*.map
 .qa/
 fonts-source/
 ref/
+dist/
