@@ -42,8 +42,8 @@ const WAVE = {
   fadeBy: 8,            // % of the way in by which it is fully visible
   ease: "power1.out",   // how the travel slows into place ("none" = even speed)
 };
-// `wave-in-short` (preparatory-program-v2.html) is the same growth, but it starts inside the band and fades in as it travels
-const WAVE_SHORT = { ...WAVE, x: 40, fadeBy: 60 };
+// `swing-in` (preparatory-program-v2.html): the photo swings down from the top right; the 2026-09-23 version travelled 92 / -145 with a quarter turn
+const SWING = { x: 20, y: -25, rotation: 18, ease: "power3.out" };
 const waveFrames = (w) => [[w.fadeBy, { autoAlpha: 1 }], [w.zoomOutAt, { scale: w.scale[0] }], [w.zoomInAt, { scale: w.scale[1] }], [100, { scale: w.scale[2] }]]
   .reduce((frames, [at, vars]) => ({ ...frames, [`${at}%`]: { ...frames[`${at}%`], ...vars } }), { easeEach: "sine.inOut" });
 const wavePreset = (w) => ({ from: { xPercent: w.x, yPercent: w.y, scale: w.scale[0], autoAlpha: 0 }, to: { xPercent: 0, yPercent: 0, keyframes: waveFrames(w), duration: 1.2, ease: w.ease } });
@@ -68,7 +68,7 @@ const REVEAL = {
   "enter-right": { from: { x: "110%", autoAlpha: 0 },           to: { x: "0%", autoAlpha: 1, duration: 0.9, ease: "expo.out" } },
   "nudge-right": { from: { x: 40, autoAlpha: 0 },               to: { x: 0, autoAlpha: 1 } },
   "wave-in":    wavePreset(WAVE),
-  "wave-in-short": wavePreset(WAVE_SHORT),
+  "swing-in":   { from: { xPercent: SWING.x, yPercent: SWING.y, rotation: SWING.rotation, autoAlpha: 0 }, to: { xPercent: 0, yPercent: 0, rotation: 0, autoAlpha: 1, duration: 1.2, ease: SWING.ease } },
   "drop":       { from: { y: -48, autoAlpha: 0 },               to: { y: 0, autoAlpha: 1, duration: 0.6, ease: "back.out(1.4)" } },
   "pop":        { from: { autoAlpha: 0 },                       to: { autoAlpha: 1, duration: 0.6, ease: "power2.out" } },
   // a crisp wipe from the bottom edge up, no fade: visibility flips as the tween starts
