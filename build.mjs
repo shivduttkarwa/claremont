@@ -86,6 +86,17 @@ function indexPage(tree, url, records) {
   };
   findDesc(tree);
 
+  // a page marked noindex (the v2 comparison page) stays out of the site search
+  const findNoindex = (nodes) => {
+    for (const n of nodes || []) {
+      if (typeof n === "string" || !n) continue;
+      if (n.tag === "meta" && n.attrs && n.attrs.name === "robots" && /noindex/.test(n.attrs.content || "")) return true;
+      if (n.content && findNoindex(n.content)) return true;
+    }
+    return false;
+  };
+  if (findNoindex(tree)) return;
+
   const main = (() => {
     let found = null;
     const dig = (nodes) => {
