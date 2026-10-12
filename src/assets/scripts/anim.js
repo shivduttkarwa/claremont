@@ -36,9 +36,9 @@ const SCRUB = { distance: 0.28, smooth: 0.4 };
 const WAVE = {
   x: 120,               // start, % of its own width: + from the right, - from the left
   y: 0,                 // start, % of its own height: + from below, - from above
-  scale: [0.6, 0.5, 1], // entering, smallest, at rest
-  zoomOutAt: 0,         // % of the way in where it starts to shrink
-  zoomInAt: 45,         // % of the way in where it is smallest and starts to grow
+  scale: [0.75, 0.55, 1], // entering, smallest, at rest
+  zoomOutAt: 30,        // % of the way in where it starts to shrink (it is off the right edge until about 35)
+  zoomInAt: 75,         // % of the way in where it is smallest and starts to grow
   fadeBy: 8,            // % of the way in by which it is fully visible
   ease: "power1.out",   // how the travel slows into place ("none" = even speed)
 };
