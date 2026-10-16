@@ -143,14 +143,19 @@
     padding-block: 0;
     background: var(--color-primary-dark);
 
-    // The square phone crop; from sm the landscape photo comes back at 3 : 2, so a tablet is not a screen of photo
+    // The square phone crop, shown whole: the layer stops travelling below lg (data-anim-disable-mobile) and fills the box,
+    // so the frame's own square is what shows. From sm the landscape photo comes back at 3 : 2, so a tablet is not a screen of photo
     .feature-banner__media {
       position: relative;
       inset: auto;
       aspect-ratio: 1 / 1; // 375 × 375
       @media (min-width: @bp-sm) { aspect-ratio: 3 / 2; }
-      img { position: static; }
       &::after { background: none; }
+    }
+    .feature-banner__layer {
+      top: 0;
+      height: 100%;
+      transform: none;
     }
 
     > .container { padding-block: 1.875rem; } // 30

@@ -9,7 +9,7 @@
             width, height, modifier, actions (HTML buttons, or empty) -->
 <section class="feature-banner feature-banner--{{ align }}{{ shade ? ' feature-banner--shade' : '' }} {{ modifier }}" aria-labelledby="{{ id }}" data-anim-parallax-trigger>
   <div class="feature-banner__media" aria-hidden="true">
-    <div class="feature-banner__layer" data-anim="parallax" data-anim-centered data-anim-speed="18.75" data-anim-scrub-mobile="0.3">
+    <div class="feature-banner__layer" data-anim="parallax" data-anim-centered data-anim-speed="18.75" data-anim-disable-mobile>
       <picture>
         <source media="(min-width: 576px)" srcset="{{ image }}" width="{{ width }}" height="{{ height }}">
         <img src="{{ image_m }}" alt="" width="{{ width }}" height="{{ height }}" loading="lazy" decoding="async"

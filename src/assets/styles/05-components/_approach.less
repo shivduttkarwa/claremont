@@ -14,7 +14,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: var(--space-4);
+    gap: ~"clamp(1rem, -3.7692rem + 7.6923vw, 2rem)"; // 16 at 992 → 32 by 1200: the four tabs and the arrows fit a 992 screen
     margin-bottom: var(--approach-bar-gap);
   }
 
@@ -23,7 +23,7 @@
     .hide-scrollbar();
     display: flex;
     flex: 1 1 auto;
-    gap: var(--space-2);
+    gap: ~"clamp(0.75rem, -0.4423rem + 1.9231vw, 1rem)"; // 12 → 16 by 1200
     min-width: 0;
     @media (min-width: @bp-xxl) {
       gap: 1.0625rem; // Figma rounds each label up a pixel, so tabs land at 201 / 427 / 644 / 847
@@ -41,6 +41,8 @@
   &__tab {
     flex: 0 0 auto;
     scroll-snap-align: start;
+    --bs-btn-padding-x: ~"clamp(1.25rem, 0.0577rem + 1.9231vw, 1.5rem)"; // 20 → 24 by 1200
+    --bs-btn-font-size: ~"clamp(0.9375rem, 0.6394rem + 0.4808vw, 1rem)"; // 15 → 16
     --bs-btn-hover-color: var(--color-primary);
     --bs-btn-hover-bg: var(--color-secondary);
     --bs-btn-hover-border-color: var(--color-primary);
