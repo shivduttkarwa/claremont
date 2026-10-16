@@ -126,3 +126,14 @@
 .last-mb-0() {
   > *:last-child { margin-bottom: 0; }
 }
+
+// Phones stack a button row to the column: the 375 frames draw every button 335 wide, one under the other, 30 apart
+.stack-buttons() {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 1.875rem; // 30
+  .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}

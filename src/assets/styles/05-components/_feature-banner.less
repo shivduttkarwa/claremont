@@ -9,6 +9,7 @@
   --banner-shade-angle: 90deg;         // dark on the copy's side
   --banner-shade-solid: 20.49%;        // 336 of 1640 in from the copy's edge (1619:7155)
   --banner-shade-clear: 48.35%;        // 793
+  --banner-wash-clear: 43.72%;         // 717 of 1640: where the report banner's white wash has faded (1805:6373)
 
   position: relative;
   isolation: isolate;
@@ -28,6 +29,7 @@
   // Inner pages: a 45px title, one blank 32 / 1.1 line, then the copy
   &--y168 { --banner-top: 10.5rem;    --banner-title-gap: 2.2rem; --banner-content-width: 31.0625rem; } // 168, 497 wide
   &--y237 { --banner-top: 14.8125rem; --banner-title-gap: 2.2rem; }                                      // 237
+  &--y209 { --banner-top: 13.0625rem; --banner-title-gap: 2.2rem; }                                      // 209: the Extra-curricular music band
 
   > .container { width: 100%; }
 
@@ -53,6 +55,17 @@
   &--shade &__media::after {
     @media (min-width: @bp-lg) {
       background: linear-gradient(var(--banner-shade-angle), var(--color-shade) var(--banner-shade-solid), transparent var(--banner-shade-clear));
+    }
+  }
+
+  // The report banner (1805:6373): Figma washes the copy's side white at 68% and sets the copy Dark Green; the phone panel stays green
+  &--wash,
+  &--wash &__content h2 {
+    @media (min-width: @bp-lg) { color: var(--color-primary-dark); }
+  }
+  &--wash &__media::after {
+    @media (min-width: @bp-lg) {
+      background: linear-gradient(var(--banner-shade-angle), ~"color-mix(in srgb, var(--color-white) 68%, transparent)", transparent var(--banner-wash-clear));
     }
   }
 
@@ -88,6 +101,7 @@
     gap: var(--space-2);
     margin-top: var(--banner-actions-gap);
     &:empty { display: none; }
+    @media @upto-md { .stack-buttons(); }
     @media (min-width: @bp-xxl) { margin-left: 0.3125rem; } // button at x 202
   }
 

@@ -84,6 +84,9 @@
       }
     }
     &__actions { order: 1; }
+    @media @upto-md {
+      &__actions { .stack-buttons(); }
+    }
     .intro-split__body > p:last-child { margin-bottom: 0; } // the copy ends 30 above the buttons and 60 above the band's foot
     @media @upto-md {
       h2 {

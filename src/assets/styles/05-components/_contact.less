@@ -131,6 +131,7 @@
     display: flex;
     justify-content: flex-end;
     margin-top: 0.8125rem; // 44 below the message rule
+    @media @upto-md { .stack-buttons(); }
     @media (min-width: @bp-sm) { grid-column: 1 / -1; }
     @media (min-width: @bp-lg) { padding-right: 1.6875rem; } // button ends at x 1413
   }
