@@ -62,6 +62,8 @@
     margin-right: -0.375rem;
     transition: transform var(--duration-base) var(--ease-out);
   }
+  // a fold row's arrow turns on the fold's own curve: on --ease-out most of the quarter turn landed in its first 70ms
+  button& .icon { transition: transform var(--duration-fold) var(--ease-settle); }
 
   // hover and focus change the colour and show the fill where a block gives one, nothing moves; a link row nudges
   // its arrow, a fold row turns it down as the frames' hover state does (1680:5968), and keeps it down while open
