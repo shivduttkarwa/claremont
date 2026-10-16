@@ -206,7 +206,7 @@ export function initSearch(root = document) {
         return `<li class="search__item">
           <a class="search__link" href="${href}">
             <span class="search__heading">${highlight(record.h, terms)}</span>
-            <span class="search__snippet"><span class="search__page">${escapeHtml(record.t)}</span>${trail}</span>
+            <span class="search__snippet"><span class="search__page">${highlight(record.t, terms)}</span>${trail}</span>
           </a>
         </li>`;
       })
