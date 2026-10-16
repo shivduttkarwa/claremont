@@ -90,13 +90,16 @@
       max-width: 75.75rem;
       margin-bottom: var(--hero-title-gap);
       font-size: ~"min(var(--font-size-display), 8.2246 * var(--hero-u))";
+      font-kerning: none; // Figma's 1640 render draws the title unkerned ("Welcome to" is 579 of ink there); its 375 render is kerned
     }
     @media (min-width: @bp-xxl) { margin-left: -0.125rem; } // x 198
   }
   &__title-line {
     display: block;
     &--indent {
-      text-indent: 0.55em; // the three spaces before "Claremont" (33 at 60): a wrapped "College." returns to the margin
+      text-indent: 0.57em; // the three spaces before "Claremont": 75 at the 131.6 title, 34 at 60; a wrapped "College." returns to the margin
+      letter-spacing: -0.045em; // Figma renders the italic run tighter than its -3%, kerned: "Claremont" at -5.2%, "College." nearer -4.2%, at 1640 and at 60
+      font-kerning: normal; // the unkerned 1640 render is the upright line only
     }
   }
 
@@ -115,7 +118,8 @@
 
     @media (min-width: @bp-lg) {
       --hero-subtitle-lh: 1.17333; // 52.8 on 45
-      --hero-subtitle-size: ~"min(var(--font-size-callout), 2.8125 * var(--hero-u))";
+      // 45 at the frame ("personal." 48 through the em). The floor keeps the 45 : 19 ratio with the copy, which stops at 16 on short screens
+      --hero-subtitle-size: ~"max(2.3684rem, min(var(--font-size-callout), 2.8125 * var(--hero-u)))";
       max-width: 33.625rem;
       margin-bottom: calc(1.45 * var(--hero-u));
       color: inherit;
@@ -137,11 +141,12 @@
       max-width: 38.5625rem; // 617
       font-size: ~"max(1rem, min(var(--font-size-lg), 1.1875 * var(--hero-u)))";
       line-height: var(--line-height-relaxed);
+      letter-spacing: var(--letter-spacing-body); // Figma's -0.57 at 19: the longest line is then 461 wide, level with the subtitle
       p { margin-bottom: calc(0.5483 * var(--hero-u)); } // 8.77
     }
   }
 
-  // The 375 frame stretches the button to the column; the client prefers it at its label width everywhere
+  // Phones stack the button to the column as the 375 frame draws it (Oct 2026 review); from md it sits at its label width
   &__actions {
     display: flex;
     flex-wrap: wrap;
