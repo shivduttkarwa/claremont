@@ -1,0 +1,23 @@
+<!-- @wagtail-block: image_carousel
+     label:  CharBlock (the carousel's accessible name)
+     slides: ListBlock(StructBlock(image:ImageChooserBlock, image_m:ImageChooserBlock (phone square), alt:CharBlock))
+     A 1640 × 614 photo band with an arrow either side (K-6 2410:8619, Preparatory 2400:7239). The arrows step it round, a
+     swipe too; each change cross-fades the photos with the home approach tabs' zoom (the leaving one grows, the arriving
+     one settles). Phones: the arrows above a full-width square.
+     locals: label, slides [{ image, image_m, alt }] -->
+<section class="image-carousel" aria-roledescription="carousel" aria-label="{{ label }}" data-image-carousel>
+  <div class="image-carousel__arrows arrow-group" data-anim="reveal" data-anim-type="fade">
+    <button class="arrow-btn arrow-btn--prev" type="button" aria-label="Previous photo" data-carousel-prev><svg class="icon"><use href="#icon-arrow-right"></use></svg></button>
+    <button class="arrow-btn arrow-btn--next" type="button" aria-label="Next photo" data-carousel-next><svg class="icon"><use href="#icon-arrow-right"></use></svg></button>
+  </div>
+  <div class="image-carousel__stage" aria-live="polite" data-carousel-stage>
+    <each loop="slide, index in slides">
+    <figure class="image-carousel__slide{{ index === 0 ? ' is-active' : '' }}" aria-roledescription="slide" aria-label="{{ index + 1 }} of {{ slides.length }}">
+      <picture>
+        <source media="(min-width: 576px)" srcset="{{ slide.image }}" width="1840" height="689">
+        <img src="{{ slide.image_m }}" alt="{{ slide.alt }}" width="750" height="750" loading="lazy" decoding="async">
+      </picture>
+    </figure>
+    </each>
+  </div>
+</section>

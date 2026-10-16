@@ -18,6 +18,7 @@ export function initImageCarousels(root = document) {
         else slide.setAttribute("aria-hidden", "true");
       });
     };
+    show(current);
     carousel.querySelector("[data-carousel-prev]")?.addEventListener("click", () => show(current - 1));
     carousel.querySelector("[data-carousel-next]")?.addEventListener("click", () => show(current + 1));
 
