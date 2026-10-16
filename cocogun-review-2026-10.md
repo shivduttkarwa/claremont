@@ -43,15 +43,16 @@ Also done, outside the deck (2026-10-16): home hover quotes break exactly as Fig
 
 ## Open
 
-1. **Home testimonial card on phones** (slide 24): the 375 frame frames the first card's photo its own way (2081:10676); the build still serves the desktop square. Cut it (`home/testimonial-m.webp` is already listed in the `mobile` set) and serve it to the first card below md.
-2. **K-6 "Originality" tile** (slide 13): "Originality" is a text row in the dispositions, with no photo; the photo beside it is the K-6 carousel, whose first phone square already comes from the 375 frame (2571:14042). Re-read the slide to see what the arrow means.
-3. **Extra-curricular activity cards** (slide 28): on 2026-10-15 the designer moved each card's vertical rule to 1px inside its right edge, running the full card height from the band's top. Match in `_link-columns.less`.
-4. **Preparatory phone accordion** (new in Figma, not in the deck): frame 2125:14512 draws "Our teaching approach" as a 138 light band with the title, then four rows 81 tall closed with the diagonal arrow, the open one filled Light Blue with 15/22 copy. The build shows that list as the accordion below 1200 but has not been measured against this frame. The frame also parks the photo carousel's arrows above this list, away from their photo; the build keeps them over the photo. Ask Cocogun.
-5. **Preparatory photo banner over the columns** (slide 21): the agency's screenshot shows the banner's top corners over the columns above. It does not reproduce locally (the band is now the carousel). Needs their browser and OS.
-6. **Home "Where would you like to start?" rows** (slide 9): the design builds them from the "Drop down" component. They were folds for a day and link rows again since 2026-10-07 at the user's request. The arrow may be asking for the fold back; confirm before changing.
-7. **Slides 17 and 20** (Welcome desktop, Preparatory columns) were never captured: the browser connection dropped. Open them and read the arrows.
-8. **Wagtail handoff notes**: add Done 1 to 12 and the outside-the-deck work to `wagtail-updates-2026-10-12.md` (or a new dated file) before the Wagtail developer takes the next drop: among others the `approach__pane--*` classes, `.stack-buttons()`, `feature-banner--wash` and `--y209`, the deleted `media_intro` block, the shared `image-carousel` and `quote-slider` locals, `link-columns--reveal-xl` with `data-fold-from`, the news `next` local and `?page=N` load-more, and the article grid's `data-search-skip` pages.
-9. **Policy links**: 7 policies have no PolicyConnect link yet (Gifted and Talented Handbook, the three Codes of Conduct, Home Learning, Student Wellbeing, Student Leadership); ask the client for them.
+Read again from the deck's PDF export on 2026-10-16 (every slide):
+
+1. **Slide 6, home hero at desktop** (arrows on the logo, nav, title, the Apply to enrol chip and the copy; no inset): logo, nav, title and copy measure against Figma (Done 7). The two known gaps are the ones the user chose to leave: the quick links sit 29 below Figma's 189, and the closing line is semibold where Figma has bold. If the arrows mean those, they are open.
+2. **Slide 9, "Where would you like to start?"** (arrows on the first row and its arrow): the design builds these rows from the "Drop down" component, so the arrows most likely ask for the rows to open with copy, as in Figma, rather than link straight to the pages. They were folds for a day and link rows since 2026-10-07 at the user's request: a decision for the user.
+3. **Slide 43, contact map**: done 2026-10-16. Figma's map was a screenshot of Google's embed (place card, controls and all), so the still image looked live but did nothing. It is now the live embed for 30 Coogee Bay Rd at the same size, greyscale as designed, loaded lazily (`contact-us.html`, `.map-banner iframe` in `_contact.less`); `contact/map.webp` is gone. Its view distance (`!1d25232` in the share-embed URL) shows the area Figma's screenshot shows, from Marrickville to the coast, sharp; a CSS scale of the whole-zoom embed blurred it.
+4. **Preparatory phone accordion** (new in Figma, not in the deck): frame 2125:14512 (a 138 light band with the title, rows 81 tall, the open one Light Blue with 15/22 copy) is not yet measured against the build's accordion.
+5. **Wagtail handoff notes**: bring `wagtail-updates-2026-10-12.md` up to date (or a new dated file) with Done 1 to 12 and the outside-the-deck work.
+6. **Policy links**: the client to supply PolicyConnect links for the 7 policies that have none.
+
+Read and now closed: slide 7 (the hero copy already has Figma's 8.77 between sentences), 11 (992 header, Done 8), 12 (pillar arrows show at 375 x 700), 13 (the cropped boy is no longer in the slider; the photos are the Design 2 portraits), 20 (the Wellbeing copy breaks as Figma's render), 21 (the arrows sit where Figma's carousel arrows are: the band is now the carousel), 24 and 25 (the K-6 sport and music phone squares), 28 (the card seams), 30 (the Extra-curricular music phone square), 38 (the next arrow loads more), 40 (the news article on phones).
 
 ## Verification used
 

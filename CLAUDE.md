@@ -57,7 +57,7 @@ Stack: plain **HTML** pages · Bootstrap 5.3 (CSS-variable themed) · **LESS** (
 - Form controls are 16px on touch (iOS zooms the page below that); body copy is 16 on phones, 15 from md.
 - Hover styling on controls that stay on screen (carousel arrows) sits inside `@media (hover: hover)`.
 - Desktop-only measures (`max-width` for the zigzag timeline, fixed footer columns) start at the breakpoint that needs them, not before. The footer's 487 / 300 / 188 columns need the whole frame, so they are `fr` shares from xxl and fixed only from `@bp-design`.
-- Hero images carry `fetchpriority="high"`; everything below the fold is `loading="lazy" decoding="async"`. Production CSS is minified by esbuild in `build.mjs`.
+- The contact map is the live Google embed (Share > Embed a map, `google.com/maps/embed?pb=…`, no API key), greyscale and lazy, in the box the design's screenshot of it had (1640 × 433, a 375 square on phones): its view distance `!1d25232` shows Figma's area, between zoom 13 and 14, sharp. The plain `?q=…&z=13` form only takes whole zoom levels, and scaling its iframe up to Figma's extent blurred it (2026-10-16). Hero images carry `fetchpriority="high"`; everything below the fold is `loading="lazy" decoding="async"`. Production CSS is minified by esbuild in `build.mjs`.
 
 ## Client review
 - Cocogun's October 2026 review of the staging build is tracked in `cocogun-review-2026-10.md`: how to read the deck (arrows and design crops, no written notes), what is done with commits, what is still open. Update it when a review item lands.
