@@ -8,6 +8,7 @@
   --fold-hover: var(--color-secondary);   // the row's colour on hover and focus
   --fold-fill: transparent;               // a fill behind the hovered or focused row, over its rules (Light Blue on white)
   --fold-fill-bleed: 0rem;                // how far that fill runs past the title on the left
+  --fold-fill-bleed-end: 0rem;            // and past the row's end on the right
   --fold-body-top: 0.25rem;               // the copy under its title, inside the fold
   --fold-body-bottom: 1.875rem;           // the copy above the next rule, inside the fold
   .reset-list();
@@ -48,7 +49,7 @@
   &::after {
     content: "";
     position: absolute;
-    inset: calc(-1 * var(--border-width)) 0 calc(-1 * var(--border-width)) calc(-1 * var(--fold-fill-bleed));
+    inset: calc(-1 * var(--border-width)) calc(-1 * var(--fold-fill-bleed-end)) calc(-1 * var(--border-width)) calc(-1 * var(--fold-fill-bleed));
     z-index: var(--z-behind);
     background: var(--fold-fill);
     opacity: 0;

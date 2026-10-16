@@ -24,10 +24,13 @@
     @media (min-width: @bp-lg) { margin: var(--cta-list-offset) 0 0 var(--cta-list-inset); }
   }
 
-  // the rows are the fold (_fold.less); the block only sets their pitch, the hover (the arrow turns, nothing else changes:
-  // the fill and Dark Green title of 1680:5968 were taken out on 2026-10-06) and the open copy's type (1801:5705: 15 / 22.5,
-  // white on the green band, 527 wide, each term its own paragraph 10 apart)
-  .fold { --fold-hover: currentColor; }
+  // the rows are the fold (_fold.less); the block sets their pitch, the hover of the "Drop down" component (2081:10801: a
+  // Light Blue fill, the title and turned arrow Dark Green) and the open copy's type (1801:5705: 15 / 22.5, white on the
+  // green band, 527 wide, each term its own paragraph 10 apart)
+  .fold {
+    --fold-hover: var(--color-heading);
+    --fold-fill: var(--color-secondary);
+  }
   .fold__row { padding: var(--cta-row-pad-y) var(--cta-row-pad-x); }
   .fold__body {
     padding-inline: var(--cta-row-pad-x); // the copy starts and ends with its title
@@ -69,6 +72,12 @@
       --cta-pad-bottom: 6.3625rem;
       --cta-list-inset: 0.3125rem;
       --cta-row-pad-x: 0rem;
+    }
+    .fold {
+      @media (min-width: @bp-lg) {
+        --fold-fill-bleed: 0.4375rem;     // 7: the component's 8 of fill before the title
+        --fold-fill-bleed-end: 0.625rem;  // 10: and 8 past the arrow's 26 frame
+      }
     }
     .fold__row {
       gap: var(--space-1);

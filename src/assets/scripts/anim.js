@@ -205,32 +205,28 @@ function scrollStep(el, animation, hold) {
   const st = ScrollTrigger.create({
     trigger: el,
     start: `clamp(${startOf(el)})`,
-    end: () => `+=${range()}`,
+    end: "max", // the range runs from the clamped start; a relative end would cut it short for a step already on screen
     onUpdate: (self) => {
-      const reach = Math.min(self.end, ScrollTrigger.maxScroll(window));
+      const reach = Math.min(self.start + range(), ScrollTrigger.maxScroll(window));
       if (reach - self.start < range() / 2) return playNow(self);
       const progress = gsap.utils.clamp(0, 1, (self.scroll() - self.start) / (reach - self.start));
       if (progress <= reached) return;
       reached = progress;
-      gsap.to(timeline(), { progress, duration: SCRUB.smooth, ease: "power2.out", overwrite: true });
       if (progress === 1) {
         self.kill();
         triggers.delete(el);
       }
+      if (progress > timeline().progress()) gsap.to(tl, { progress, duration: SCRUB.smooth, ease: "power2.out", overwrite: true });
     },
   });
   triggers.set(el, st);
   if (!(st.scroll() >= st.start || onScreen())) return;
   const wait = follow();
   if (!wait) return playNow(st);
-  // On screen while the entrance still runs: it plays when that ends. The trigger stays alive until then, so a
-  // reader who scrolls down straight away sees it follow the scroll like any other step, not a blank section.
+  // On screen while the entrance still runs: it plays when that ends. The trigger stays alive throughout, so a
+  // reader who scrolls down straight away or just after sees it follow the scroll like any other step, not a blank section.
   gsap.delayedCall(wait, () => {
-    if (!triggers.has(el)) return;
-    st.kill();
-    triggers.delete(el);
-    gsap.killTweensOf(timeline());
-    timeline().play();
+    if (triggers.get(el) === st) timeline().play();
   });
 }
 
@@ -274,7 +270,26 @@ function playEntrance(steps, root) {
   // scroll steps already in view follow as the last step, but never while a title is still rising;
   // on phones they wait for the whole entrance, so the copy under a hero comes after its quick links
   const lead = phone.matches ? 0 : DEFAULTS.entranceLead;
-  if (root === document) handoff = gsap.ticker.time + Math.max(0, tl.duration() - lead, titleEnd);
+  if (root !== document) return;
+  handoff = gsap.ticker.time + Math.max(0, tl.duration() - lead, titleEnd);
+  hurryOnScroll(tl, lead);
+}
+
+// The reader's first scroll during the entrance starts every step still to come at once, in order, so the hero is
+// never beaten by the copy scrolling in under it
+function hurryOnScroll(tl, lead) {
+  const hurry = () => {
+    if (window.scrollY < 2) return;
+    window.removeEventListener("scroll", hurry);
+    const now = tl.time();
+    const waiting = tl.getChildren(false, true, true).filter((child) => child.startTime() > now);
+    const starts = [...new Set(waiting.map((child) => child.startTime()))].sort((a, b) => a - b);
+    waiting.forEach((child) => child.startTime(now + 0.001 + starts.indexOf(child.startTime()) * DEFAULTS.stagger));
+    handoff = gsap.ticker.time + Math.max(0, tl.duration() - now - lead);
+  };
+  tl.eventCallback("onComplete", () => window.removeEventListener("scroll", hurry));
+  window.addEventListener("scroll", hurry, { passive: true });
+  hurry();
 }
 
 // data-anim-group -> tag direct children as staggered reveals (auto ordering)

@@ -46,7 +46,17 @@
     }'></include>
 
     <!-- Fees and dates -->
-    <include src="sections/enrolment/fees-links.html"></include>
+    <include src="sections/cta-links.html" locals='{
+      "id": "fees-title",
+      "title": "Fees and dates",
+      "modifier": "cta-links--roomy cta-links--with-actions",
+      "items": [
+        { "id": "fees-schedule", "label": "2027 Fee Schedule", "body": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec nunc congue, ultricies felis at, malesuada erat. Morbi nisi nulla, blandit eget dolor id, aliquam vehicula dolor sagittis eleifend.</p>" },
+        { "id": "fees-dates", "label": "Term Dates", "body": "<p>Term 1: Monday 1 February to Friday 9 April (10 weeks)</p><p>Term 2: Wednesday 28 April to Friday 25 June (9 weeks)</p><p>Term 3: Monday 20 July to Friday 24 September (10 weeks)</p><p>Term 4: Tuesday 12 October to Wednesday 1 December (8 weeks)</p>" }
+      ],
+      "cta_text": "Apply to enrol",
+      "cta_url": "#apply"
+    }'></include>
   </main>
 
   <include src="partials/footer.html"></include>

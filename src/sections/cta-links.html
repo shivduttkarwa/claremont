@@ -1,20 +1,33 @@
 <!-- @wagtail-block: cta_links
-     title: CharBlock(required)
-     links: ListBlock(StructBlock(label:CharBlock, page:PageChooserBlock))
-     The rows are the fold's link rows (_fold.less): each goes to its page. -->
-<section class="cta-links" aria-labelledby="cta-title">
+     title: RichTextBlock (may carry a line break)
+     items: ListBlock(StructBlock(label:CharBlock, body:RichTextBlock))
+     cta:   StructBlock(text:CharBlock, url:URLBlock) — optional
+     The rows are Figma's "Drop down" component, the fold (_fold.less, initFolds): every row shut at rest, a click opens one.
+     Home 1619:7085, enrolment 1801:5705 / 2149:7929, policies strategy band.
+     locals: id, title, modifier (or empty), items [{ id, label, body }], cta_text and cta_url (empty for no button) -->
+<section class="cta-links{{ modifier ? ' ' + modifier : '' }}" aria-labelledby="{{ id }}">
   <div class="container">
     <div class="row g-4 row-split">
       <div class="col-lg-6">
-        <h2 id="cta-title" data-anim="split" data-anim-type="chars-soft" data-anim-type-mobile="lines">Where would you like to start?</h2>
+        <h2 id="{{ id }}" data-anim="split" data-anim-type="chars-soft" data-anim-type-mobile="lines">{{{ title }}}</h2>
       </div>
       <div class="col-lg-6">
         <div class="cta-links__aside">
-          <ul class="fold">
-            <li class="fold__item" data-anim="reveal" data-anim-type="fade"><a class="fold__row" href="preparatory-program.html">Preparatory Program<svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
-            <li class="fold__item" data-anim="reveal" data-anim-type="fade"><a class="fold__row" href="k-6-primary.html">K-6 Primary<svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
-            <li class="fold__item" data-anim="reveal" data-anim-type="fade"><a class="fold__row" href="contact-us.html#book-a-tour">Book a tour<svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
-          </ul>
+        <ul class="fold" data-fold>
+          <each loop="item in items">
+          <li class="fold__item" data-anim="reveal" data-anim-type="fade">
+            <button class="fold__row" type="button" aria-expanded="false" aria-controls="{{ item.id }}">{{ item.label }}<svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button>
+            <div class="fold__panel" id="{{ item.id }}">
+              <div class="fold__body">{{{ item.body }}}</div>
+            </div>
+          </li>
+          </each>
+        </ul>
+        <if condition="cta_text">
+        <div class="cta-links__actions" data-anim="reveal" data-anim-type="fade-up">
+          <a class="btn btn-primary" href="{{ cta_url }}">{{ cta_text }}</a>
+        </div>
+        </if>
         </div>
       </div>
     </div>
