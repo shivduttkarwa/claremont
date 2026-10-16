@@ -84,3 +84,38 @@
     letter-spacing: var(--letter-spacing-ui);
   }
 }
+
+// Phones (news article M 2149:8665): 60 above and below, the standfirst at 35 with Back to news full width 30 under it, then
+// the photo, the copy at 15 and Previous / Next each 30 apart, the pair on one row with each word centred beside its arrow
+@media @upto-lg {
+  .article {
+    padding-block: 3.75rem; // 60
+    .row { --bs-gutter-y: 0; }
+
+    h2 {
+      margin-bottom: 1.875rem; // 30
+      font-size: 2.1875rem;    // 35
+      line-height: 1.05;       // 36.75
+    }
+    &__media { margin: 1.875rem 0; } // 30
+    &__body { max-width: calc(100% - 0.03125rem); } // Figma breaks a line half a pixel short of its 335 box
+    &__body,
+    &__nav-label {
+      font-size: 0.9375rem; // 15
+      line-height: 1.5333;  // 23: Figma draws the 22.5 line at a whole pixel
+      letter-spacing: var(--letter-spacing-body); // -3% of 15, not of the 16 it would inherit
+    }
+    &__nav {
+      grid-template-columns: 1fr 1fr;
+      margin-top: 1.875rem; // 30
+    }
+    &__nav-link {
+      align-items: center;
+      gap: 1.25rem; // 20
+    }
+    // the 375 frame names only Previous and Next; the article's title stays for screen readers
+    @media @upto-md {
+      &__nav-label span + span { .visually-hidden(); }
+    }
+  }
+}

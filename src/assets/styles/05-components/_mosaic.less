@@ -64,14 +64,8 @@
     }
 
     &--media {
-      --mosaic-zoom: 1;
       overflow: hidden;
-      img {
-        .img-cover();
-        transform: scale(var(--mosaic-zoom));
-        transition: transform var(--duration-slow) var(--ease-out);
-      }
-      &:hover { --mosaic-zoom: 1.04; }
+      img { .img-cover(); }
     }
   }
 
@@ -111,7 +105,7 @@
 
 // ---------------------------------------------------------------------
 // Phones: the designer redrew the mosaic as a one-slide carousel (node 2232:5523) — heading and intro,
-// full-width arrows, then each photo (375 × 300) over its blue card, one pair at a time (Swiper).
+// full-width arrows, then each photo (375 × 300, 2571:14064 and the four beside it) over its blue card: the deck below md, a Swiper on tablets.
 // ---------------------------------------------------------------------
 @media @upto-lg {
   .mosaic {
@@ -175,8 +169,18 @@
       }
       .icon {
         flex: none;
-        margin: 0;
+        margin: 0 0 -0.125rem; // the 30 icon hangs 2 below Figma's 28 title row
       }
+    }
+
+    // the deck (_deck.less), as the quote slider's: one Light Blue row under every card's copy, the longest card setting it
+    @media @upto-md {
+      &__slider.is-deck &__grid::before {
+        content: "";
+        grid-area: ~"2 / 1";
+        background: var(--color-secondary);
+      }
+      &__slider.is-deck &__card { background: none; }
     }
   }
 }

@@ -99,19 +99,12 @@
   }
 }
 
-// Columns that open in place, one at a time (the Preparatory teaching approach): a stacked accordion
-// below lg, the four tall columns from lg with the open one blue and its copy settled at the bottom
-.link-columns--reveal {
-  --columns-body-width: 18.96875rem; // 304, less the half pixel Figma breaks short of it ("that asking / for", 1638:5176)
-  --columns-pad-bottom: 3rem;     // 48 under the copy
+// Columns that open in place, one at a time (the K-6 teaching teams, the Preparatory teaching approach): a stacked accordion
+// below @from, the four tall columns from it with the open one blue and its copy settled at the bottom
+.reveal-columns(@from) {
+  --columns-pad-bottom: 3rem; // 48 under the copy
 
   .link-columns__grid { grid-template-columns: minmax(0, 1fr); }
-
-  // the air above the rows closes up below the design width, where the columns stand taller under longer copy
-  @media (min-width: @bp-lg) {
-    --columns-pad-top: ~"clamp(3.75rem, 0.7838rem + 4.784vw, 5.6875rem)";          // 60 at 992 → 91 at 1640
-    --columns-header-gap: ~"clamp(4rem, -0.0425rem + 6.52vw, 6.640625rem)";        // 64 → 106.25
-  }
 
   .link-columns__item--body-284 { --columns-body-width: 17.75rem; }   // Figma's copy box differs per column
   .link-columns__item--body-301 { --columns-body-width: 18.8125rem; }
@@ -127,23 +120,17 @@
     &.is-open { background: var(--color-blue); }
   }
 
-  // four columns of this copy only fit from xl: below it the rows stay the stacked accordion
-  @media (min-width: @bp-sm) and (max-width: 1199.98px) {
+  @media (min-width: @bp-sm) and (max-width: (@from - 0.02px)) {
     .link-columns__item:nth-child(odd) { border-right: 0; }
     .link-columns__item--media { aspect-ratio: 4 / 3; }
   }
-  @media (min-width: @bp-lg) and (max-width: 1199.98px) {
-    .link-columns__item {
-      padding: var(--columns-pad-top-inner) var(--container-gutter) var(--space-4);
-      border-top: var(--border-width-thick) solid var(--color-line);
-      border-right: 0;
-    }
-  }
 
-  // the rows are the fold (_fold.less, .fold--hover): the heading wraps the button, which keeps the heading's own type
+  // the rows are the fold (_fold.less, .fold--hover): the heading wraps the button, which keeps the heading's own type, and a
+  // hovered title stays Dark Green (the fold's Light Blue is for the green bands; here it vanished into the open column's fill)
   .fold {
     --fold-body-top: var(--space-3);
     --fold-body-bottom: 0; // the column's own padding closes it
+    --fold-hover: var(--color-heading);
   }
   .fold__item:last-child { border-bottom: 0; }
   .fold__row {
@@ -152,16 +139,12 @@
     padding: 0;
     font: inherit;
     letter-spacing: inherit;
-    span {
-      @media (min-width: @bp-xl) { max-width: var(--columns-title-width); }
-    }
     .icon { margin-right: -0.375rem; }
   }
 
   h3 { max-width: none; }
 
   .fold__body {
-    max-width: 37.5rem; // the intro's measure, so a tablet's open row does not run its copy edge to edge
     p {
       margin: 0;
       padding-top: 0.625rem; // paragraph spacing 10
@@ -177,7 +160,7 @@
     }
   }
 
-  @media (min-width: @bp-xl) {
+  @media (min-width: @from) {
     .link-columns__grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 
     .link-columns__item:not(.link-columns__item--media) {
@@ -186,11 +169,43 @@
     }
 
     .fold { --fold-body-top: 0; }
+    .fold__row span { max-width: var(--columns-title-width); }
     .fold__body {
       max-width: var(--columns-body-width);
       font-size: 0.9375rem; // 15
-      line-height: 1.5333;  // 23: Figma draws the 22.5 line at a whole pixel
+      line-height: 1.5;     // 22.5
     }
+  }
+}
+// from lg to a later @from, the rows keep the accordion's rules where the base columns would take over
+.reveal-columns(@from) when (@from > @bp-lg) {
+  @media (min-width: @bp-lg) and (max-width: (@from - 0.02px)) {
+    .link-columns__item {
+      padding: var(--columns-pad-top-inner) var(--container-gutter) var(--space-4);
+      border-top: var(--border-width-thick) solid var(--color-line);
+      border-right: 0;
+    }
+  }
+}
+
+.link-columns--reveal {
+  --columns-body-width: 19rem; // 304
+  .reveal-columns(@bp-lg);
+}
+
+// The Preparatory approach (1638:5169): four columns of its long copy only fit from xl, so it stays the accordion to 1200
+// (data-fold-from on the list), its open row's copy held to the intro's measure; from xl the copy breaks half a pixel short
+// of Figma's 304 at Figma's whole-pixel 23, as the render of 1638:5173 draws it, and the air above it closes up below 1640
+.link-columns--reveal-xl {
+  --columns-body-width: 18.96875rem; // 304 less the half pixel ("that asking / for", 1638:5176)
+  @media (min-width: @bp-lg) {
+    --columns-pad-top: ~"clamp(3.75rem, 0.7838rem + 4.784vw, 5.6875rem)";   // 60 at 992 → 91 at 1640
+    --columns-header-gap: ~"clamp(4rem, -0.0425rem + 6.52vw, 6.640625rem)"; // 64 → 106.25
+  }
+  .fold__body { max-width: 37.5rem; }
+  .reveal-columns(@bp-xl);
+  @media (min-width: @bp-xl) {
+    .fold__body { line-height: 1.5333; } // 23
   }
 }
 

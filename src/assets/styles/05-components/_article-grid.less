@@ -47,6 +47,22 @@
       padding-inline: var(--articles-text-inset);
       transition: color var(--duration-fast) ease;
     }
+
+    // the whole card is the link: the photo draws a little closer, the headline darkens and the arrow nudges
+    &:focus-visible {
+      color: var(--color-text);
+      h3 { color: var(--color-green-hover); }
+      img { transform: scale(1.03); }
+      .icon { transform: translate(0.25rem, -0.25rem); }
+    }
+    @media (hover: hover) {
+      &:hover {
+        color: var(--color-text);
+        h3 { color: var(--color-green-hover); }
+        img { transform: scale(1.03); }
+        .icon { transform: translate(0.25rem, -0.25rem); }
+      }
+    }
   }
 
   // the headline and date together, filling the card so the date keeps the foot; on phones the pair reveals on its own
@@ -54,14 +70,6 @@
     display: flex;
     flex: 1 1 auto;
     flex-direction: column;
-
-    &:hover,
-    &:focus-visible {
-      color: var(--color-text);
-      h3 { color: var(--color-green-hover); }
-      img { transform: scale(1.04); }
-      .icon { transform: translate(0.25rem, -0.25rem); }
-    }
   }
   li:last-child &__card::after { display: none; }
   @media (min-width: @bp-lg) {

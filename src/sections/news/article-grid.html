@@ -1,6 +1,8 @@
 <!-- @wagtail-block: article_grid (news index listing; 8 per page)
      articles: query of NewsArticlePage — photo:ImageChooserBlock, title, date
-     pager:    previous / next page links
+     next:     the next listing page's URL (Wagtail: ?page=N), or "" on the last page. The arrow loads that page's cards in
+               place (news.js) and points at the page after, or goes once there is none; without the script it opens the page
+     locals: next
      Figma uses one placeholder photo, headline and date for every card. Phones (news M 2149:8421) stack the cards full-bleed
      with a 375 x 216 landscape crop of their own (card-m.webp), the caption padded 30 / 20 and the pager right under the last card;
      each caption reveals on its own there as it comes into view, under the photo that came in before it. -->
@@ -65,8 +67,10 @@
       </a></li>
     </ul>
 
-    <nav class="article-grid__pager" aria-label="News pages" data-anim="reveal" data-anim-type="fade">
-      <a class="arrow-btn arrow-btn--next" href="news.html?page=2" aria-label="Next page"><svg class="icon"><use href="#icon-arrow-right"></use></svg></a>
+    <if condition="next">
+    <nav class="article-grid__pager" aria-label="More news" data-anim="reveal" data-anim-type="fade">
+      <a class="arrow-btn arrow-btn--next" href="{{ next }}" aria-label="Load more news" data-load-more><svg class="icon"><use href="#icon-arrow-right"></use></svg></a>
     </nav>
+    </if>
   </div>
 </section>

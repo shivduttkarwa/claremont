@@ -9,6 +9,7 @@ import { initSliders } from "./slider.js";
 import { initPan } from "./pan.js";
 import { initPageTransition } from "./transition.js";
 import { initImageCarousels } from "./carousel.js";
+import { initLoadMore } from "./news.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   Anim.init({ after: window.__pageArrival });
@@ -23,6 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initApproachAccordion();
   initFolds();
   initImageCarousels();
+  initLoadMore();
   initSearch();
   initStickyHeader();
   initMenu();

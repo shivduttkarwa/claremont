@@ -99,7 +99,7 @@ function indexPage(tree, url, records) {
     dig(tree);
     return found;
   })();
-  if (!main) return;
+  if (!main || "data-search-skip" in (main.attrs || {})) return; // a listing's later pages repeat its first
 
   const ids = new Set();
   const pageRecords = [];

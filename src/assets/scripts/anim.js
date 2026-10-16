@@ -159,9 +159,12 @@ function titleHold(el) {
   if (!titlesFirst(el)) return 0;
   const title = titleFor(el);
   if (!title) return 0;
+  const run = titleDurations.get(title) || 0;
+  const onScreen = (node) => node.getBoundingClientRect().top < window.innerHeight;
+  if (onScreen(el) && onScreen(title)) return run; // both on screen at load: they start together
   const gap = el.getBoundingClientRect().top - title.getBoundingClientRect().top;
   const share = 1 - gap / (window.innerHeight * SCRUB.distance);
-  return (titleDurations.get(title) || 0) * gsap.utils.clamp(0, 1, share);
+  return run * gsap.utils.clamp(0, 1, share);
 }
 const triggers = new WeakMap(); // element -> its ScrollTrigger
 const splits = new WeakMap(); // element -> its SplitText while split
@@ -410,28 +413,45 @@ function setupSplits(root, entrance, scroll) {
     const count = isChars
       ? el.textContent.replace(/\s/g, "").length
       : Math.max(1, Math.round(el.getBoundingClientRect().height / parseFloat(getComputedStyle(el).lineHeight)) || 1);
-    const stagger = preset.spread ? Math.min(preset.to.stagger, preset.spread / Math.max(1, count)) : preset.to.stagger;
-    titleDurations.set(el, preset.to.duration + stagger * Math.max(0, count - 1));
+    const step = preset.spread ? Math.min(preset.to.stagger, preset.spread / Math.max(1, count)) : preset.to.stagger;
+    titleDurations.set(el, preset.to.duration + step * Math.max(0, count - 1));
     const build = () => {
-      const boxes = isChars ? glyphBoxes(el) : null;
-      // words are boxed too, so a wrapping title still breaks between words and not inside one
-      const split = new SplitText(
-        el,
-        isChars
-          ? { type: "words,chars", wordsClass: "anim-word", charsClass: "anim-char" }
-          : { type: "lines", linesClass: "anim-line", tag: "span" }
-      );
-      const targets = isChars ? split.chars : split.lines;
-      if (boxes && boxes.length === targets.length) {
+      const half = parseFloat(getComputedStyle(el).lineHeight) / 2 || parseFloat(getComputedStyle(el).fontSize) / 2;
+      const boxes = glyphBoxes(el);
+      // every title is boxed by word and letter with its lines held where they sat; a phone title then rises line by line
+      // as its words, since SplitText's own lines can disagree with the layout (an <em> across a wrap, a <br> the width hides)
+      const split = new SplitText(el, { type: "words,chars", wordsClass: "anim-word", charsClass: "anim-char" });
+      const kept = boxes.length === split.chars.length;
+      if (kept) {
         keepLines(el, split, boxes);
-        keepKerning(targets, boxes);
+        keepKerning(split.chars, boxes);
+      }
+      let targets = split.chars;
+      let stagger = step;
+      if (!isChars) {
+        const index = new Map(split.chars.map((char, i) => [char, i]));
+        const tops = split.words.map((word) => {
+          const first = index.get(word.querySelector(".anim-char"));
+          return kept && first !== undefined ? boxes[first].top : word.getBoundingClientRect().top;
+        });
+        let line = -1;
+        let top = -Infinity;
+        const lineOf = tops.map((t) => {
+          if (t > top + half) { // an italic run sits a pixel low on the same line
+            line += 1;
+            top = t;
+          }
+          return line;
+        });
+        targets = split.words;
+        stagger = (i) => lineOf[i] * step;
       }
       splits.set(el, split);
       const from = preset.rise ? { ...preset.from, y: parseFloat(getComputedStyle(el).fontSize) * preset.rise } : preset.from;
       // read every transform first: gsap.set would read each letter back after writing the one before, a layout apiece
       targets.forEach((target) => gsap.getProperty(target, "y"));
       gsap.set(targets, from);
-      return { split, targets };
+      return { split, targets, stagger };
     };
     let built = null;
     play(el, {
@@ -439,7 +459,7 @@ function setupSplits(root, entrance, scroll) {
       duration: titleDurations.get(el),
       prepare: () => { built = build(); },
       animation: () => {
-        const { split, targets } = built || build();
+        const { split, targets, stagger } = built || build();
         built = null;
         gsap.set(el, { autoAlpha: 1 }); // the container shows; its pieces carry the hidden state
         // the original markup comes back once it has played, so the audited layout is untouched
