@@ -90,19 +90,6 @@
 .fold__item.is-open > .fold__panel { .fold-panel-open(); }
 .fold__item.is-open > .fold__panel > .fold__body { .fold-body-open(); }
 
-// .fold--hover opens on hover with a mouse from lg (initFolds), one row always open; a touch screen at that width has
-// no hover, so it shows every panel
-@media (min-width: @bp-lg) and (hover: none) {
-  .fold--hover .fold__panel {
-    grid-template-rows: 1fr;
-    visibility: visible;
-  }
-  .fold--hover .fold__body {
-    opacity: 1;
-    transform: none;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .fold__row .icon { transition: none; }
 }

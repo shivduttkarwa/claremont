@@ -265,10 +265,13 @@ function settleReveals(panel) {
 }
 
 // [data-fold]: the ruled fold (_fold.less). One row open at a time; a row's button opens it, or shuts it when open.
-// .fold--hover also opens a row under the mouse from lg and keeps one open there (the columns and the activity cards)
+// .fold--hover keeps one row open from lg, the one under the mouse or the last one tapped (the columns and the activity cards);
+// data-fold-from moves that width for a list that stays an accordion longer
 export function initFolds(root = document) {
-  const mouse = window.matchMedia("(min-width: 992px) and (hover: hover) and (pointer: fine)");
   root.querySelectorAll("[data-fold]").forEach((list) => {
+    const from = list.dataset.foldFrom || 992;
+    const mouse = window.matchMedia(`(min-width: ${from}px) and (hover: hover) and (pointer: fine)`);
+    const wide = window.matchMedia(`(min-width: ${from}px)`);
     const items = [...list.querySelectorAll(".fold__item")].filter((item) => item.closest("[data-fold]") === list);
     const rowOf = (item) => [...item.querySelectorAll(".fold__row[aria-expanded]")].find((row) => row.closest(".fold__item") === item);
     const hover = list.classList.contains("fold--hover");
@@ -283,7 +286,7 @@ export function initFolds(root = document) {
       const row = event.target.closest(".fold__row[aria-expanded]");
       if (!row || row.closest("[data-fold]") !== list) return;
       const item = row.closest(".fold__item");
-      setOpen(item.classList.contains("is-open") && !(hover && mouse.matches) ? null : item);
+      setOpen(item.classList.contains("is-open") && !(hover && wide.matches) ? null : item);
       settleReveals(item.querySelector(":scope > .fold__panel"));
     });
     if (hover) items.forEach((item) => item.addEventListener("mouseenter", () => { if (mouse.matches) setOpen(item); }));
