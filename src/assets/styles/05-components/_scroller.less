@@ -48,15 +48,15 @@
     .scroller__text { transition: opacity var(--duration-base) ease; }
     &.is-clipped > h3,
     &.is-clipped .scroller__text { opacity: var(--scroller-dim); }
-    // Figma rules each link card 2 wide, 1 in from its right edge, beside the 1 gap
+    // Figma's render (1734:13623) whites each card's last pixel beside the 1 gap: one 2 white seam between the cards
     @media (min-width: @bp-lg) {
       &::after {
         content: "";
         position: absolute;
         top: 0;
-        right: var(--border-width);
+        right: 0;
         bottom: 0;
-        width: var(--border-width-thick);
+        width: var(--border-width);
         background: var(--color-white);
         pointer-events: none;
       }

@@ -119,6 +119,19 @@
     }
     .feature-banner__media::after { background: none; }
   }
+
+  // a phone square of its own (the Preparatory banner, 2125:14702): square below sm, the landscape photo from sm, and below lg
+  // the layer stands still and fills the box (data-anim-disable-mobile), as the stacked banners' does
+  &--square-m {
+    @media (max-width: 575.98px) { aspect-ratio: 1; }
+    @media @upto-lg {
+      .feature-banner__layer {
+        top: 0;
+        height: 100%;
+        transform: none;
+      }
+    }
+  }
 }
 
 // ---------------------------------------------------------------------

@@ -1,12 +1,23 @@
 <!-- @wagtail-block: image_banner
      image: ImageChooserBlock
      alt:   CharBlock
-     locals: image, alt, width, height -->
-<figure class="feature-banner feature-banner--media-only" data-anim-parallax-trigger>
+     image_m: the photo's own phone square, or "" (Preparatory M 2125:14702): square below sm and still below lg
+     locals: image, image_m, alt, width, height -->
+<figure class="feature-banner feature-banner--media-only{{ image_m ? ' feature-banner--square-m' : '' }}" data-anim-parallax-trigger>
   <div class="feature-banner__media">
+    <if condition="image_m">
+    <div class="feature-banner__layer" data-anim="parallax" data-anim-centered data-anim-speed="18.75" data-anim-disable-mobile>
+      <picture>
+        <source media="(min-width: 576px)" srcset="{{ image }}" width="{{ width }}" height="{{ height }}">
+        <img src="{{ image_m }}" alt="{{ alt }}" width="750" height="750" loading="lazy" decoding="async" data-anim="reveal" data-anim-type="fade">
+      </picture>
+    </div>
+    </if>
+    <else>
     <div class="feature-banner__layer" data-anim="parallax" data-anim-centered data-anim-speed="18.75" data-anim-scrub-mobile="0.3">
       <img src="{{ image }}" alt="{{ alt }}" width="{{ width }}" height="{{ height }}" loading="lazy" decoding="async"
-           data-anim="reveal" data-anim-type="scale">
+           data-anim="reveal" data-anim-type="fade">
     </div>
+    </else>
   </div>
 </figure>
