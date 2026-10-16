@@ -1,0 +1,56 @@
+# Cocogun review, October 2026: what was asked, what is done, what is open
+
+For the next agent working on this repo. Read this before touching anything the review covers.
+
+Deck: https://docs.google.com/presentation/d/1lDgoW9dH1JVZ9A5QA7Amu45w1bv-9gyYYihfEuE7hDU ("Claremont College Site Feedback", 46 slides, view-only). It reviews the staging build at cim-staging.au/websites/claremont.
+
+Last updated: 2026-10-16, after commit `92c8926`.
+
+## How to read the deck
+
+- The deck has no written notes anywhere: not on the slides, not in speaker notes, not in comments. Checked by making an editable copy and selecting everything. The copy, "Copy of Claremont College Site Feedback", sits in the user's Google Drive and can be deleted.
+- Slide 3 is praise: the first build is "excellent", the animation "just works". Slide 4 lists every page as checked on desktop through mobile.
+- From slide 5 on, every slide is a page divider or a screenshot of the build with orange arrows. Where the agency wants something different it pastes a crop of the Figma design next to the build. The arrow runs from that design crop to the element in the build. So the method is: compare the arrowed element with the inset, then confirm against the Figma file.
+- The Figma file is the one in `CLAUDE.md`. Fresh node dumps from 2026-10-15 are in `.qa/figma/n-design2-20261015.json` (the "03- Design 2" canvas, 1619:1791), `n-round3-20261015.json` and `fills-20261015.json`. The helpers in `.qa/` read `n*.json` files in name order, so these win over the older caches.
+- Since the deck was made, the designer changed one thing (2026-10-15): the Preparatory 375 frame gained an "Our teaching approach" accordion after the intro (see Open, item 9).
+
+## Done and pushed
+
+Each item names the deck slides, the Figma evidence, and the commit.
+
+1. **Home "Our teaching approach" tabs** (slides 8 to 10 region; the user asked for this from node 2399:6580). The block had been built from the Round 3 canvas. It now follows the four Design 2 state frames 1636:2282, 1638:2555, 1638:2627, 1638:4413: their photos (cut by `python .qa/fills-crop.py approach`, five files under `images/home/approach-*.webp`), their copy (six hotspots on tab 1, three real ones on tabs 2 to 4, the placeholders are gone), and their marker positions as per-tab classes `approach__pane--teaching|future|wellbeing|community` in `_approach.less`. A card opens to the right of its disc as every Figma card does; it only moves left or up when it would leave the photo or cover the title (`placeHotspot` in `ui.js`). Commit `ba47d9f`.
+2. **Phone buttons stack full width** (slides 14, 15, 18, 22, 26, 31, 33, 36, 41, 44). Every 375 frame draws every button 335 wide, one under the other, 30 apart. Below md every button row takes `.stack-buttons()` from `02-tools/_mixins.less`: the footer pair, the CTA row, the intro row (Enrolment), the CTA links' Apply to enrol, the feature banner's Download, the contact Submit, the article's Back to news, and the home hero's Welcome from Claremont. Tablets (md to lg) keep label width side by side. This reversed a 2026-09-25 decision for label-width buttons; the user chose to follow the deck. Commit `1cf2bc2`, hero button in the same commit.
+3. **Phone footer** (slides 14, 15): the logo and the three social icons are centred below md, the two buttons stack, the paragraph stays left. `04-layout/_footer.less`, phone block. Commit `1cf2bc2`.
+4. **Policies report banner, desktop** (slide 35): the build had cut Round 3's photo (two girls, the one photo Round 3 pastes everywhere). It now cuts Design 2's node 1805:6373 (the boy with headphones), which also carries a 68% white wash on the copy's side with Dark Green copy. The wash is a CSS layer, not baked into the image (`feature-banner--wash` in `_feature-banner.less`, node listed in `CSS_SHADE` in the crop script). Crop set: `python .qa/fills-crop.py review`. Commit `1cf2bc2`.
+5. **Extra-curricular "Learning music"** (slide 29): Design 2 draws it as the same full-bleed 614 photo band K-6 uses (node 2410:7621, copy 209 from the top), not Round 3's inset-photo layout. The page now includes `sections/feature-banner.html` with `feature-banner--y209 feature-banner--stacked`; the old `sections/extra-curricular/learning-music.html`, `_media-intro.less` and `images/extra-curricular/feature*.webp` are deleted. Phone crop from the 375 frame's own node 2149:6321. Commit `1cf2bc2`.
+6. **Search results** (slide 10): the six arrows pointed at each result's page label ("Enrolment ·"), the one place the search term was not highlighted. `search.js` now runs the label through `highlight()` like the heading and excerpt. Commit `9e64573`.
+7. **Home hero title and copy** (slides 6, 7, 11; the user then compared against Figma directly). The numbers matched Figma already, but Figma's own render of the title node differs from the browser: it draws the 1640 title without the font's kerning and the italic line about 1.7% tighter than its stated -3%. The build now matches the render's ink: `font-kerning: none` on the h1 from lg, the italic line keeps kerning at `letter-spacing: -0.045em`, the three-space indent is 0.57em. The hero copy takes Figma's -3% tracking from lg (an earlier pass had loosened it, which made every line about 40px wider than the design) and the subtitle has a floor tied to the copy's so the two keep their ratio on short screens. Method and measurements are in the memory note `figma-text-rendering-differences`. Commit `eddaa73`.
+8. **Small laptops, 992 to 1200** (slide 11 is at 992): the header's logo now scales from 176 (was 192) and its links from 14px (was 15), both reaching the Figma values by 1200. The approach tab row, which scrolled sideways at 992 with the last tab hidden under the arrows, now scales its padding, type and gaps between 992 and 1200 so all four tabs and the arrows fit. Commit `92c8926`.
+9. **Stacked banners on phones** (slides 13, 24, 25, 30 region; the user asked from node 2081:10705): the home faith banner's phone crop was the desktop photo's middle (the boy alone) where the 375 frame places the photo to show both children, and the parallax layer at 160% of the box zoomed and slid every stacked banner's square. The faith, K-6 sport and K-6 music phone squares are now cut exactly from their nodes, and the stacked banner's layer stands still and fills its box below lg (`data-anim-disable-mobile` on the layer, `.feature-banner__layer` override in the stacked block). No phone parallax on these four banners; desktop unchanged. Commit `92c8926`.
+
+Also done, outside the deck: the Wagtail handoff notes were brought up to date for the earlier round (`wagtail-updates-2026-10-12.md`). They do not yet cover items 1 to 9 above; see Open, item 14.
+
+## Resolved as no change
+
+- **Pillars arrows on phones** (slide 12): they exist and render. The agency's screenshot caught them before their fade-in had run.
+- **Contact map** (slide 43): the build uses the same screenshot the design uses, in full greyscale.
+- **Hero logo, nav, chips at 1640** (slide 6): measured against the Design 2 home frame, all within a pixel. Two small type differences remain by the user's choice ("leave it for now"): the quick links strip sits 29px lower than Figma's 189 because the build aligns it with the title's cap height, and the closing line "This is Claremont College…" is semibold (600) where Figma has bold (700).
+
+## Open
+
+10. **Phone photo crops for the K-6 Originality tile and the testimonial card** (slides 13, 24): the 375 frames give each its own framing; the build's crops are from the desktop photos. Add them to the `review` set in `.qa/fills-crop.py` and cut from the phone frames' nodes.
+11. **News listing pager** (slide 38): Design 2 draws a previous and next arrow pair, 48 square, right-aligned under the cards. The build has a single next arrow (`sections/news/article-grid.html`).
+12. **News article standfirst on phones** (slide 40): Figma keeps it at Instrument Sans 35/37 on the 375 frame; the build sets it smaller below lg.
+13. **Extra-curricular activity cards** (slide 28): on 2026-10-15 the designer moved each card's vertical rule to 1px inside its right edge, running the full card height from the band's top. Match in `_link-columns.less`.
+14. **Preparatory phone accordion** (new in Figma, not in the deck): "Our teaching approach" after the intro on frame 2125:14512: a 138 light band with the title, then four rows (Wellbeing, Program, Specialist teachers, School Hours and Extended care), 81 tall closed with the diagonal arrow, the open one filled Light Blue with 15/22 copy. The frame also keeps the old prev/next arrow pair above it, which may be a leftover; ask Cocogun.
+15. **Preparatory photo banner over the columns** (slide 21): the agency's screenshot shows the banner's top corners over the columns above. The build clips the banner and the design butts the blocks, and it does not reproduce locally. Needs their browser and OS.
+16. **Home "Where would you like to start?" rows** (slide 9): the design builds them from the "Drop down" component. They were folds for a day and link rows again since 2026-10-07 at the user's request. The arrow may be asking for the fold back; confirm before changing.
+17. **Slides 17 and 20** (Welcome desktop, Preparatory columns) were never captured: the browser connection dropped. Open them and read the arrows.
+18. **Wagtail handoff notes**: add items 1 to 9 to `wagtail-updates-2026-10-12.md` (or a new dated file) before the Wagtail developer takes the next drop: the new `approach__pane--*` classes and per-tab hotspot counts, `.stack-buttons()`, `feature-banner--wash` and `--y209`, the deleted `media_intro` block, the search label highlight, the hero type rules, and the stacked banner's `data-anim-disable-mobile`.
+
+## Verification used
+
+- Desktop: `bash .qa/audit.sh summary <page>` must show the same known off runs as before a change (home: seven runs in the hero, faith banner and footer, plus the pillars "Collaboration" line). Commits above all held that.
+- Phones: `node .qa/mobile-audit.mjs 320,375,414 <pages>` prints nothing beyond the contact map's `heavy` notice.
+- Shots: `node .qa/shot.mjs <file-url> <w> <h> <out.png> <mobile 0|1> [wait] 0 '<js to run first>'` scrolls to a block or opens a state before capturing.
+- Deploy: every push to `main` rebuilds and publishes to https://shivduttkarwa.github.io/claremont/ within about a minute; assets are cached ten minutes, so hard refresh. cim-staging is a manual upload and still holds the 2026-10-11 build.

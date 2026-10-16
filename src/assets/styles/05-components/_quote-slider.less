@@ -9,6 +9,13 @@
   --qs-pad-bottom: 0rem;
   --qs-track-gap: 3.25rem;        // arrows end 166, photos start 218
   --qs-dim: 0.45;
+  --qs-box-pad: 1.3125rem 1.5625rem 1.5625rem; // 21 25 25 (2410:8175)
+  --qs-quote-size: 2.5rem;        // 40
+  --qs-quote-measure: calc(17.0625rem + var(--text-fit)); // 273
+  // phones (2087:11952): the 374 photo at the phone's width over the 300 panel, the card within the screen, the arrows above it
+  --qs-card-m: ~"min(100vw * 374 / 375 + 18.75rem, 100svh)";
+  --qs-panel-m: ~"min(18.75rem, var(--qs-card-m) * 300 / 674)"; // 300
+  --qs-panel-pad-m: 1.875rem 1.5625rem; // 30 25
 
   padding-block: var(--space-8) 0;
   @media (min-width: @bp-lg) { padding-block: var(--qs-pad-top) var(--qs-pad-bottom); }
@@ -21,6 +28,21 @@
     --qs-pad-bottom: 4.42875rem;     // 70.86: the 806 frame under the cards
     --qs-track-gap: 4.0625rem;       // the copy box ends 297 (Figma draws 299), cards at 362
     --qs-title-gap: 1.65625rem;      // heading box ends 180.5, copy at 207
+    // the box (2470:7158) is drawn at 374 over the 370 one: the quote 27 in and 285 wide, the whole box at 94%
+    --qs-box-pad: 1.71125rem 1.5625rem 1.5625rem 1.69625rem; // 27.38 down, 27.14 in
+    --qs-quote-size: 2.527rem;       // 40.43
+    --qs-quote-measure: 6.925em;     // Figma's 285 box breaks all seven quotes as the browser does between 6.90 and 6.95em (2470:7161)
+    --qs-box-opacity: 0.94;
+    // phones (2081:10673, the panels 2570:4889): a 412 photo over a 361 panel, Light Blue at 95% in a group at 94%,
+    // the quote 28 in at 40.34 breaking as on desktop at 375, its box widening with the phone so the air beside it stays
+    --qs-card-m: ~"min(100vw * 412 / 375 + 22.5625rem, 100svh)";
+    --qs-panel-m: ~"min(22.5625rem, var(--qs-card-m) * 361 / 773)"; // 361
+    --qs-panel-pad-m: 1.705rem 1.5625rem 1.7rem 1.755rem; // 27.28 down, 28.08 in, and 27.2 under the English quote's eight lines in the 361
+    --qs-panel-fill-m: 95%;
+    --qs-panel-opacity-m: 0.94;
+    --qs-quote-size-m: 2.52125rem;   // 40.34
+    --qs-quote-measure-m: ~"min(100% - 0.125em, var(--qs-quote-measure) + max(0rem, 100vw - 23.4375rem))";
+    --qs-photo-opacity-m: 0.95;      // 2081:10676; the educators' photos are opaque
   }
 
   &__header {
@@ -107,7 +129,7 @@
 
   &__quote {
     margin: 0;
-    max-width: calc(17.0625rem + var(--text-fit)); // 273
+    max-width: var(--qs-quote-measure);
     font-family: var(--font-display);
     font-size: 2.5rem; // 40
     line-height: 0.95; // 38
@@ -130,7 +152,7 @@
     }
   }
 
-  // The box (2410:8175, note 1732:12358): Light Blue over the photo with the quote at the top and the author at the foot.
+  // The box (2410:8175 and home's 2470:7158, note 1732:12358): Light Blue over the photo with the quote at the top and the author at the foot.
   // It waits below the card and slides up as the card opens — on hover or focus from lg (ui.js), as the active slide on
   // touch tablets (slider.js) — and the arrow turns down
   @media (min-width: @bp-md) {
@@ -143,12 +165,14 @@
       position: absolute;
       inset: 0;
       z-index: var(--z-content);
-      padding: 1.3125rem 1.5625rem 1.5625rem; // 21 25 25
+      padding: var(--qs-box-pad);
       background: ~"color-mix(in srgb, var(--color-secondary) 95%, transparent)";
+      opacity: var(--qs-box-opacity, 1);
       transform: translateY(100%);
       transition: transform var(--duration-slow) var(--ease-out);
       @media (prefers-reduced-motion: reduce) { transition-duration: 0.01ms; }
     }
+    &__quote { font-size: var(--qs-quote-size); }
     &__card.is-open &__caption,
     &__card:focus-within &__caption { transform: none; }
     &__card.is-open &__photo .icon,
@@ -163,7 +187,8 @@
 // Below lg: heading (and copy), the arrows across the full width, then the Swiper carousel.
 // Tablets run the desktop cards from the page edge with the peeking one dimmed; phones show one
 // full-bleed card (2081:10675, 2570:4911): the photo over the quote panel, the arrows, photo and quote
-// filling one screen (the header hides while scrolling down), photo and panel in their 412 : 361 share.
+// filling one screen at most (the header hides while scrolling down): the photo keeps its frame's proportion and the panel
+// its frame's height, so a wider or taller screen never stretches either one.
 // ---------------------------------------------------------------------
 @media @upto-lg {
   .quote-slider {
@@ -196,7 +221,7 @@
       &__card {
         display: flex;
         flex-direction: column;
-        height: var(--quote-card-m);
+        height: var(--qs-card-m);
         &.is-clipped > * { opacity: 1; }
       }
 
@@ -205,33 +230,40 @@
         min-height: 0;
         aspect-ratio: auto;
         background: none;
-        img { opacity: 0.95; }
+        img {
+          object-position: 50% 0; // a short screen trims the photo from the foot, never the heads
+          opacity: var(--qs-photo-opacity-m, 1);
+        }
         .icon { display: none; }
       }
 
-      // a quote too long for its share grows the panel and takes the room from its own photo
+      // a quote too long for the panel grows it and takes the room from its own photo
       &__caption {
         display: flex;
         flex: 0 0 auto;
         flex-direction: column;
         justify-content: space-between;
         gap: 0.625rem; // 10
-        min-height: var(--quote-panel-m);
-        padding: 1.9375rem 1.5625rem; // 31 down, 25 in: the 325 text box
-        background: var(--color-secondary);
+        min-height: var(--qs-panel-m);
+        padding: var(--qs-panel-pad-m);
+        background: ~"color-mix(in srgb, var(--color-secondary) var(--qs-panel-fill-m, 100%), transparent)";
+        opacity: var(--qs-panel-opacity-m, 1);
       }
 
-      &__quote,
-      &__author { max-width: none; }
+      &__quote {
+        max-width: var(--qs-quote-measure-m, calc(100% - 0.125em)); // Figma breaks a line 5 short of its box (2088:12808)
+        font-size: var(--qs-quote-size-m, 2.5rem);
+      }
 
       // the deck (_deck.less): the panel's blue sits under every card's copy, so one fades out over it before the next fades in
       &__slider.is-deck &__track {
         grid-template-rows: ~"minmax(0, 1fr) auto";
-        height: var(--quote-card-m);
+        height: var(--qs-card-m);
         &::before {
           content: "";
           grid-area: ~"2 / 1";
-          background: var(--color-secondary);
+          background: ~"color-mix(in srgb, var(--color-secondary) var(--qs-panel-fill-m, 100%), transparent)";
+          opacity: var(--qs-panel-opacity-m, 1);
         }
       }
       &__slider.is-deck &__caption { background: none; }
