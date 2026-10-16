@@ -179,6 +179,9 @@
     &__card:focus-within &__photo .icon {
       color: var(--color-primary);
       transform: rotate(90deg);
+      // the colour waits for the box, which on its ease-out reaches the arrow a third of the way into the slide
+      transition: transform var(--duration-base) var(--ease-out), color var(--duration-fast) ease calc(var(--duration-slow) / 3);
+      @media (prefers-reduced-motion: reduce) { transition-delay: 0s; }
     }
   }
 }
