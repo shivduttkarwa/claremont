@@ -278,7 +278,7 @@
       display: block;
       position: absolute;
       top: 0.0625rem;
-      left: calc(100% + 0.5625rem);
+      left: calc(100% + 1.25rem); // the card starts 20 past the disc: Figma's 234 against the 189 marker
       width: var(--approach-card-width);
       padding-bottom: 0;
       opacity: 0;
@@ -294,12 +294,12 @@
   &.is-swapped &__card {
     @media (min-width: @bp-lg) {
       left: auto;
-      right: calc(100% + 0.5625rem);
+      right: calc(100% + 1.25rem);
     }
   }
   @media (min-width: @bp-lg) {
     &--flip.is-swapped &__card {
-      left: calc(100% + 0.5625rem);
+      left: calc(100% + 1.25rem);
       right: auto;
     }
     &.is-up &__card {
@@ -337,13 +337,30 @@
     line-height: var(--hotspot-line);
   }
 
-  // Marker centres from Figma (panel 1640 × 684)
-  &--1 { --x: 13.02%; --y: 46.71%; }
-  &--2 { --x: 48.75%; --y: 11.92%; }
-  &--3 { --x: 31.07%; --y: 32.24%; }
-  &--4 { --x: 72.47%; --y: 63.67%; }
-  &--5 { --x: 45.27%; --y: 67.76%; }
-  &--6 { --x: 63.20%; --y: 32.24%; }
+  // Marker centres from the "03- Design 2" tab frames (photo 1640 × 684)
+  .approach__pane--teaching & {
+    &--1 { --x: 12.29%; --y: 46.71%; }
+    &--2 { --x: 32.77%; --y: 29.17%; }
+    &--3 { --x: 58.99%; --y: 22.15%; }
+    &--4 { --x: 60.58%; --y: 42.62%; }
+    &--5 { --x: 44.30%; --y: 66.30%; }
+    &--6 { --x: 73.69%; --y: 67.47%; }
+  }
+  .approach__pane--future & {
+    &--1 { --x: 12.29%; --y: 37.79%; }
+    &--2 { --x: 44.79%; --y: 28.87%; }
+    &--3 { --x: 67.71%; --y: 51.83%; }
+  }
+  .approach__pane--wellbeing & {
+    &--1 { --x: 20.40%; --y: 61.18%; }
+    &--2 { --x: 58.51%; --y: 25.37%; }
+    &--3 { --x: 69.85%; --y: 69.52%; }
+  }
+  .approach__pane--community & {
+    &--1 { --x: 14.30%; --y: 53.87%; }
+    &--2 { --x: 38.75%; --y: 38.82%; }
+    &--3 { --x: 72.59%; --y: 57.53%; }
+  }
 }
 
 // ---------------------------------------------------------------------

@@ -27,7 +27,8 @@ export function openHotspot(group, open) {
   placeHotspot(group);
 }
 
-// The card keeps Figma's 353 as the photo shrinks, so it moves to a clear spot or fades what it covers
+// The card opens to the right of its disc as Figma draws it and fades the discs it covers; it only moves when it would
+// leave the photo or cover the title, which happens as the photo shrinks while the card keeps Figma's 353
 const desktop = window.matchMedia("(min-width: 992px)");
 const PLACES = [[false, false], [true, false], [false, true], [true, true]];
 
@@ -43,11 +44,12 @@ export function placeHotspot(group) {
   const card = open.querySelector(".hotspot__card");
   const gap = remToPx(0.5);
   const title = group.closest(".approach__overlay")?.querySelector("h2");
-  const obstacles = items.filter((item) => item !== open).map((item) => [item, item.getBoundingClientRect()]);
+  const discs = items.filter((item) => item !== open).map((item) => [item, item.getBoundingClientRect()]);
+  const keepClear = [];
   if (title) {
     const range = document.createRange();
     range.selectNodeContents(title);
-    obstacles.push([null, range.getBoundingClientRect()]);
+    keepClear.push(range.getBoundingClientRect());
   }
 
   const measure = ([swapped, up]) => {
@@ -58,9 +60,10 @@ export function placeHotspot(group) {
     const top = box.top + card.offsetTop;
     const right = left + card.offsetWidth;
     const bottom = top + card.offsetHeight;
-    const hits = obstacles.filter(([, r]) => r.right + gap > left && r.left - gap < right && r.bottom + gap > top && r.top - gap < bottom);
+    const touches = (r) => r.right + gap > left && r.left - gap < right && r.bottom + gap > top && r.top - gap < bottom;
+    const hits = discs.filter(([, r]) => touches(r));
     const outside = left < bounds.left || right > bounds.right || top < bounds.top || bottom > bounds.bottom;
-    return { place: [swapped, up], hits, score: (outside ? 100 : 0) + hits.length };
+    return { place: [swapped, up], hits, score: (outside ? 100 : 0) + keepClear.filter(touches).length };
   };
 
   let best = null;
