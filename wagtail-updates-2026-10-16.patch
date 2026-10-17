@@ -1,0 +1,2529 @@
+diff --git a/build.mjs b/build.mjs
+index bdc24de..5b25c33 100644
+--- a/build.mjs
++++ b/build.mjs
+@@ -99,7 +99,7 @@ function indexPage(tree, url, records) {
+     dig(tree);
+     return found;
+   })();
+-  if (!main) return;
++  if (!main || "data-search-skip" in (main.attrs || {})) return; // a listing's later pages repeat its first
+ 
+   const ids = new Set();
+   const pageRecords = [];
+diff --git a/src/assets/images/contact/map.webp b/src/assets/images/contact/map.webp
+deleted file mode 100644
+index 483dbd8..0000000
+Binary files a/src/assets/images/contact/map.webp and /dev/null differ
+diff --git a/src/assets/images/extra-curricular/banner-music-m.webp b/src/assets/images/extra-curricular/banner-music-m.webp
+new file mode 100644
+index 0000000..7a894d3
+Binary files /dev/null and b/src/assets/images/extra-curricular/banner-music-m.webp differ
+diff --git a/src/assets/images/extra-curricular/banner-music.webp b/src/assets/images/extra-curricular/banner-music.webp
+new file mode 100644
+index 0000000..8aa0261
+Binary files /dev/null and b/src/assets/images/extra-curricular/banner-music.webp differ
+diff --git a/src/assets/images/extra-curricular/feature-m.webp b/src/assets/images/extra-curricular/feature-m.webp
+deleted file mode 100644
+index 3f91be2..0000000
+Binary files a/src/assets/images/extra-curricular/feature-m.webp and /dev/null differ
+diff --git a/src/assets/images/extra-curricular/feature.webp b/src/assets/images/extra-curricular/feature.webp
+deleted file mode 100644
+index d8c3aa3..0000000
+Binary files a/src/assets/images/extra-curricular/feature.webp and /dev/null differ
+diff --git a/src/assets/images/home/approach-community.webp b/src/assets/images/home/approach-community.webp
+index 520047e..26e1bc7 100644
+Binary files a/src/assets/images/home/approach-community.webp and b/src/assets/images/home/approach-community.webp differ
+diff --git a/src/assets/images/home/approach-future.webp b/src/assets/images/home/approach-future.webp
+index 5f123d6..0e93c25 100644
+Binary files a/src/assets/images/home/approach-future.webp and b/src/assets/images/home/approach-future.webp differ
+diff --git a/src/assets/images/home/approach-teaching-m.webp b/src/assets/images/home/approach-teaching-m.webp
+new file mode 100644
+index 0000000..ec126e2
+Binary files /dev/null and b/src/assets/images/home/approach-teaching-m.webp differ
+diff --git a/src/assets/images/home/approach-teaching.webp b/src/assets/images/home/approach-teaching.webp
+new file mode 100644
+index 0000000..bdee057
+Binary files /dev/null and b/src/assets/images/home/approach-teaching.webp differ
+diff --git a/src/assets/images/home/approach-wellbeing.webp b/src/assets/images/home/approach-wellbeing.webp
+index 3f9f9c3..fe5f974 100644
+Binary files a/src/assets/images/home/approach-wellbeing.webp and b/src/assets/images/home/approach-wellbeing.webp differ
+diff --git a/src/assets/images/home/faith-m.webp b/src/assets/images/home/faith-m.webp
+index 2698cf8..ebaad8b 100644
+Binary files a/src/assets/images/home/faith-m.webp and b/src/assets/images/home/faith-m.webp differ
+diff --git a/src/assets/images/home/teaching-approach-m.webp b/src/assets/images/home/teaching-approach-m.webp
+deleted file mode 100644
+index cad543f..0000000
+Binary files a/src/assets/images/home/teaching-approach-m.webp and /dev/null differ
+diff --git a/src/assets/images/home/teaching-approach.webp b/src/assets/images/home/teaching-approach.webp
+deleted file mode 100644
+index 815851c..0000000
+Binary files a/src/assets/images/home/teaching-approach.webp and /dev/null differ
+diff --git a/src/assets/images/home/testimonial-1-m.webp b/src/assets/images/home/testimonial-1-m.webp
+new file mode 100644
+index 0000000..bd2f440
+Binary files /dev/null and b/src/assets/images/home/testimonial-1-m.webp differ
+diff --git a/src/assets/images/k-6-primary/banner-music-m.webp b/src/assets/images/k-6-primary/banner-music-m.webp
+index eac77c0..15c79c6 100644
+Binary files a/src/assets/images/k-6-primary/banner-music-m.webp and b/src/assets/images/k-6-primary/banner-music-m.webp differ
+diff --git a/src/assets/images/k-6-primary/banner-sport-m.webp b/src/assets/images/k-6-primary/banner-sport-m.webp
+index 69071b8..863fc83 100644
+Binary files a/src/assets/images/k-6-primary/banner-sport-m.webp and b/src/assets/images/k-6-primary/banner-sport-m.webp differ
+diff --git a/src/assets/images/k-6-primary/mosaic-1-m.webp b/src/assets/images/k-6-primary/mosaic-1-m.webp
+new file mode 100644
+index 0000000..4139e09
+Binary files /dev/null and b/src/assets/images/k-6-primary/mosaic-1-m.webp differ
+diff --git a/src/assets/images/k-6-primary/mosaic-2-m.webp b/src/assets/images/k-6-primary/mosaic-2-m.webp
+new file mode 100644
+index 0000000..856394e
+Binary files /dev/null and b/src/assets/images/k-6-primary/mosaic-2-m.webp differ
+diff --git a/src/assets/images/k-6-primary/mosaic-3-m.webp b/src/assets/images/k-6-primary/mosaic-3-m.webp
+new file mode 100644
+index 0000000..bc01b9f
+Binary files /dev/null and b/src/assets/images/k-6-primary/mosaic-3-m.webp differ
+diff --git a/src/assets/images/k-6-primary/mosaic-4-m.webp b/src/assets/images/k-6-primary/mosaic-4-m.webp
+new file mode 100644
+index 0000000..f4799b3
+Binary files /dev/null and b/src/assets/images/k-6-primary/mosaic-4-m.webp differ
+diff --git a/src/assets/images/k-6-primary/mosaic-5-m.webp b/src/assets/images/k-6-primary/mosaic-5-m.webp
+new file mode 100644
+index 0000000..5ddbd77
+Binary files /dev/null and b/src/assets/images/k-6-primary/mosaic-5-m.webp differ
+diff --git a/src/assets/images/policies/banner.webp b/src/assets/images/policies/banner.webp
+index fb431ca..c8fd25f 100644
+Binary files a/src/assets/images/policies/banner.webp and b/src/assets/images/policies/banner.webp differ
+diff --git a/src/assets/images/preparatory-program/banner-1.webp b/src/assets/images/preparatory-program/banner-1.webp
+deleted file mode 100644
+index 23d16b0..0000000
+Binary files a/src/assets/images/preparatory-program/banner-1.webp and /dev/null differ
+diff --git a/src/assets/images/preparatory-program/banner-2-m.webp b/src/assets/images/preparatory-program/banner-2-m.webp
+new file mode 100644
+index 0000000..519cbde
+Binary files /dev/null and b/src/assets/images/preparatory-program/banner-2-m.webp differ
+diff --git a/src/assets/images/preparatory-program/carousel-1-m.webp b/src/assets/images/preparatory-program/carousel-1-m.webp
+new file mode 100644
+index 0000000..4ca7743
+Binary files /dev/null and b/src/assets/images/preparatory-program/carousel-1-m.webp differ
+diff --git a/src/assets/images/preparatory-program/carousel-1.webp b/src/assets/images/preparatory-program/carousel-1.webp
+new file mode 100644
+index 0000000..67ef5c4
+Binary files /dev/null and b/src/assets/images/preparatory-program/carousel-1.webp differ
+diff --git a/src/assets/images/preparatory-program/carousel-2-m.webp b/src/assets/images/preparatory-program/carousel-2-m.webp
+new file mode 100644
+index 0000000..6a6f939
+Binary files /dev/null and b/src/assets/images/preparatory-program/carousel-2-m.webp differ
+diff --git a/src/assets/images/preparatory-program/carousel-2.webp b/src/assets/images/preparatory-program/carousel-2.webp
+new file mode 100644
+index 0000000..36927f5
+Binary files /dev/null and b/src/assets/images/preparatory-program/carousel-2.webp differ
+diff --git a/src/assets/images/preparatory-program/carousel-3-m.webp b/src/assets/images/preparatory-program/carousel-3-m.webp
+new file mode 100644
+index 0000000..37b53b9
+Binary files /dev/null and b/src/assets/images/preparatory-program/carousel-3-m.webp differ
+diff --git a/src/assets/images/preparatory-program/carousel-3.webp b/src/assets/images/preparatory-program/carousel-3.webp
+new file mode 100644
+index 0000000..5f6141c
+Binary files /dev/null and b/src/assets/images/preparatory-program/carousel-3.webp differ
+diff --git a/src/assets/images/preparatory-program/carousel-4-m.webp b/src/assets/images/preparatory-program/carousel-4-m.webp
+new file mode 100644
+index 0000000..0bcc2ed
+Binary files /dev/null and b/src/assets/images/preparatory-program/carousel-4-m.webp differ
+diff --git a/src/assets/images/preparatory-program/carousel-4.webp b/src/assets/images/preparatory-program/carousel-4.webp
+new file mode 100644
+index 0000000..a19c283
+Binary files /dev/null and b/src/assets/images/preparatory-program/carousel-4.webp differ
+diff --git a/src/assets/images/preparatory-program/carousel-5-m.webp b/src/assets/images/preparatory-program/carousel-5-m.webp
+new file mode 100644
+index 0000000..bd88f1c
+Binary files /dev/null and b/src/assets/images/preparatory-program/carousel-5-m.webp differ
+diff --git a/src/assets/images/preparatory-program/carousel-5.webp b/src/assets/images/preparatory-program/carousel-5.webp
+new file mode 100644
+index 0000000..2ba644e
+Binary files /dev/null and b/src/assets/images/preparatory-program/carousel-5.webp differ
+diff --git a/src/assets/images/preparatory-program/carousel-6-m.webp b/src/assets/images/preparatory-program/carousel-6-m.webp
+new file mode 100644
+index 0000000..0e96162
+Binary files /dev/null and b/src/assets/images/preparatory-program/carousel-6-m.webp differ
+diff --git a/src/assets/images/preparatory-program/carousel-6.webp b/src/assets/images/preparatory-program/carousel-6.webp
+new file mode 100644
+index 0000000..c7e7007
+Binary files /dev/null and b/src/assets/images/preparatory-program/carousel-6.webp differ
+diff --git a/src/assets/images/preparatory-program/carousel-7-m.webp b/src/assets/images/preparatory-program/carousel-7-m.webp
+new file mode 100644
+index 0000000..ad713e8
+Binary files /dev/null and b/src/assets/images/preparatory-program/carousel-7-m.webp differ
+diff --git a/src/assets/images/preparatory-program/carousel-7.webp b/src/assets/images/preparatory-program/carousel-7.webp
+new file mode 100644
+index 0000000..3d3d313
+Binary files /dev/null and b/src/assets/images/preparatory-program/carousel-7.webp differ
+diff --git a/src/assets/images/preparatory-program/carousel-8-m.webp b/src/assets/images/preparatory-program/carousel-8-m.webp
+new file mode 100644
+index 0000000..7a9b869
+Binary files /dev/null and b/src/assets/images/preparatory-program/carousel-8-m.webp differ
+diff --git a/src/assets/images/preparatory-program/carousel-8.webp b/src/assets/images/preparatory-program/carousel-8.webp
+new file mode 100644
+index 0000000..26951d9
+Binary files /dev/null and b/src/assets/images/preparatory-program/carousel-8.webp differ
+diff --git a/src/assets/scripts/anim.js b/src/assets/scripts/anim.js
+index 014b1c6..e6e10f8 100644
+--- a/src/assets/scripts/anim.js
++++ b/src/assets/scripts/anim.js
+@@ -159,9 +159,12 @@ function titleHold(el) {
+   if (!titlesFirst(el)) return 0;
+   const title = titleFor(el);
+   if (!title) return 0;
++  const run = titleDurations.get(title) || 0;
++  const onScreen = (node) => node.getBoundingClientRect().top < window.innerHeight;
++  if (onScreen(el) && onScreen(title)) return run; // both on screen at load: they start together
+   const gap = el.getBoundingClientRect().top - title.getBoundingClientRect().top;
+   const share = 1 - gap / (window.innerHeight * SCRUB.distance);
+-  return (titleDurations.get(title) || 0) * gsap.utils.clamp(0, 1, share);
++  return run * gsap.utils.clamp(0, 1, share);
+ }
+ const triggers = new WeakMap(); // element -> its ScrollTrigger
+ const splits = new WeakMap(); // element -> its SplitText while split
+@@ -202,32 +205,28 @@ function scrollStep(el, animation, hold) {
+   const st = ScrollTrigger.create({
+     trigger: el,
+     start: `clamp(${startOf(el)})`,
+-    end: () => `+=${range()}`,
++    end: "max", // the range runs from the clamped start; a relative end would cut it short for a step already on screen
+     onUpdate: (self) => {
+-      const reach = Math.min(self.end, ScrollTrigger.maxScroll(window));
++      const reach = Math.min(self.start + range(), ScrollTrigger.maxScroll(window));
+       if (reach - self.start < range() / 2) return playNow(self);
+       const progress = gsap.utils.clamp(0, 1, (self.scroll() - self.start) / (reach - self.start));
+       if (progress <= reached) return;
+       reached = progress;
+-      gsap.to(timeline(), { progress, duration: SCRUB.smooth, ease: "power2.out", overwrite: true });
+       if (progress === 1) {
+         self.kill();
+         triggers.delete(el);
+       }
++      if (progress > timeline().progress()) gsap.to(tl, { progress, duration: SCRUB.smooth, ease: "power2.out", overwrite: true });
+     },
+   });
+   triggers.set(el, st);
+   if (!(st.scroll() >= st.start || onScreen())) return;
+   const wait = follow();
+   if (!wait) return playNow(st);
+-  // On screen while the entrance still runs: it plays when that ends. The trigger stays alive until then, so a
+-  // reader who scrolls down straight away sees it follow the scroll like any other step, not a blank section.
++  // On screen while the entrance still runs: it plays when that ends. The trigger stays alive throughout, so a
++  // reader who scrolls down straight away or just after sees it follow the scroll like any other step, not a blank section.
+   gsap.delayedCall(wait, () => {
+-    if (!triggers.has(el)) return;
+-    st.kill();
+-    triggers.delete(el);
+-    gsap.killTweensOf(timeline());
+-    timeline().play();
++    if (triggers.get(el) === st) timeline().play();
+   });
+ }
+ 
+@@ -271,7 +270,26 @@ function playEntrance(steps, root) {
+   // scroll steps already in view follow as the last step, but never while a title is still rising;
+   // on phones they wait for the whole entrance, so the copy under a hero comes after its quick links
+   const lead = phone.matches ? 0 : DEFAULTS.entranceLead;
+-  if (root === document) handoff = gsap.ticker.time + Math.max(0, tl.duration() - lead, titleEnd);
++  if (root !== document) return;
++  handoff = gsap.ticker.time + Math.max(0, tl.duration() - lead, titleEnd);
++  hurryOnScroll(tl, lead);
++}
++
++// The reader's first scroll during the entrance starts every step still to come at once, in order, so the hero is
++// never beaten by the copy scrolling in under it
++function hurryOnScroll(tl, lead) {
++  const hurry = () => {
++    if (window.scrollY < 2) return;
++    window.removeEventListener("scroll", hurry);
++    const now = tl.time();
++    const waiting = tl.getChildren(false, true, true).filter((child) => child.startTime() > now);
++    const starts = [...new Set(waiting.map((child) => child.startTime()))].sort((a, b) => a - b);
++    waiting.forEach((child) => child.startTime(now + 0.001 + starts.indexOf(child.startTime()) * DEFAULTS.stagger));
++    handoff = gsap.ticker.time + Math.max(0, tl.duration() - now - lead);
++  };
++  tl.eventCallback("onComplete", () => window.removeEventListener("scroll", hurry));
++  window.addEventListener("scroll", hurry, { passive: true });
++  hurry();
+ }
+ 
+ // data-anim-group -> tag direct children as staggered reveals (auto ordering)
+@@ -410,28 +428,45 @@ function setupSplits(root, entrance, scroll) {
+     const count = isChars
+       ? el.textContent.replace(/\s/g, "").length
+       : Math.max(1, Math.round(el.getBoundingClientRect().height / parseFloat(getComputedStyle(el).lineHeight)) || 1);
+-    const stagger = preset.spread ? Math.min(preset.to.stagger, preset.spread / Math.max(1, count)) : preset.to.stagger;
+-    titleDurations.set(el, preset.to.duration + stagger * Math.max(0, count - 1));
++    const step = preset.spread ? Math.min(preset.to.stagger, preset.spread / Math.max(1, count)) : preset.to.stagger;
++    titleDurations.set(el, preset.to.duration + step * Math.max(0, count - 1));
+     const build = () => {
+-      const boxes = isChars ? glyphBoxes(el) : null;
+-      // words are boxed too, so a wrapping title still breaks between words and not inside one
+-      const split = new SplitText(
+-        el,
+-        isChars
+-          ? { type: "words,chars", wordsClass: "anim-word", charsClass: "anim-char" }
+-          : { type: "lines", linesClass: "anim-line", tag: "span" }
+-      );
+-      const targets = isChars ? split.chars : split.lines;
+-      if (boxes && boxes.length === targets.length) {
++      const half = parseFloat(getComputedStyle(el).lineHeight) / 2 || parseFloat(getComputedStyle(el).fontSize) / 2;
++      const boxes = glyphBoxes(el);
++      // every title is boxed by word and letter with its lines held where they sat; a phone title then rises line by line
++      // as its words, since SplitText's own lines can disagree with the layout (an <em> across a wrap, a <br> the width hides)
++      const split = new SplitText(el, { type: "words,chars", wordsClass: "anim-word", charsClass: "anim-char" });
++      const kept = boxes.length === split.chars.length;
++      if (kept) {
+         keepLines(el, split, boxes);
+-        keepKerning(targets, boxes);
++        keepKerning(split.chars, boxes);
++      }
++      let targets = split.chars;
++      let stagger = step;
++      if (!isChars) {
++        const index = new Map(split.chars.map((char, i) => [char, i]));
++        const tops = split.words.map((word) => {
++          const first = index.get(word.querySelector(".anim-char"));
++          return kept && first !== undefined ? boxes[first].top : word.getBoundingClientRect().top;
++        });
++        let line = -1;
++        let top = -Infinity;
++        const lineOf = tops.map((t) => {
++          if (t > top + half) { // an italic run sits a pixel low on the same line
++            line += 1;
++            top = t;
++          }
++          return line;
++        });
++        targets = split.words;
++        stagger = (i) => lineOf[i] * step;
+       }
+       splits.set(el, split);
+       const from = preset.rise ? { ...preset.from, y: parseFloat(getComputedStyle(el).fontSize) * preset.rise } : preset.from;
+       // read every transform first: gsap.set would read each letter back after writing the one before, a layout apiece
+       targets.forEach((target) => gsap.getProperty(target, "y"));
+       gsap.set(targets, from);
+-      return { split, targets };
++      return { split, targets, stagger };
+     };
+     let built = null;
+     play(el, {
+@@ -439,7 +474,7 @@ function setupSplits(root, entrance, scroll) {
+       duration: titleDurations.get(el),
+       prepare: () => { built = build(); },
+       animation: () => {
+-        const { split, targets } = built || build();
++        const { split, targets, stagger } = built || build();
+         built = null;
+         gsap.set(el, { autoAlpha: 1 }); // the container shows; its pieces carry the hidden state
+         // the original markup comes back once it has played, so the audited layout is untouched
+diff --git a/src/assets/scripts/carousel.js b/src/assets/scripts/carousel.js
+index c57010c..af036db 100644
+--- a/src/assets/scripts/carousel.js
++++ b/src/assets/scripts/carousel.js
+@@ -18,6 +18,7 @@ export function initImageCarousels(root = document) {
+         else slide.setAttribute("aria-hidden", "true");
+       });
+     };
++    show(current);
+     carousel.querySelector("[data-carousel-prev]")?.addEventListener("click", () => show(current - 1));
+     carousel.querySelector("[data-carousel-next]")?.addEventListener("click", () => show(current + 1));
+ 
+diff --git a/src/assets/scripts/main.js b/src/assets/scripts/main.js
+index 2ddb0e8..351e44d 100644
+--- a/src/assets/scripts/main.js
++++ b/src/assets/scripts/main.js
+@@ -9,6 +9,7 @@ import { initSliders } from "./slider.js";
+ import { initPan } from "./pan.js";
+ import { initPageTransition } from "./transition.js";
+ import { initImageCarousels } from "./carousel.js";
++import { initLoadMore } from "./news.js";
+ 
+ document.addEventListener("DOMContentLoaded", () => {
+   Anim.init({ after: window.__pageArrival });
+@@ -23,6 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
+   initApproachAccordion();
+   initFolds();
+   initImageCarousels();
++  initLoadMore();
+   initSearch();
+   initStickyHeader();
+   initMenu();
+diff --git a/src/assets/scripts/news.js b/src/assets/scripts/news.js
+new file mode 100644
+index 0000000..e8fd0b7
+--- /dev/null
++++ b/src/assets/scripts/news.js
+@@ -0,0 +1,52 @@
++// news — [data-load-more]: the listing's arrow fetches the next page and adds its cards under these, then points at the
++// page after or goes; without the script, or where the fetch fails (a file:// preview), it simply opens that page
++import { Anim } from "./anim.js";
++
++const CARDS = ".article-grid__grid > li";
++
++export function initLoadMore(root = document) {
++  root.querySelectorAll("[data-load-more]").forEach((link) => {
++    const list = link.closest("section")?.querySelector(".article-grid__grid");
++    if (!list) return;
++    let busy = false;
++
++    link.addEventListener("click", async (event) => {
++      if (event.metaKey || event.ctrlKey || event.shiftKey || event.button) return;
++      event.preventDefault();
++      if (busy) return;
++      busy = true;
++      link.setAttribute("aria-busy", "true");
++      try {
++        const response = await fetch(link.href);
++        if (!response.ok) throw new Error(response.status);
++        const page = new DOMParser().parseFromString(await response.text(), "text/html");
++        const cards = [...page.querySelectorAll(CARDS)].map((card) => document.importNode(card, true));
++        if (!cards.length) throw new Error("no cards");
++        cards.forEach((card, i) => {
++          // the same staggered rise along its row as the cards above (anim.js reads these, as from data-anim-group)
++          card.setAttribute("data-anim", "reveal");
++          card.setAttribute("data-anim-type", "fade-up");
++          card.setAttribute("data-anim-order", String(i));
++          card.setAttribute("data-anim-auto-order", "");
++          list.append(card);
++        });
++        cards.forEach((card) => {
++          Anim.add(card);
++          if (!card.hasAttribute("data-anim-bound")) card.removeAttribute("data-anim"); // never left hidden
++        });
++        // a keyboard reader carries on from the first new card once its reveal has shown it (a hidden card takes no focus)
++        const first = cards[0].querySelector("a");
++        const land = () => (getComputedStyle(cards[0]).visibility === "visible" ? first?.focus({ preventScroll: true }) : requestAnimationFrame(land));
++        requestAnimationFrame(land);
++        const next = page.querySelector("[data-load-more]");
++        if (next) link.href = next.getAttribute("href");
++        else link.closest("nav")?.remove();
++      } catch {
++        window.location.href = link.href;
++      } finally {
++        busy = false;
++        link.removeAttribute("aria-busy");
++      }
++    });
++  });
++}
+diff --git a/src/assets/scripts/search.js b/src/assets/scripts/search.js
+index eeca44f..0e2f7b8 100644
+--- a/src/assets/scripts/search.js
++++ b/src/assets/scripts/search.js
+@@ -206,7 +206,7 @@ export function initSearch(root = document) {
+         return `<li class="search__item">
+           <a class="search__link" href="${href}">
+             <span class="search__heading">${highlight(record.h, terms)}</span>
+-            <span class="search__snippet"><span class="search__page">${escapeHtml(record.t)}</span>${trail}</span>
++            <span class="search__snippet"><span class="search__page">${highlight(record.t, terms)}</span>${trail}</span>
+           </a>
+         </li>`;
+       })
+diff --git a/src/assets/scripts/ui.js b/src/assets/scripts/ui.js
+index e9fb3f4..7941ee0 100644
+--- a/src/assets/scripts/ui.js
++++ b/src/assets/scripts/ui.js
+@@ -27,7 +27,8 @@ export function openHotspot(group, open) {
+   placeHotspot(group);
+ }
+ 
+-// The card keeps Figma's 353 as the photo shrinks, so it moves to a clear spot or fades what it covers
++// The card opens to the right of its disc as Figma draws it and fades the discs it covers; it only moves when it would
++// leave the photo or cover the title, which happens as the photo shrinks while the card keeps Figma's 353
+ const desktop = window.matchMedia("(min-width: 992px)");
+ const PLACES = [[false, false], [true, false], [false, true], [true, true]];
+ 
+@@ -43,11 +44,12 @@ export function placeHotspot(group) {
+   const card = open.querySelector(".hotspot__card");
+   const gap = remToPx(0.5);
+   const title = group.closest(".approach__overlay")?.querySelector("h2");
+-  const obstacles = items.filter((item) => item !== open).map((item) => [item, item.getBoundingClientRect()]);
++  const discs = items.filter((item) => item !== open).map((item) => [item, item.getBoundingClientRect()]);
++  const keepClear = [];
+   if (title) {
+     const range = document.createRange();
+     range.selectNodeContents(title);
+-    obstacles.push([null, range.getBoundingClientRect()]);
++    keepClear.push(range.getBoundingClientRect());
+   }
+ 
+   const measure = ([swapped, up]) => {
+@@ -58,9 +60,10 @@ export function placeHotspot(group) {
+     const top = box.top + card.offsetTop;
+     const right = left + card.offsetWidth;
+     const bottom = top + card.offsetHeight;
+-    const hits = obstacles.filter(([, r]) => r.right + gap > left && r.left - gap < right && r.bottom + gap > top && r.top - gap < bottom);
++    const touches = (r) => r.right + gap > left && r.left - gap < right && r.bottom + gap > top && r.top - gap < bottom;
++    const hits = discs.filter(([, r]) => touches(r));
+     const outside = left < bounds.left || right > bounds.right || top < bounds.top || bottom > bounds.bottom;
+-    return { place: [swapped, up], hits, score: (outside ? 100 : 0) + hits.length };
++    return { place: [swapped, up], hits, score: (outside ? 100 : 0) + keepClear.filter(touches).length };
+   };
+ 
+   let best = null;
+@@ -262,10 +265,13 @@ function settleReveals(panel) {
+ }
+ 
+ // [data-fold]: the ruled fold (_fold.less). One row open at a time; a row's button opens it, or shuts it when open.
+-// .fold--hover also opens a row under the mouse from lg and keeps one open there (the columns and the activity cards)
++// .fold--hover keeps one row open from lg, the one under the mouse or the last one tapped (the columns and the activity cards);
++// data-fold-from moves that width for a list that stays an accordion longer
+ export function initFolds(root = document) {
+-  const mouse = window.matchMedia("(min-width: 992px) and (hover: hover) and (pointer: fine)");
+   root.querySelectorAll("[data-fold]").forEach((list) => {
++    const from = list.dataset.foldFrom || 992;
++    const mouse = window.matchMedia(`(min-width: ${from}px) and (hover: hover) and (pointer: fine)`);
++    const wide = window.matchMedia(`(min-width: ${from}px)`);
+     const items = [...list.querySelectorAll(".fold__item")].filter((item) => item.closest("[data-fold]") === list);
+     const rowOf = (item) => [...item.querySelectorAll(".fold__row[aria-expanded]")].find((row) => row.closest(".fold__item") === item);
+     const hover = list.classList.contains("fold--hover");
+@@ -280,7 +286,7 @@ export function initFolds(root = document) {
+       const row = event.target.closest(".fold__row[aria-expanded]");
+       if (!row || row.closest("[data-fold]") !== list) return;
+       const item = row.closest(".fold__item");
+-      setOpen(item.classList.contains("is-open") && !(hover && mouse.matches) ? null : item);
++      setOpen(item.classList.contains("is-open") && !(hover && wide.matches) ? null : item);
+       settleReveals(item.querySelector(":scope > .fold__panel"));
+     });
+     if (hover) items.forEach((item) => item.addEventListener("mouseenter", () => { if (mouse.matches) setOpen(item); }));
+diff --git a/src/assets/styles/01-settings/_tokens.less b/src/assets/styles/01-settings/_tokens.less
+index 7fb86d1..ca477d0 100644
+--- a/src/assets/styles/01-settings/_tokens.less
++++ b/src/assets/styles/01-settings/_tokens.less
+@@ -139,9 +139,6 @@
+   --header-gutter: 1.875rem;     /* 30: the mobile bar sits wider than the 20 content gutter */
+   --header-height-pinned: 5rem;  /* 80: the compact bar that returns on scroll-up from lg */
+   --control-height: 3rem;        /* 48 — buttons, tabs, arrows */
+-  /* Phone photo + quote slider card (testimonials, educators): 375 × 773, or the screen under the 48 arrows + 20 gap */
+-  --quote-card-m: ~"min(100vw * 773 / 375, 100svh - 4.25rem)";
+-  --quote-panel-m: calc(var(--quote-card-m) * 361 / 773); /* the quote panel's share, under a 412 photo */
+   --marker-size: 1.5625rem;      /* 25 — hotspot dots */
+ 
+   /* Motion */
+diff --git a/src/assets/styles/02-tools/_mixins.less b/src/assets/styles/02-tools/_mixins.less
+index c023594..477cf06 100644
+--- a/src/assets/styles/02-tools/_mixins.less
++++ b/src/assets/styles/02-tools/_mixins.less
+@@ -126,3 +126,25 @@
+ .last-mb-0() {
+   > *:last-child { margin-bottom: 0; }
+ }
++
++// Phones stack a button row to the column: the 375 frames draw every button 335 wide, one under the other, 30 apart
++.stack-buttons() {
++  flex-direction: column;
++  align-items: stretch;
++  gap: 1.875rem; // 30
++  .btn {
++    width: 100%;
++    justify-content: center;
++  }
++}
++
++// Kept for screen readers, gone from sight (Bootstrap's .visually-hidden, as a mixin for one breakpoint)
++.visually-hidden() {
++  position: absolute;
++  width: 0.0625rem;
++  height: 0.0625rem;
++  margin: -0.0625rem;
++  overflow: hidden;
++  clip-path: inset(50%);
++  white-space: nowrap;
++}
+diff --git a/src/assets/styles/04-layout/_footer.less b/src/assets/styles/04-layout/_footer.less
+index 354c2cd..0607266 100644
+--- a/src/assets/styles/04-layout/_footer.less
++++ b/src/assets/styles/04-layout/_footer.less
+@@ -256,10 +256,11 @@
+       line-height: 1.25rem; // 20
+     }
+ 
+-    // The design's 41.3 button, with the 44 hit area .tap-area() already gives it. The frame stretches the
+-    // pair to the column, one under the other; the client prefers them at label width, side by side
++    // The design's 41.3 button, with the 44 hit area .tap-area() already gives it. Phones stack the pair to the
++    // column as the frame draws them (asked for in the Oct 2026 review); tablets keep them side by side
+     &__actions {
+       gap: var(--footer-stack) var(--space-2);
++      @media @upto-md { .stack-buttons(); gap: var(--footer-stack); }
+       margin-bottom: calc(var(--footer-stack) - 0.375rem); // the 44 social anchors overhang their 32 glyphs by 6
+       .btn {
+         --bs-btn-font-size: 0.8606rem; // 13.77
+@@ -304,9 +305,13 @@
+       letter-spacing: var(--letter-spacing-body);
+     }
+ 
+-    // Phones centre the logo only; its copy, the buttons and the social row keep the column's left edge (the client's call)
++    // Phones centre the logo and the social row, as the frame draws them; the copy keeps the column's left edge
+     @media @upto-md {
+       &__logo { margin-inline: auto; }
++      &__social {
++        justify-content: center;
++        margin-left: 0;
++      }
+     }
+ 
+     // Tablets and landscape phones: the brand row runs full width, then two aligned columns
+diff --git a/src/assets/styles/04-layout/_header.less b/src/assets/styles/04-layout/_header.less
+index 3c1f594..bc6071f 100644
+--- a/src/assets/styles/04-layout/_header.less
++++ b/src/assets/styles/04-layout/_header.less
+@@ -35,9 +35,9 @@
+     position: absolute;
+     inset: 0 0 auto;
+     background-color: transparent;
+-    --header-logo-width: ~"clamp(12rem, -11.8462rem + 38.4615vw, 17rem)"; // 192 at 992 → 272 at 1200
++    --header-logo-width: ~"clamp(11rem, -17.6154rem + 46.1538vw, 17rem)"; // 176 at 992 → 272 at 1200
+     --header-nav-gap: ~"clamp(1rem, -4.9615rem + 9.6154vw, 2.25rem)";      // 16 → 36
+-    --header-link-size: ~"clamp(0.9375rem, 0.6394rem + 0.4808vw, 1rem)";  // 15 → 16
++    --header-link-size: ~"clamp(0.875rem, 0.2788rem + 0.9615vw, 1rem)";   // 14 → 16
+     --header-gap: var(--space-3);
+   }
+ 
+diff --git a/src/assets/styles/05-components/_approach.less b/src/assets/styles/05-components/_approach.less
+index b7d20aa..63c5684 100644
+--- a/src/assets/styles/05-components/_approach.less
++++ b/src/assets/styles/05-components/_approach.less
+@@ -14,7 +14,7 @@
+     display: flex;
+     align-items: center;
+     justify-content: space-between;
+-    gap: var(--space-4);
++    gap: ~"clamp(1rem, -3.7692rem + 7.6923vw, 2rem)"; // 16 at 992 → 32 by 1200: the four tabs and the arrows fit a 992 screen
+     margin-bottom: var(--approach-bar-gap);
+   }
+ 
+@@ -23,7 +23,7 @@
+     .hide-scrollbar();
+     display: flex;
+     flex: 1 1 auto;
+-    gap: var(--space-2);
++    gap: ~"clamp(0.75rem, -0.4423rem + 1.9231vw, 1rem)"; // 12 → 16 by 1200
+     min-width: 0;
+     @media (min-width: @bp-xxl) {
+       gap: 1.0625rem; // Figma rounds each label up a pixel, so tabs land at 201 / 427 / 644 / 847
+@@ -41,6 +41,8 @@
+   &__tab {
+     flex: 0 0 auto;
+     scroll-snap-align: start;
++    --bs-btn-padding-x: ~"clamp(1.25rem, 0.0577rem + 1.9231vw, 1.5rem)"; // 20 → 24 by 1200
++    --bs-btn-font-size: ~"clamp(0.9375rem, 0.6394rem + 0.4808vw, 1rem)"; // 15 → 16
+     --bs-btn-hover-color: var(--color-primary);
+     --bs-btn-hover-bg: var(--color-secondary);
+     --bs-btn-hover-border-color: var(--color-primary);
+@@ -278,7 +280,7 @@
+       display: block;
+       position: absolute;
+       top: 0.0625rem;
+-      left: calc(100% + 0.5625rem);
++      left: calc(100% + 1.25rem); // the card starts 20 past the disc: Figma's 234 against the 189 marker
+       width: var(--approach-card-width);
+       padding-bottom: 0;
+       opacity: 0;
+@@ -294,12 +296,12 @@
+   &.is-swapped &__card {
+     @media (min-width: @bp-lg) {
+       left: auto;
+-      right: calc(100% + 0.5625rem);
++      right: calc(100% + 1.25rem);
+     }
+   }
+   @media (min-width: @bp-lg) {
+     &--flip.is-swapped &__card {
+-      left: calc(100% + 0.5625rem);
++      left: calc(100% + 1.25rem);
+       right: auto;
+     }
+     &.is-up &__card {
+@@ -337,13 +339,30 @@
+     line-height: var(--hotspot-line);
+   }
+ 
+-  // Marker centres from Figma (panel 1640 × 684)
+-  &--1 { --x: 13.02%; --y: 46.71%; }
+-  &--2 { --x: 48.75%; --y: 11.92%; }
+-  &--3 { --x: 31.07%; --y: 32.24%; }
+-  &--4 { --x: 72.47%; --y: 63.67%; }
+-  &--5 { --x: 45.27%; --y: 67.76%; }
+-  &--6 { --x: 63.20%; --y: 32.24%; }
++  // Marker centres from the "03- Design 2" tab frames (photo 1640 × 684)
++  .approach__pane--teaching & {
++    &--1 { --x: 12.29%; --y: 46.71%; }
++    &--2 { --x: 32.77%; --y: 29.17%; }
++    &--3 { --x: 58.99%; --y: 22.15%; }
++    &--4 { --x: 60.58%; --y: 42.62%; }
++    &--5 { --x: 44.30%; --y: 66.30%; }
++    &--6 { --x: 73.69%; --y: 67.47%; }
++  }
++  .approach__pane--future & {
++    &--1 { --x: 12.29%; --y: 37.79%; }
++    &--2 { --x: 44.79%; --y: 28.87%; }
++    &--3 { --x: 67.71%; --y: 51.83%; }
++  }
++  .approach__pane--wellbeing & {
++    &--1 { --x: 20.40%; --y: 61.18%; }
++    &--2 { --x: 58.51%; --y: 25.37%; }
++    &--3 { --x: 69.85%; --y: 69.52%; }
++  }
++  .approach__pane--community & {
++    &--1 { --x: 14.30%; --y: 53.87%; }
++    &--2 { --x: 38.75%; --y: 38.82%; }
++    &--3 { --x: 72.59%; --y: 57.53%; }
++  }
+ }
+ 
+ // ---------------------------------------------------------------------
+@@ -398,7 +417,7 @@
+         flex: 0 0 auto;
+         width: 1.625rem; // 26
+         height: 1.625rem;
+-        transition: transform var(--duration-fold) var(--ease-out);
++        transition: transform var(--duration-fold) var(--ease-settle);
+       }
+     }
+     .tab-pane.is-open &__row .icon { transform: rotate(90deg); } // ↗ turns to ↘
+diff --git a/src/assets/styles/05-components/_article-grid.less b/src/assets/styles/05-components/_article-grid.less
+index a96aeee..6247e2c 100644
+--- a/src/assets/styles/05-components/_article-grid.less
++++ b/src/assets/styles/05-components/_article-grid.less
+@@ -47,6 +47,22 @@
+       padding-inline: var(--articles-text-inset);
+       transition: color var(--duration-fast) ease;
+     }
++
++    // the whole card is the link: the photo draws a little closer, the headline darkens and the arrow nudges
++    &:focus-visible {
++      color: var(--color-text);
++      h3 { color: var(--color-green-hover); }
++      img { transform: scale(1.03); }
++      .icon { transform: translate(0.25rem, -0.25rem); }
++    }
++    @media (hover: hover) {
++      &:hover {
++        color: var(--color-text);
++        h3 { color: var(--color-green-hover); }
++        img { transform: scale(1.03); }
++        .icon { transform: translate(0.25rem, -0.25rem); }
++      }
++    }
+   }
+ 
+   // the headline and date together, filling the card so the date keeps the foot; on phones the pair reveals on its own
+@@ -54,14 +70,6 @@
+     display: flex;
+     flex: 1 1 auto;
+     flex-direction: column;
+-
+-    &:hover,
+-    &:focus-visible {
+-      color: var(--color-text);
+-      h3 { color: var(--color-green-hover); }
+-      img { transform: scale(1.04); }
+-      .icon { transform: translate(0.25rem, -0.25rem); }
+-    }
+   }
+   li:last-child &__card::after { display: none; }
+   @media (min-width: @bp-lg) {
+diff --git a/src/assets/styles/05-components/_article.less b/src/assets/styles/05-components/_article.less
+index dd88cbb..803b6e4 100644
+--- a/src/assets/styles/05-components/_article.less
++++ b/src/assets/styles/05-components/_article.less
+@@ -18,6 +18,7 @@
+ 
+   &__back {
+     @media (min-width: @bp-xxl) { margin-left: -0.125rem; }
++    @media @upto-md { width: 100%; }
+   }
+ 
+   &__main {
+@@ -83,3 +84,38 @@
+     letter-spacing: var(--letter-spacing-ui);
+   }
+ }
++
++// Phones (news article M 2149:8665): 60 above and below, the standfirst at 35 with Back to news full width 30 under it, then
++// the photo, the copy at 15 and Previous / Next each 30 apart, the pair on one row with each word centred beside its arrow
++@media @upto-lg {
++  .article {
++    padding-block: 3.75rem; // 60
++    .row { --bs-gutter-y: 0; }
++
++    h2 {
++      margin-bottom: 1.875rem; // 30
++      font-size: 2.1875rem;    // 35
++      line-height: 1.05;       // 36.75
++    }
++    &__media { margin: 1.875rem 0; } // 30
++    &__body { max-width: calc(100% - 0.03125rem); } // Figma breaks a line half a pixel short of its 335 box
++    &__body,
++    &__nav-label {
++      font-size: 0.9375rem; // 15
++      line-height: 1.5333;  // 23: Figma draws the 22.5 line at a whole pixel
++      letter-spacing: var(--letter-spacing-body); // -3% of 15, not of the 16 it would inherit
++    }
++    &__nav {
++      grid-template-columns: 1fr 1fr;
++      margin-top: 1.875rem; // 30
++    }
++    &__nav-link {
++      align-items: center;
++      gap: 1.25rem; // 20
++    }
++    // the 375 frame names only Previous and Next; the article's title stays for screen readers
++    @media @upto-md {
++      &__nav-label span + span { .visually-hidden(); }
++    }
++  }
++}
+diff --git a/src/assets/styles/05-components/_contact.less b/src/assets/styles/05-components/_contact.less
+index b12a7c1..4c8a268 100644
+--- a/src/assets/styles/05-components/_contact.less
++++ b/src/assets/styles/05-components/_contact.less
+@@ -131,6 +131,7 @@
+     display: flex;
+     justify-content: flex-end;
+     margin-top: 0.8125rem; // 44 below the message rule
++    @media @upto-md { .stack-buttons(); }
+     @media (min-width: @bp-sm) { grid-column: 1 / -1; }
+     @media (min-width: @bp-lg) { padding-right: 1.6875rem; } // button ends at x 1413
+   }
+@@ -140,11 +141,14 @@
+ .map-banner {
+   display: block;
+   overflow: hidden;
+-  aspect-ratio: 4 / 3;
++  aspect-ratio: 1; // the 375 square (contact M 2235:6092)
+   @media (min-width: @bp-md) { aspect-ratio: 1640 / 433; }
+-  // Figma desaturates the map fill; the filter keeps the source screenshot untouched
+-  img {
+-    .img-cover();
++  // the live Google map, desaturated as Figma's is
++  iframe {
++    display: block;
++    width: 100%;
++    height: 100%;
++    border: 0;
+     filter: grayscale(1);
+   }
+ }
+diff --git a/src/assets/styles/05-components/_cta-links.less b/src/assets/styles/05-components/_cta-links.less
+index 0aba6be..9c810d3 100644
+--- a/src/assets/styles/05-components/_cta-links.less
++++ b/src/assets/styles/05-components/_cta-links.less
+@@ -24,10 +24,13 @@
+     @media (min-width: @bp-lg) { margin: var(--cta-list-offset) 0 0 var(--cta-list-inset); }
+   }
+ 
+-  // the rows are the fold (_fold.less); the block only sets their pitch, the hover (the arrow turns, nothing else changes:
+-  // the fill and Dark Green title of 1680:5968 were taken out on 2026-10-06) and the open copy's type (1801:5705: 15 / 22.5,
+-  // white on the green band, 527 wide, each term its own paragraph 10 apart)
+-  .fold { --fold-hover: currentColor; }
++  // the rows are the fold (_fold.less); the block sets their pitch, the hover of the "Drop down" component (2081:10801: a
++  // Light Blue fill, the title and turned arrow Dark Green) and the open copy's type (1801:5705: 15 / 22.5, white on the
++  // green band, 527 wide, each term its own paragraph 10 apart)
++  .fold {
++    --fold-hover: var(--color-heading);
++    --fold-fill: var(--color-secondary);
++  }
+   .fold__row { padding: var(--cta-row-pad-y) var(--cta-row-pad-x); }
+   .fold__body {
+     padding-inline: var(--cta-row-pad-x); // the copy starts and ends with its title
+@@ -59,6 +62,7 @@
+     gap: var(--space-2);
+     margin-top: 2.4375rem; // 39
+     @media (min-width: @bp-xxl) { margin-left: 0.0625rem; }
++    @media @upto-md { .stack-buttons(); }
+   }
+ 
+   // Inner-page band: heading at 103, list at (825, 104), 103 of air below (84 when a button follows)
+@@ -69,6 +73,12 @@
+       --cta-list-inset: 0.3125rem;
+       --cta-row-pad-x: 0rem;
+     }
++    .fold {
++      @media (min-width: @bp-lg) {
++        --fold-fill-bleed: 0.4375rem;     // 7: the component's 8 of fill before the title
++        --fold-fill-bleed-end: 0.625rem;  // 10: and 8 past the arrow's 26 frame
++      }
++    }
+     .fold__row {
+       gap: var(--space-1);
+       padding-inline-start: 0.0625rem;
+diff --git a/src/assets/styles/05-components/_cta-row.less b/src/assets/styles/05-components/_cta-row.less
+index 6aa0938..d051fdc 100644
+--- a/src/assets/styles/05-components/_cta-row.less
++++ b/src/assets/styles/05-components/_cta-row.less
+@@ -37,5 +37,6 @@
+     gap: var(--space-2);
+     margin-top: var(--space-5);
+     @media (min-width: @bp-lg) { margin-top: var(--cta-row-actions-gap); }
++    @media @upto-md { .stack-buttons(); }
+   }
+ }
+diff --git a/src/assets/styles/05-components/_feature-banner.less b/src/assets/styles/05-components/_feature-banner.less
+index 5414d77..c51b4b6 100644
+--- a/src/assets/styles/05-components/_feature-banner.less
++++ b/src/assets/styles/05-components/_feature-banner.less
+@@ -9,6 +9,7 @@
+   --banner-shade-angle: 90deg;         // dark on the copy's side
+   --banner-shade-solid: 20.49%;        // 336 of 1640 in from the copy's edge (1619:7155)
+   --banner-shade-clear: 48.35%;        // 793
++  --banner-wash-clear: 43.72%;         // 717 of 1640: where the report banner's white wash has faded (1805:6373)
+ 
+   position: relative;
+   isolation: isolate;
+@@ -28,6 +29,7 @@
+   // Inner pages: a 45px title, one blank 32 / 1.1 line, then the copy
+   &--y168 { --banner-top: 10.5rem;    --banner-title-gap: 2.2rem; --banner-content-width: 31.0625rem; } // 168, 497 wide
+   &--y237 { --banner-top: 14.8125rem; --banner-title-gap: 2.2rem; }                                      // 237
++  &--y209 { --banner-top: 13.0625rem; --banner-title-gap: 2.2rem; }                                      // 209: the Extra-curricular music band
+ 
+   > .container { width: 100%; }
+ 
+@@ -56,6 +58,17 @@
+     }
+   }
+ 
++  // The report banner (1805:6373): Figma washes the copy's side white at 68% and sets the copy Dark Green; the phone panel stays green
++  &--wash,
++  &--wash &__content h2 {
++    @media (min-width: @bp-lg) { color: var(--color-primary-dark); }
++  }
++  &--wash &__media::after {
++    @media (min-width: @bp-lg) {
++      background: linear-gradient(var(--banner-shade-angle), ~"color-mix(in srgb, var(--color-white) 68%, transparent)", transparent var(--banner-wash-clear));
++    }
++  }
++
+   &__layer { .parallax-layer(30%); } // speed 30 / 160 = 18.75
+ 
+   &__content {
+@@ -88,6 +101,7 @@
+     gap: var(--space-2);
+     margin-top: var(--banner-actions-gap);
+     &:empty { display: none; }
++    @media @upto-md { .stack-buttons(); }
+     @media (min-width: @bp-xxl) { margin-left: 0.3125rem; } // button at x 202
+   }
+ 
+@@ -105,6 +119,19 @@
+     }
+     .feature-banner__media::after { background: none; }
+   }
++
++  // a phone square of its own (the Preparatory banner, 2125:14702): square below sm, the landscape photo from sm, and below lg
++  // the layer stands still and fills the box (data-anim-disable-mobile), as the stacked banners' does
++  &--square-m {
++    @media (max-width: 575.98px) { aspect-ratio: 1; }
++    @media @upto-lg {
++      .feature-banner__layer {
++        top: 0;
++        height: 100%;
++        transform: none;
++      }
++    }
++  }
+ }
+ 
+ // ---------------------------------------------------------------------
+@@ -129,15 +156,20 @@
+     padding-block: 0;
+     background: var(--color-primary-dark);
+ 
+-    // The square phone crop; from sm the landscape photo comes back at 3 : 2, so a tablet is not a screen of photo
++    // The square phone crop, shown whole: the layer stops travelling below lg (data-anim-disable-mobile) and fills the box,
++    // so the frame's own square is what shows. From sm the landscape photo comes back at 3 : 2, so a tablet is not a screen of photo
+     .feature-banner__media {
+       position: relative;
+       inset: auto;
+       aspect-ratio: 1 / 1; // 375 × 375
+       @media (min-width: @bp-sm) { aspect-ratio: 3 / 2; }
+-      img { position: static; }
+       &::after { background: none; }
+     }
++    .feature-banner__layer {
++      top: 0;
++      height: 100%;
++      transform: none;
++    }
+ 
+     > .container { padding-block: 1.875rem; } // 30
+ 
+diff --git a/src/assets/styles/05-components/_fold.less b/src/assets/styles/05-components/_fold.less
+index 300473b..b8e2a5c 100644
+--- a/src/assets/styles/05-components/_fold.less
++++ b/src/assets/styles/05-components/_fold.less
+@@ -8,6 +8,7 @@
+   --fold-hover: var(--color-secondary);   // the row's colour on hover and focus
+   --fold-fill: transparent;               // a fill behind the hovered or focused row, over its rules (Light Blue on white)
+   --fold-fill-bleed: 0rem;                // how far that fill runs past the title on the left
++  --fold-fill-bleed-end: 0rem;            // and past the row's end on the right
+   --fold-body-top: 0.25rem;               // the copy under its title, inside the fold
+   --fold-body-bottom: 1.875rem;           // the copy above the next rule, inside the fold
+   .reset-list();
+@@ -48,7 +49,7 @@
+   &::after {
+     content: "";
+     position: absolute;
+-    inset: calc(-1 * var(--border-width)) 0 calc(-1 * var(--border-width)) calc(-1 * var(--fold-fill-bleed));
++    inset: calc(-1 * var(--border-width)) calc(-1 * var(--fold-fill-bleed-end)) calc(-1 * var(--border-width)) calc(-1 * var(--fold-fill-bleed));
+     z-index: var(--z-behind);
+     background: var(--fold-fill);
+     opacity: 0;
+@@ -61,6 +62,8 @@
+     margin-right: -0.375rem;
+     transition: transform var(--duration-base) var(--ease-out);
+   }
++  // a fold row's arrow turns on the fold's own curve: on --ease-out most of the quarter turn landed in its first 70ms
++  button& .icon { transition: transform var(--duration-fold) var(--ease-settle); }
+ 
+   // hover and focus change the colour and show the fill where a block gives one, nothing moves; a link row nudges
+   // its arrow, a fold row turns it down as the frames' hover state does (1680:5968), and keeps it down while open
+@@ -90,19 +93,6 @@
+ .fold__item.is-open > .fold__panel { .fold-panel-open(); }
+ .fold__item.is-open > .fold__panel > .fold__body { .fold-body-open(); }
+ 
+-// .fold--hover opens on hover with a mouse from lg (initFolds), one row always open; a touch screen at that width has
+-// no hover, so it shows every panel
+-@media (min-width: @bp-lg) and (hover: none) {
+-  .fold--hover .fold__panel {
+-    grid-template-rows: 1fr;
+-    visibility: visible;
+-  }
+-  .fold--hover .fold__body {
+-    opacity: 1;
+-    transform: none;
+-  }
+-}
+-
+ @media (prefers-reduced-motion: reduce) {
+   .fold__row .icon { transition: none; }
+ }
+diff --git a/src/assets/styles/05-components/_hero.less b/src/assets/styles/05-components/_hero.less
+index 4ae9b1c..43f903d 100644
+--- a/src/assets/styles/05-components/_hero.less
++++ b/src/assets/styles/05-components/_hero.less
+@@ -90,13 +90,16 @@
+       max-width: 75.75rem;
+       margin-bottom: var(--hero-title-gap);
+       font-size: ~"min(var(--font-size-display), 8.2246 * var(--hero-u))";
++      font-kerning: none; // Figma's 1640 render draws the title unkerned ("Welcome to" is 579 of ink there); its 375 render is kerned
+     }
+     @media (min-width: @bp-xxl) { margin-left: -0.125rem; } // x 198
+   }
+   &__title-line {
+     display: block;
+     &--indent {
+-      text-indent: 0.55em; // the three spaces before "Claremont" (33 at 60): a wrapped "College." returns to the margin
++      text-indent: 0.57em; // the three spaces before "Claremont": 75 at the 131.6 title, 34 at 60; a wrapped "College." returns to the margin
++      letter-spacing: -0.045em; // Figma renders the italic run tighter than its -3%, kerned: "Claremont" at -5.2%, "College." nearer -4.2%, at 1640 and at 60
++      font-kerning: normal; // the unkerned 1640 render is the upright line only
+     }
+   }
+ 
+@@ -115,7 +118,8 @@
+ 
+     @media (min-width: @bp-lg) {
+       --hero-subtitle-lh: 1.17333; // 52.8 on 45
+-      --hero-subtitle-size: ~"min(var(--font-size-callout), 2.8125 * var(--hero-u))";
++      // 45 at the frame ("personal." 48 through the em). The floor keeps the 45 : 19 ratio with the copy, which stops at 16 on short screens
++      --hero-subtitle-size: ~"max(2.3684rem, min(var(--font-size-callout), 2.8125 * var(--hero-u)))";
+       max-width: 33.625rem;
+       margin-bottom: calc(1.45 * var(--hero-u));
+       color: inherit;
+@@ -137,11 +141,12 @@
+       max-width: 38.5625rem; // 617
+       font-size: ~"max(1rem, min(var(--font-size-lg), 1.1875 * var(--hero-u)))";
+       line-height: var(--line-height-relaxed);
++      letter-spacing: var(--letter-spacing-body); // Figma's -0.57 at 19: the longest line is then 461 wide, level with the subtitle
+       p { margin-bottom: calc(0.5483 * var(--hero-u)); } // 8.77
+     }
+   }
+ 
+-  // The 375 frame stretches the button to the column; the client prefers it at its label width everywhere
++  // Phones stack the button to the column as the 375 frame draws it (Oct 2026 review); from md it sits at its label width
+   &__actions {
+     display: flex;
+     flex-wrap: wrap;
+@@ -149,6 +154,7 @@
+     margin-top: var(--space-5);
+     .btn { flex: 0 0 auto; }
+     @media (min-width: @bp-lg) { margin-top: calc(2.8125 * var(--hero-u)); } // 45
++    @media @upto-md { .stack-buttons(); }
+   }
+ 
+   &__subnav {
+diff --git a/src/assets/styles/05-components/_intro-split.less b/src/assets/styles/05-components/_intro-split.less
+index 9239b4c..8637e30 100644
+--- a/src/assets/styles/05-components/_intro-split.less
++++ b/src/assets/styles/05-components/_intro-split.less
+@@ -84,6 +84,9 @@
+       }
+     }
+     &__actions { order: 1; }
++    @media @upto-md {
++      &__actions { .stack-buttons(); }
++    }
+     .intro-split__body > p:last-child { margin-bottom: 0; } // the copy ends 30 above the buttons and 60 above the band's foot
+     @media @upto-md {
+       h2 {
+diff --git a/src/assets/styles/05-components/_link-columns.less b/src/assets/styles/05-components/_link-columns.less
+index d26f2ff..f7b5743 100644
+--- a/src/assets/styles/05-components/_link-columns.less
++++ b/src/assets/styles/05-components/_link-columns.less
+@@ -99,11 +99,10 @@
+   }
+ }
+ 
+-// Columns that open in place, one at a time (the Preparatory teaching approach): a stacked accordion
+-// below lg, the four tall columns from lg with the open one blue and its copy settled at the bottom
+-.link-columns--reveal {
+-  --columns-body-width: 19rem;    // 304
+-  --columns-pad-bottom: 3rem;     // 48 under the copy
++// Columns that open in place, one at a time (the K-6 teaching teams, the Preparatory teaching approach): a stacked accordion
++// below @from, the four tall columns from it with the open one blue and its copy settled at the bottom
++.reveal-columns(@from) {
++  --columns-pad-bottom: 3rem; // 48 under the copy
+ 
+   .link-columns__grid { grid-template-columns: minmax(0, 1fr); }
+ 
+@@ -121,15 +120,17 @@
+     &.is-open { background: var(--color-blue); }
+   }
+ 
+-  @media (min-width: @bp-sm) and (max-width: 991.98px) {
++  @media (min-width: @bp-sm) and (max-width: (@from - 0.02px)) {
+     .link-columns__item:nth-child(odd) { border-right: 0; }
+     .link-columns__item--media { aspect-ratio: 4 / 3; }
+   }
+ 
+-  // the rows are the fold (_fold.less, .fold--hover): the heading wraps the button, which keeps the heading's own type
++  // the rows are the fold (_fold.less, .fold--hover): the heading wraps the button, which keeps the heading's own type, and a
++  // hovered title stays Dark Green (the fold's Light Blue is for the green bands; here it vanished into the open column's fill)
+   .fold {
+     --fold-body-top: var(--space-3);
+     --fold-body-bottom: 0; // the column's own padding closes it
++    --fold-hover: var(--color-heading);
+   }
+   .fold__item:last-child { border-bottom: 0; }
+   .fold__row {
+@@ -138,9 +139,6 @@
+     padding: 0;
+     font: inherit;
+     letter-spacing: inherit;
+-    span {
+-      @media (min-width: @bp-lg) { max-width: var(--columns-title-width); }
+-    }
+     .icon { margin-right: -0.375rem; }
+   }
+ 
+@@ -156,9 +154,13 @@
+       font-weight: var(--font-weight-semibold);
+       letter-spacing: var(--letter-spacing-ui);
+     }
++    sup {
++      top: -0.55em;    // Figma draws the ® small and raised, its foot 5 above the line
++      font-size: 0.62em;
++    }
+   }
+ 
+-  @media (min-width: @bp-lg) {
++  @media (min-width: @from) {
+     .link-columns__grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+ 
+     .link-columns__item:not(.link-columns__item--media) {
+@@ -167,6 +169,7 @@
+     }
+ 
+     .fold { --fold-body-top: 0; }
++    .fold__row span { max-width: var(--columns-title-width); }
+     .fold__body {
+       max-width: var(--columns-body-width);
+       font-size: 0.9375rem; // 15
+@@ -174,6 +177,37 @@
+     }
+   }
+ }
++// from lg to a later @from, the rows keep the accordion's rules where the base columns would take over
++.reveal-columns(@from) when (@from > @bp-lg) {
++  @media (min-width: @bp-lg) and (max-width: (@from - 0.02px)) {
++    .link-columns__item {
++      padding: var(--columns-pad-top-inner) var(--container-gutter) var(--space-4);
++      border-top: var(--border-width-thick) solid var(--color-line);
++      border-right: 0;
++    }
++  }
++}
++
++.link-columns--reveal {
++  --columns-body-width: 19rem; // 304
++  .reveal-columns(@bp-lg);
++}
++
++// The Preparatory approach (1638:5169): four columns of its long copy only fit from xl, so it stays the accordion to 1200
++// (data-fold-from on the list), its open row's copy held to the intro's measure; from xl the copy breaks half a pixel short
++// of Figma's 304 at Figma's whole-pixel 23, as the render of 1638:5173 draws it, and the air above it closes up below 1640
++.link-columns--reveal-xl {
++  --columns-body-width: 18.96875rem; // 304 less the half pixel ("that asking / for", 1638:5176)
++  @media (min-width: @bp-lg) {
++    --columns-pad-top: ~"clamp(3.75rem, 0.7838rem + 4.784vw, 5.6875rem)";   // 60 at 992 → 91 at 1640
++    --columns-header-gap: ~"clamp(4rem, -0.0425rem + 6.52vw, 6.640625rem)"; // 64 → 106.25
++  }
++  .fold__body { max-width: 37.5rem; }
++  .reveal-columns(@bp-xl);
++  @media (min-width: @bp-xl) {
++    .fold__body { line-height: 1.5333; } // 23
++  }
++}
+ 
+ // K-6 teaching teams on phones (2571:14024, rows 2571:14034): Light Blue 50, 60 over a 32 heading with its copy 20 under,
+ // the photo full-bleed 60 below, square on phones, then the rows straight under it on Light Blue — a Near Black rule over
+diff --git a/src/assets/styles/05-components/_link-grid.less b/src/assets/styles/05-components/_link-grid.less
+index a06c817..d139a44 100644
+--- a/src/assets/styles/05-components/_link-grid.less
++++ b/src/assets/styles/05-components/_link-grid.less
+@@ -58,7 +58,7 @@
+       width: 2rem;
+       height: 1.625rem;
+       margin-right: -0.375rem;
+-      transition: transform var(--duration-base) var(--ease-out);
++      transition: transform var(--duration-fold) var(--ease-settle); // turns as the dropdowns' arrows do
+     }
+ 
+     // hover (1885:8652) with the dispositions' fill, as asked: Light Blue from 1 above the rule to the next rule and across
+@@ -215,3 +215,18 @@
+     .link-grid__label { max-width: 19.3125rem; } // 309
+   }
+ }
++
++// Policies below lg (policies M 2235:5860): 60 above and below the list; each row 30 under its rule and 30 above the next,
++// the title box 308 wide at 25 / 28 with the arrow's frame straight after it (Figma's 20 gap overflows away), ending 1 inside the column
++@media @upto-lg {
++  .link-grid--plain {
++    padding-block: 3.75rem; // 60
++
++    .link-grid__link {
++      gap: 0;
++      min-height: 0;
++      padding: 1.875rem 0.0625rem 1.875rem 0; // 30 above and below; the arrow ends 1 in
++      line-height: 1.12;                     // 28: Figma draws the 27.5 line at a whole pixel
++    }
++  }
++}
+diff --git a/src/assets/styles/05-components/_media-intro.less b/src/assets/styles/05-components/_media-intro.less
+deleted file mode 100644
+index 6b10f58..0000000
+--- a/src/assets/styles/05-components/_media-intro.less
++++ /dev/null
+@@ -1,63 +0,0 @@
+-// 05-components/_media-intro.less — contained wide photo with a heading + copy row beneath
+-
+-.media-intro {
+-  --media-intro-pad-top: 3.25rem;    // 52
+-  --media-intro-pad-bottom: 4.8125rem; // copy (6 lines) ends 609 of 686
+-  --media-intro-gap: 3.1875rem;      // photo ends 423, copy starts 474
+-
+-  padding-block: var(--space-6) var(--space-6);
+-  @media (min-width: @bp-lg) { padding-block: var(--media-intro-pad-top) var(--media-intro-pad-bottom); }
+-
+-  &__media {
+-    position: relative;
+-    margin: 0 0 var(--space-5);
+-    overflow: hidden;
+-    aspect-ratio: 1242 / 371;
+-    @media (min-width: @bp-lg) { margin-bottom: var(--media-intro-gap); }
+-    @media (min-width: @bp-xxl) { margin-inline: -0.125rem 0; } // x 198 → 1440
+-  }
+-
+-  &__layer { .parallax-layer(30%); } // speed 30 / 160 = 18.75
+-
+-  h2 {
+-    margin: 0 0 var(--space-3);
+-    @media (min-width: @bp-lg) { margin: 0.1875rem 0 0 -0.125rem; } // (198, 477)
+-  }
+-
+-  p {
+-    max-width: 44.875rem; // 718
+-    margin: 0;
+-    @media (min-width: @bp-lg) { margin-left: 0.3125rem; } // x 722
+-  }
+-}
+-
+-// ---------------------------------------------------------------------
+-// Phones: the designer redrew this as a full-bleed square photo over the heading and copy (node 2149:6320)
+-// ---------------------------------------------------------------------
+-@media @upto-lg {
+-  .media-intro {
+-    padding-block: 0 1.875rem; // 30
+-
+-    // The square phone crop; from sm the landscape photo comes back at 3 : 2
+-    &__media {
+-      margin: 0 calc(var(--container-gutter) * -1) 1.875rem; // 30
+-      aspect-ratio: 1;
+-      @media (min-width: @bp-sm) { aspect-ratio: 3 / 2; }
+-    }
+-
+-    .row { --bs-gutter-y: 0; }
+-
+-    h2 {
+-      margin-bottom: 2.34375rem; // 37.5: the empty 22.5 line plus its paragraph spacing
+-      font-family: var(--font-display);
+-      font-size: 2.5rem; // 40
+-      line-height: 0.95; // 38
+-    }
+-
+-    p {
+-      max-width: none;
+-      font-size: 0.9375rem; // 15
+-      line-height: 1.5333;  // 23: Figma draws the 22.5 line at a whole pixel
+-    }
+-  }
+-}
+diff --git a/src/assets/styles/05-components/_mosaic.less b/src/assets/styles/05-components/_mosaic.less
+index 07828e1..6b0cb05 100644
+--- a/src/assets/styles/05-components/_mosaic.less
++++ b/src/assets/styles/05-components/_mosaic.less
+@@ -64,14 +64,8 @@
+     }
+ 
+     &--media {
+-      --mosaic-zoom: 1;
+       overflow: hidden;
+-      img {
+-        .img-cover();
+-        transform: scale(var(--mosaic-zoom));
+-        transition: transform var(--duration-slow) var(--ease-out);
+-      }
+-      &:hover { --mosaic-zoom: 1.04; }
++      img { .img-cover(); }
+     }
+   }
+ 
+@@ -111,7 +105,7 @@
+ 
+ // ---------------------------------------------------------------------
+ // Phones: the designer redrew the mosaic as a one-slide carousel (node 2232:5523) — heading and intro,
+-// full-width arrows, then each photo (375 × 300) over its blue card, one pair at a time (Swiper).
++// full-width arrows, then each photo (375 × 300, 2571:14064 and the four beside it) over its blue card: the deck below md, a Swiper on tablets.
+ // ---------------------------------------------------------------------
+ @media @upto-lg {
+   .mosaic {
+@@ -175,8 +169,18 @@
+       }
+       .icon {
+         flex: none;
+-        margin: 0;
++        margin: 0 0 -0.125rem; // the 30 icon hangs 2 below Figma's 28 title row
++      }
++    }
++
++    // the deck (_deck.less), as the quote slider's: one Light Blue row under every card's copy, the longest card setting it
++    @media @upto-md {
++      &__slider.is-deck &__grid::before {
++        content: "";
++        grid-area: ~"2 / 1";
++        background: var(--color-secondary);
+       }
++      &__slider.is-deck &__card { background: none; }
+     }
+   }
+ }
+diff --git a/src/assets/styles/05-components/_quote-slider.less b/src/assets/styles/05-components/_quote-slider.less
+index 720ce23..6f1161a 100644
+--- a/src/assets/styles/05-components/_quote-slider.less
++++ b/src/assets/styles/05-components/_quote-slider.less
+@@ -9,6 +9,13 @@
+   --qs-pad-bottom: 0rem;
+   --qs-track-gap: 3.25rem;        // arrows end 166, photos start 218
+   --qs-dim: 0.45;
++  --qs-box-pad: 1.3125rem 1.5625rem 1.5625rem; // 21 25 25 (2410:8175)
++  --qs-quote-size: 2.5rem;        // 40
++  --qs-quote-measure: calc(17.0625rem + var(--text-fit)); // 273
++  // phones (2087:11952): the 374 photo at the phone's width over the 300 panel, the card within the screen, the arrows above it
++  --qs-card-m: ~"min(100vw * 374 / 375 + 18.75rem, 100svh)";
++  --qs-panel-m: ~"min(18.75rem, var(--qs-card-m) * 300 / 674)"; // 300
++  --qs-panel-pad-m: 1.875rem 1.5625rem; // 30 25
+ 
+   padding-block: var(--space-8) 0;
+   @media (min-width: @bp-lg) { padding-block: var(--qs-pad-top) var(--qs-pad-bottom); }
+@@ -21,6 +28,21 @@
+     --qs-pad-bottom: 4.42875rem;     // 70.86: the 806 frame under the cards
+     --qs-track-gap: 4.0625rem;       // the copy box ends 297 (Figma draws 299), cards at 362
+     --qs-title-gap: 1.65625rem;      // heading box ends 180.5, copy at 207
++    // the box (2470:7158) is drawn at 374 over the 370 one: the quote 27 in and 285 wide, the whole box at 94%
++    --qs-box-pad: 1.71125rem 1.5625rem 1.5625rem 1.69625rem; // 27.38 down, 27.14 in
++    --qs-quote-size: 2.527rem;       // 40.43
++    --qs-quote-measure: 6.925em;     // Figma's 285 box breaks all seven quotes as the browser does between 6.90 and 6.95em (2470:7161)
++    --qs-box-opacity: 0.94;
++    // phones (2081:10673, the panels 2570:4889): a 412 photo over a 361 panel, Light Blue at 95% in a group at 94%,
++    // the quote 28 in at 40.34 breaking as on desktop at 375, its box widening with the phone so the air beside it stays
++    --qs-card-m: ~"min(100vw * 412 / 375 + 22.5625rem, 100svh)";
++    --qs-panel-m: ~"min(22.5625rem, var(--qs-card-m) * 361 / 773)"; // 361
++    --qs-panel-pad-m: 1.705rem 1.5625rem 1.7rem 1.755rem; // 27.28 down, 28.08 in, and 27.2 under the English quote's eight lines in the 361
++    --qs-panel-fill-m: 95%;
++    --qs-panel-opacity-m: 0.94;
++    --qs-quote-size-m: 2.52125rem;   // 40.34
++    --qs-quote-measure-m: ~"min(100% - 0.125em, var(--qs-quote-measure) + max(0rem, 100vw - 23.4375rem))";
++    --qs-photo-opacity-m: 0.95;      // 2081:10676; the educators' photos are opaque
+   }
+ 
+   &__header {
+@@ -107,7 +129,7 @@
+ 
+   &__quote {
+     margin: 0;
+-    max-width: calc(17.0625rem + var(--text-fit)); // 273
++    max-width: var(--qs-quote-measure);
+     font-family: var(--font-display);
+     font-size: 2.5rem; // 40
+     line-height: 0.95; // 38
+@@ -130,7 +152,7 @@
+     }
+   }
+ 
+-  // The box (2410:8175, note 1732:12358): Light Blue over the photo with the quote at the top and the author at the foot.
++  // The box (2410:8175 and home's 2470:7158, note 1732:12358): Light Blue over the photo with the quote at the top and the author at the foot.
+   // It waits below the card and slides up as the card opens — on hover or focus from lg (ui.js), as the active slide on
+   // touch tablets (slider.js) — and the arrow turns down
+   @media (min-width: @bp-md) {
+@@ -143,18 +165,23 @@
+       position: absolute;
+       inset: 0;
+       z-index: var(--z-content);
+-      padding: 1.3125rem 1.5625rem 1.5625rem; // 21 25 25
++      padding: var(--qs-box-pad);
+       background: ~"color-mix(in srgb, var(--color-secondary) 95%, transparent)";
++      opacity: var(--qs-box-opacity, 1);
+       transform: translateY(100%);
+       transition: transform var(--duration-slow) var(--ease-out);
+       @media (prefers-reduced-motion: reduce) { transition-duration: 0.01ms; }
+     }
++    &__quote { font-size: var(--qs-quote-size); }
+     &__card.is-open &__caption,
+     &__card:focus-within &__caption { transform: none; }
+     &__card.is-open &__photo .icon,
+     &__card:focus-within &__photo .icon {
+       color: var(--color-primary);
+       transform: rotate(90deg);
++      // the colour waits for the box, which on its ease-out reaches the arrow a third of the way into the slide
++      transition: transform var(--duration-base) var(--ease-out), color var(--duration-fast) ease calc(var(--duration-slow) / 3);
++      @media (prefers-reduced-motion: reduce) { transition-delay: 0s; }
+     }
+   }
+ }
+@@ -163,7 +190,8 @@
+ // Below lg: heading (and copy), the arrows across the full width, then the Swiper carousel.
+ // Tablets run the desktop cards from the page edge with the peeking one dimmed; phones show one
+ // full-bleed card (2081:10675, 2570:4911): the photo over the quote panel, the arrows, photo and quote
+-// filling one screen (the header hides while scrolling down), photo and panel in their 412 : 361 share.
++// filling one screen at most (the header hides while scrolling down): the photo keeps its frame's proportion and the panel
++// its frame's height, so a wider or taller screen never stretches either one.
+ // ---------------------------------------------------------------------
+ @media @upto-lg {
+   .quote-slider {
+@@ -196,7 +224,7 @@
+       &__card {
+         display: flex;
+         flex-direction: column;
+-        height: var(--quote-card-m);
++        height: var(--qs-card-m);
+         &.is-clipped > * { opacity: 1; }
+       }
+ 
+@@ -205,33 +233,40 @@
+         min-height: 0;
+         aspect-ratio: auto;
+         background: none;
+-        img { opacity: 0.95; }
++        img {
++          object-position: 50% 0; // a short screen trims the photo from the foot, never the heads
++          opacity: var(--qs-photo-opacity-m, 1);
++        }
+         .icon { display: none; }
+       }
+ 
+-      // a quote too long for its share grows the panel and takes the room from its own photo
++      // a quote too long for the panel grows it and takes the room from its own photo
+       &__caption {
+         display: flex;
+         flex: 0 0 auto;
+         flex-direction: column;
+         justify-content: space-between;
+         gap: 0.625rem; // 10
+-        min-height: var(--quote-panel-m);
+-        padding: 1.9375rem 1.5625rem; // 31 down, 25 in: the 325 text box
+-        background: var(--color-secondary);
++        min-height: var(--qs-panel-m);
++        padding: var(--qs-panel-pad-m);
++        background: ~"color-mix(in srgb, var(--color-secondary) var(--qs-panel-fill-m, 100%), transparent)";
++        opacity: var(--qs-panel-opacity-m, 1);
+       }
+ 
+-      &__quote,
+-      &__author { max-width: none; }
++      &__quote {
++        max-width: var(--qs-quote-measure-m, calc(100% - 0.125em)); // Figma breaks a line 5 short of its box (2088:12808)
++        font-size: var(--qs-quote-size-m, 2.5rem);
++      }
+ 
+       // the deck (_deck.less): the panel's blue sits under every card's copy, so one fades out over it before the next fades in
+       &__slider.is-deck &__track {
+         grid-template-rows: ~"minmax(0, 1fr) auto";
+-        height: var(--quote-card-m);
++        height: var(--qs-card-m);
+         &::before {
+           content: "";
+           grid-area: ~"2 / 1";
+-          background: var(--color-secondary);
++          background: ~"color-mix(in srgb, var(--color-secondary) var(--qs-panel-fill-m, 100%), transparent)";
++          opacity: var(--qs-panel-opacity-m, 1);
+         }
+       }
+       &__slider.is-deck &__caption { background: none; }
+diff --git a/src/assets/styles/05-components/_scroller.less b/src/assets/styles/05-components/_scroller.less
+index 9c950fd..7d7d8d1 100644
+--- a/src/assets/styles/05-components/_scroller.less
++++ b/src/assets/styles/05-components/_scroller.less
+@@ -48,15 +48,15 @@
+     .scroller__text { transition: opacity var(--duration-base) ease; }
+     &.is-clipped > h3,
+     &.is-clipped .scroller__text { opacity: var(--scroller-dim); }
+-    // Figma rules each link card 2 wide, 1 in from its right edge, beside the 1 gap
++    // Figma's render (1734:13623) whites each card's last pixel beside the 1 gap: one 2 white seam between the cards
+     @media (min-width: @bp-lg) {
+       &::after {
+         content: "";
+         position: absolute;
+         top: 0;
+-        right: var(--border-width);
++        right: 0;
+         bottom: 0;
+-        width: var(--border-width-thick);
++        width: var(--border-width);
+         background: var(--color-white);
+         pointer-events: none;
+       }
+diff --git a/src/assets/styles/06-animation/_animation.less b/src/assets/styles/06-animation/_animation.less
+index 42306cb..87472d6 100644
+--- a/src/assets/styles/06-animation/_animation.less
++++ b/src/assets/styles/06-animation/_animation.less
+@@ -30,11 +30,9 @@ html.anim-ready:not(.anim-reduced) [data-anim="progress"] { --anim-progress: 0;
+   clip-path: inset(0 0 var(--anim-clip) 0);
+ }
+ 
+-// Split-text: masked lines wrapper (SplitText adds .anim-line / .anim-word / .anim-char). The boxes
+-// must not inherit a text-indent, or each one indents again and the kerning nudges fight it.
+-.anim-line { display: block; }
++// Split-text (SplitText adds .anim-word / .anim-char). The boxes must not inherit a text-indent, or each one
++// indents again and the kerning nudges fight it.
+ .anim-char { display: inline-block; }
+-.anim-line,
+ .anim-word,
+ .anim-char { text-indent: 0; }
+ 
+diff --git a/src/assets/styles/main.less b/src/assets/styles/main.less
+index b343b8e..fdc09ea 100644
+--- a/src/assets/styles/main.less
++++ b/src/assets/styles/main.less
+@@ -43,7 +43,6 @@
+ @import "05-components/_mosaic.less";
+ @import "05-components/_scroller.less";
+ @import "05-components/_staff-grid.less";
+-@import "05-components/_media-intro.less";
+ @import "05-components/_article-grid.less";
+ @import "05-components/_article.less";
+ @import "05-components/_contact.less";
+diff --git a/src/contact-us.html b/src/contact-us.html
+index 5a18e00..e292c7b 100644
+--- a/src/contact-us.html
++++ b/src/contact-us.html
+@@ -28,10 +28,11 @@
+     <!-- Details + enquiry form -->
+     <include src="sections/contact/details-form.html"></include>
+ 
+-    <!-- Map: static greyscale image as designed; swap for a Google Maps embed in production if wanted -->
+-    <a class="map-banner" href="https://www.google.com/maps/search/?api=1&query=30+Coogee+Bay+Rd+Randwick+NSW+2031" target="_blank" rel="noopener" aria-label="Open 30 Coogee Bay Rd, Randwick in Google Maps">
+-      <img src="assets/images/contact/map.webp" alt="Map showing Claremont College at 30 Coogee Bay Rd, Randwick" width="2460" height="650" loading="lazy" decoding="async">
+-    </a>
++    <!-- @wagtail-block: map_embed — embed_url: URLBlock (Google Maps, Share > Embed a map). Figma's map is a screenshot of this embed;
++         its view distance (!1d25232 m) shows Figma's area, between zoom 13 and 14, sharp. Greyscale as designed, loaded as the reader nears it. -->
++    <div class="map-banner">
++      <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d25232!2d151.2445794!3d-33.918254!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6b12b2180f7b0cf1%3A0x7ddd745ce26630de!2s30%20Coogee%20Bay%20Rd%2C%20Randwick%20NSW%202031!5e0!3m2!1sen!2sau!4v1760000000000!5m2!1sen!2sau" title="Map showing Claremont College at 30 Coogee Bay Rd, Randwick" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
++    </div>
+   </main>
+ 
+   <include src="partials/footer.html"></include>
+diff --git a/src/enrolment.html b/src/enrolment.html
+index 8e2505e..daf8253 100644
+--- a/src/enrolment.html
++++ b/src/enrolment.html
+@@ -39,13 +39,24 @@
+     <!-- Photo banner -->
+     <include src="sections/image-banner.html" locals='{
+       "image": "assets/images/enrolment/banner.webp",
++      "image_m": "",
+       "alt": "Claremont students working in their books on the floor of a bright classroom",
+       "width": "1840",
+       "height": "1102"
+     }'></include>
+ 
+     <!-- Fees and dates -->
+-    <include src="sections/enrolment/fees-links.html"></include>
++    <include src="sections/cta-links.html" locals='{
++      "id": "fees-title",
++      "title": "Fees and dates",
++      "modifier": "cta-links--roomy cta-links--with-actions",
++      "items": [
++        { "id": "fees-schedule", "label": "2027 Fee Schedule", "body": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec nunc congue, ultricies felis at, malesuada erat. Morbi nisi nulla, blandit eget dolor id, aliquam vehicula dolor sagittis eleifend.</p>" },
++        { "id": "fees-dates", "label": "Term Dates", "body": "<p>Term 1: Monday 1 February to Friday 9 April (10 weeks)</p><p>Term 2: Wednesday 28 April to Friday 25 June (9 weeks)</p><p>Term 3: Monday 20 July to Friday 24 September (10 weeks)</p><p>Term 4: Tuesday 12 October to Wednesday 1 December (8 weeks)</p>" }
++      ],
++      "cta_text": "Apply to enrol",
++      "cta_url": "#apply"
++    }'></include>
+   </main>
+ 
+   <include src="partials/footer.html"></include>
+diff --git a/src/extra-curricular.html b/src/extra-curricular.html
+index ec95d09..6afef07 100644
+--- a/src/extra-curricular.html
++++ b/src/extra-curricular.html
+@@ -36,8 +36,20 @@
+     <!-- Activities carousel -->
+     <include src="sections/extra-curricular/activities.html"></include>
+ 
+-    <!-- Learning music -->
+-    <include src="sections/extra-curricular/learning-music.html"></include>
++    <!-- Music banner: the "03- Design 2" band (2410:7621), the same block as K-6's, copy at 209 -->
++    <include src="sections/feature-banner.html" locals='{
++      "align": "left",
++      "shade": false,
++      "actions": "",
++      "id": "music-title",
++      "modifier": "feature-banner--y209 feature-banner--stacked",
++      "title": "Learning <em>music</em>",
++      "text": "Learning to love music (not only as a listener, but as a practitioner) has a profound impact upon children, which extends far beyond a simple appreciation of the arts. Studies have shown that music education deepens concentration and sharpens memory in both visual and verbal skills. That’s why music is woven throughout life at Claremont College, with tuition from Prep to Year 6 and a range of ensembles where children gain real performance experience. Because when a child discovers what they can do, the confidence follows them everywhere.",
++      "image": "assets/images/extra-curricular/banner-music.webp",
++      "image_m": "assets/images/extra-curricular/banner-music-m.webp",
++      "width": "1840",
++      "height": "1102"
++    }'></include>
+ 
+     <!-- Closing call to action -->
+     <include src="sections/cta-row.html" locals='{
+diff --git a/src/index.html b/src/index.html
+index c1c21e3..5a8d6db 100644
+--- a/src/index.html
++++ b/src/index.html
+@@ -42,7 +42,18 @@
+     }'></include>
+ 
+     <!-- Where to start CTA -->
+-    <include src="sections/cta-links.html"></include>
++    <include src="sections/cta-links.html" locals='{
++      "id": "cta-title",
++      "title": "Where would you like to start?",
++      "modifier": "",
++      "items": [
++        { "id": "start-preparatory", "label": "Preparatory Program", "body": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec nunc congue, ultricies felis at, malesuada erat. Morbi nisi nulla, blandit eget dolor id, aliquam vehicula dolor sagittis eleifend.</p>" },
++        { "id": "start-k-6", "label": "K-6 Primary", "body": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec nunc congue, ultricies felis at, malesuada erat. Morbi nisi nulla, blandit eget dolor id, aliquam vehicula dolor sagittis eleifend.</p>" },
++        { "id": "start-tour", "label": "Book a tour", "body": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec nunc congue, ultricies felis at, malesuada erat. Morbi nisi nulla, blandit eget dolor id, aliquam vehicula dolor sagittis eleifend.</p>" }
++      ],
++      "cta_text": "",
++      "cta_url": ""
++    }'></include>
+   </main>
+ 
+   <include src="partials/footer.html"></include>
+diff --git a/src/news-2.html b/src/news-2.html
+new file mode 100644
+index 0000000..cc01ead
+--- /dev/null
++++ b/src/news-2.html
+@@ -0,0 +1,44 @@
++<!doctype html>
++<!-- The news listing's second page: news.html's arrow loads its cards in place (news.js); kept out of the site search. -->
++<html lang="en">
++<head>
++  <include src="partials/head.html" locals='{
++    "title": "More news | Claremont College",
++    "description": "News and events from the Claremont College community, big and small."
++  }'></include>
++</head>
++<body>
++  <include src="partials/icons.html"></include>
++  <a class="visually-hidden-focusable" href="#main">Skip to content</a>
++
++  <include src="partials/header.html"></include>
++
++  <main id="main" data-search-skip>
++    <!-- Hero -->
++    <include src="sections/page-hero.html" locals='{
++      "modifier": "",
++      "title": "News and community",
++      "aside": "",
++      "image": "assets/images/news/hero.webp",
++      "image_m": "assets/images/news/hero-m.webp",
++      "width": "1840",
++      "height": "1090"
++    }'></include>
++
++    <!-- Green intro band -->
++    <include src="sections/intro-split.html" locals='{
++      "theme": "intro-split--dark intro-split--md intro-split--wide-lead intro-split--body-offset",
++      "actions": "",
++      "lead": "At Claremont, community isn’t a <br>value on a wall, <em>it’s a calendar.</em>",
++      "body": "<p>It’s the concert someone’s dad rigged the lighting for, the cake stall that sold out before lunch, and the Saturday working bee nobody was obliged to turn up to. This is where we post all the events - big and small - that make Claremont feel like Claremont.</p>"
++    }'></include>
++
++    <!-- Article listing -->
++    <include src="sections/news/article-grid.html" locals='{ "next": "" }'></include>
++  </main>
++
++  <include src="partials/footer.html"></include>
++
++  <script src="assets/js/main.js" defer></script>
++</body>
++</html>
+diff --git a/src/news.html b/src/news.html
+index 00a4d1c..aaa3fb4 100644
+--- a/src/news.html
++++ b/src/news.html
+@@ -34,7 +34,7 @@
+     }'></include>
+ 
+     <!-- Article listing -->
+-    <include src="sections/news/article-grid.html"></include>
++    <include src="sections/news/article-grid.html" locals='{ "next": "news-2.html" }'></include>
+   </main>
+ 
+   <include src="partials/footer.html"></include>
+diff --git a/src/policies.html b/src/policies.html
+index 79851bb..1766da3 100644
+--- a/src/policies.html
++++ b/src/policies.html
+@@ -33,7 +33,7 @@
+       "align": "left",
+       "shade": false,
+       "id": "report-title",
+-      "modifier": "feature-banner--y237 feature-banner--stacked feature-banner--stacked-cta",
++      "modifier": "feature-banner--y237 feature-banner--stacked feature-banner--stacked-cta feature-banner--wash",
+       "title": "School Annual Report 2025",
+       "text": "A full and open account of our results, our progress, and where we’re headed next.",
+       "actions": "<a class=\"btn btn-primary btn-icon\" href=\"#\">Download<svg class=\"icon\" aria-hidden=\"true\"><use href=\"#icon-download-tray\"></use><use class=\"btn-icon__arrow\" href=\"#icon-download-arrow\"></use></svg></a>",
+@@ -44,7 +44,17 @@
+     }'></include>
+ 
+     <!-- Strategy links -->
+-    <include src="sections/policies/strategy-links.html"></include>
++    <include src="sections/cta-links.html" locals='{
++      "id": "strategy-title",
++      "title": "Our strategy<br>and the science",
++      "modifier": "cta-links--roomy",
++      "items": [
++        { "id": "strategy-plan", "label": "Strategic Plan", "body": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec nunc congue, ultricies felis at, malesuada erat. Morbi nisi nulla, blandit eget dolor id, aliquam vehicula dolor sagittis eleifend.</p>" },
++        { "id": "strategy-research", "label": "Co-Teaching Improves Student Outcomes (Research)", "body": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec nunc congue, ultricies felis at, malesuada erat. Morbi nisi nulla, blandit eget dolor id, aliquam vehicula dolor sagittis eleifend.</p>" }
++      ],
++      "cta_text": "",
++      "cta_url": ""
++    }'></include>
+   </main>
+ 
+   <include src="partials/footer.html"></include>
+diff --git a/src/preparatory-program.html b/src/preparatory-program.html
+index 6166f9b..1431d6e 100644
+--- a/src/preparatory-program.html
++++ b/src/preparatory-program.html
+@@ -36,13 +36,8 @@
+     <!-- Our teaching approach: four link columns -->
+     <include src="sections/preparatory-program/teaching-approach.html"></include>
+ 
+-    <!-- Photo banner -->
+-    <include src="sections/image-banner.html" locals='{
+-      "image": "assets/images/preparatory-program/banner-1.webp",
+-      "alt": "A Preparatory teacher leading a music session with coloured boomwhackers",
+-      "width": "1840",
+-      "height": "1051"
+-    }'></include>
++    <!-- Photo carousel -->
++    <include src="sections/preparatory-program/carousel.html"></include>
+ 
+     <!-- A day in the life -->
+     <include src="sections/preparatory-program/timeline.html"></include>
+@@ -53,6 +48,7 @@
+     <!-- Photo banner -->
+     <include src="sections/image-banner.html" locals='{
+       "image": "assets/images/preparatory-program/banner-2.webp",
++      "image_m": "assets/images/preparatory-program/banner-2-m.webp",
+       "alt": "A smiling Preparatory student holding up her drawing",
+       "width": "1840",
+       "height": "1071"
+diff --git a/src/sections/cta-links.html b/src/sections/cta-links.html
+index 1a241b4..f5bf37b 100644
+--- a/src/sections/cta-links.html
++++ b/src/sections/cta-links.html
+@@ -1,20 +1,33 @@
+ <!-- @wagtail-block: cta_links
+-     title: CharBlock(required)
+-     links: ListBlock(StructBlock(label:CharBlock, page:PageChooserBlock))
+-     The rows are the fold's link rows (_fold.less): each goes to its page. -->
+-<section class="cta-links" aria-labelledby="cta-title">
++     title: RichTextBlock (may carry a line break)
++     items: ListBlock(StructBlock(label:CharBlock, body:RichTextBlock))
++     cta:   StructBlock(text:CharBlock, url:URLBlock) — optional
++     The rows are Figma's "Drop down" component, the fold (_fold.less, initFolds): every row shut at rest, a click opens one.
++     Home 1619:7085, enrolment 1801:5705 / 2149:7929, policies strategy band.
++     locals: id, title, modifier (or empty), items [{ id, label, body }], cta_text and cta_url (empty for no button) -->
++<section class="cta-links{{ modifier ? ' ' + modifier : '' }}" aria-labelledby="{{ id }}">
+   <div class="container">
+     <div class="row g-4 row-split">
+       <div class="col-lg-6">
+-        <h2 id="cta-title" data-anim="split" data-anim-type="chars-soft" data-anim-type-mobile="lines">Where would you like to start?</h2>
++        <h2 id="{{ id }}" data-anim="split" data-anim-type="chars-soft" data-anim-type-mobile="lines">{{{ title }}}</h2>
+       </div>
+       <div class="col-lg-6">
+         <div class="cta-links__aside">
+-          <ul class="fold">
+-            <li class="fold__item" data-anim="reveal" data-anim-type="fade"><a class="fold__row" href="preparatory-program.html">Preparatory Program<svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+-            <li class="fold__item" data-anim="reveal" data-anim-type="fade"><a class="fold__row" href="k-6-primary.html">K-6 Primary<svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+-            <li class="fold__item" data-anim="reveal" data-anim-type="fade"><a class="fold__row" href="contact-us.html#book-a-tour">Book a tour<svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a></li>
+-          </ul>
++        <ul class="fold" data-fold>
++          <each loop="item in items">
++          <li class="fold__item" data-anim="reveal" data-anim-type="fade">
++            <button class="fold__row" type="button" aria-expanded="false" aria-controls="{{ item.id }}">{{ item.label }}<svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button>
++            <div class="fold__panel" id="{{ item.id }}">
++              <div class="fold__body">{{{ item.body }}}</div>
++            </div>
++          </li>
++          </each>
++        </ul>
++        <if condition="cta_text">
++        <div class="cta-links__actions" data-anim="reveal" data-anim-type="fade-up">
++          <a class="btn btn-primary" href="{{ cta_url }}">{{ cta_text }}</a>
++        </div>
++        </if>
+         </div>
+       </div>
+     </div>
+diff --git a/src/sections/enrolment/fees-links.html b/src/sections/enrolment/fees-links.html
+deleted file mode 100644
+index e9f2ada..0000000
+--- a/src/sections/enrolment/fees-links.html
++++ /dev/null
+@@ -1,43 +0,0 @@
+-<!-- @wagtail-block: cta_links (roomy, with button)
+-     title: CharBlock(required)
+-     items: ListBlock(StructBlock(label:CharBlock, body:RichTextBlock))
+-     cta:   StructBlock(text:CharBlock, url:URLBlock)
+-     The rows are the fold (_fold.less, initFolds): Figma 1801:5705 (1640) and 2149:7929 (375) draw Term Dates open with its four
+-     terms, 30 above the closing rule, and the button 36 under it; every row is shut at rest and a click opens one. The fee schedule's copy is placeholder. -->
+-<section class="cta-links cta-links--roomy cta-links--with-actions" aria-labelledby="fees-title">
+-  <div class="container">
+-    <div class="row g-4 row-split">
+-      <div class="col-lg-6">
+-        <h2 id="fees-title" data-anim="split" data-anim-type="chars-soft" data-anim-type-mobile="lines">Fees and dates</h2>
+-      </div>
+-      <div class="col-lg-6">
+-        <div class="cta-links__aside">
+-        <ul class="fold" data-fold>
+-          <li class="fold__item" data-anim="reveal" data-anim-type="fade">
+-            <button class="fold__row" type="button" aria-expanded="false" aria-controls="fees-schedule">2027 Fee Schedule<svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button>
+-            <div class="fold__panel" id="fees-schedule">
+-              <div class="fold__body">
+-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec nunc congue, ultricies felis at, malesuada erat. Morbi nisi nulla, blandit eget dolor id, aliquam vehicula dolor sagittis eleifend.</p>
+-              </div>
+-            </div>
+-          </li>
+-          <li class="fold__item" data-anim="reveal" data-anim-type="fade">
+-            <button class="fold__row" type="button" aria-expanded="false" aria-controls="fees-dates">Term Dates<svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button>
+-            <div class="fold__panel" id="fees-dates">
+-              <div class="fold__body">
+-                <p>Term 1: Monday 1 February to Friday 9 April (10 weeks)</p>
+-                <p>Term 2: Wednesday 28 April to Friday 25 June (9 weeks)</p>
+-                <p>Term 3: Monday 20 July to Friday 24 September (10 weeks)</p>
+-                <p>Term 4: Tuesday 12 October to Wednesday 1 December (8 weeks)</p>
+-              </div>
+-            </div>
+-          </li>
+-        </ul>
+-        <div class="cta-links__actions" data-anim="reveal" data-anim-type="fade-up">
+-          <a class="btn btn-primary" href="#apply">Apply to enrol</a>
+-        </div>
+-        </div>
+-      </div>
+-    </div>
+-  </div>
+-</section>
+diff --git a/src/sections/extra-curricular/learning-music.html b/src/sections/extra-curricular/learning-music.html
+deleted file mode 100644
+index fc46d70..0000000
+--- a/src/sections/extra-curricular/learning-music.html
++++ /dev/null
+@@ -1,26 +0,0 @@
+-<!-- @wagtail-block: media_intro
+-     image: ImageChooserBlock
+-     title: CharBlock(required)
+-     text:  RichTextBlock
+-     Phones (Figma 2149:6320): a full-bleed square photo, its own crop, then the heading and copy. -->
+-<section class="media-intro" aria-labelledby="music-title">
+-  <div class="container">
+-    <figure class="media-intro__media" data-anim-parallax-trigger>
+-      <div class="media-intro__layer" data-anim="parallax" data-anim-centered data-anim-speed="18.75" data-anim-scrub-mobile="0.3">
+-        <picture>
+-          <source media="(min-width: 576px)" srcset="assets/images/extra-curricular/feature.webp" width="1860" height="889">
+-          <img src="assets/images/extra-curricular/feature-m.webp" alt="A Claremont student playing the violin under stage lights" width="750" height="1200" loading="lazy" decoding="async"
+-               data-anim="reveal" data-anim-type="scale">
+-        </picture>
+-      </div>
+-    </figure>
+-    <div class="row g-4 row-split">
+-      <div class="col-lg-5">
+-        <h2 id="music-title" data-anim="split" data-anim-type="chars-soft" data-anim-type-mobile="lines">Learning music</h2>
+-      </div>
+-      <div class="col-lg-7">
+-        <p data-anim="reveal" data-anim-order="1">Learning to love music (not only as a listener, but as a practitioner) has a profound impact upon children, which extends far beyond a simple appreciation of the arts. Studies have shown that music education deepens concentration and sharpens memory in both visual and verbal skills. That’s why music is woven throughout life at Claremont College, with tuition from Prep to Year 6 and a range of ensembles where children gain real performance experience. Because when a child discovers what they can do, the confidence follows them everywhere.</p>
+-      </div>
+-    </div>
+-  </div>
+-</section>
+diff --git a/src/sections/feature-banner.html b/src/sections/feature-banner.html
+index a93540b..fea338d 100644
+--- a/src/sections/feature-banner.html
++++ b/src/sections/feature-banner.html
+@@ -9,11 +9,11 @@
+             width, height, modifier, actions (HTML buttons, or empty) -->
+ <section class="feature-banner feature-banner--{{ align }}{{ shade ? ' feature-banner--shade' : '' }} {{ modifier }}" aria-labelledby="{{ id }}" data-anim-parallax-trigger>
+   <div class="feature-banner__media" aria-hidden="true">
+-    <div class="feature-banner__layer" data-anim="parallax" data-anim-centered data-anim-speed="18.75" data-anim-scrub-mobile="0.3">
++    <div class="feature-banner__layer" data-anim="parallax" data-anim-centered data-anim-speed="18.75" data-anim-disable-mobile>
+       <picture>
+         <source media="(min-width: 576px)" srcset="{{ image }}" width="{{ width }}" height="{{ height }}">
+         <img src="{{ image_m }}" alt="" width="{{ width }}" height="{{ height }}" loading="lazy" decoding="async"
+-             data-anim="reveal" data-anim-type="scale">
++             data-anim="reveal" data-anim-type="fade">
+       </picture>
+     </div>
+   </div>
+diff --git a/src/sections/image-banner.html b/src/sections/image-banner.html
+index 56a3ac3..eff305f 100644
+--- a/src/sections/image-banner.html
++++ b/src/sections/image-banner.html
+@@ -1,12 +1,23 @@
+ <!-- @wagtail-block: image_banner
+      image: ImageChooserBlock
+      alt:   CharBlock
+-     locals: image, alt, width, height -->
+-<figure class="feature-banner feature-banner--media-only" data-anim-parallax-trigger>
++     image_m: the photo's own phone square, or "" (Preparatory M 2125:14702): square below sm and still below lg
++     locals: image, image_m, alt, width, height -->
++<figure class="feature-banner feature-banner--media-only{{ image_m ? ' feature-banner--square-m' : '' }}" data-anim-parallax-trigger>
+   <div class="feature-banner__media">
++    <if condition="image_m">
++    <div class="feature-banner__layer" data-anim="parallax" data-anim-centered data-anim-speed="18.75" data-anim-disable-mobile>
++      <picture>
++        <source media="(min-width: 576px)" srcset="{{ image }}" width="{{ width }}" height="{{ height }}">
++        <img src="{{ image_m }}" alt="{{ alt }}" width="750" height="750" loading="lazy" decoding="async" data-anim="reveal" data-anim-type="fade">
++      </picture>
++    </div>
++    </if>
++    <else>
+     <div class="feature-banner__layer" data-anim="parallax" data-anim-centered data-anim-speed="18.75" data-anim-scrub-mobile="0.3">
+       <img src="{{ image }}" alt="{{ alt }}" width="{{ width }}" height="{{ height }}" loading="lazy" decoding="async"
+-           data-anim="reveal" data-anim-type="scale">
++           data-anim="reveal" data-anim-type="fade">
+     </div>
++    </else>
+   </div>
+ </figure>
+diff --git a/src/sections/image-carousel.html b/src/sections/image-carousel.html
+new file mode 100644
+index 0000000..4131b02
+--- /dev/null
++++ b/src/sections/image-carousel.html
+@@ -0,0 +1,23 @@
++<!-- @wagtail-block: image_carousel
++     label:  CharBlock (the carousel's accessible name)
++     slides: ListBlock(StructBlock(image:ImageChooserBlock, image_m:ImageChooserBlock (phone square), alt:CharBlock))
++     A 1640 × 614 photo band with an arrow either side (K-6 2410:8619, Preparatory 2400:7239). The arrows step it round, a
++     swipe too; each change cross-fades the photos with the home approach tabs' zoom (the leaving one grows, the arriving
++     one settles). Phones: the arrows above a full-width square.
++     locals: label, slides [{ image, image_m, alt }] -->
++<section class="image-carousel" aria-roledescription="carousel" aria-label="{{ label }}" data-image-carousel>
++  <div class="image-carousel__arrows arrow-group" data-anim="reveal" data-anim-type="fade">
++    <button class="arrow-btn arrow-btn--prev" type="button" aria-label="Previous photo" data-carousel-prev><svg class="icon"><use href="#icon-arrow-right"></use></svg></button>
++    <button class="arrow-btn arrow-btn--next" type="button" aria-label="Next photo" data-carousel-next><svg class="icon"><use href="#icon-arrow-right"></use></svg></button>
++  </div>
++  <div class="image-carousel__stage" aria-live="polite" data-carousel-stage>
++    <each loop="slide, index in slides">
++    <figure class="image-carousel__slide{{ index === 0 ? ' is-active' : '' }}" aria-roledescription="slide" aria-label="{{ index + 1 }} of {{ slides.length }}">
++      <picture>
++        <source media="(min-width: 576px)" srcset="{{ slide.image }}" width="1840" height="689">
++        <img src="{{ slide.image_m }}" alt="{{ slide.alt }}" width="750" height="750" loading="lazy" decoding="async">
++      </picture>
++    </figure>
++    </each>
++  </div>
++</section>
+diff --git a/src/sections/k-6-primary/art-of-teaching.html b/src/sections/k-6-primary/art-of-teaching.html
+index 3ea3e04..302feb8 100644
+--- a/src/sections/k-6-primary/art-of-teaching.html
++++ b/src/sections/k-6-primary/art-of-teaching.html
+@@ -25,47 +25,47 @@
+       <button class="arrow-btn arrow-btn--next" type="button" aria-label="Next" data-slider-next><svg class="icon"><use href="#icon-arrow-right"></use></svg></button>
+     </div>
+ 
+-    <div class="mosaic__slider swiper" data-slider-per-view="1" data-slider-per-view-md="2">
++    <div class="mosaic__slider swiper" data-slider-per-view="1" data-slider-per-view-md="2" data-slider-deck>
+       <div class="mosaic__grid swiper-wrapper" data-anim-group="fade-up">
+         <div class="mosaic__slide swiper-slide">
+-          <div class="mosaic__cell mosaic__cell--media">
+-            <img src="assets/images/k-6-primary/mosaic-1.webp" alt="A teacher and student reading together in a classroom nook" width="612" height="612" loading="lazy" decoding="async">
++          <div class="mosaic__cell mosaic__cell--media deck__frame">
++            <span class="deck__shot"><picture><source media="(min-width: 992px)" srcset="assets/images/k-6-primary/mosaic-1.webp" width="612" height="612"><img src="assets/images/k-6-primary/mosaic-1-m.webp" alt="A teacher and student reading together in a classroom nook" width="750" height="600" loading="lazy" decoding="async"></picture></span>
+           </div>
+           <article class="mosaic__cell mosaic__cell--wide">
+-            <div class="mosaic__card mosaic__card--accent" data-anim="reveal" data-anim-type="fade-up" data-anim-media="(max-width: 991.98px)">
++            <div class="mosaic__card mosaic__card--accent deck__copy" data-anim="reveal" data-anim-type="fade-up" data-anim-media="(max-width: 991.98px)">
+               <div class="mosaic__head"><h3>Explicit teaching</h3><svg class="icon" aria-hidden="true"><use href="#icon-book-open"></use></svg></div>
+               <p>Explicit Teaching is used to make learning clear, explicit and purposeful. Teachers model new skills, provide guided practice and check understanding before students apply their learning independently. This approach builds strong foundations, mastery and confidence, while allowing teachers to respond quickly to individual learning needs.</p>
+             </div>
+           </article>
+         </div>
+         <div class="mosaic__slide swiper-slide">
+-          <div class="mosaic__cell mosaic__cell--media">
+-            <img src="assets/images/k-6-primary/mosaic-2.webp" alt="" width="612" height="612" loading="lazy" decoding="async">
++          <div class="mosaic__cell mosaic__cell--media deck__frame">
++            <span class="deck__shot"><picture><source media="(min-width: 992px)" srcset="assets/images/k-6-primary/mosaic-2.webp" width="612" height="612"><img src="assets/images/k-6-primary/mosaic-2-m.webp" alt="" width="750" height="600" loading="lazy" decoding="async"></picture></span>
+           </div>
+           <article class="mosaic__cell mosaic__cell--tall">
+-            <div class="mosaic__card mosaic__card--accent" data-anim="reveal" data-anim-type="fade-up" data-anim-media="(max-width: 991.98px)">
++            <div class="mosaic__card mosaic__card--accent deck__copy" data-anim="reveal" data-anim-type="fade-up" data-anim-media="(max-width: 991.98px)">
+               <div class="mosaic__head"><h3>Daily reviews</h3><svg class="icon" aria-hidden="true"><use href="#icon-calendar-grid"></use></svg></div>
+               <p>Daily Review strengthens learning by revisiting key knowledge and skills regularly. Through short, focused activities, students consolidate previous learning, build fluency and develop confidence, helping knowledge become secure.</p>
+             </div>
+           </article>
+         </div>
+         <div class="mosaic__slide swiper-slide">
+-          <div class="mosaic__cell mosaic__cell--media">
+-            <img src="assets/images/k-6-primary/mosaic-3.webp" alt="" width="610" height="608" loading="lazy" decoding="async">
++          <div class="mosaic__cell mosaic__cell--media deck__frame">
++            <span class="deck__shot"><picture><source media="(min-width: 992px)" srcset="assets/images/k-6-primary/mosaic-3.webp" width="610" height="608"><img src="assets/images/k-6-primary/mosaic-3-m.webp" alt="" width="750" height="600" loading="lazy" decoding="async"></picture></span>
+           </div>
+           <article class="mosaic__cell mosaic__cell--wide">
+-            <div class="mosaic__card" data-anim="reveal" data-anim-type="fade-up" data-anim-media="(max-width: 991.98px)">
++            <div class="mosaic__card deck__copy" data-anim="reveal" data-anim-type="fade-up" data-anim-media="(max-width: 991.98px)">
+               <div class="mosaic__head"><h3>Immersive learning</h3><svg class="icon" aria-hidden="true"><use href="#icon-blocks"></use></svg></div>
+               <p>Learning comes to life through engaging, hands-on experiences that inspire students to explore, create and think critically. Through practical investigations, STEM challenges, robotics, Mathematics and Creative Arts, students apply their learning in meaningful ways, develop confidence and build the problem-solving skills needed for success in an ever-changing world.</p>
+             </div>
+           </article>
+         </div>
+         <div class="mosaic__slide swiper-slide">
+-          <div class="mosaic__cell mosaic__cell--media mosaic__cell--wide">
+-            <img src="assets/images/k-6-primary/mosaic-4.webp" alt="" width="1234" height="612" loading="lazy" decoding="async">
++          <div class="mosaic__cell mosaic__cell--media mosaic__cell--wide deck__frame">
++            <span class="deck__shot"><picture><source media="(min-width: 992px)" srcset="assets/images/k-6-primary/mosaic-4.webp" width="1234" height="612"><img src="assets/images/k-6-primary/mosaic-4-m.webp" alt="" width="750" height="600" loading="lazy" decoding="async"></picture></span>
+           </div>
+           <article class="mosaic__cell mosaic__cell--tall">
+-            <div class="mosaic__card mosaic__card--accent" data-anim="reveal" data-anim-type="fade-up" data-anim-media="(max-width: 991.98px)">
++            <div class="mosaic__card mosaic__card--accent deck__copy" data-anim="reveal" data-anim-type="fade-up" data-anim-media="(max-width: 991.98px)">
+               <div class="mosaic__head"><h3>Think deeply, <br>learn confidently</h3><svg class="icon" aria-hidden="true"><use href="#icon-brain"></use></svg></div>
+               <p>We teach students to think deeply in all learning areas, ask questions and become aware of how they learn. Through purposeful learning experiences, students learn to plan, monitor and reflect on their thinking, develop effective strategies and build the confidence to approach challenges independently.</p>
+             </div>
+@@ -73,13 +73,13 @@
+         </div>
+         <div class="mosaic__slide swiper-slide">
+           <article class="mosaic__cell mosaic__cell--wide">
+-            <div class="mosaic__card" data-anim="reveal" data-anim-type="fade-up" data-anim-media="(max-width: 991.98px)">
++            <div class="mosaic__card deck__copy" data-anim="reveal" data-anim-type="fade-up" data-anim-media="(max-width: 991.98px)">
+               <div class="mosaic__head"><h3>The power of challenge</h3><svg class="icon" aria-hidden="true"><use href="#icon-bolt"></use></svg></div>
+               <p>At Claremont College, we provide learning experiences informed by the work of James Nottingham and Lev Vygotsky, stretching students beyond what they can do independently while providing the support they need to succeed. Students are encouraged to persist through challenge and see mistakes as valuable opportunities to learn, build resilience and grow in confidence.</p>
+             </div>
+           </article>
+-          <div class="mosaic__cell mosaic__cell--media">
+-            <img src="assets/images/k-6-primary/mosaic-5.webp" alt="" width="612" height="612" loading="lazy" decoding="async">
++          <div class="mosaic__cell mosaic__cell--media deck__frame">
++            <span class="deck__shot"><picture><source media="(min-width: 992px)" srcset="assets/images/k-6-primary/mosaic-5.webp" width="612" height="612"><img src="assets/images/k-6-primary/mosaic-5-m.webp" alt="" width="750" height="600" loading="lazy" decoding="async"></picture></span>
+           </div>
+         </div>
+       </div>
+diff --git a/src/sections/k-6-primary/carousel.html b/src/sections/k-6-primary/carousel.html
+index 2254948..58ca3e9 100644
+--- a/src/sections/k-6-primary/carousel.html
++++ b/src/sections/k-6-primary/carousel.html
+@@ -1,39 +1,4 @@
+-<!-- @wagtail-block: image_carousel
+-     label:  CharBlock (the carousel's accessible name)
+-     slides: ListBlock(StructBlock(image:ImageChooserBlock, image_m:ImageChooserBlock (phone square), alt:CharBlock))
+-     The 1640 × 614 band on the "03- Design 2" K-6 page (2410:8619) with its photo and the three the client linked
+-     (2410:8873, 2410:8945, 2429:11177). The arrows step it round, a swipe too; each change cross-fades the photos with
+-     the home approach tabs' zoom (the leaving one grows, the arriving one settles). Phones (2571:14041): the arrows
+-     above a full-width square. -->
+-<section class="image-carousel" aria-roledescription="carousel" aria-label="Life in K–6 at Claremont" data-image-carousel>
+-  <div class="image-carousel__arrows arrow-group" data-anim="reveal" data-anim-type="fade">
+-    <button class="arrow-btn arrow-btn--prev" type="button" aria-label="Previous photo" data-carousel-prev><svg class="icon"><use href="#icon-arrow-right"></use></svg></button>
+-    <button class="arrow-btn arrow-btn--next" type="button" aria-label="Next photo" data-carousel-next><svg class="icon"><use href="#icon-arrow-right"></use></svg></button>
+-  </div>
+-  <div class="image-carousel__stage" aria-live="polite" data-carousel-stage>
+-    <figure class="image-carousel__slide is-active" aria-roledescription="slide" aria-label="1 of 4">
+-      <picture>
+-        <source media="(min-width: 576px)" srcset="assets/images/k-6-primary/carousel-1.webp" width="1840" height="689">
+-        <img src="assets/images/k-6-primary/carousel-1-m.webp" alt="Students sitting on classroom steps holding up their whiteboards to a teacher" width="750" height="750" loading="lazy" decoding="async">
+-      </picture>
+-    </figure>
+-    <figure class="image-carousel__slide" aria-roledescription="slide" aria-label="2 of 4" aria-hidden="true">
+-      <picture>
+-        <source media="(min-width: 576px)" srcset="assets/images/k-6-primary/carousel-2.webp" width="1840" height="689">
+-        <img src="assets/images/k-6-primary/carousel-2-m.webp" alt="Two students in the library, one holding a remote control and the other pointing ahead" width="750" height="750" loading="lazy" decoding="async">
+-      </picture>
+-    </figure>
+-    <figure class="image-carousel__slide" aria-roledescription="slide" aria-label="3 of 4" aria-hidden="true">
+-      <picture>
+-        <source media="(min-width: 576px)" srcset="assets/images/k-6-primary/carousel-3.webp" width="1840" height="689">
+-        <img src="assets/images/k-6-primary/carousel-3-m.webp" alt="A smiling student in the school garden" width="750" height="750" loading="lazy" decoding="async">
+-      </picture>
+-    </figure>
+-    <figure class="image-carousel__slide" aria-roledescription="slide" aria-label="4 of 4" aria-hidden="true">
+-      <picture>
+-        <source media="(min-width: 576px)" srcset="assets/images/k-6-primary/carousel-4.webp" width="1840" height="689">
+-        <img src="assets/images/k-6-primary/carousel-4-m.webp" alt="Students playing on the school’s outdoor court" width="750" height="750" loading="lazy" decoding="async">
+-      </picture>
+-    </figure>
+-  </div>
+-</section>
++<!-- @wagtail-block: image_carousel — the shared block is sections/image-carousel.html
++     The band on the "03- Design 2" K-6 page (2410:8619) with its photo and the three the client linked
++     (2410:8873, 2410:8945, 2429:11177); phones (2571:14041) open on the frame's own square. -->
++<include src="sections/image-carousel.html" locals='{"label": "Life in K–6 at Claremont", "slides": [{"image": "assets/images/k-6-primary/carousel-1.webp", "image_m": "assets/images/k-6-primary/carousel-1-m.webp", "alt": "Students sitting on classroom steps holding up their whiteboards to a teacher"}, {"image": "assets/images/k-6-primary/carousel-2.webp", "image_m": "assets/images/k-6-primary/carousel-2-m.webp", "alt": "Two students in the library, one holding a remote control and the other pointing ahead"}, {"image": "assets/images/k-6-primary/carousel-3.webp", "image_m": "assets/images/k-6-primary/carousel-3-m.webp", "alt": "A smiling student in the school garden"}, {"image": "assets/images/k-6-primary/carousel-4.webp", "image_m": "assets/images/k-6-primary/carousel-4-m.webp", "alt": "Students playing on the school’s outdoor court"}]}'></include>
+diff --git a/src/sections/news/article-body.html b/src/sections/news/article-body.html
+index fd972cf..41a4a30 100644
+--- a/src/sections/news/article-body.html
++++ b/src/sections/news/article-body.html
+@@ -12,10 +12,10 @@
+       </div>
+       <div class="col-lg-7">
+         <div class="article__main">
+-        <figure class="article__media" data-anim="reveal" data-anim-type="fade">
++        <figure class="article__media" data-anim="reveal" data-anim-type="fade" data-anim-order="2">
+           <img src="assets/images/news/article.webp" alt="Two Claremont students in green hats and cardigans standing in the school garden" width="1424" height="776">
+         </figure>
+-        <div class="article__body rich-text" data-anim="reveal">
++        <div class="article__body rich-text" data-anim-group="fade-up">
+           <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin id est eget est imperdiet consequat. Nam venenatis erat sed viverra tempor. In eu porta magna. Proin vestibulum nisl ut facilisis viverra. Proin non leo ex. Quisque gravida tincidunt auctor. Morbi ac tellus mi. Proin tempus, nunc et ultrices eleifend, augue est sagittis dolor, ac aliquam odio lectus et dolor. Morbi nec eros maximus, volutpat lorem sollicitudin, blandit nulla. Fusce scelerisque erat sem, et eleifend neque posuere ac. Mauris sollicitudin suscipit diam, sit amet gravida ex auctor at. Fusce laoreet eros enim, at rhoncus ante tempor eget. Curabitur lorem orci, consectetur quis orci id, varius mollis elit. Sed dictum nisl et interdum elementum. Sed quis elementum turpis. Duis eu erat odio.</p>
+           <p>In hac habitasse platea dictumst. Phasellus at pretium augue. Vestibulum non neque nec enim ornare elementum rhoncus eget lacus. Sed lacinia lacus ante. Sed ac tempus nisi, vel suscipit sapien. Sed varius ut erat et elementum. Proin tempus diam porta justo placerat, in vehicula ligula sodales. Vivamus vitae tincidunt metus. Aenean at condimentum ante, a varius est. Proin dignissim in arcu id cursus. Etiam quis erat gravida nibh euismod luctus non ac magna. Nullam aliquam massa a lacinia lacinia. Fusce ac pharetra lacus, interdum dapibus elit.</p>
+           <p>Aenean pharetra magna orci, sit amet tempor dui convallis vitae. Morbi malesuada placerat bibendum. Etiam commodo velit sed sem congue efficitur. Cras ac dolor aliquam, finibus nunc sit amet, porta erat. Nunc vel velit id ante consequat cursus. Mauris in porta ex. Nunc finibus urna in sagittis elementum. Vestibulum ac eleifend diam. Aenean nec est vehicula, suscipit mi quis, ornare ex. Sed ex turpis, pellentesque a pharetra molestie, sagittis tristique tellus. Curabitur porta rutrum orci quis imperdiet.</p>
+diff --git a/src/sections/news/article-grid.html b/src/sections/news/article-grid.html
+index a39d335..3e05846 100644
+--- a/src/sections/news/article-grid.html
++++ b/src/sections/news/article-grid.html
+@@ -1,6 +1,8 @@
+ <!-- @wagtail-block: article_grid (news index listing; 8 per page)
+      articles: query of NewsArticlePage — photo:ImageChooserBlock, title, date
+-     pager:    previous / next page links
++     next:     the next listing page's URL (Wagtail: ?page=N), or "" on the last page. The arrow loads that page's cards in
++               place (news.js) and points at the page after, or goes once there is none; without the script it opens the page
++     locals: next
+      Figma uses one placeholder photo, headline and date for every card. Phones (news M 2149:8421) stack the cards full-bleed
+      with a 375 x 216 landscape crop of their own (card-m.webp), the caption padded 30 / 20 and the pager right under the last card;
+      each caption reveals on its own there as it comes into view, under the photo that came in before it. -->
+@@ -65,8 +67,10 @@
+       </a></li>
+     </ul>
+ 
+-    <nav class="article-grid__pager" aria-label="News pages" data-anim="reveal" data-anim-type="fade">
+-      <a class="arrow-btn arrow-btn--next" href="news.html?page=2" aria-label="Next page"><svg class="icon"><use href="#icon-arrow-right"></use></svg></a>
++    <if condition="next">
++    <nav class="article-grid__pager" aria-label="More news" data-anim="reveal" data-anim-type="fade">
++      <a class="arrow-btn arrow-btn--next" href="{{ next }}" aria-label="Load more news" data-load-more><svg class="icon"><use href="#icon-arrow-right"></use></svg></a>
+     </nav>
++    </if>
+   </div>
+ </section>
+diff --git a/src/sections/policies/strategy-links.html b/src/sections/policies/strategy-links.html
+deleted file mode 100644
+index 6550531..0000000
+--- a/src/sections/policies/strategy-links.html
++++ /dev/null
+@@ -1,35 +0,0 @@
+-<!-- @wagtail-block: cta_links (roomy)
+-     title: RichTextBlock (may carry a line break)
+-     items: ListBlock(StructBlock(label:CharBlock, body:RichTextBlock))
+-     The rows are the fold (_fold.less, initFolds), every row shut at rest, a click opens one; the copy here is placeholder. -->
+-<section class="cta-links cta-links--roomy" aria-labelledby="strategy-title">
+-  <div class="container">
+-    <div class="row g-4 row-split">
+-      <div class="col-lg-6">
+-        <h2 id="strategy-title" data-anim="split" data-anim-type="chars-soft" data-anim-type-mobile="lines">Our strategy<br>and the science</h2>
+-      </div>
+-      <div class="col-lg-6">
+-        <div class="cta-links__aside">
+-        <ul class="fold" data-fold>
+-          <li class="fold__item" data-anim="reveal" data-anim-type="fade">
+-            <button class="fold__row" type="button" aria-expanded="false" aria-controls="strategy-plan">Strategic Plan<svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button>
+-            <div class="fold__panel" id="strategy-plan">
+-              <div class="fold__body">
+-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec nunc congue, ultricies felis at, malesuada erat. Morbi nisi nulla, blandit eget dolor id, aliquam vehicula dolor sagittis eleifend.</p>
+-              </div>
+-            </div>
+-          </li>
+-          <li class="fold__item" data-anim="reveal" data-anim-type="fade">
+-            <button class="fold__row" type="button" aria-expanded="false" aria-controls="strategy-research">Co-Teaching Improves Student Outcomes (Research)<svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button>
+-            <div class="fold__panel" id="strategy-research">
+-              <div class="fold__body">
+-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec nunc congue, ultricies felis at, malesuada erat. Morbi nisi nulla, blandit eget dolor id, aliquam vehicula dolor sagittis eleifend.</p>
+-              </div>
+-            </div>
+-          </li>
+-        </ul>
+-        </div>
+-      </div>
+-    </div>
+-  </div>
+-</section>
+diff --git a/src/sections/preparatory-program/carousel.html b/src/sections/preparatory-program/carousel.html
+new file mode 100644
+index 0000000..849cc5d
+--- /dev/null
++++ b/src/sections/preparatory-program/carousel.html
+@@ -0,0 +1,4 @@
++<!-- @wagtail-block: image_carousel — the shared block is sections/image-carousel.html
++     The band under the teaching approach (2400:7239) and the seven "Carousel" frames the designer drew beside the page
++     (2400:7203, 2399:7125, 2399:7090, 2400:7281, 2400:7262, 2399:7190, 2410:8235); phones open on the frame's own square (2125:14700). -->
++<include src="sections/image-carousel.html" locals='{"label": "Life in the Preparatory Program at Claremont", "slides": [{"image": "assets/images/preparatory-program/carousel-1.webp", "image_m": "assets/images/preparatory-program/carousel-1-m.webp", "alt": "A Preparatory teacher leading a music session with coloured boomwhackers"}, {"image": "assets/images/preparatory-program/carousel-2.webp", "image_m": "assets/images/preparatory-program/carousel-2-m.webp", "alt": "A teacher reading a picture book with a Preparatory boy beside the classroom shelves"}, {"image": "assets/images/preparatory-program/carousel-3.webp", "image_m": "assets/images/preparatory-program/carousel-3-m.webp", "alt": "A Preparatory student arranging leaves and toy animals on a nature table"}, {"image": "assets/images/preparatory-program/carousel-4.webp", "image_m": "assets/images/preparatory-program/carousel-4-m.webp", "alt": "A Preparatory classroom with soft seats, a round wooden table and stools"}, {"image": "assets/images/preparatory-program/carousel-5.webp", "image_m": "assets/images/preparatory-program/carousel-5-m.webp", "alt": "A Preparatory student blowing bubbles"}, {"image": "assets/images/preparatory-program/carousel-6.webp", "image_m": "assets/images/preparatory-program/carousel-6-m.webp", "alt": "A Preparatory classroom with low wooden shelves, a round rug and a reading corner"}, {"image": "assets/images/preparatory-program/carousel-7.webp", "image_m": "assets/images/preparatory-program/carousel-7-m.webp", "alt": "A Preparatory student smiling down at a wooden toy in her hands"}, {"image": "assets/images/preparatory-program/carousel-8.webp", "image_m": "assets/images/preparatory-program/carousel-8-m.webp", "alt": "A Preparatory student holding a leaf out towards the camera"}]}'></include>
+diff --git a/src/sections/preparatory-program/teaching-approach.html b/src/sections/preparatory-program/teaching-approach.html
+index f42226d..4e29a7a 100644
+--- a/src/sections/preparatory-program/teaching-approach.html
++++ b/src/sections/preparatory-program/teaching-approach.html
+@@ -3,19 +3,19 @@
+      items: ListBlock(StructBlock(title:CharBlock, body:RichTextBlock))
+      The columns are the fold (_fold.less, initFolds, .fold--hover): one open at a time, the first at rest (Figma 1638:5169,
+      1680:6364, 1680:6398, 1680:6432); from lg the one under the mouse opens, below lg they stack as an accordion. -->
+-<section class="link-columns link-columns--reveal bg-light" aria-labelledby="prep-approach-title">
++<section class="link-columns link-columns--reveal-xl bg-light" aria-labelledby="prep-approach-title">
+   <div class="container">
+     <div class="link-columns__header">
+       <h2 id="prep-approach-title" data-anim="split" data-anim-type="chars-soft" data-anim-type-mobile="lines">Our teaching approach</h2>
+     </div>
+   </div>
+-  <div class="link-columns__grid fold fold--hover" data-fold data-anim-group="fade">
++  <div class="link-columns__grid fold fold--hover" data-fold data-fold-from="1200" data-anim-group="fade">
+     <div class="link-columns__item fold__item is-open">
+       <h3><button class="link-columns__head fold__row" type="button" aria-expanded="true" aria-controls="prep-approach-wellbeing"><span>Wellbeing</span><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button></h3>
+       <div class="fold__panel" id="prep-approach-wellbeing">
+         <div class="fold__body">
+           <p>Every child deserves to feel confident, connected and safe. Our Preparatory Wellbeing Program gives them the tools they need to feel all three.</p>
+-          <p>Kimochis® Social and Emotional Learning helps children to understand and manage their emotions. The program teaches children to respond constructively to challenging situations and make responsible decisions.</p>
++          <p>Kimochis<sup>®</sup> Social and Emotional Learning helps children to understand and manage their emotions. The program teaches children to respond constructively to challenging situations and make responsible decisions.</p>
+           <p>Developed by the Office of the Children’s Guardian for children aged 2–6, the SAFE Series teaches personal safety in language a young child can actually use. Children learn what a boundary is, how to notice when something doesn’t feel right, and that asking for help is always the right thing to do.</p>
+         </div>
+       </div>
+diff --git a/src/sections/quote-slider.html b/src/sections/quote-slider.html
+index 112aa41..4b1a904 100644
+--- a/src/sections/quote-slider.html
++++ b/src/sections/quote-slider.html
+@@ -11,7 +11,8 @@
+      phones each card is the photo over the quote panel, the arrows, photo and quote filling one screen: the cards are one
+      stacked deck (data-slider-deck) and change as ref/wcc's split slider does, the next photo wiping up over the last
+      while the copy fades out and in.
+-     locals: id, title, intro (or ""), layout, prev_label, next_label, slides [{ image, alt, width, height, quote, author, role, url, link_label }] -->
++     locals: id, title, intro (or ""), layout, prev_label, next_label, slides [{ image, image_m, width_m, height_m, alt, width, height, quote,
++             author, role, url, link_label }]; image_m (or "") is the photo's own phone framing, served below md -->
+ <section class="quote-slider quote-slider--{{ layout }}" aria-labelledby="{{ id }}" data-slider data-slider-below-lg data-pan>
+   <div class="container">
+     <div class="quote-slider__header">
+@@ -31,10 +32,10 @@
+       <each loop="slide in slides">
+       <li class="swiper-slide quote-slider__card" data-anim-item data-quote-card>
+         <if condition="slide.url">
+-        <a class="quote-slider__photo deck__frame" href="{{ slide.url }}" aria-label="{{ slide.link_label }}"><span class="deck__shot"><img src="{{ slide.image }}" alt="{{ slide.alt }}" width="{{ slide.width }}" height="{{ slide.height }}" loading="lazy" decoding="async"></span><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
++        <a class="quote-slider__photo deck__frame" href="{{ slide.url }}" aria-label="{{ slide.link_label }}"><span class="deck__shot"><if condition="slide.image_m"><picture><source media="(min-width: 768px)" srcset="{{ slide.image }}" width="{{ slide.width }}" height="{{ slide.height }}"><img src="{{ slide.image_m }}" alt="{{ slide.alt }}" width="{{ slide.width_m }}" height="{{ slide.height_m }}" loading="lazy" decoding="async"></picture></if><else><img src="{{ slide.image }}" alt="{{ slide.alt }}" width="{{ slide.width }}" height="{{ slide.height }}" loading="lazy" decoding="async"></else></span><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+         </if>
+         <else>
+-        <div class="quote-slider__photo deck__frame"><span class="deck__shot"><img src="{{ slide.image }}" alt="{{ slide.alt }}" width="{{ slide.width }}" height="{{ slide.height }}" loading="lazy" decoding="async"></span></div>
++        <div class="quote-slider__photo deck__frame"><span class="deck__shot"><if condition="slide.image_m"><picture><source media="(min-width: 768px)" srcset="{{ slide.image }}" width="{{ slide.width }}" height="{{ slide.height }}"><img src="{{ slide.image_m }}" alt="{{ slide.alt }}" width="{{ slide.width_m }}" height="{{ slide.height_m }}" loading="lazy" decoding="async"></picture></if><else><img src="{{ slide.image }}" alt="{{ slide.alt }}" width="{{ slide.width }}" height="{{ slide.height }}" loading="lazy" decoding="async"></else></span></div>
+         </else>
+         <div class="quote-slider__caption">
+           <div class="quote-slider__text deck__copy" data-anim="reveal" data-anim-type="fade-up" data-anim-media="(max-width: 767.98px)">
+diff --git a/src/sections/teaching-approach.html b/src/sections/teaching-approach.html
+index e38bb84..49e7f83 100644
+--- a/src/sections/teaching-approach.html
++++ b/src/sections/teaching-approach.html
+@@ -7,9 +7,8 @@
+      ))
+      Marker positions render as --x / --y custom properties (modifier classes here; inline vars in Wagtail).
+      The hotspot that is open by default carries data-anim-item="fade-up" on its card so it fades up after its marker.
+-     The first tab's six topics and their copy come from the phone accordion frame (2101:13731); its seven rows
+-     repeat "Teacher collaboration" once, so the bodies are paired by label. ASSUMPTION: every hotspot on tabs 2–4
+-     carries placeholder copy; those tabs use photos from the Figma Photography canvas. -->
++     Photos, hotspot positions and copy come from the "03- Design 2" tab frames (1636:2282, 1638:2555, 1638:2627, 1638:4413):
++     six hotspots on the first tab, three on each of the others. The phone frame (2081:9479) crops the first tab's photo to its own slot. -->
+ <section class="approach bg-light" aria-label="Our approach" data-tabs>
+   <div class="container">
+     <div class="approach__bar" data-anim="sequence" data-anim-type="fade" data-anim-stagger="0.08">
+@@ -28,13 +27,13 @@
+ 
+   <div class="tab-content" data-anim="sequence" data-anim-type="from-right" data-anim-stagger="0.12" data-anim-start="top 50%" data-anim-mobile="each">
+     <!-- Tab 1 -->
+-    <div class="tab-pane fade show active" id="pane-teaching" role="tabpanel" aria-labelledby="tab-teaching" tabindex="0">
++    <div class="tab-pane approach__pane--teaching fade show active" id="pane-teaching" role="tabpanel" aria-labelledby="tab-teaching" tabindex="0">
+       <button class="approach__row" data-anim-item="fade" type="button" aria-expanded="false" aria-controls="pane-teaching-body" data-approach-toggle><span class="approach__row-inner"><span>Our teaching approach</span><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></span></button>
+       <div class="approach__panel" id="pane-teaching-body">
+         <div class="approach__media">
+           <picture>
+-            <source media="(min-width: 992px)" srcset="assets/images/home/teaching-approach.webp" width="1226" height="511">
+-            <img src="assets/images/home/teaching-approach-m.webp" alt="Students reading in a green pod library nook while a teacher talks with classmates" width="750" height="552">
++            <source media="(min-width: 992px)" srcset="assets/images/home/approach-teaching.webp" width="1840" height="768">
++            <img src="assets/images/home/approach-teaching-m.webp" alt="Students at work around tables in a bright classroom with green walls, a teacher among them" width="750" height="552">
+           </picture>
+         </div>
+         <div class="approach__overlay">
+@@ -63,7 +62,7 @@
+                 <p class="hotspot__text">Children are taught at a pace that is based on their learning needs, rather than their grade.</p>
+               </div>
+             </li>
+-            <li class="hotspot hotspot--4 hotspot--flip" data-hotspot>
++            <li class="hotspot hotspot--4" data-hotspot>
+               <button class="hotspot__marker" data-anim-item type="button" aria-expanded="false" aria-controls="hotspot-4" data-hotspot-toggle><span class="hotspot__label">Specialised teachers, specialised learning</span></button>
+               <div class="hotspot__card" id="hotspot-4">
+                 <h3 class="hotspot__title">Specialised teachers, specialised learning</h3>
+@@ -77,7 +76,7 @@
+                 <p class="hotspot__text">Each grade is concentrated with a high teacher-to-student ratio, ensuring every child has the right support at each stage of their learning journey.</p>
+               </div>
+             </li>
+-            <li class="hotspot hotspot--6 hotspot--flip" data-hotspot>
++            <li class="hotspot hotspot--6" data-hotspot>
+               <button class="hotspot__marker" data-anim-item type="button" aria-expanded="false" aria-controls="hotspot-6" data-hotspot-toggle><span class="hotspot__label">Recognising and rewarding academic excellence</span></button>
+               <div class="hotspot__card" id="hotspot-6">
+                 <h3 class="hotspot__title">Recognising and rewarding academic excellence</h3>
+@@ -89,12 +88,11 @@
+       </div>
+     </div>
+ 
+-    <!-- Tabs 2–4: photos from the Figma Photography canvas; the six hotspots sit where the first tab's do, copy is placeholder -->
+-    <div class="tab-pane fade" id="pane-future" role="tabpanel" aria-labelledby="tab-future" tabindex="0">
++    <div class="tab-pane approach__pane--future fade" id="pane-future" role="tabpanel" aria-labelledby="tab-future" tabindex="0">
+       <button class="approach__row" data-anim-item="fade" type="button" aria-expanded="false" aria-controls="pane-future-body" data-approach-toggle><span class="approach__row-inner"><span>Future-ready children</span><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></span></button>
+       <div class="approach__panel" id="pane-future-body">
+         <div class="approach__media">
+-          <img src="assets/images/home/approach-future.webp" alt="A student holding a VR headset in the blue technology room while a classmate tries one on" width="1640" height="684" loading="lazy" decoding="async">
++          <img src="assets/images/home/approach-future.webp" alt="A student wearing a VR headset in the blue-lit technology room while a classmate tries another" width="1840" height="768" loading="lazy" decoding="async">
+         </div>
+         <div class="approach__overlay">
+           <div class="container">
+@@ -102,56 +100,35 @@
+           </div>
+           <ol class="hotspots" data-hotspots data-anim="sequence" data-anim-type="pop" data-anim-tier="hero" data-anim-order="1" data-anim-stagger="0.08" data-anim-disable-mobile>
+             <li class="hotspot hotspot--1 is-open" data-hotspot>
+-              <button class="hotspot__marker" data-anim-item type="button" aria-expanded="true" aria-controls="hotspot-7" data-hotspot-toggle><span class="hotspot__label">Immersive technology</span></button>
++              <button class="hotspot__marker" data-anim-item type="button" aria-expanded="true" aria-controls="hotspot-7" data-hotspot-toggle><span class="hotspot__label">School readiness program</span></button>
+               <div class="hotspot__card" id="hotspot-7" data-anim-item="fade-up">
+-                <h3 class="hotspot__title">Immersive technology</h3>
+-                <p class="hotspot__text">Placeholder copy. Virtual reality and coding tools bring big ideas within reach.</p>
++                <h3 class="hotspot__title">School readiness program</h3>
++                <p class="hotspot__text">Our 4 to 5 year old school readiness program, Wylie Cottage, offers a purposeful, research-informed, and play-based program inspired by Reggio Emilia practices. With early access to Library, Sport and Music, children build confidence, curiosity and a lifelong love of learning.</p>
+               </div>
+             </li>
+             <li class="hotspot hotspot--2" data-hotspot>
+-              <button class="hotspot__marker" data-anim-item type="button" aria-expanded="false" aria-controls="hotspot-8" data-hotspot-toggle><span class="hotspot__label">Maker shelves</span></button>
++              <button class="hotspot__marker" data-anim-item type="button" aria-expanded="false" aria-controls="hotspot-8" data-hotspot-toggle><span class="hotspot__label">Stepping up to high school</span></button>
+               <div class="hotspot__card" id="hotspot-8">
+-                <h3 class="hotspot__title">Maker shelves</h3>
+-                <p class="hotspot__text">Placeholder copy. Tools and materials for building, testing and trying again.</p>
++                <h3 class="hotspot__title">Stepping up to high school</h3>
++                <p class="hotspot__text">Our High School Study Program gives children and parents the reassurance of a seamless transition to high school. We instil in children a set of dispositions including collaboration, compassion and innovative thinking to prepare them for their next step.</p>
+               </div>
+             </li>
+             <li class="hotspot hotspot--3" data-hotspot>
+-              <button class="hotspot__marker" data-anim-item type="button" aria-expanded="false" aria-controls="hotspot-9" data-hotspot-toggle><span class="hotspot__label">Hands-on devices</span></button>
++              <button class="hotspot__marker" data-anim-item type="button" aria-expanded="false" aria-controls="hotspot-9" data-hotspot-toggle><span class="hotspot__label">Every child leaves ready for the future</span></button>
+               <div class="hotspot__card" id="hotspot-9">
+-                <h3 class="hotspot__title">Hands-on devices</h3>
+-                <p class="hotspot__text">Placeholder copy. Every child learns to use technology with purpose.</p>
+-              </div>
+-            </li>
+-            <li class="hotspot hotspot--4 hotspot--flip" data-hotspot>
+-              <button class="hotspot__marker" data-anim-item type="button" aria-expanded="false" aria-controls="hotspot-10" data-hotspot-toggle><span class="hotspot__label">Design thinking</span></button>
+-              <div class="hotspot__card" id="hotspot-10">
+-                <h3 class="hotspot__title">Design thinking</h3>
+-                <p class="hotspot__text">Placeholder copy. Students frame problems, prototype answers and refine them.</p>
+-              </div>
+-            </li>
+-            <li class="hotspot hotspot--5" data-hotspot>
+-              <button class="hotspot__marker" data-anim-item type="button" aria-expanded="false" aria-controls="hotspot-11" data-hotspot-toggle><span class="hotspot__label">Digital citizenship</span></button>
+-              <div class="hotspot__card" id="hotspot-11">
+-                <h3 class="hotspot__title">Digital citizenship</h3>
+-                <p class="hotspot__text">Placeholder copy. Learning to be safe, kind and critical online.</p>
+-              </div>
+-            </li>
+-            <li class="hotspot hotspot--6 hotspot--flip" data-hotspot>
+-              <button class="hotspot__marker" data-anim-item type="button" aria-expanded="false" aria-controls="hotspot-12" data-hotspot-toggle><span class="hotspot__label">Collaborative projects</span></button>
+-              <div class="hotspot__card" id="hotspot-12">
+-                <h3 class="hotspot__title">Collaborative projects</h3>
+-                <p class="hotspot__text">Placeholder copy. Teams share ideas and build on each other's thinking.</p>
++                <h3 class="hotspot__title">Every child leaves ready for the future</h3>
++                <p class="hotspot__text">We are committed to developing knowledgeable, confident and critical thinkers, equipped with the future-ready skills and dispositions they will need to thrive throughout their lives.</p>
+               </div>
+             </li>
+           </ol>
+         </div>
+       </div>
+     </div>
+-    <div class="tab-pane fade" id="pane-wellbeing" role="tabpanel" aria-labelledby="tab-wellbeing" tabindex="0">
++    <div class="tab-pane approach__pane--wellbeing fade" id="pane-wellbeing" role="tabpanel" aria-labelledby="tab-wellbeing" tabindex="0">
+       <button class="approach__row" data-anim-item="fade" type="button" aria-expanded="false" aria-controls="pane-wellbeing-body" data-approach-toggle><span class="approach__row-inner"><span>Wellbeing is priority</span><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></span></button>
+       <div class="approach__panel" id="pane-wellbeing-body">
+         <div class="approach__media">
+-          <img src="assets/images/home/approach-wellbeing.webp" alt="Two students reading in green armchairs in a calm, plant-filled learning space" width="1640" height="684" loading="lazy" decoding="async">
++          <img src="assets/images/home/approach-wellbeing.webp" alt="A teacher and a young student posting a letter at the green door of the counsellor’s office" width="1840" height="768" loading="lazy" decoding="async">
+         </div>
+         <div class="approach__overlay">
+           <div class="container">
+@@ -159,56 +136,35 @@
+           </div>
+           <ol class="hotspots" data-hotspots data-anim="sequence" data-anim-type="pop" data-anim-tier="hero" data-anim-order="1" data-anim-stagger="0.08" data-anim-disable-mobile>
+             <li class="hotspot hotspot--1 is-open" data-hotspot>
+-              <button class="hotspot__marker" data-anim-item type="button" aria-expanded="true" aria-controls="hotspot-13" data-hotspot-toggle><span class="hotspot__label">Calm reading corners</span></button>
+-              <div class="hotspot__card" id="hotspot-13" data-anim-item="fade-up">
+-                <h3 class="hotspot__title">Calm reading corners</h3>
+-                <p class="hotspot__text">Placeholder copy. Quiet places to settle, breathe and lose yourself in a book.</p>
++              <button class="hotspot__marker" data-anim-item type="button" aria-expanded="true" aria-controls="hotspot-10" data-hotspot-toggle><span class="hotspot__label">Protecting health and happiness</span></button>
++              <div class="hotspot__card" id="hotspot-10" data-anim-item="fade-up">
++                <h3 class="hotspot__title">Protecting health and happiness</h3>
++                <p class="hotspot__text">Physical, mental and emotional well-being is prioritised daily with a registered nurse and school counsellor on school grounds all week.</p>
+               </div>
+             </li>
+             <li class="hotspot hotspot--2" data-hotspot>
+-              <button class="hotspot__marker" data-anim-item type="button" aria-expanded="false" aria-controls="hotspot-14" data-hotspot-toggle><span class="hotspot__label">Room to be yourself</span></button>
+-              <div class="hotspot__card" id="hotspot-14">
+-                <h3 class="hotspot__title">Room to be yourself</h3>
+-                <p class="hotspot__text">Placeholder copy. Familiar spaces where every child feels known and safe.</p>
++              <button class="hotspot__marker" data-anim-item type="button" aria-expanded="false" aria-controls="hotspot-11" data-hotspot-toggle><span class="hotspot__label">Social and emotional learning</span></button>
++              <div class="hotspot__card" id="hotspot-11">
++                <h3 class="hotspot__title">Social and emotional learning</h3>
++                <p class="hotspot__text">Our Open Parachute program ensures children’s wellbeing, resilience and interpersonal skills are nurtured. Additionally, our PBIS (Positive Behaviour Interventions and Supports) framework reinforces positive behaviours to help children develop into successful members of the community.</p>
+               </div>
+             </li>
+             <li class="hotspot hotspot--3" data-hotspot>
+-              <button class="hotspot__marker" data-anim-item type="button" aria-expanded="false" aria-controls="hotspot-15" data-hotspot-toggle><span class="hotspot__label">Light and nature</span></button>
+-              <div class="hotspot__card" id="hotspot-15">
+-                <h3 class="hotspot__title">Light and nature</h3>
+-                <p class="hotspot__text">Placeholder copy. Natural light and greenery help young minds rest and focus.</p>
+-              </div>
+-            </li>
+-            <li class="hotspot hotspot--4 hotspot--flip" data-hotspot>
+-              <button class="hotspot__marker" data-anim-item type="button" aria-expanded="false" aria-controls="hotspot-16" data-hotspot-toggle><span class="hotspot__label">Mindful moments</span></button>
+-              <div class="hotspot__card" id="hotspot-16">
+-                <h3 class="hotspot__title">Mindful moments</h3>
+-                <p class="hotspot__text">Placeholder copy. Short pauses through the day to settle and refocus.</p>
+-              </div>
+-            </li>
+-            <li class="hotspot hotspot--5" data-hotspot>
+-              <button class="hotspot__marker" data-anim-item type="button" aria-expanded="false" aria-controls="hotspot-17" data-hotspot-toggle><span class="hotspot__label">Known by name</span></button>
+-              <div class="hotspot__card" id="hotspot-17">
+-                <h3 class="hotspot__title">Known by name</h3>
+-                <p class="hotspot__text">Placeholder copy. Small classes where every adult knows every child.</p>
+-              </div>
+-            </li>
+-            <li class="hotspot hotspot--6 hotspot--flip" data-hotspot>
+-              <button class="hotspot__marker" data-anim-item type="button" aria-expanded="false" aria-controls="hotspot-18" data-hotspot-toggle><span class="hotspot__label">Movement and play</span></button>
+-              <div class="hotspot__card" id="hotspot-18">
+-                <h3 class="hotspot__title">Movement and play</h3>
+-                <p class="hotspot__text">Placeholder copy. Active breaks that help children learn and feel well.</p>
++              <button class="hotspot__marker" data-anim-item type="button" aria-expanded="false" aria-controls="hotspot-12" data-hotspot-toggle><span class="hotspot__label">Children with voice and choice</span></button>
++              <div class="hotspot__card" id="hotspot-12">
++                <h3 class="hotspot__title">Children with voice and choice</h3>
++                <p class="hotspot__text">Every child has a voice in shaping their learning experience, from learning spaces to playgrounds. This helps build confidence and a sense of agency in all our students.</p>
+               </div>
+             </li>
+           </ol>
+         </div>
+       </div>
+     </div>
+-    <div class="tab-pane fade" id="pane-community" role="tabpanel" aria-labelledby="tab-community" tabindex="0">
++    <div class="tab-pane approach__pane--community fade" id="pane-community" role="tabpanel" aria-labelledby="tab-community" tabindex="0">
+       <button class="approach__row" data-anim-item="fade" type="button" aria-expanded="false" aria-controls="pane-community-body" data-approach-toggle><span class="approach__row-inner"><span>Community minded</span><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></span></button>
+       <div class="approach__panel" id="pane-community-body">
+         <div class="approach__media">
+-          <img src="assets/images/home/approach-community.webp" alt="The whole school gathered on the playground under the shade sail, seen from above" width="1640" height="684" loading="lazy" decoding="async">
++          <img src="assets/images/home/approach-community.webp" alt="Two students in hats and backpacks looking back over their shoulders on the way into school" width="1840" height="768" loading="lazy" decoding="async">
+         </div>
+         <div class="approach__overlay">
+           <div class="container">
+@@ -216,45 +172,24 @@
+           </div>
+           <ol class="hotspots" data-hotspots data-anim="sequence" data-anim-type="pop" data-anim-tier="hero" data-anim-order="1" data-anim-stagger="0.08" data-anim-disable-mobile>
+             <li class="hotspot hotspot--1 is-open" data-hotspot>
+-              <button class="hotspot__marker" data-anim-item type="button" aria-expanded="true" aria-controls="hotspot-19" data-hotspot-toggle><span class="hotspot__label">Whole-school gatherings</span></button>
+-              <div class="hotspot__card" id="hotspot-19" data-anim-item="fade-up">
+-                <h3 class="hotspot__title">Whole-school gatherings</h3>
+-                <p class="hotspot__text">Placeholder copy. Assemblies where every year group learns from each other.</p>
++              <button class="hotspot__marker" data-anim-item type="button" aria-expanded="true" aria-controls="hotspot-13" data-hotspot-toggle><span class="hotspot__label">“Our and we”, not “us and you”</span></button>
++              <div class="hotspot__card" id="hotspot-13" data-anim-item="fade-up">
++                <h3 class="hotspot__title">“Our and we”, not “us and you”</h3>
++                <p class="hotspot__text">We foster a collective and collaborative environment for children, teachers, parents and our community. We’re in this together.</p>
+               </div>
+             </li>
+             <li class="hotspot hotspot--2" data-hotspot>
+-              <button class="hotspot__marker" data-anim-item type="button" aria-expanded="false" aria-controls="hotspot-20" data-hotspot-toggle><span class="hotspot__label">Shared spaces</span></button>
+-              <div class="hotspot__card" id="hotspot-20">
+-                <h3 class="hotspot__title">Shared spaces</h3>
+-                <p class="hotspot__text">Placeholder copy. Places designed for the whole community to come together.</p>
++              <button class="hotspot__marker" data-anim-item type="button" aria-expanded="false" aria-controls="hotspot-14" data-hotspot-toggle><span class="hotspot__label">Fulfilment is contagious</span></button>
++              <div class="hotspot__card" id="hotspot-14">
++                <h3 class="hotspot__title">Fulfilment is contagious</h3>
++                <p class="hotspot__text">Our teachers love to teach and see it as a privilege. This infectious enthusiasm for teaching breeds enthusiasm for learning.</p>
+               </div>
+             </li>
+             <li class="hotspot hotspot--3" data-hotspot>
+-              <button class="hotspot__marker" data-anim-item type="button" aria-expanded="false" aria-controls="hotspot-21" data-hotspot-toggle><span class="hotspot__label">Play and belonging</span></button>
+-              <div class="hotspot__card" id="hotspot-21">
+-                <h3 class="hotspot__title">Play and belonging</h3>
+-                <p class="hotspot__text">Placeholder copy. Games, teams and traditions that build friendships across ages.</p>
+-              </div>
+-            </li>
+-            <li class="hotspot hotspot--4 hotspot--flip" data-hotspot>
+-              <button class="hotspot__marker" data-anim-item type="button" aria-expanded="false" aria-controls="hotspot-22" data-hotspot-toggle><span class="hotspot__label">Buddies across ages</span></button>
+-              <div class="hotspot__card" id="hotspot-22">
+-                <h3 class="hotspot__title">Buddies across ages</h3>
+-                <p class="hotspot__text">Placeholder copy. Older students look out for the youngest.</p>
+-              </div>
+-            </li>
+-            <li class="hotspot hotspot--5" data-hotspot>
+-              <button class="hotspot__marker" data-anim-item type="button" aria-expanded="false" aria-controls="hotspot-23" data-hotspot-toggle><span class="hotspot__label">Families welcome</span></button>
+-              <div class="hotspot__card" id="hotspot-23">
+-                <h3 class="hotspot__title">Families welcome</h3>
+-                <p class="hotspot__text">Placeholder copy. Parents and carers are part of school life.</p>
+-              </div>
+-            </li>
+-            <li class="hotspot hotspot--6 hotspot--flip" data-hotspot>
+-              <button class="hotspot__marker" data-anim-item type="button" aria-expanded="false" aria-controls="hotspot-24" data-hotspot-toggle><span class="hotspot__label">Serving others</span></button>
+-              <div class="hotspot__card" id="hotspot-24">
+-                <h3 class="hotspot__title">Serving others</h3>
+-                <p class="hotspot__text">Placeholder copy. Projects that connect the school with its neighbourhood.</p>
++              <button class="hotspot__marker" data-anim-item type="button" aria-expanded="false" aria-controls="hotspot-15" data-hotspot-toggle><span class="hotspot__label">Christian values</span></button>
++              <div class="hotspot__card" id="hotspot-15">
++                <h3 class="hotspot__title">Christian values</h3>
++                <p class="hotspot__text">Our faith is a key foundation of our approach to education. We inspire learning, nurture connection and shape the lives of children by grounding these in ethical and relational experiences based on Christian values.</p>
+               </div>
+             </li>
+           </ol>
+diff --git a/src/sections/testimonials.html b/src/sections/testimonials.html
+index 55c3129..7dcfdfe 100644
+--- a/src/sections/testimonials.html
++++ b/src/sections/testimonials.html
+@@ -1,4 +1,4 @@
+ <!-- @wagtail-block: quote_slider (layout: testimonials) — the shared block is sections/quote-slider.html
+      Seven cards from the "03- Design 2" strip (2410:7552, 2470:7150), full-bleed from the page edge; the quotes are
+      the students' own from its hover frame (2470:7161), set in one pair of typographic quote marks. Phones: 2081:10675, 2570:4911. -->
+-<include src="sections/quote-slider.html" locals='{"id": "testimonials-title", "title": "See what our biggest and littlest fans have to say about us.", "intro": "We are proud that parents, children and our staff work together to create a supportive, nurturing and inclusive community in and around Claremont College. Together we share a commitment to enhancing children’s education and their school experience, in a place that makes every child feel they belong.", "layout": "testimonials", "prev_label": "Previous", "next_label": "Next", "slides": [{"image": "assets/images/home/testimonial-1.webp", "alt": "A student smiling at a lunchtime club", "width": "740", "height": "740", "quote": "“Clubs are fun because you get to try new things and find out what you enjoy.”", "author": "", "role": "", "url": "", "link_label": ""}, {"image": "assets/images/home/testimonial-2.webp", "alt": "A student in school uniform smiling at the camera", "width": "740", "height": "740", "quote": "“At Claremont everyone looks after each other. No one is left out.”", "author": "", "role": "", "url": "", "link_label": ""}, {"image": "assets/images/home/testimonial-3.webp", "alt": "A student writing at a desk", "width": "740", "height": "740", "quote": "“English is fun because we get to play with words and use things like similes and metaphors to make our writing really interesting!”", "author": "", "role": "", "url": "", "link_label": ""}, {"image": "assets/images/home/testimonial-4.webp", "alt": "A Prep student in the classroom", "width": "740", "height": "740", "quote": "“I like Prep because we learnt about the Cooroobee frog and that it is endangered.”", "author": "", "role": "", "url": "", "link_label": ""}, {"image": "assets/images/home/testimonial-5.webp", "alt": "A student in a science lesson", "width": "740", "height": "740", "quote": "“I love learning in Science because we got to make a rain gauge to help solve a problem.”", "author": "", "role": "", "url": "", "link_label": ""}, {"image": "assets/images/home/testimonial-6.webp", "alt": "A student working on maths", "width": "740", "height": "740", "quote": "“I love doing Year 6 Maths even though I am in Year 4. It is challenging and I never get bored.”", "author": "", "role": "", "url": "", "link_label": ""}, {"image": "assets/images/home/testimonial-7.webp", "alt": "A young student reading", "width": "740", "height": "740", "quote": "“I love reading because I can sound out new words all by myself. I’m getting better every day!”", "author": "", "role": "", "url": "", "link_label": ""}]}'></include>
++<include src="sections/quote-slider.html" locals='{"id": "testimonials-title", "title": "See what our biggest and littlest fans have to say about us.", "intro": "We are proud that parents, children and our staff work together to create a supportive, nurturing and inclusive community in and around Claremont College. Together we share a commitment to enhancing children’s education and their school experience, in a place that makes every child feel they belong.", "layout": "testimonials", "prev_label": "Previous", "next_label": "Next", "slides": [{"image": "assets/images/home/testimonial-1.webp", "image_m": "assets/images/home/testimonial-1-m.webp", "width_m": "750", "height_m": "824", "alt": "A student smiling at a lunchtime club", "width": "740", "height": "740", "quote": "“Clubs are fun because you get to try new things and find out what you enjoy.”", "author": "", "role": "", "url": "", "link_label": ""}, {"image": "assets/images/home/testimonial-2.webp", "image_m": "", "width_m": "", "height_m": "", "alt": "A student in school uniform smiling at the camera", "width": "740", "height": "740", "quote": "“At Claremont everyone looks after each other. No one is left out.”", "author": "", "role": "", "url": "", "link_label": ""}, {"image": "assets/images/home/testimonial-3.webp", "image_m": "", "width_m": "", "height_m": "", "alt": "A student writing at a desk", "width": "740", "height": "740", "quote": "“English is fun because we get to play with words and use things like similes and metaphors to make our writing really interesting!”", "author": "", "role": "", "url": "", "link_label": ""}, {"image": "assets/images/home/testimonial-4.webp", "image_m": "", "width_m": "", "height_m": "", "alt": "A Prep student in the classroom", "width": "740", "height": "740", "quote": "“I like Prep because we learnt about the Cooroobee frog and that it is endangered.”", "author": "", "role": "", "url": "", "link_label": ""}, {"image": "assets/images/home/testimonial-5.webp", "image_m": "", "width_m": "", "height_m": "", "alt": "A student in a science lesson", "width": "740", "height": "740", "quote": "“I love learning in Science because we got to make a rain gauge to help solve a problem.”", "author": "", "role": "", "url": "", "link_label": ""}, {"image": "assets/images/home/testimonial-6.webp", "image_m": "", "width_m": "", "height_m": "", "alt": "A student working on maths", "width": "740", "height": "740", "quote": "I love doing Year 6 Maths even though I am in Year 4. It is challenging and I never get bored.", "author": "", "role": "", "url": "", "link_label": ""}, {"image": "assets/images/home/testimonial-7.webp", "image_m": "", "width_m": "", "height_m": "", "alt": "A young student reading", "width": "740", "height": "740", "quote": "I love reading because I can sound out new words all by myself. I’m getting better every day!", "author": "", "role": "", "url": "", "link_label": ""}]}'></include>
+diff --git a/src/sections/welcome/educators.html b/src/sections/welcome/educators.html
+index ac28237..f6f2922 100644
+--- a/src/sections/welcome/educators.html
++++ b/src/sections/welcome/educators.html
+@@ -1,4 +1,4 @@
+ <!-- @wagtail-block: quote_slider (layout: educators) — the shared block is sections/quote-slider.html
+      Eight cards from the "03- Design 2" strip (2410:7936); the names come from its hover cards (2410:8070…),
+      the titles and quotes are Figma's placeholder copy. -->
+-<include src="sections/quote-slider.html" locals='{"id": "educators-title", "title": "Our team of educators who inspire", "intro": "", "layout": "educators", "prev_label": "Previous educators", "next_label": "Next educators", "slides": [{"image": "assets/images/welcome/educator-1.webp", "alt": "", "width": "714", "height": "712", "quote": "“Lorem ipsum dolor sit amet, consectetur adipiscing elit.”", "author": "Katrina Calverley", "role": "To provide title", "url": "#", "link_label": "Meet Katrina Calverley"}, {"image": "assets/images/welcome/educator-2.webp", "alt": "", "width": "714", "height": "712", "quote": "“Lorem ipsum dolor sit amet, consectetur adipiscing elit.”", "author": "Bianca Herborn", "role": "To provide title", "url": "#", "link_label": "Meet Bianca Herborn"}, {"image": "assets/images/welcome/educator-3.webp", "alt": "", "width": "714", "height": "712", "quote": "“Lorem ipsum dolor sit amet, consectetur adipiscing elit.”", "author": "Abby Carter", "role": "To provide title", "url": "#", "link_label": "Meet Abby Carter"}, {"image": "assets/images/welcome/educator-4.webp", "alt": "", "width": "714", "height": "712", "quote": "“Lorem ipsum dolor sit amet, consectetur adipiscing elit.”", "author": "Will Mison", "role": "To provide title", "url": "#", "link_label": "Meet Will Mison"}, {"image": "assets/images/welcome/educator-5.webp", "alt": "", "width": "714", "height": "712", "quote": "“Lorem ipsum dolor sit amet, consectetur adipiscing elit.”", "author": "Cath McKersie", "role": "To provide title", "url": "#", "link_label": "Meet Cath McKersie"}, {"image": "assets/images/welcome/educator-6.webp", "alt": "", "width": "714", "height": "712", "quote": "“Lorem ipsum dolor sit amet, consectetur adipiscing elit.”", "author": "Deborah Koh", "role": "To provide title", "url": "#", "link_label": "Meet Deborah Koh"}, {"image": "assets/images/welcome/educator-7.webp", "alt": "", "width": "714", "height": "712", "quote": "“Lorem ipsum dolor sit amet, consectetur adipiscing elit.”", "author": "Lisa Speranza", "role": "To provide title", "url": "#", "link_label": "Meet Lisa Speranza"}, {"image": "assets/images/welcome/educator-8.webp", "alt": "", "width": "714", "height": "712", "quote": "“Lorem ipsum dolor sit amet, consectetur adipiscing elit.”", "author": "Louise McNerney", "role": "To provide title", "url": "#", "link_label": "Meet Louise McNerney"}]}'></include>
++<include src="sections/quote-slider.html" locals='{"id": "educators-title", "title": "Our team of educators who inspire", "intro": "", "layout": "educators", "prev_label": "Previous educators", "next_label": "Next educators", "slides": [{"image": "assets/images/welcome/educator-1.webp", "image_m": "", "width_m": "", "height_m": "", "alt": "", "width": "714", "height": "712", "quote": "“Lorem ipsum dolor sit amet, consectetur adipiscing elit.”", "author": "Katrina Calverley", "role": "To provide title", "url": "#", "link_label": "Meet Katrina Calverley"}, {"image": "assets/images/welcome/educator-2.webp", "image_m": "", "width_m": "", "height_m": "", "alt": "", "width": "714", "height": "712", "quote": "“Lorem ipsum dolor sit amet, consectetur adipiscing elit.”", "author": "Bianca Herborn", "role": "To provide title", "url": "#", "link_label": "Meet Bianca Herborn"}, {"image": "assets/images/welcome/educator-3.webp", "image_m": "", "width_m": "", "height_m": "", "alt": "", "width": "714", "height": "712", "quote": "“Lorem ipsum dolor sit amet, consectetur adipiscing elit.”", "author": "Abby Carter", "role": "To provide title", "url": "#", "link_label": "Meet Abby Carter"}, {"image": "assets/images/welcome/educator-4.webp", "image_m": "", "width_m": "", "height_m": "", "alt": "", "width": "714", "height": "712", "quote": "“Lorem ipsum dolor sit amet, consectetur adipiscing elit.”", "author": "Will Mison", "role": "To provide title", "url": "#", "link_label": "Meet Will Mison"}, {"image": "assets/images/welcome/educator-5.webp", "image_m": "", "width_m": "", "height_m": "", "alt": "", "width": "714", "height": "712", "quote": "“Lorem ipsum dolor sit amet, consectetur adipiscing elit.”", "author": "Cath McKersie", "role": "To provide title", "url": "#", "link_label": "Meet Cath McKersie"}, {"image": "assets/images/welcome/educator-6.webp", "image_m": "", "width_m": "", "height_m": "", "alt": "", "width": "714", "height": "712", "quote": "“Lorem ipsum dolor sit amet, consectetur adipiscing elit.”", "author": "Deborah Koh", "role": "To provide title", "url": "#", "link_label": "Meet Deborah Koh"}, {"image": "assets/images/welcome/educator-7.webp", "image_m": "", "width_m": "", "height_m": "", "alt": "", "width": "714", "height": "712", "quote": "“Lorem ipsum dolor sit amet, consectetur adipiscing elit.”", "author": "Lisa Speranza", "role": "To provide title", "url": "#", "link_label": "Meet Lisa Speranza"}, {"image": "assets/images/welcome/educator-8.webp", "image_m": "", "width_m": "", "height_m": "", "alt": "", "width": "714", "height": "712", "quote": "“Lorem ipsum dolor sit amet, consectetur adipiscing elit.”", "author": "Louise McNerney", "role": "To provide title", "url": "#", "link_label": "Meet Louise McNerney"}]}'></include>
