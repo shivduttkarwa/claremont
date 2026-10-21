@@ -2,7 +2,7 @@
 
 Date: 2026-10-21
 Source of truth: the static cutup repo, `static/claremont`
-Baseline: commit `2dbafee`, the last commit covered by `wagtail-updates-2026-10-16.md`. Everything below is the difference between that commit and commit `15dffe8`.
+Baseline: commit `2dbafee`, the last commit covered by `wagtail-updates-2026-10-16.md`. Everything below is the difference between that commit and commit `aa6c057`.
 Companion file: `wagtail-updates-2026-10-21.patch` (same folder) is the full `git diff` of `src/` for these updates, 40 files. The three image files in it show only as "Binary files differ": take them from the repo itself (section 2), and skip them when applying: `git apply --exclude='src/assets/images/*' wagtail-updates-2026-10-21.patch` applies every text hunk cleanly to the baseline. `build.mjs` did not change.
 
 ## Purpose
@@ -24,8 +24,7 @@ This one is mostly CSS and JS, plus:
 4. Do the work in this order: assets (section 1), images (section 2), block changes (section 3), templates (section 4), content (section 5), then the checks (section 9).
 5. Deploy the CSS and the JS together. Several changes are split between the two (section 8).
 6. If a Wagtail copy of a file has local changes, merge the change shown here into it. Do not overwrite the file.
-7. Two files in the static repo are test pages, not part of the site: `src/quote-length-test.html` and `src/quote-scroll-lab.html`. Ignore them. They are left out of the `.patch`.
-8. If something in the Wagtail project does not match what this file describes, stop and report it rather than guessing.
+7. If something in the Wagtail project does not match what this file describes, stop and report it rather than guessing.
 
 ## The updates
 
