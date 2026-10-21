@@ -1,0 +1,217 @@
+<!doctype html>
+<!-- Test page, not part of the site: the welcome page with a bar switching how a wheel or swipe over an educator's scrolling
+     quote shares with the page. Delete this file once a version is chosen. -->
+<html lang="en">
+<head>
+  <include src="partials/head.html" locals='{
+    "title": "Quote scroll lab | Claremont College",
+    "description": "Test page: how the educators’ scrolling quotes share the wheel and swipe with the page."
+  }'></include>
+<meta name="robots" content="noindex">
+<script>
+(() => {
+  const v = new URLSearchParams(location.search).get("v") || "rest";
+  document.documentElement.dataset.qsl = v;
+  if (v !== "current") document.documentElement.classList.add("qsl-boot");
+})();
+</script>
+<style>
+html[data-qsl="ends"] .quote-slider--educators .quote-slider__quote,
+html[data-qsl="rest"] .quote-slider--educators .quote-slider__quote,
+html[data-qsl="page"] .quote-slider--educators .quote-slider__quote { overscroll-behavior: auto; }
+html[data-qsl="rest"] .quote-slider--educators .quote-slider__quote.qsl-pass { overflow-y: hidden; }
+html[data-qsl="page"] .quote-slider--educators .quote-slider__quote { overflow-y: hidden; cursor: pointer; }
+html.qsl-boot .quote-slider--educators .quote-slider__quote { overflow-y: visible; }
+
+.qsl { position: fixed; left: 50%; bottom: 14px; z-index: 2147483000; transform: translateX(-50%); width: max-content; max-width: calc(100vw - 20px);
+  padding: 10px 14px; border: 1px solid #0d4749; border-radius: 12px; background: rgba(255, 255, 255, 0.96); box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+  font: 500 13px/1.3 Inter, system-ui, sans-serif; letter-spacing: 0; color: #0d4749; }
+.qsl[hidden], .qsl-show[hidden] { display: none; }
+.qsl__row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.qsl button, .qsl-show { padding: 6px 11px; border: 1px solid #0d4749; border-radius: 999px; background: #fff; color: #0d4749; font: inherit; cursor: pointer; }
+.qsl button[aria-pressed="true"] { background: #0d4749; color: #fff; }
+.qsl button.qsl__plain { border-color: transparent; text-decoration: underline; }
+.qsl__note { max-width: 640px; margin: 8px 0 0; font-weight: 400; color: #2b2b2b; }
+.qsl-show { position: fixed; right: 10px; bottom: 10px; z-index: 2147483000; font: 500 13px/1.3 Inter, system-ui, sans-serif; }
+</style>
+</head>
+<body>
+  <include src="partials/icons.html"></include>
+  <a class="visually-hidden-focusable" href="#main">Skip to content</a>
+
+  <include src="partials/header.html"></include>
+
+  <main id="main" data-search-skip>
+    <!-- Hero -->
+    <include src="sections/page-hero.html" locals='{
+      "modifier": "page-hero--low-title",
+      "title": "Passionate about education<br>since 1882",
+      "aside": "",
+      "image": "assets/images/welcome/hero.webp",
+      "image_m": "assets/images/welcome/hero-m.webp",
+      "width": "1840",
+      "height": "1090"
+    }'></include>
+
+    <!-- Green intro band -->
+    <include src="sections/intro-split.html" locals='{
+      "theme": "intro-split--dark intro-split--lg",
+      "actions": "",
+      "lead": "It is with great pleasure that we welcome you to <em>Claremont College.</em>",
+      "body": "<p>With a proud history spanning more than 140 years, we are a highly regarded co-educational primary school committed to academic excellence, wellbeing, Christian values and the development of the whole child. Our students are at the heart of everything we do, and our dedicated teachers work closely with families to create a happy, safe and nurturing environment where every child is known, supported and challenged to reach their potential. Beyond our strong academic outcomes, Claremont is a warm and connected community built on collaboration, innovation, compassion and genuine care. We look forward to welcoming you and your family to our community.</p>"
+    }'></include>
+
+    <!-- Executive team -->
+    <include src="sections/welcome/executives.html"></include>
+
+    <!-- Educators carousel -->
+    <include src="sections/welcome/educators.html"></include>
+
+    <!-- Closing call to action -->
+    <include src="sections/cta-row.html" locals='{
+      "id": "welcome-cta-title",
+      "title": "At Claremont, every educator knows every child.",
+      "body": "<p>These are the people who will spend every day with your child, who will remember what they were struggling with last term, and who will still recall their name years after they’ve left. Come see what a difference being known can make.</p>",
+      "secondary_text": "Preparatory Program",
+      "secondary_url": "preparatory-program.html",
+      "primary_text": "K-6 Primary",
+      "primary_url": "k-6-primary.html"
+    }'></include>
+  </main>
+
+  <include src="partials/footer.html"></include>
+
+  <script src="assets/js/main.js" defer></script>
+
+<div class="qsl" data-lenis-prevent>
+  <div class="qsl__row">
+    <button data-v="ends">A · Hand over at the ends</button><button data-v="rest">B · Page first</button><button data-v="page">C · Page only</button><button data-v="current">Current</button>
+    <button class="qsl__plain" data-jump>Go to educators</button><button class="qsl__plain" data-hide>Hide bar</button>
+  </div>
+  <p class="qsl__note" data-note></p>
+</div>
+<button class="qsl-show" data-show hidden>Scroll test</button>
+<script>
+(() => {
+  const html = document.documentElement;
+  const v = html.dataset.qsl;
+  const NOTES = {
+    ends: "The quote takes the wheel or swipe only while it has text left that way. Desktop: at its end the same wheel carries straight on down the page, and at its top straight on up, so there is no dead stop. Phones: once the quote is at its end, the next swipe moves the page (no browser passes a swipe on halfway).",
+    rest: "A, but the page comes first while it is moving: a wheel or swipe that arrives while the page is still scrolling stays with the page, so scrolling past the row never catches on a quote. Once the page has stopped (a third of a second), the quote takes the wheel and hands back at its ends.",
+    page: "The wheel and swipe always move the page; the quote only glides by itself. Click or tap a quote to pause or play it, and at its end to start it again.",
+    current: "As the site has it now: over the quote, the wheel and swipe scroll only the quote, and the page waits until the pointer or finger leaves it.",
+  };
+  const bar = document.querySelector(".qsl"), show = document.querySelector("[data-show]");
+  bar.querySelectorAll("[data-v]").forEach((b) => {
+    b.setAttribute("aria-pressed", String(b.dataset.v === v));
+    b.addEventListener("click", () => { location.search = "?v=" + b.dataset.v + "&jump=1"; });
+  });
+  bar.querySelector("[data-note]").textContent = NOTES[v] || "";
+  const section = document.querySelector(".quote-slider--educators");
+  const jump = () => section.scrollIntoView({ block: "center" });
+  bar.querySelector("[data-jump]").addEventListener("click", jump);
+  bar.querySelector("[data-hide]").addEventListener("click", () => { bar.hidden = true; show.hidden = false; });
+  show.addEventListener("click", () => { bar.hidden = false; show.hidden = true; });
+  if (new URLSearchParams(location.search).get("jump")) addEventListener("load", () => setTimeout(jump, 500));
+  if (v === "current") return;
+
+  // the site's own quote script skips the quotes while qsl-boot keeps them unscrollable; this copy of it then takes over
+  document.addEventListener("DOMContentLoaded", () => setTimeout(() => {
+    html.classList.remove("qsl-boot");
+    init();
+  }));
+
+  function init() {
+    const SPEED = 24, WAIT = 1400, RESET = 700, REST = 350;
+    const cards = [...section.querySelectorAll("[data-quote-card]")];
+    const phone = matchMedia("(max-width: 767.98px)");
+    const reduced = matchMedia("(prefers-reduced-motion: reduce)");
+    const syncs = [];
+    let inView = false;
+    let pageMovedAt = 0;
+    addEventListener("scroll", () => { pageMovedAt = performance.now(); }, { passive: true });
+    const pageMoving = () => performance.now() - pageMovedAt < REST;
+    new IntersectionObserver(([e]) => { inView = e.intersectionRatio >= 0.4; syncs.forEach((s) => s()); }, { threshold: [0, 0.4, 1] }).observe(section);
+
+    cards.forEach((card) => {
+      const quote = card.querySelector(".quote-slider__quote");
+      let raf = 0, timer = 0, manual = false, paused = false;
+      const room = () => quote.scrollHeight - quote.clientHeight;
+      const mark = () => {
+        quote.classList.toggle("is-scrolled", quote.scrollTop > 1);
+        quote.classList.toggle("is-end", quote.scrollTop >= room() - 1);
+        if (room() > 1) quote.tabIndex = 0;
+        else quote.removeAttribute("tabindex");
+      };
+      const stop = () => { cancelAnimationFrame(raf); clearTimeout(timer); raf = timer = 0; };
+      const glide = (wait = WAIT) => {
+        if (raf || timer || manual || paused || reduced.matches) return;
+        timer = setTimeout(() => {
+          timer = 0;
+          let pos = quote.scrollTop, last = null;
+          const step = (t) => {
+            if (last !== null) pos += ((t - last) / 1000) * SPEED;
+            last = t;
+            const max = room();
+            quote.scrollTop = Math.min(pos, max);
+            raf = pos < max ? requestAnimationFrame(step) : 0;
+          };
+          raf = requestAnimationFrame(step);
+        }, wait);
+      };
+      const isOpen = () => inView && card.classList.contains(phone.matches ? "is-active" : "is-open");
+      const sync = () => {
+        if (isOpen()) return glide();
+        stop();
+        manual = paused = false;
+        setTimeout(() => { if (!isOpen()) { quote.scrollTop = 0; mark(); } }, RESET);
+      };
+      const takeOver = () => { manual = true; stop(); };
+      const canScroll = (dy) => (dy > 0 ? quote.scrollTop < room() - 1 : quote.scrollTop > 1);
+
+      if (v === "ends" || v === "rest") {
+        // runs before Lenis sees the wheel on the window: the attribute decides whether the quote or the page takes it
+        quote.addEventListener("wheel", (e) => {
+          const toQuote = canScroll(e.deltaY) && (v === "ends" || !pageMoving());
+          quote.toggleAttribute("data-lenis-prevent", toQuote);
+          if (toQuote) takeOver();
+        }, { passive: true });
+        quote.addEventListener("touchstart", () => {
+          if (v === "rest" && pageMoving()) quote.classList.add("qsl-pass");
+          else takeOver();
+        }, { passive: true });
+        const release = () => quote.classList.remove("qsl-pass");
+        quote.addEventListener("touchend", release, { passive: true });
+        quote.addEventListener("touchcancel", release, { passive: true });
+        quote.addEventListener("keydown", takeOver);
+      }
+
+      if (v === "page") {
+        quote.addEventListener("click", () => {
+          if (quote.scrollTop >= room() - 1) {
+            stop();
+            manual = paused = false;
+            quote.scrollTo({ top: 0, behavior: "smooth" });
+            glide();
+          } else if (paused) {
+            paused = false;
+            glide(0);
+          } else {
+            paused = true;
+            stop();
+          }
+        });
+      }
+
+      quote.addEventListener("scroll", mark, { passive: true });
+      new MutationObserver(sync).observe(card, { attributes: true, attributeFilter: ["class"] });
+      syncs.push(sync);
+      mark();
+      sync();
+    });
+    document.fonts.ready.then(() => syncs.forEach((s) => s()));
+  }
+})();
+</script>
+</body>
+</html>

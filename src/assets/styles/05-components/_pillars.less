@@ -22,9 +22,13 @@
     h2 { margin: 0; }
   }
 
-  // The carousel is a phone treatment; the three columns need no arrows
+  // The carousel is a phone treatment; the three columns need no arrows. Not display: none, or a desktop load never
+  // binds their reveal and they stay hidden after the window narrows
   &__arrows {
-    @media (min-width: @bp-lg) { display: none; }
+    @media (min-width: @bp-lg) {
+      position: absolute;
+      visibility: hidden;
+    }
   }
 
   // The .swiper box clips; from lg the reveals travel past the columns' bottom edge, so it must not
