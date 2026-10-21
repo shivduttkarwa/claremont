@@ -73,8 +73,8 @@
     object-fit: cover;
     object-position: 50% 0;
     @media (min-width: @bp-lg) {
-      --parallax-to: -12%; // data-anim-speed 12, reversed: up by its spare height as the block leaves
-      height: 124.34%; // export is 1842 × 1650 against the 1842 × 1327 frame crop
+      --parallax-to: -6.34%; // data-anim-speed 6.34, reversed: up by its spare 80 as the block leaves
+      height: 106.77%; // Design 2's photo (2399:6393): 1262 of real photo against the 1182 frame
       object-position: 50% 50%; // the kids' faces stay where Figma has them when a wider screen crops the photo
       will-change: transform;
     }
@@ -134,14 +134,13 @@
   &__body {
     font-size: ~"clamp(1.125rem, 5.3731vw - 0.1343rem, 1.3125rem)"; // 18 at 375, scaling with the 335 column
     line-height: 1.3333; // 24: Figma draws its 24.3 line at a whole pixel
-    letter-spacing: 0.01em; // looser than Figma's -0.03em, which read cramped once the text scales below 19
+    letter-spacing: var(--letter-spacing-body); // Figma's -3%: -0.54 at the 375 frame's 18, -0.57 at the desktop 19
     p { margin-bottom: 0.4873em; } // 8.77 at 18
     strong { font-weight: var(--font-weight-semibold); }
     @media (min-width: @bp-lg) {
       max-width: 38.5625rem; // 617
       font-size: ~"max(1rem, min(var(--font-size-lg), 1.1875 * var(--hero-u)))";
       line-height: var(--line-height-relaxed);
-      letter-spacing: var(--letter-spacing-body); // Figma's -0.57 at 19: the longest line is then 461 wide, level with the subtitle
       p { margin-bottom: calc(0.5483 * var(--hero-u)); } // 8.77
     }
   }

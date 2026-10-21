@@ -4,15 +4,31 @@ For the next agent working on this repo. Read this before touching anything the 
 
 Deck: https://docs.google.com/presentation/d/1lDgoW9dH1JVZ9A5QA7Amu45w1bv-9gyYYihfEuE7hDU ("Claremont College Site Feedback", 46 slides, view-only). It reviews the staging build at cim-staging.au/websites/claremont.
 
-Last updated: 2026-10-16, after commit `b33ca35`.
+Last updated: 2026-10-20, after the deck's comments were read.
 
 ## How to read the deck
 
-- The deck has no written notes anywhere: not on the slides, not in speaker notes, not in comments. Checked by making an editable copy and selecting everything. The copy, "Copy of Claremont College Site Feedback", sits in the user's Google Drive and can be deleted.
+- The deck carries 30 comments by Chris Clausen (13 to 15 Oct). Google hides comments from view-only access, and neither the PDF export nor an editable copy carries them, so they were missed until Cocogun sent the deck as a PowerPoint on 2026-10-20 (`Claremont College Site Feedback.pptx`, not committed; the comments are in `ppt/comments/`). They are listed below, under "Comments".
 - Slide 3 is praise: the first build is "excellent", the animation "just works". Slide 4 lists every page as checked on desktop through mobile.
 - From slide 5 on, every slide is a page divider or a screenshot of the build with orange arrows. Where the agency wants something different it pastes a crop of the Figma design next to the build. The arrow runs from that design crop to the element in the build. So the method is: compare the arrowed element with the inset, then confirm against the Figma file.
 - The Figma file is the one in `CLAUDE.md`. Fresh node dumps from 2026-10-15 are in `.qa/figma/n-design2-20261015.json` (the "03- Design 2" canvas, 1619:1791), `n-round3-20261015.json` and `fills-20261015.json`. The helpers in `.qa/` read `n*.json` files in name order, so these win over the older caches.
 - Since the deck was made, the designer changed one thing (2026-10-15): the Preparatory 375 frame gained an "Our teaching approach" accordion after the intro (see Open, item 9).
+
+## Comments (Chris Clausen, read 2026-10-20)
+
+Done before they were read: slides 9, 13, 14, 15, 17, 18, 21, 22, 24, 25, 26, 28 (2 white seams from lg), 29, 30, 31, 33, 35, 36, 41, 43, 44; slide 38 (the arrow loads more) and 40 (the phone standfirst is Figma's 35) only need the answer.
+
+| Slide | Comment | Status |
+|---|---|---|
+| 6 | 1640 as the max scale above 1640: copy, nav, buttons, logos stop; colour blocks and images keep scaling | Done 2026-10-20 (see `CLAUDE.md`, Tokens + units). 1640 measured identical on every page. |
+| 7 | Body tracking reads wider than Figma's -3%, desktop and mobile | Done 2026-10-20. A computed-style audit of every text element at 1640 and 375 (Figma's rule: Instrument Sans and Argent CF -3%, Inter -2%, the footer's Inter 13 at 0) found three misses, all fixed: the hero copy below lg was +1%; the policy titles were -1.8% (25px inheriting the 15px body's -0.45); and every 15px phone copy block inherited the 16px body's -0.48 (-3.2%), now declared per block. What remains off-rule is deliberate: the hero's italic line at -4.5% (Figma's render), the ® and the phone hotspot labels at Figma's own -2%. |
+| 8 | Images still to update | Done 2026-10-20: the home hero is Design 2's photo (2399:6393), desktop and phone; it has 80 of spare photo, so the parallax travel is 6.34% |
+| 10 | Remove the blue accent from search results, keep the yellow | Done 2026-10-20: the count is the excerpt's 75% white, the page label white, a hovered result Yellow (Figma draws no results list) |
+| 11 | At 992 x 600 the content is oversized and the logo too small | Done 2026-10-20: the laptop's 14 root now starts at 992 for every pointer (their 992 x 600 is DevTools' touch-emulating responsive mode), so 992 reads as 1200 does: nav, icons, chips and copy at 0.875x, the logo 211 (was 176). |
+| 12 | Phone pillars: arrows and line missing | Done 2026-10-20: the 1 Light Blue rule across the slider's top, 20 under the arrows (2101:14043's top stroke) |
+| 20 | Preparatory column copy in Near Black | Done 2026-10-20: Near Black on the Preparatory and K-6 columns, as every frame draws it |
+
+Also fixed on 2026-10-20 while auditing every page at 18 sizes (320 to 2560, portrait and landscape phones, iPads, laptops; `.qa`-style overlap, spill and off-screen checks on every text box, and a computed-style tracking audit): the contact form's rule showed one pale pixel at its middle on odd widths (its two halves now overlap half a pixel); the news listing's green strip behind the first cards ran under the captions from 576 to 767 where two cards sit side by side (it stops at their photos' foot now). Nothing else overlapped or spilled at any size.
 
 ## Done and pushed
 

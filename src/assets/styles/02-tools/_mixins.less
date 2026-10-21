@@ -112,6 +112,11 @@
   .timeline-rows(@n, (@i + 1));
 }
 
+// The 1640 frame, centred on a wider screen: the header, footer and rows of text columns keep it.
+.design-frame() {
+  @media (min-width: @bp-design) { max-width: 102.5rem; margin-inline: auto; }
+}
+
 .reset-list() {
   list-style: none;
   margin: 0;

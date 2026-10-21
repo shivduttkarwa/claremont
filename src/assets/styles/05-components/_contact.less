@@ -89,7 +89,7 @@
       background-image: linear-gradient(var(--color-primary), var(--color-primary)), linear-gradient(var(--contact-rule), var(--contact-rule)), linear-gradient(var(--contact-rule), var(--contact-rule));
       background-repeat: no-repeat;
       background-position: center bottom, left bottom, right bottom;
-      background-size: 0 var(--contact-line), 50% var(--border-width), 50% var(--border-width);
+      background-size: 0 var(--contact-line), calc(50% + 0.03125rem) var(--border-width), calc(50% + 0.03125rem) var(--border-width); // the halves overlap half a pixel: at an odd width they met on a half pixel, one pale dot mid-rule
       background-origin: border-box;
       background-clip: border-box;
       font-size: var(--font-size-md);

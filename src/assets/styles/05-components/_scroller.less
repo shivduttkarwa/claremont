@@ -42,6 +42,7 @@
     flex: 0 0 auto;
     width: ~"min(var(--scroller-card), 80vw)";
     scroll-snap-align: start;
+    @media (min-width: @bp-design) { flex-grow: 1; } // a wide screen past the six 1640 cards: they share the spare width
     // Dim the title and the copy: not the card (the reveal leaves an inline opacity on it) and not the fold panel
     // (a transition set there replaces the fold's own, and the card then snaps open instead of unfolding)
     > h3,
@@ -174,6 +175,7 @@
       max-width: none;
       font-size: 0.9375rem; // 15
       line-height: 1.5333;  // 23: Figma draws the 22.5 line at a whole pixel
+      letter-spacing: var(--letter-spacing-body); // -0.45: the body hands down -0.48 from its 16
     }
   }
 }

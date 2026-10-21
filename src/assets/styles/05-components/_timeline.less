@@ -263,8 +263,11 @@
 
     // The frame sets its copy at 15/22.5, not the site's 16 phone body, and the items only fit the drawn heights at that size
     &__header p,
-    &__body p,
-    &__time { font-size: var(--timeline-m-copy); }
+    &__body p {
+      font-size: var(--timeline-m-copy);
+      letter-spacing: var(--letter-spacing-body); // -0.45: the body hands down -0.48 from its 16
+    }
+    &__time { font-size: var(--timeline-m-copy); } // Inter, keeps its -2%
 
     &__list { gap: 1.25rem; } // 20
 

@@ -52,6 +52,7 @@
     color: var(--color-heading);
     font-size: var(--font-size-xl);
     line-height: var(--line-height-snug);
+    letter-spacing: var(--letter-spacing-body); // -0.75 at 25 (1805:6265), not the -0.45 the body hands down
     @media (min-width: @bp-lg) { min-height: var(--link-grid-row); }
 
     .icon {
@@ -189,6 +190,7 @@
       p {
         font-size: 0.9375rem; // 15
         line-height: 1.5;     // 22.5
+        letter-spacing: var(--letter-spacing-body); // -0.45: the body hands down -0.48 from its 16
       }
     }
 

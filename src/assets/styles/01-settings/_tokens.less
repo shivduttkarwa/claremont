@@ -131,6 +131,7 @@
   /* Layout */
   --container-max: 80rem;        /* 1280 incl. gutters → 1240 content */
   --container-content: 77.5rem;  /* 1240 */
+  --du: 1rem;                    /* a rem that keeps growing past 1640: for measures tied to a full-bleed photo */
   /* 20 on phones, 32 from md, 40 from lg, 20 inside the 1280 frame at xxl; never less than a notch inset */
   --container-gutter: ~"max(1.25rem, env(safe-area-inset-left), env(safe-area-inset-right))";
   --edge-gutter: var(--container-gutter); /* header + footer side padding (3.75rem at xxl) */
@@ -185,4 +186,7 @@
     --edge-gutter: 3.75rem;
     --header-gutter: 3.75rem;
   }
+}
+@media (min-width: @bp-design) {
+  :root { --du: ~"calc(100vw / 102.5)"; } // 16 at 1640, 18.7 at 1920, 25 at 2560
 }

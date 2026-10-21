@@ -36,7 +36,9 @@ export function initPan(root = document) {
     // --pan-card on the section is read at every width so the Swiper snaps too
     const measure = () => {
       section.style.removeProperty("--pan-card");
-      width = snap(cards[0].getBoundingClientRect().width);
+      // a screen wider than the loop would see its end, so the cards grow just enough to cover it (2240+ on home)
+      const cover = lg.matches && cards.length > 1 ? section.clientWidth / (cards.length - 1) : 0;
+      width = snap(Math.max(cards[0].getBoundingClientRect().width, cover));
       section.style.setProperty("--pan-card", `${width}px`);
     };
     // each card sits in its slot moved left by the drift, wrapped so it comes back in from the right

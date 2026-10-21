@@ -118,7 +118,7 @@ html:has(.search.is-open) {
     font-family: var(--font-ui);
     font-size: var(--font-size-sm);
     letter-spacing: var(--letter-spacing-ui);
-    color: var(--color-secondary);
+    color: ~"color-mix(in srgb, var(--color-white) 75%, transparent)";
     &:empty { display: none; }
   }
 
@@ -134,7 +134,7 @@ html:has(.search.is-open) {
     padding: var(--space-2) 0;
     color: var(--color-white);
     &:hover,
-    &:focus-visible { color: var(--color-secondary); }
+    &:focus-visible { color: var(--color-accent); }
   }
 
   &__heading {
@@ -154,7 +154,7 @@ html:has(.search.is-open) {
   &__page {
     font-family: var(--font-ui);
     letter-spacing: var(--letter-spacing-ui);
-    color: var(--color-secondary);
+    color: var(--color-white);
   }
 
   // Bootstrap fills mark yellow with padding; the match is coloured instead

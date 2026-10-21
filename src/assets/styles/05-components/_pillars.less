@@ -29,6 +29,7 @@
 
   // The .swiper box clips; from lg the reveals travel past the columns' bottom edge, so it must not
   &__grid {
+    .design-frame();
     @media (min-width: @bp-lg) { overflow: visible; }
   }
 
@@ -112,6 +113,7 @@
 
     &__grid {
       --swiper-wrapper-transition-timing-function: var(--ease-out); // the card glides to rest
+      border-top: var(--border-width) solid var(--color-line); // 2101:14043's top stroke, 20 under the arrows
     }
 
     &__item {
@@ -139,6 +141,7 @@
     &__text {
       font-size: 0.9375rem; // 15
       line-height: 1.5;     // 22.5
+      letter-spacing: var(--letter-spacing-body); // -0.45: the body hands down -0.48 from its 16
     }
   }
 }

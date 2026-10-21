@@ -1,8 +1,8 @@
 // 05-components/_split-feature.less — callout + copy beside a tilted archival photo (614 tall)
 
 .split-feature {
-  --split-height: ~"clamp(30rem, 37.44vw, 38.375rem)"; // 614 at 1640
-  --split-top: 11.75rem;                               // 188
+  --split-height: ~"clamp(30rem, 37.44vw, 38.375 * var(--du))"; // 614 at 1640, then the photo's proportion
+  --split-top: calc(11.75 * var(--du));                           // 188
   --split-title-gap: 2.2rem;                           // 35.2
   --split-content-width: 33rem;                        // 528
   --split-paragraph-gap: 0.625rem;                     // 10

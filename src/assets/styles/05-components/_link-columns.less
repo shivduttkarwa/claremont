@@ -32,6 +32,7 @@
   }
 
   &__grid {
+    .design-frame();
     display: grid;
     grid-template-columns: minmax(0, 1fr);
     @media (min-width: @bp-sm) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -145,6 +146,7 @@
   h3 { max-width: none; }
 
   .fold__body {
+    color: var(--color-text); // Near Black under the Dark Green titles (1638:5176, 1709:10342)
     p {
       margin: 0;
       padding-top: 0.625rem; // paragraph spacing 10
@@ -174,6 +176,7 @@
       max-width: var(--columns-body-width);
       font-size: 0.9375rem; // 15
       line-height: 1.5;     // 22.5
+      letter-spacing: var(--letter-spacing-body); // -0.45: the body hands down -0.48 from its 16
     }
   }
 }
@@ -227,6 +230,7 @@
       p {
         font-size: 0.9375rem; // 15
         line-height: 1.5;     // 22.5
+        letter-spacing: var(--letter-spacing-body); // -0.45: the body hands down -0.48 from its 16
       }
     }
 
@@ -262,6 +266,7 @@
       padding-inline: var(--container-gutter);
       font-size: 0.9375rem; // 15
       line-height: 1.5;     // 22.5
+      letter-spacing: var(--letter-spacing-body); // -0.45: the body hands down -0.48 from its 16
     }
   }
 }

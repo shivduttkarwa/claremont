@@ -1,8 +1,8 @@
 // 05-components/_feature-banner.less — full-bleed photo (614 tall at 1640), optionally with a callout
 
 .feature-banner {
-  --banner-height: ~"clamp(30rem, 37.44vw, 38.375rem)";
-  --banner-top: 13.0625rem;            // 209 (homepage)
+  --banner-height: ~"clamp(30rem, 37.44vw, 38.375 * var(--du))"; // 614 at 1640, then the photo's proportion
+  --banner-top: calc(13.0625 * var(--du)); // 209 (homepage)
   --banner-content-width: 33rem;       // 528
   --banner-title-gap: 1.96875rem;      // 31.5 (homepage: 5 + a 15px blank line + 10)
   --banner-actions-gap: 2.28125rem;    // 36.5
@@ -27,9 +27,9 @@
   }
 
   // Inner pages: a 45px title, one blank 32 / 1.1 line, then the copy
-  &--y168 { --banner-top: 10.5rem;    --banner-title-gap: 2.2rem; --banner-content-width: 31.0625rem; } // 168, 497 wide
-  &--y237 { --banner-top: 14.8125rem; --banner-title-gap: 2.2rem; }                                      // 237
-  &--y209 { --banner-top: 13.0625rem; --banner-title-gap: 2.2rem; }                                      // 209: the Extra-curricular music band
+  &--y168 { --banner-top: calc(10.5 * var(--du));    --banner-title-gap: 2.2rem; --banner-content-width: 31.0625rem; } // 168, 497 wide
+  &--y237 { --banner-top: calc(14.8125 * var(--du)); --banner-title-gap: 2.2rem; }                                      // 237
+  &--y209 { --banner-top: calc(13.0625 * var(--du)); --banner-title-gap: 2.2rem; }                                      // 209: the Extra-curricular music band
 
   > .container { width: 100%; }
 
@@ -82,6 +82,7 @@
   &--right &__content {
     margin-left: auto;
     @media (min-width: @bp-xxl) { margin-right: -1.6875rem; } // x 939 (Design 2 home): the 528 box runs 27 past the container
+    @media (min-width: @bp-design) { margin-right: ~"calc(-1 * max(1.6875rem, 7.256vw - 5.75rem))"; } // never left of 57.26%, where it sits on the photo at 1640
   }
 
   h2 {
@@ -184,6 +185,7 @@
     .feature-banner__text {
       font-size: 0.9375rem; // 15
       line-height: 1.5;     // 22.5
+      letter-spacing: var(--letter-spacing-body); // -0.45: the body hands down -0.48 from its 16
     }
   }
 
