@@ -607,10 +607,23 @@ index 7539b65..af58d33 100644
        li + li {
          gap: 0.625rem; // 10
 diff --git a/src/assets/styles/05-components/_pillars.less b/src/assets/styles/05-components/_pillars.less
-index d6298bc..6ec5677 100644
+index d6298bc..bbb776b 100644
 --- a/src/assets/styles/05-components/_pillars.less
 +++ b/src/assets/styles/05-components/_pillars.less
-@@ -29,6 +29,7 @@
+@@ -22,13 +22,18 @@
+     h2 { margin: 0; }
+   }
+ 
+-  // The carousel is a phone treatment; the three columns need no arrows
++  // The carousel is a phone treatment; the three columns need no arrows. Not display: none, or a desktop load never
++  // binds their reveal and they stay hidden after the window narrows
+   &__arrows {
+-    @media (min-width: @bp-lg) { display: none; }
++    @media (min-width: @bp-lg) {
++      position: absolute;
++      visibility: hidden;
++    }
+   }
  
    // The .swiper box clips; from lg the reveals travel past the columns' bottom edge, so it must not
    &__grid {
@@ -618,7 +631,7 @@ index d6298bc..6ec5677 100644
      @media (min-width: @bp-lg) { overflow: visible; }
    }
  
-@@ -112,6 +113,7 @@
+@@ -112,6 +117,7 @@
  
      &__grid {
        --swiper-wrapper-transition-timing-function: var(--ease-out); // the card glides to rest
@@ -626,7 +639,7 @@ index d6298bc..6ec5677 100644
      }
  
      &__item {
-@@ -139,6 +141,7 @@
+@@ -139,6 +145,7 @@
      &__text {
        font-size: 0.9375rem; // 15
        line-height: 1.5;     // 22.5

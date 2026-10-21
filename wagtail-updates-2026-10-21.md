@@ -2,7 +2,7 @@
 
 Date: 2026-10-21
 Source of truth: the static cutup repo, `static/claremont`
-Baseline: commit `2dbafee`, the last commit covered by `wagtail-updates-2026-10-16.md`. Everything below is the difference between that commit and commit `d66f014`.
+Baseline: commit `2dbafee`, the last commit covered by `wagtail-updates-2026-10-16.md`. Everything below is the difference between that commit and commit `836db29`.
 Companion file: `wagtail-updates-2026-10-21.patch` (same folder) is the full `git diff` of `src/` for these updates, 38 files. The two image files in it show only as "Binary files differ": take them from the repo itself (section 2). `build.mjs` did not change.
 
 ## Purpose
@@ -36,7 +36,7 @@ This one is mostly CSS and JS, plus:
 | 3 | **Home hero photo** is the Design 2 photo (the girl and boy in blazers), desktop and phone | Images, template edit 2 |
 | 4 | **Letter-spacing**: the home hero copy is Figma's -3% at every width (it was +1% on phones), the policy titles are -3% (they inherited the body's smaller value), and every 15px copy block on phones now declares -3% at its own size | CSS only |
 | 5 | **Search results**: no Light Blue. The result count is soft white, the page labels white, a hovered result Yellow; matches stay Yellow | CSS only |
-| 6 | **Phone pillars** ("What matters to us"): the Light Blue rule under the arrows, from the 375 frame | CSS only |
+| 6 | **Phone pillars** ("What matters to us"): the Light Blue rule under the arrows, from the 375 frame. The arrows are hidden on desktop with `visibility: hidden` instead of `display: none`, so a page loaded at desktop width and then narrowed below 992 still shows them (they used to stay invisible, which is what the agency's slide 12 screenshot caught) | CSS only |
 | 7 | **Preparatory "Our teaching approach" and K-6 teaching-team columns**: the copy under the titles is Near Black, as every Figma frame draws it | CSS only |
 | 8 | **Contact form validation** is drawn by the page: the browser's own bubble is replaced by a Dark Green tip with the Yellow warning sign under the first empty or malformed field, which also gets the focus. It goes as the field is typed in, on blur, on Escape or after six seconds. Also: the field rule no longer shows a pale pixel at its middle on odd widths | JS (new `form.js`), CSS, template edits 3 and 4, block note (section 3) |
 | 9 | **News listing** between 576 and 767: the green strip behind the first cards stops at their photos' foot instead of running under the captions | CSS only |
@@ -283,7 +283,7 @@ Only needed for Option B. Copy the whole file unless the Wagtail copy has local 
 | `05-components/_link-columns.less` | The grid takes `.design-frame()`; `.fold__body { color: var(--color-text) }`; three 15px blocks declare their tracking | 1, 7, 4 |
 | `05-components/_link-grid.less` | `.link-grid__link` declares `letter-spacing: var(--letter-spacing-body)` (the policy titles); the phone copy declares its tracking | 4 |
 | `05-components/_mosaic.less`, `_page-hero.less`, `_staff-grid.less`, `_timeline.less`, `_scroller.less` (phone text), `_quote-slider.less` (intro) | 15px phone copy declares `letter-spacing: var(--letter-spacing-body)` (in `_timeline.less` the Inter `__time` label is split out and keeps its own); `_scroller.less` also lets the activity cards grow past 1640 (`flex-grow: 1` from `@bp-design`) | 4, 1 |
-| `05-components/_pillars.less` | The grid takes `.design-frame()`; on phones the slider has a `1px` `--color-line` top rule under the arrows; the phone text declares its tracking | 1, 6, 4 |
+| `05-components/_pillars.less` | The grid takes `.design-frame()`; from 992 the arrows are `position: absolute; visibility: hidden` (not `display: none`, which stopped their reveal binding on a desktop load); on phones the slider has a `1px` `--color-line` top rule under the arrows; the phone text declares its tracking | 1, 6, 4 |
 | `05-components/_quote-slider.less` | Two `@property` rules (`--qs-fade-top`, `--qs-fade-bottom`); in the educators layout the quote box has `min-height: 0` and the quote `flex: 1 1 0; overflow-y: auto; scrollbar-width: none` with a `mask-image` fading its top and bottom edges (the fade sizes animate with `is-scrolled` / `is-end`); the quote's line-height is `var(--qs-quote-leading, 0.95)`; on phones the educators' caption is `height: var(--qs-panel-m)` | 10 |
 | `05-components/_search.less` | `__meta` soft white (`color-mix` 75%), `__page` white, `__link` hover and focus Yellow (were Light Blue) | 5 |
 | `05-components/_split-feature.less` | `--split-height` max and `--split-top` in `--du` | 1 |
@@ -307,7 +307,7 @@ Desktop checks at 1640 wide unless stated.
 - [ ] **Home hero:** the new photo (girl and boy in blazers) on desktop and on a phone, scrolling up slightly as the page scrolls on desktop.
 - [ ] **Policies list:** the titles are tighter than before (−3%); nothing wraps differently at 1640.
 - [ ] **Search:** no Light Blue anywhere in the results; a hovered result turns Yellow; the matched words are Yellow.
-- [ ] **Phone pillars** (375): a thin Light Blue line sits 20px under the arrows, above the first card.
+- [ ] **Phone pillars** (375): a thin Light Blue line sits 20px under the arrows, above the first card. Load the home page at desktop width, then narrow the window below 992: both arrows show.
 - [ ] **Preparatory "Our teaching approach" and K-6 teams:** the copy under an open title is Near Black; the titles stay Dark Green.
 - [ ] **Contact form:** press Submit with the fields empty: a Dark Green bubble with a Yellow warning disc appears under First Name, which has the focus; it goes as you type. Type `jane.doe` as the email and submit: the bubble asks for an address like jane.doe@gmail.com. No browser-styled bubble appears. On a phone the bubble sits under the field the same way.
 - [ ] **News listing at 600 wide:** no green behind the captions of the first two cards.
