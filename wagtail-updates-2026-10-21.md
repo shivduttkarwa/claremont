@@ -3,7 +3,7 @@
 Date: 2026-10-21
 Source of truth: the static cutup repo, `static/claremont`
 Baseline: commit `2dbafee`, the last commit covered by `wagtail-updates-2026-10-16.md`. Everything below is the difference between that commit and commit `836db29`.
-Companion file: `wagtail-updates-2026-10-21.patch` (same folder) is the full `git diff` of `src/` for these updates, 38 files. The two image files in it show only as "Binary files differ": take them from the repo itself (section 2). `build.mjs` did not change.
+Companion file: `wagtail-updates-2026-10-21.patch` (same folder) is the full `git diff` of `src/` for these updates, 38 files. The two image files in it show only as "Binary files differ": take them from the repo itself (section 2), and skip them when applying: `git apply --exclude='src/assets/images/*' wagtail-updates-2026-10-21.patch` applies every text hunk cleanly to the baseline. `build.mjs` did not change.
 
 ## Purpose
 
@@ -241,7 +241,7 @@ Names from the Design 2 hover cards; roles and quotes from the client's comments
 
 ### Extra Curricular: the Languages card
 
-Replace the Languages card's placeholder copy with:
+Static file: `src/sections/extra-curricular/activities.html` (the card markup is unchanged; only its copy). Replace the Languages card's placeholder copy with:
 
 > Students in Kindergarten to Year 6 can choose to learn French or Mandarin through our weekly after-school language program. Lessons are designed to develop language skills through engaging, interactive and enjoyable learning experiences, with cultural learning incorporated where it supports and enriches language development.
 
