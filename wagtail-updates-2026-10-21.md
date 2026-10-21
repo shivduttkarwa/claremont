@@ -3,7 +3,7 @@
 Date: 2026-10-21
 Source of truth: the static cutup repo, `static/claremont`
 Baseline: commit `2dbafee`, the last commit covered by `wagtail-updates-2026-10-16.md`. Everything below is the difference between that commit and commit `15dffe8`.
-Companion file: `wagtail-updates-2026-10-21.patch` (same folder) is the full `git diff` of `src/` for these updates, 39 files. The three image files in it show only as "Binary files differ": take them from the repo itself (section 2), and skip them when applying: `git apply --exclude='src/assets/images/*' wagtail-updates-2026-10-21.patch` applies every text hunk cleanly to the baseline. `build.mjs` did not change.
+Companion file: `wagtail-updates-2026-10-21.patch` (same folder) is the full `git diff` of `src/` for these updates, 40 files. The three image files in it show only as "Binary files differ": take them from the repo itself (section 2), and skip them when applying: `git apply --exclude='src/assets/images/*' wagtail-updates-2026-10-21.patch` applies every text hunk cleanly to the baseline. `build.mjs` did not change.
 
 ## Purpose
 
