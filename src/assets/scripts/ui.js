@@ -113,6 +113,7 @@ export function initPlaceholderLinks(root = document) {
 // Hover only, no click: the card under the pointer raises its quote over its overlay, and drops it again
 // when the pointer leaves. Touch opens the active slide instead (data-slider-open-active).
 export function initQuoteCards(root = document) {
+  root.querySelectorAll("[data-quote-cards]").forEach(initQuoteScroll);
   if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
   root.querySelectorAll("[data-quote-cards]").forEach((group) => {
     const cards = [...group.querySelectorAll("[data-quote-card]")];
@@ -123,6 +124,92 @@ export function initQuoteCards(root = document) {
       card.addEventListener("pointerleave", () => card.classList.remove("is-open"));
     });
   });
+}
+
+// A quote that scrolls in its box glides to its end once its card opens; a wheel, swipe or key takes over by hand
+const QUOTE_GLIDE = { speed: 24, wait: 1400, reset: 700 };
+
+function initQuoteScroll(group) {
+  const cards = [...group.querySelectorAll("[data-quote-card]")].filter((card) => {
+    const quote = card.querySelector(".quote-slider__quote");
+    return quote && getComputedStyle(quote).overflowY !== "visible";
+  });
+  if (!cards.length) return;
+  const phone = window.matchMedia("(max-width: 767.98px)");
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const section = group.closest("[data-slider]") || group;
+  const syncs = [];
+  const marks = [];
+  let inView = false;
+  new IntersectionObserver(
+    ([entry]) => {
+      inView = entry.intersectionRatio >= 0.4;
+      syncs.forEach((sync) => sync());
+    },
+    { threshold: [0, 0.4, 1] }
+  ).observe(section);
+
+  cards.forEach((card) => {
+    const quote = card.querySelector(".quote-slider__quote");
+    let raf = 0;
+    let timer = 0;
+    let manual = false;
+    // only a quote longer than its box is a tab stop and keeps the wheel from the page
+    const mark = () => {
+      const room = quote.scrollHeight - quote.clientHeight;
+      quote.classList.toggle("is-scrolled", quote.scrollTop > 1);
+      quote.classList.toggle("is-end", quote.scrollTop >= room - 1);
+      quote.toggleAttribute("data-lenis-prevent", room > 1);
+      if (room > 1) quote.tabIndex = 0;
+      else quote.removeAttribute("tabindex");
+    };
+    const stop = () => {
+      cancelAnimationFrame(raf);
+      clearTimeout(timer);
+      raf = timer = 0;
+    };
+    const glide = () => {
+      if (raf || timer || manual || reduced.matches) return;
+      timer = setTimeout(() => {
+        timer = 0;
+        let pos = quote.scrollTop;
+        let last = null;
+        const step = (now) => {
+          if (last !== null) pos += ((now - last) / 1000) * QUOTE_GLIDE.speed;
+          last = now;
+          const max = quote.scrollHeight - quote.clientHeight;
+          quote.scrollTop = Math.min(pos, max);
+          raf = pos < max ? requestAnimationFrame(step) : 0;
+        };
+        raf = requestAnimationFrame(step);
+      }, QUOTE_GLIDE.wait);
+    };
+    const isOpen = () => inView && card.classList.contains(phone.matches ? "is-active" : "is-open");
+    const sync = () => {
+      if (isOpen()) return glide();
+      stop();
+      manual = false;
+      setTimeout(() => {
+        if (isOpen()) return;
+        quote.scrollTop = 0;
+        mark();
+      }, QUOTE_GLIDE.reset);
+    };
+    ["wheel", "touchstart", "pointerdown", "keydown"].forEach((type) =>
+      quote.addEventListener(type, () => {
+        manual = true;
+        stop();
+      }, { passive: true })
+    );
+    quote.addEventListener("scroll", mark, { passive: true });
+    new MutationObserver(sync).observe(card, { attributes: true, attributeFilter: ["class"] });
+    syncs.push(sync);
+    marks.push(mark);
+    mark();
+  });
+  const markAll = () => marks.forEach((mark) => mark());
+  document.fonts?.ready.then(markAll);
+  window.addEventListener("resize", markAll);
 }
 
 export function initScrollers(root = document) {

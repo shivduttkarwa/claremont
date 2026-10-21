@@ -2,6 +2,9 @@
 // Light Blue box carries a quote and, optionally, its author (sections/quote-slider.html). One block; the layout
 // option only sets each page's Figma card size and spacing.
 
+@property --qs-fade-top { syntax: "<length>"; inherits: true; initial-value: 0; }
+@property --qs-fade-bottom { syntax: "<length>"; inherits: true; initial-value: 0; }
+
 .quote-slider {
   --qs-card: 22.3125rem;          // 357
   --qs-ratio: 357 / 356;
@@ -45,11 +48,23 @@
     --qs-photo-opacity-m: 0.95;      // 2081:10676; the educators' photos are opaque
   }
 
-  // The client's educator quotes run to 340 characters, which Figma's 40 never held; they take its long Argent style, the 375 hero intro's 18 / 24
-  &--educators {
-    --qs-quote-size: 1.125rem;       // 18
-    --qs-quote-size-m: 1.125rem;
-    --qs-quote-leading: 1.3333;      // 24
+  // The educator quotes run to 340 characters: they keep Figma's 40 and scroll in the box (ui.js glides them)
+  &--educators &__text {
+    --qs-fade-top: 0rem;
+    --qs-fade-bottom: 2.5rem;     // 40
+    min-height: 0;
+    transition: --qs-fade-top var(--duration-base) ease, --qs-fade-bottom var(--duration-base) ease;
+    &:has(.is-scrolled) { --qs-fade-top: 1.5rem; } // 24
+    &:has(.is-end) { --qs-fade-bottom: 0rem; }
+  }
+  &--educators &__quote {
+    flex: 1 1 0;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: none;
+    mask-image: ~"linear-gradient(to bottom, transparent, var(--color-white) var(--qs-fade-top), var(--color-white) calc(100% - var(--qs-fade-bottom)), transparent)";
+    &::-webkit-scrollbar { display: none; }
   }
 
   &__header {
@@ -259,6 +274,7 @@
         background: ~"color-mix(in srgb, var(--color-secondary) var(--qs-panel-fill-m, 100%), transparent)";
         opacity: var(--qs-panel-opacity-m, 1);
       }
+      &--educators &__caption { height: var(--qs-panel-m); } // the educators' quote scrolls in the frame's 300 instead
 
       &__quote {
         max-width: var(--qs-quote-measure-m, calc(100% - 0.125em)); // Figma breaks a line 5 short of its box (2088:12808)
