@@ -1,0 +1,254 @@
+<!doctype html>
+<!-- Test page, not part of the site: the welcome hero and educators slider with a bar comparing how the long quotes keep
+     Figma's 40. Delete this file once a version is chosen. -->
+<html lang="en">
+<head>
+  <include src="partials/head.html" locals='{
+    "title": "Quote length test | Claremont College",
+    "description": "Test page: three ways to set the educators’ long quotes."
+  }'></include>
+<meta name="robots" content="noindex">
+<script>document.documentElement.dataset.qlab = new URLSearchParams(location.search).get("v") || "more";</script>
+<style>
+@property --qlab-top { syntax: "<length>"; inherits: false; initial-value: 0px; }
+@property --qlab-bottom { syntax: "<length>"; inherits: false; initial-value: 0px; }
+
+html[data-qlab="more"] .quote-slider--educators,
+html[data-qlab="scroll"] .quote-slider--educators { --qs-quote-size: 2.5rem; --qs-quote-size-m: 2.5rem; --qs-quote-leading: 0.95; }
+
+@media (max-width: 767.98px) {
+  html[data-qlab="more"] .quote-slider--educators .quote-slider__caption,
+  html[data-qlab="scroll"] .quote-slider--educators .quote-slider__caption { height: var(--qs-panel-m); }
+}
+
+/* Read more */
+html[data-qlab="more"] .quote-slider--educators .quote-slider__quote.is-clamped {
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: var(--qlab-lines, 6); overflow: hidden;
+}
+html[data-qlab="more"] .quote-slider--educators .quote-slider__caption { cursor: pointer; }
+.qlab-foot { display: flex; align-items: flex-end; justify-content: space-between; gap: 0.75rem; }
+.qlab-more { position: relative; flex: none; display: inline-flex; align-items: center; gap: 0.375rem; padding: 0; border: 0; background: none;
+  font-family: var(--font-ui); font-size: 0.9375rem; font-weight: 600; line-height: 1.5; letter-spacing: -0.02em; color: var(--color-heading);
+  cursor: pointer; transition: color var(--duration-base, 0.3s) ease; }
+.qlab-more::before { content: ""; position: absolute; inset: -0.75rem -0.5rem; }
+.qlab-more .icon { width: 1rem; height: 1rem; }
+.qlab-more[hidden] { display: none; }
+@media (hover: hover) { .qlab-more:hover { color: var(--color-primary-dark); } }
+
+.qlab-dialog { width: min(77.5rem, 100vw - 5rem); max-width: none; max-height: calc(100dvh - 5rem); padding: 0; border: 0;
+  background: var(--color-secondary); color: var(--color-text); overflow: auto; overscroll-behavior: contain; scrollbar-width: thin; }
+.qlab-dialog::backdrop { background: color-mix(in srgb, var(--color-green-dark) 80%, transparent); }
+.qlab-dialog[open] { animation: qlab-in 0.5s var(--ease-out); }
+.qlab-dialog[open]::backdrop { animation: qlab-fade 0.5s ease; }
+.qlab-dialog.is-closing { opacity: 0; translate: 0 0.9375rem; transition: opacity 0.25s ease, translate 0.25s ease; }
+.qlab-dialog.is-closing::backdrop { opacity: 0; transition: opacity 0.25s ease; }
+@keyframes qlab-in { from { opacity: 0; translate: 0 0.9375rem; } }
+@keyframes qlab-fade { from { opacity: 0; } }
+.qlab-dialog__inner { display: grid; grid-template-columns: minmax(0, 26.25rem) minmax(0, 1fr); }
+.qlab-dialog__photo { margin: 0; }
+.qlab-dialog__photo img { display: block; width: 100%; height: 100%; aspect-ratio: 1; object-fit: cover; }
+.qlab-dialog__copy { display: flex; flex-direction: column; justify-content: space-between; gap: 2.5rem; padding: 2.5rem 5rem 2.5rem 2.5rem; }
+.qlab-dialog__quote { margin: 0; max-width: 40rem; font-family: var(--font-display); font-size: 2.5rem; line-height: 0.95; letter-spacing: -0.03em; color: var(--color-heading); }
+.qlab-dialog__author { margin: 0; font-family: var(--font-ui); font-size: 0.9375rem; font-weight: 600; line-height: 1.5; letter-spacing: -0.02em; color: var(--color-text); }
+.qlab-dialog__author span { font-family: var(--font-body); font-weight: 400; letter-spacing: -0.03em; }
+.qlab-dialog__close { position: absolute; top: 0.75rem; right: 0.75rem; display: grid; place-items: center; width: 2.75rem; height: 2.75rem;
+  padding: 0; border: 0; background: none; color: var(--color-heading); cursor: pointer; transition: color var(--duration-base, 0.3s) ease; }
+.qlab-dialog__close .icon { width: 1.25rem; height: 1.25rem; }
+@media (hover: hover) { .qlab-dialog__close:hover { color: var(--color-primary-dark); } }
+@media (max-width: 767.98px) {
+  .qlab-dialog { width: 100vw; height: 100dvh; max-height: none; margin: 0; }
+  .qlab-dialog__inner { grid-template-columns: 1fr; }
+  .qlab-dialog__photo img { height: auto; }
+  .qlab-dialog__copy { gap: 1.875rem; padding: 1.875rem 1.5625rem 2.5rem; }
+  .qlab-dialog__close { background: var(--color-secondary); }
+}
+
+/* Scroll in the box */
+html[data-qlab="scroll"] .quote-slider--educators .quote-slider__text { min-height: 0; }
+html[data-qlab="scroll"] .quote-slider--educators .quote-slider__quote {
+  flex: 1 1 0; min-height: 0; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: none;
+  --qlab-top: 0rem; --qlab-bottom: 2.5rem;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 var(--qlab-top), #000 calc(100% - var(--qlab-bottom)), transparent);
+  mask-image: linear-gradient(to bottom, transparent, #000 var(--qlab-top), #000 calc(100% - var(--qlab-bottom)), transparent);
+  transition: --qlab-top 0.3s ease, --qlab-bottom 0.3s ease;
+}
+html[data-qlab="scroll"] .quote-slider--educators .quote-slider__quote::-webkit-scrollbar { display: none; }
+html[data-qlab="scroll"] .quote-slider--educators .quote-slider__quote.is-scrolled { --qlab-top: 1.5rem; }
+html[data-qlab="scroll"] .quote-slider--educators .quote-slider__quote.is-end { --qlab-bottom: 0rem; }
+
+.qlab { position: fixed; left: 50%; bottom: 14px; z-index: 2147483000; transform: translateX(-50%); width: max-content; max-width: calc(100vw - 20px);
+  padding: 10px 14px; border: 1px solid #0d4749; border-radius: 12px; background: rgba(255, 255, 255, 0.96); box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+  font: 500 13px/1.3 Inter, system-ui, sans-serif; letter-spacing: 0; color: #0d4749; }
+.qlab[hidden], .qlab-show[hidden] { display: none; }
+.qlab__row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.qlab button, .qlab-show { padding: 6px 11px; border: 1px solid #0d4749; border-radius: 999px; background: #fff; color: #0d4749; font: inherit; cursor: pointer; }
+.qlab button[aria-pressed="true"] { background: #0d4749; color: #fff; }
+.qlab button.qlab__plain { border-color: transparent; text-decoration: underline; }
+.qlab__note { max-width: 640px; margin: 8px 0 0; font-weight: 400; color: #2b2b2b; }
+.qlab-show { position: fixed; right: 10px; bottom: 10px; z-index: 2147483000; font: 500 13px/1.3 Inter, system-ui, sans-serif; }
+</style>
+</head>
+<body>
+  <include src="partials/icons.html"></include>
+  <a class="visually-hidden-focusable" href="#main">Skip to content</a>
+
+  <main id="main" data-search-skip>
+    <!-- Hero -->
+    <include src="sections/page-hero.html" locals='{
+      "modifier": "page-hero--low-title",
+      "title": "Passionate about education<br>since 1882",
+      "aside": "",
+      "image": "assets/images/welcome/hero.webp",
+      "image_m": "assets/images/welcome/hero-m.webp",
+      "width": "1840",
+      "height": "1090"
+    }'></include>
+
+    <!-- Educators carousel -->
+    <include src="sections/welcome/educators.html"></include>
+
+  </main>
+
+  <script src="assets/js/main.js" defer></script>
+
+<div class="qlab" data-lenis-prevent>
+  <div class="qlab__row">
+    <button data-v="more">Read more (40)</button><button data-v="scroll">Scroll in box (40)</button><button data-v="current">Current (18)</button>
+    <button class="qlab__plain" data-jump>Go to educators</button><button class="qlab__plain" data-hide>Hide bar</button>
+  </div>
+  <p class="qlab__note" data-note></p>
+</div>
+<button class="qlab-show" data-show hidden>Quote test</button>
+<dialog class="qlab-dialog" data-lenis-prevent aria-label="Full quote">
+  <button class="qlab-dialog__close" type="button" aria-label="Close"><svg class="icon" aria-hidden="true"><use href="#icon-close"></use></svg></button>
+  <div class="qlab-dialog__inner">
+    <figure class="qlab-dialog__photo"><img alt=""></figure>
+    <div class="qlab-dialog__copy"><blockquote class="qlab-dialog__quote"></blockquote><p class="qlab-dialog__author"></p></div>
+  </div>
+</dialog>
+<script>
+(() => {
+  const v = document.documentElement.dataset.qlab;
+  const NOTES = {
+    more: "Figma's 40 everywhere: the box shows as much of the quote as fits, ending in an ellipsis, and Read more (or a click on the box) opens the whole quote at 40 beside the photo. No moving text; phones get the same dialog full screen.",
+    scroll: "Figma's 40 in the same box: once a card opens, the quote waits a moment, then glides slowly up to show the rest and stops at the end; a wheel or a swipe on the quote scrolls it by hand. On phones the panel keeps the frame's 300 and scrolls the same way.",
+    current: "As the site has it now: every quote at 18 / 24, the 375 hero intro's Argent, so even the 340-character one fits the box.",
+  };
+  const bar = document.querySelector(".qlab"), show = document.querySelector("[data-show]");
+  bar.querySelectorAll("[data-v]").forEach((b) => {
+    b.setAttribute("aria-pressed", String(b.dataset.v === v));
+    b.addEventListener("click", () => { location.search = "?v=" + b.dataset.v + "&jump=1"; });
+  });
+  bar.querySelector("[data-note]").textContent = NOTES[v] || "";
+  const section = document.querySelector(".quote-slider--educators");
+  const jump = () => section.scrollIntoView({ block: "center" });
+  bar.querySelector("[data-jump]").addEventListener("click", jump);
+  bar.querySelector("[data-hide]").addEventListener("click", () => { bar.hidden = true; show.hidden = false; });
+  show.addEventListener("click", () => { bar.hidden = false; show.hidden = true; });
+  if (new URLSearchParams(location.search).get("jump")) addEventListener("load", () => setTimeout(jump, 500));
+
+  const cards = [...section.querySelectorAll(".quote-slider__card")];
+  const phone = matchMedia("(max-width: 767.98px)");
+  let inView = false;
+  const watchers = [];
+  new IntersectionObserver(([e]) => { inView = e.intersectionRatio >= 0.4; watchers.forEach((w) => w()); }, { threshold: [0, 0.4, 1] }).observe(section);
+
+  if (v === "more") {
+    const dialog = document.querySelector(".qlab-dialog");
+    const img = dialog.querySelector("img"), dq = dialog.querySelector(".qlab-dialog__quote"), da = dialog.querySelector(".qlab-dialog__author");
+    const close = () => {
+      dialog.classList.add("is-closing");
+      setTimeout(() => { dialog.classList.remove("is-closing"); dialog.close(); }, 250);
+    };
+    dialog.addEventListener("close", () => window.Anim && window.Anim.start());
+    dialog.querySelector(".qlab-dialog__close").addEventListener("click", close);
+    dialog.addEventListener("click", (e) => { if (e.target === dialog) close(); });
+    dialog.addEventListener("cancel", (e) => { e.preventDefault(); close(); });
+    const open = (card) => {
+      const photo = card.querySelector(".quote-slider__photo img");
+      img.src = photo.currentSrc || photo.src;
+      img.alt = photo.alt;
+      dq.textContent = card.querySelector(".quote-slider__quote").textContent;
+      da.innerHTML = card.querySelector(".quote-slider__author").innerHTML;
+      window.Anim && window.Anim.stop();
+      dialog.showModal();
+    };
+    const parts = cards.map((card) => {
+      const quote = card.querySelector(".quote-slider__quote");
+      const author = card.querySelector(".quote-slider__author");
+      const foot = document.createElement("div");
+      foot.className = "qlab-foot";
+      author.replaceWith(foot);
+      foot.append(author);
+      const more = document.createElement("button");
+      more.type = "button";
+      more.className = "qlab-more";
+      more.innerHTML = 'Read more<svg class="icon" aria-hidden="true"><use href="#icon-arrow-right"></use></svg>';
+      more.setAttribute("aria-label", "Read " + author.firstChild.textContent.trim() + "’s full quote");
+      foot.append(more);
+      more.addEventListener("click", (e) => { e.stopPropagation(); open(card); });
+      card.querySelector(".quote-slider__caption").addEventListener("click", () => { if (!more.hidden) open(card); });
+      return { card, quote, foot, more, cap: card.querySelector(".quote-slider__caption"), text: card.querySelector(".quote-slider__text") };
+    });
+    const fit = () => parts.forEach(({ quote, foot, more, cap, text }) => {
+      quote.classList.remove("is-clamped");
+      const cs = getComputedStyle(cap);
+      const box = phone.matches ? cap.getBoundingClientRect().height : cap.clientHeight;
+      const room = box - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom) - foot.offsetHeight - parseFloat(getComputedStyle(text).rowGap || 0);
+      const lh = parseFloat(getComputedStyle(quote).lineHeight);
+      const lines = Math.max(1, Math.floor(room / lh));
+      const over = quote.getBoundingClientRect().height > lines * lh + 1;
+      quote.style.setProperty("--qlab-lines", lines);
+      quote.classList.toggle("is-clamped", over);
+      more.hidden = !over;
+    });
+    document.fonts.ready.then(fit);
+    addEventListener("load", fit);
+    addEventListener("resize", fit);
+  }
+
+  if (v === "scroll") {
+    const SPEED = 24, WAIT = 1400;
+    cards.forEach((card) => {
+      const quote = card.querySelector(".quote-slider__quote");
+      quote.setAttribute("data-lenis-prevent", "");
+      quote.tabIndex = 0;
+      let raf = 0, timer = 0, manual = false;
+      const mark = () => {
+        quote.classList.toggle("is-scrolled", quote.scrollTop > 1);
+        quote.classList.toggle("is-end", quote.scrollTop + quote.clientHeight >= quote.scrollHeight - 1);
+      };
+      const stop = () => { cancelAnimationFrame(raf); clearTimeout(timer); raf = timer = 0; };
+      const run = () => {
+        if (raf || timer || manual) return;
+        timer = setTimeout(() => {
+          timer = 0;
+          let pos = quote.scrollTop, last = null;
+          const step = (t) => {
+            if (last !== null) pos += ((t - last) / 1000) * SPEED;
+            last = t;
+            const max = quote.scrollHeight - quote.clientHeight;
+            quote.scrollTop = Math.min(pos, max);
+            raf = pos < max ? requestAnimationFrame(step) : 0;
+          };
+          raf = requestAnimationFrame(step);
+        }, WAIT);
+      };
+      const isOpen = () => inView && (phone.matches ? card.classList.contains("is-active") : card.classList.contains("is-open"));
+      const sync = () => {
+        if (isOpen()) return run();
+        stop();
+        manual = false;
+        setTimeout(() => { if (!isOpen()) { quote.scrollTop = 0; mark(); } }, 700);
+      };
+      ["wheel", "touchstart", "pointerdown", "keydown"].forEach((ev) => quote.addEventListener(ev, () => { manual = true; stop(); }, { passive: true }));
+      quote.addEventListener("scroll", mark, { passive: true });
+      new MutationObserver(sync).observe(card, { attributes: true, attributeFilter: ["class"] });
+      watchers.push(sync);
+      document.fonts.ready.then(mark);
+    });
+  }
+})();
+</script>
+</body>
+</html>
