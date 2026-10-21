@@ -1,0 +1,41 @@
+<!doctype html>
+<!-- A news article from the live site (claremont.nsw.edu.au/national-reconciliation-week/, pulled 2026-10-21); news-article.html is the Figma template. -->
+<html lang="en">
+<head>
+  <include src="partials/head.html" locals='{
+    "title": "National Reconciliation Week | Claremont College",
+    "description": "As part of National Reconciliation Week (27 May to 3 June) we have the opportunity to learn about our shared histories, cultures, and achievements, and to…"
+  }'></include>
+</head>
+<body>
+  <include src="partials/icons.html"></include>
+  <a class="visually-hidden-focusable" href="#main">Skip to content</a>
+
+  <include src="partials/header.html"></include>
+
+  <main id="main">
+    <!-- Hero (solid green, no photo) -->
+    <include src="sections/page-hero-plain.html" locals='{
+      "title": "National Reconciliation Week"
+    }'></include>
+
+    <!-- Article -->
+    <include src="sections/news/article-body.html" locals='{
+      "standfirst": "",
+      "image": "assets/images/news/articles/national-reconciliation-week.webp",
+      "alt": "",
+      "width": "500",
+      "height": "333",
+      "body": "<p>As part of National Reconciliation Week (27 May to 3 June) we have the opportunity to learn about our shared histories, cultures, and achievements, and to explore how each of us can contribute to achieving reconciliation in Australia. As Principal, I cannot think of anything more important for all people in a community to work towards understanding one another, seeking to have empathy, mutual respect, recognition of past hurt and wrongdoing, and reconciliation as we move forward. These principles apply not only to our Indigenous history, but to us all as we ‘do life’ with one another. Time and time again, I experience the power of this first-hand in the midst of resolving conflict and working towards healing, justice, and the common good of all people.</p>\n          <p>This week at school many of the children have had the opportunity to learn more about Reconciliation Week with lessons on Indigenous culture. It was unfortunate that the Year 4 excursion to the Koojay Corroboree due to the weather, however they still enjoyed their Indigenous themed lessons across today.</p>\n          <p>Today, National Sorry Day, much media discussion has focused on the 6 year anniversary of the Uluru Statement of the Heart. If you find yourself like me, seeking to better understand the issues at hand, and to be informed in your decision making around the First Nations Voice I commend this website to you.&nbsp;<a href=\"https://ulurustatement.org/\" target=\"_blank\" rel=\"noreferrer noopener\"><strong>Uluru Statement</strong></a></p>\n          <p>As I mentioned at our Parent Information Evening back in February, a priority for this year is for Claremont College to be a school marked by anti-racism, tolerance, celebration of difference, inclusion, respect and understanding differences. For me this is what authentic Christian Education and community is all about.</p>\n          <p>“Continually pursue peace with everyone&#8221; <em>Hebrews 12:14</em></p>",
+      "prev_url": "news-be-a-voice-for-generations.html",
+      "prev_title": "Be A Voice For Generations",
+      "next_url": "news-learning-enrichment-claremont-college.html",
+      "next_title": "Learning Enrichment @ Claremont College"
+    }'></include>
+  </main>
+
+  <include src="partials/footer.html"></include>
+
+  <script src="assets/js/main.js" defer></script>
+</body>
+</html>

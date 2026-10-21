@@ -1,0 +1,56 @@
+<!doctype html>
+<!-- The news listing's third page: news.html's arrow loads its cards in place (news.js); kept out of the site search. -->
+<html lang="en">
+<head>
+  <include src="partials/head.html" locals='{
+    "title": "More news | Claremont College",
+    "description": "News and events from the Claremont College community, big and small."
+  }'></include>
+</head>
+<body>
+  <include src="partials/icons.html"></include>
+  <a class="visually-hidden-focusable" href="#main">Skip to content</a>
+
+  <include src="partials/header.html"></include>
+
+  <main id="main" data-search-skip>
+    <!-- Hero -->
+    <include src="sections/page-hero.html" locals='{
+      "modifier": "",
+      "title": "News and community",
+      "aside": "",
+      "image": "assets/images/news/hero.webp",
+      "image_m": "assets/images/news/hero-m.webp",
+      "width": "1840",
+      "height": "1090"
+    }'></include>
+
+    <!-- Green intro band -->
+    <include src="sections/intro-split.html" locals='{
+      "theme": "intro-split--dark intro-split--md intro-split--wide-lead intro-split--body-offset",
+      "actions": "",
+      "lead": "At Claremont, community isn’t a <br>value on a wall, <em>it’s a calendar.</em>",
+      "body": "<p>It’s the concert someone’s dad rigged the lighting for, the cake stall that sold out before lunch, and the Saturday working bee nobody was obliged to turn up to. This is where we post all the events - big and small - that make Claremont feel like Claremont.</p>"
+    }'></include>
+
+    <!-- Article listing -->
+    <include src="sections/news/article-grid.html" locals='{
+      "next": "news-4.html",
+      "articles": [
+      { "title": "Be A Voice For Generations", "date": "6 January 2025", "url": "news-be-a-voice-for-generations.html", "image": "assets/images/news/articles/be-a-voice-for-generations.webp", "width": "500", "height": "309" },
+      { "title": "National Reconciliation Week", "date": "6 January 2025", "url": "news-national-reconciliation-week.html", "image": "assets/images/news/articles/national-reconciliation-week.webp", "width": "500", "height": "333" },
+      { "title": "Learning Enrichment @ Claremont College", "date": "6 January 2025", "url": "news-learning-enrichment-claremont-college.html", "image": "assets/images/news/articles/learning-enrichment-claremont-college.webp", "width": "500", "height": "333" },
+      { "title": "Parent Mathematics Seminar", "date": "6 January 2025", "url": "news-parent-mathematics-seminar.html", "image": "assets/images/news/articles/parent-mathematics-seminar.webp", "width": "500", "height": "256" },
+      { "title": "Assessment at Claremont – Part 2", "date": "6 January 2025", "url": "news-assessment-at-claremont-part-2.html", "image": "assets/images/news/articles/assessment-at-claremont-part-2.webp", "width": "500", "height": "333" },
+      { "title": "Christian Education @ Claremont", "date": "6 January 2025", "url": "news-christian-education-claremont.html", "image": "assets/images/news/articles/christian-education-claremont.webp", "width": "500", "height": "279" },
+      { "title": "A Framework for STEM Learning", "date": "6 January 2025", "url": "news-a-framework-for-stem-learning.html", "image": "assets/images/news/articles/a-framework-for-stem-learning.webp", "width": "500", "height": "333" },
+      { "title": "Child Safety Lessons at Claremont – What we are teaching our students", "date": "6 January 2025", "url": "news-child-safety-lessons-at-claremont-what-we-are-teaching-our-students.html", "image": "assets/images/news/articles/child-safety-lessons-at-claremont-what-we-are-teaching-our-students.webp", "width": "500", "height": "333" }
+      ]
+    }'></include>
+  </main>
+
+  <include src="partials/footer.html"></include>
+
+  <script src="assets/js/main.js" defer></script>
+</body>
+</html>

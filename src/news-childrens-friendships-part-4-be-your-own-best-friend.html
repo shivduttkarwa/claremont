@@ -1,0 +1,41 @@
+<!doctype html>
+<!-- A news article from the live site (claremont.nsw.edu.au/childrens-friendships-part-4-be-your-own-best-friend/, pulled 2026-10-21); news-article.html is the Figma template. -->
+<html lang="en">
+<head>
+  <include src="partials/head.html" locals='{
+    "title": "Children’s Friendships (Part 4) – Be Your Own Best Friend | Claremont College",
+    "description": "To grow and develop, we need to challenge ourselves to take risks, to try new things and do things differently. Learning new things means that we will…"
+  }'></include>
+</head>
+<body>
+  <include src="partials/icons.html"></include>
+  <a class="visually-hidden-focusable" href="#main">Skip to content</a>
+
+  <include src="partials/header.html"></include>
+
+  <main id="main">
+    <!-- Hero (solid green, no photo) -->
+    <include src="sections/page-hero-plain.html" locals='{
+      "title": "Children’s Friendships (Part 4) – Be Your Own Best Friend"
+    }'></include>
+
+    <!-- Article -->
+    <include src="sections/news/article-body.html" locals='{
+      "standfirst": "",
+      "image": "assets/images/news/articles/childrens-friendships-part-4-be-your-own-best-friend.webp",
+      "alt": "",
+      "width": "500",
+      "height": "333",
+      "body": "<p>To grow and develop, we need to challenge ourselves to take risks, to try new things and do things differently. Learning new things means that we will ultimately make mistakes and experience failed attempts. Feelings of frustration, disappointment and even hopelessness are common as well. Approaching this experience with a growth mindset, means that we understand mistakes and failures as data that we can use to improve and inform our next attempt.</p>\n          <p>But often that inner voice, often referred to as the inner critic, will complicate matters and spring into action after we make a mistake or get something wrong, using harsh words and phrases like <em>I’m stupid</em>, <em>I’m hopeless</em>, <em>I will never be able to do this</em>. At times, some of us will even deliberately reach for these words and phrases to try and motivate ourselves to do better and achieve more.</p>\n          <p>And sometimes, in the short term, we feel like it works. But in the longer term we know that it is a pathway to experience greater feelings of anxiety and depression. A great question for children after experiencing a failure or in the face of a worry, is <em>what would you say to a friend in the same situation? </em>The caring and compassionate response I hear in reply from students is a far cry from their inner critic’s normal response. We know that the inner critic is just trying to help and protect us, but choosing to use compassionate words with ourselves can also lead to perseverance, persistence, achievement and feelings of self-worth and contentment. Parents can role model this in dealing with their own mistakes and frustrations as well as giving children prompts to be their own ‘best friend’ in the face of challenges.</p>\n          <p><strong>Ms Catherine McKersie, School Counsellor</strong></p>",
+      "prev_url": "news-childrens-friendships-part-5-catch-acts-of-kindness.html",
+      "prev_title": "Children’s Friendships (Part 5) – Catch Acts of Kindness",
+      "next_url": "news-childrens-friendships-part-3.html",
+      "next_title": "Children’s Friendships (Part 3)"
+    }'></include>
+  </main>
+
+  <include src="partials/footer.html"></include>
+
+  <script src="assets/js/main.js" defer></script>
+</body>
+</html>

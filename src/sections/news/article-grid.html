@@ -2,69 +2,24 @@
      articles: query of NewsArticlePage — photo:ImageChooserBlock, title, date
      next:     the next listing page's URL (Wagtail: ?page=N), or "" on the last page. The arrow loads that page's cards in
                place (news.js) and points at the page after, or goes once there is none; without the script it opens the page
-     locals: next
-     Figma uses one placeholder photo, headline and date for every card. Phones (news M 2149:8421) stack the cards full-bleed
-     with a 375 x 216 landscape crop of their own (card-m.webp), the caption padded 30 / 20 and the pager right under the last card;
-     each caption reveals on its own there as it comes into view, under the photo that came in before it. -->
+     locals: articles [{ title, date, url, image, width, height }], next
+     The cutup's cards are the live site's 26 articles (claremont.nsw.edu.au/news, 2026-10-21), eight to a listing page, each
+     photo the site's own 500-wide feature image, each card opening that article's page (news-<slug>.html). Figma uses one placeholder photo, headline and date for every card. Phones
+     (news M 2149:8421) stack the cards full-bleed with a 375 x 216 landscape crop of the photo, the caption padded 30 / 20 and
+     the pager right under the last card; each caption reveals on its own there as it comes into view, under the photo that
+     came in before it. -->
 <section class="article-grid" aria-label="Latest news">
   <div class="container">
     <ul class="article-grid__grid" data-anim-group="fade-up">
-      <li><a class="article-grid__card" href="news-article.html">
-        <div class="article-grid__media"><picture><source media="(min-width: 768px)" srcset="assets/images/news/card.webp" width="605" height="603"><img src="assets/images/news/card-m.webp" alt="" width="750" height="432" loading="lazy" decoding="async"></picture></div>
+      <each loop="article in articles">
+      <li><a class="article-grid__card" href="{{ article.url }}">
+        <div class="article-grid__media"><picture><source media="(min-width: 768px)" srcset="{{ article.image }}" width="{{ article.width }}" height="{{ article.height }}"><img src="{{ article.image }}" alt="" width="{{ article.width }}" height="{{ article.height }}" loading="lazy" decoding="async"></picture></div>
         <div class="article-grid__copy" data-anim="reveal" data-anim-type="fade-up" data-anim-media="(max-width: 767.98px)">
-          <h3>Article headline written here</h3>
-          <div class="article-grid__meta"><span>Date published written here</span><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></div>
+          <h3>{{ article.title }}</h3>
+          <div class="article-grid__meta"><span>{{ article.date }}</span><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></div>
         </div>
       </a></li>
-      <li><a class="article-grid__card" href="news-article.html">
-        <div class="article-grid__media"><picture><source media="(min-width: 768px)" srcset="assets/images/news/card.webp" width="605" height="603"><img src="assets/images/news/card-m.webp" alt="" width="750" height="432" loading="lazy" decoding="async"></picture></div>
-        <div class="article-grid__copy" data-anim="reveal" data-anim-type="fade-up" data-anim-media="(max-width: 767.98px)">
-          <h3>Article headline written here</h3>
-          <div class="article-grid__meta"><span>Date published written here</span><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></div>
-        </div>
-      </a></li>
-      <li><a class="article-grid__card" href="news-article.html">
-        <div class="article-grid__media"><picture><source media="(min-width: 768px)" srcset="assets/images/news/card.webp" width="605" height="603"><img src="assets/images/news/card-m.webp" alt="" width="750" height="432" loading="lazy" decoding="async"></picture></div>
-        <div class="article-grid__copy" data-anim="reveal" data-anim-type="fade-up" data-anim-media="(max-width: 767.98px)">
-          <h3>Article headline written here</h3>
-          <div class="article-grid__meta"><span>Date published written here</span><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></div>
-        </div>
-      </a></li>
-      <li><a class="article-grid__card" href="news-article.html">
-        <div class="article-grid__media"><picture><source media="(min-width: 768px)" srcset="assets/images/news/card.webp" width="605" height="603"><img src="assets/images/news/card-m.webp" alt="" width="750" height="432" loading="lazy" decoding="async"></picture></div>
-        <div class="article-grid__copy" data-anim="reveal" data-anim-type="fade-up" data-anim-media="(max-width: 767.98px)">
-          <h3>Article headline written here</h3>
-          <div class="article-grid__meta"><span>Date published written here</span><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></div>
-        </div>
-      </a></li>
-      <li><a class="article-grid__card" href="news-article.html">
-        <div class="article-grid__media"><picture><source media="(min-width: 768px)" srcset="assets/images/news/card.webp" width="605" height="603"><img src="assets/images/news/card-m.webp" alt="" width="750" height="432" loading="lazy" decoding="async"></picture></div>
-        <div class="article-grid__copy" data-anim="reveal" data-anim-type="fade-up" data-anim-media="(max-width: 767.98px)">
-          <h3>Article headline written here</h3>
-          <div class="article-grid__meta"><span>Date published written here</span><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></div>
-        </div>
-      </a></li>
-      <li><a class="article-grid__card" href="news-article.html">
-        <div class="article-grid__media"><picture><source media="(min-width: 768px)" srcset="assets/images/news/card.webp" width="605" height="603"><img src="assets/images/news/card-m.webp" alt="" width="750" height="432" loading="lazy" decoding="async"></picture></div>
-        <div class="article-grid__copy" data-anim="reveal" data-anim-type="fade-up" data-anim-media="(max-width: 767.98px)">
-          <h3>Article headline written here</h3>
-          <div class="article-grid__meta"><span>Date published written here</span><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></div>
-        </div>
-      </a></li>
-      <li><a class="article-grid__card" href="news-article.html">
-        <div class="article-grid__media"><picture><source media="(min-width: 768px)" srcset="assets/images/news/card.webp" width="605" height="603"><img src="assets/images/news/card-m.webp" alt="" width="750" height="432" loading="lazy" decoding="async"></picture></div>
-        <div class="article-grid__copy" data-anim="reveal" data-anim-type="fade-up" data-anim-media="(max-width: 767.98px)">
-          <h3>Article headline written here</h3>
-          <div class="article-grid__meta"><span>Date published written here</span><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></div>
-        </div>
-      </a></li>
-      <li><a class="article-grid__card" href="news-article.html">
-        <div class="article-grid__media"><picture><source media="(min-width: 768px)" srcset="assets/images/news/card.webp" width="605" height="603"><img src="assets/images/news/card-m.webp" alt="" width="750" height="432" loading="lazy" decoding="async"></picture></div>
-        <div class="article-grid__copy" data-anim="reveal" data-anim-type="fade-up" data-anim-media="(max-width: 767.98px)">
-          <h3>Article headline written here</h3>
-          <div class="article-grid__meta"><span>Date published written here</span><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></div>
-        </div>
-      </a></li>
+      </each>
     </ul>
 
     <if condition="next">

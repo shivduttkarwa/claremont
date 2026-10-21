@@ -1,0 +1,41 @@
+<!doctype html>
+<!-- A news article from the live site (claremont.nsw.edu.au/be-a-voice-for-generations/, pulled 2026-10-21); news-article.html is the Figma template. -->
+<html lang="en">
+<head>
+  <include src="partials/head.html" locals='{
+    "title": "Be A Voice For Generations | Claremont College",
+    "description": "National Reconciliation Week represents an important week in our school calendar. It is important to use this week as a time of reflection, understanding…"
+  }'></include>
+</head>
+<body>
+  <include src="partials/icons.html"></include>
+  <a class="visually-hidden-focusable" href="#main">Skip to content</a>
+
+  <include src="partials/header.html"></include>
+
+  <main id="main">
+    <!-- Hero (solid green, no photo) -->
+    <include src="sections/page-hero-plain.html" locals='{
+      "title": "Be A Voice For Generations"
+    }'></include>
+
+    <!-- Article -->
+    <include src="sections/news/article-body.html" locals='{
+      "standfirst": "",
+      "image": "assets/images/news/articles/be-a-voice-for-generations.webp",
+      "alt": "",
+      "width": "500",
+      "height": "309",
+      "body": "<p>National Reconciliation Week represents an important week in our school calendar. It is important to use this week as a time of reflection, understanding and unity. At Claremont College, we strive to provide our students the opportunity to explore what reconciliation means, highlighting the importance of acknowledging the events of the past and fostering mutual respect for all Australians.</p>\n          <p>This week is celebrated annually from 27 May to 3 June. Students have been given the opportunity to take part in activities that promote a deeper understanding of our nation’s history and culture, and what it means to be inclusive for all Australians moving forward. The theme for the week this year is <em>Be a Voice for Generations</em><em>, </em>focusing on encouraging all Australians to be a voice for reconciliation in our everyday lives.</p>\n          <p>In our primary school setting, it is crucial to cultivate a sense of belonging and respect for all cultures, especially the rich and diverse heritage of our First Nations people. By engaging students in activities that promote reconciliation, we can instil a sense of empathy, understanding, and unity among our young learners.</p>\n          <p>Our teachers incorporate age-appropriate activities into their lesson plans that explore the rich cultural heritage of Indigenous Australians. These activities may include storytelling, art, music, dance, and discussions about the Stolen Generations, reconciliation milestones, and the significance of National Sorry Day.</p>\n          <p>We encourage our school community to participate in local events and activities that celebrate National Reconciliation Week. By attending community events, students have the opportunity to connect with their wider community and witness the collective efforts towards reconciliation.</p>\n          <p>National Reconciliation Week allows us to empower our students with the knowledge and understanding needed to actively contribute to a more inclusive and harmonious society. By educating our young learners about the importance of reconciliation, we can inspire them to become agents of change, promoting unity and respect both now and in the future.</p>\n          <p>More information can be found here:&nbsp;<a href=\"https://nrw.reconciliation.org.au/about-nrw/\">https://nrw.reconciliation.org&#8230;</a></p>",
+      "prev_url": "news-to-send-to-school-today-or-not.html",
+      "prev_title": "To Send To School Today, Or Not?",
+      "next_url": "news-national-reconciliation-week.html",
+      "next_title": "National Reconciliation Week"
+    }'></include>
+  </main>
+
+  <include src="partials/footer.html"></include>
+
+  <script src="assets/js/main.js" defer></script>
+</body>
+</html>

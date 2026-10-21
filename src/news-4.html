@@ -1,0 +1,50 @@
+<!doctype html>
+<!-- The news listing's fourth page: news.html's arrow loads its cards in place (news.js); kept out of the site search. -->
+<html lang="en">
+<head>
+  <include src="partials/head.html" locals='{
+    "title": "More news | Claremont College",
+    "description": "News and events from the Claremont College community, big and small."
+  }'></include>
+</head>
+<body>
+  <include src="partials/icons.html"></include>
+  <a class="visually-hidden-focusable" href="#main">Skip to content</a>
+
+  <include src="partials/header.html"></include>
+
+  <main id="main" data-search-skip>
+    <!-- Hero -->
+    <include src="sections/page-hero.html" locals='{
+      "modifier": "",
+      "title": "News and community",
+      "aside": "",
+      "image": "assets/images/news/hero.webp",
+      "image_m": "assets/images/news/hero-m.webp",
+      "width": "1840",
+      "height": "1090"
+    }'></include>
+
+    <!-- Green intro band -->
+    <include src="sections/intro-split.html" locals='{
+      "theme": "intro-split--dark intro-split--md intro-split--wide-lead intro-split--body-offset",
+      "actions": "",
+      "lead": "At Claremont, community isn’t a <br>value on a wall, <em>it’s a calendar.</em>",
+      "body": "<p>It’s the concert someone’s dad rigged the lighting for, the cake stall that sold out before lunch, and the Saturday working bee nobody was obliged to turn up to. This is where we post all the events - big and small - that make Claremont feel like Claremont.</p>"
+    }'></include>
+
+    <!-- Article listing -->
+    <include src="sections/news/article-grid.html" locals='{
+      "next": "",
+      "articles": [
+      { "title": "Love is in the Air – Celebrating Grandparents", "date": "6 January 2025", "url": "news-love-is-in-the-air-celebrating-grandparents.html", "image": "assets/images/news/articles/love-is-in-the-air-celebrating-grandparents.webp", "width": "500", "height": "335" },
+      { "title": "Lessons Children Can Teach Us For How To Handle Exams", "date": "6 January 2025", "url": "news-lessons-children-can-teach-us-for-how-to-handle-exams.html", "image": "assets/images/news/articles/lessons-children-can-teach-us-for-how-to-handle-exams.webp", "width": "500", "height": "333" }
+      ]
+    }'></include>
+  </main>
+
+  <include src="partials/footer.html"></include>
+
+  <script src="assets/js/main.js" defer></script>
+</body>
+</html>
