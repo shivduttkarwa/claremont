@@ -2,8 +2,8 @@
 
 Date: 2026-10-21
 Source of truth: the static cutup repo, `static/claremont`
-Baseline: commit `2dbafee`, the last commit covered by `wagtail-updates-2026-10-16.md`. Everything below is the difference between that commit and commit `836db29`.
-Companion file: `wagtail-updates-2026-10-21.patch` (same folder) is the full `git diff` of `src/` for these updates, 38 files. The two image files in it show only as "Binary files differ": take them from the repo itself (section 2), and skip them when applying: `git apply --exclude='src/assets/images/*' wagtail-updates-2026-10-21.patch` applies every text hunk cleanly to the baseline. `build.mjs` did not change.
+Baseline: commit `2dbafee`, the last commit covered by `wagtail-updates-2026-10-16.md`. Everything below is the difference between that commit and commit `15dffe8`.
+Companion file: `wagtail-updates-2026-10-21.patch` (same folder) is the full `git diff` of `src/` for these updates, 39 files. The three image files in it show only as "Binary files differ": take them from the repo itself (section 2), and skip them when applying: `git apply --exclude='src/assets/images/*' wagtail-updates-2026-10-21.patch` applies every text hunk cleanly to the baseline. `build.mjs` did not change.
 
 ## Purpose
 
@@ -11,7 +11,7 @@ The 2026-10-16 updates are already in the Wagtail build. Since then the agency's
 
 This one is mostly CSS and JS, plus:
 
-- two replaced photos (section 2);
+- two replaced photos and one new phone square (section 2);
 - one new script and one new icon for the contact form (section 4, edits 3 and 4);
 - template edits to the header, footer, search panel, home hero, contact form and pillars (section 4);
 - content to enter in the Wagtail admin: the executives' roles and bios, the educators' roles and quotes, the Languages card and the order of the core values (section 5).
@@ -42,6 +42,7 @@ This one is mostly CSS and JS, plus:
 | 9 | **News listing** between 576 and 767: the green strip behind the first cards stops at their photos' foot instead of running under the captions | CSS only |
 | 10 | **Educator quotes** (Welcome): the client's real quotes run to 340 characters, so a quote longer than its box keeps Figma's 40px type and scrolls inside the box, with a fade at the edges. It glides to its end on its own once the card is open (hover on desktop, the active card on phones); a wheel, swipe or key takes over | CSS, JS, content |
 | 11 | **Design 2 copy**: the six executives' roles and bios, the educators' names, roles and quotes, the Languages activity card, and the core values in the order Collaboration, Innovation, Compassion | Content (section 5), template edit 5 |
+| 12 | **Enrolment photo banner on phones** shows the 375 frame's own square of the photo (the children on the bench), as the Preparatory banner already does, instead of the landscape crop | Image, content (section 5) |
 
 ## 1. Assets: CSS and JS
 
@@ -73,14 +74,22 @@ Copy `_tokens.less` and `_mixins.less` first: `_feature-banner`, `_split-feature
 
 ## 2. Images
 
-Both under `src/assets/images/home/`, WebP, same file names as before with a new picture. Replace them.
+All under `src/assets/images/`, WebP.
+
+Changed (same file name, new picture):
 
 | File | Size | Why |
 | --- | --- | --- |
 | `home/hero.webp` | 1842 × 1417 (was 1842 × 1650) | The Design 2 home hero photo (girl and boy in blazers). The file has 80px of spare photo below the frame for the parallax, instead of the old 323 |
 | `home/hero-m.webp` | 750 × 1028 (unchanged size) | Its phone crop, centred on the two children |
 
-Nothing is added or deleted.
+New:
+
+| File | Size | Used by |
+| --- | --- | --- |
+| `enrolment/banner-m.webp` | 750 × 750 | The enrolment photo banner on phones (update 12): the `image_m` of that `image_banner` block, the field added in the 16 October notes |
+
+Nothing is deleted.
 
 ## 3. Block changes
 
@@ -253,6 +262,10 @@ The third pillar's statement is Collaboration / Innovation / Compassion, one per
 
 Upload the new `home/hero.webp` and `home/hero-m.webp` over the old ones (section 2).
 
+### Enrolment photo banner
+
+Static file: `src/enrolment.html` (the `image_banner` include after the enrolment journey). Set the block's phone photo (`image_m`) to `enrolment/banner-m.webp`. The template already handles it (the 16 October notes, edit 4): with a phone photo the banner takes `feature-banner--square-m` and serves the square below 576.
+
 ## 6. Script changes in detail
 
 Only needed for Option B, or if the Wagtail copy of a script was modified. The `.patch` file has every hunk with full context.
@@ -315,3 +328,4 @@ Desktop checks at 1640 wide unless stated.
 - [ ] **Welcome executives:** six real roles and bios.
 - [ ] **Extra Curricular:** the Languages card shows the French and Mandarin copy.
 - [ ] **Home core values:** Collaboration, Innovation, Compassion, in that order.
+- [ ] **Enrolment on a phone:** the photo between the enrolment journey and "Fees and dates" is a square showing the children on the bench with the teacher at the left; from 576 up it is the landscape photo as before.

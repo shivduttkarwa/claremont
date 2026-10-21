@@ -1,3 +1,7 @@
+diff --git a/src/assets/images/enrolment/banner-m.webp b/src/assets/images/enrolment/banner-m.webp
+new file mode 100644
+index 0000000..f737038
+Binary files /dev/null and b/src/assets/images/enrolment/banner-m.webp differ
 diff --git a/src/assets/images/home/hero-m.webp b/src/assets/images/home/hero-m.webp
 index d1db892..d8fc0ff 100644
 Binary files a/src/assets/images/home/hero-m.webp and b/src/assets/images/home/hero-m.webp differ
@@ -808,6 +812,19 @@ index 15723bc..bb0d365 100644
  
      &__list { gap: 1.25rem; } // 20
  
+diff --git a/src/enrolment.html b/src/enrolment.html
+index daf8253..d845b05 100644
+--- a/src/enrolment.html
++++ b/src/enrolment.html
+@@ -39,7 +39,7 @@
+     <!-- Photo banner -->
+     <include src="sections/image-banner.html" locals='{
+       "image": "assets/images/enrolment/banner.webp",
+-      "image_m": "",
++      "image_m": "assets/images/enrolment/banner-m.webp",
+       "alt": "Claremont students working in their books on the floor of a bright classroom",
+       "width": "1840",
+       "height": "1102"
 diff --git a/src/partials/footer.html b/src/partials/footer.html
 index b7d674f..36ec4cf 100644
 --- a/src/partials/footer.html
