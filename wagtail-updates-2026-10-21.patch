@@ -1,0 +1,1034 @@
+diff --git a/src/assets/images/home/hero-m.webp b/src/assets/images/home/hero-m.webp
+index d1db892..d8fc0ff 100644
+Binary files a/src/assets/images/home/hero-m.webp and b/src/assets/images/home/hero-m.webp differ
+diff --git a/src/assets/images/home/hero.webp b/src/assets/images/home/hero.webp
+index a0e3b09..649abe7 100644
+Binary files a/src/assets/images/home/hero.webp and b/src/assets/images/home/hero.webp differ
+diff --git a/src/assets/scripts/form.js b/src/assets/scripts/form.js
+new file mode 100644
+index 0000000..f18d215
+--- /dev/null
++++ b/src/assets/scripts/form.js
+@@ -0,0 +1,72 @@
++// The browser's validation bubble in the site's own dress: a form with data-form-validate takes novalidate, and on
++// submit the first empty or malformed field gets a tip under its rule (data-error; data-error-format for a value that
++// is typed but malformed) and the focus, as the browser does. The tip goes as the field is typed in, when it loses
++// focus, on Escape, or after a few seconds.
++
++const HIDE_AFTER = 6000;
++let open = null;
++
++function message(field) {
++  const v = field.validity;
++  if (v.valueMissing) return field.dataset.error || "Please fill in this field.";
++  if (v.typeMismatch || v.patternMismatch) return field.dataset.errorFormat || field.dataset.error || "Please check this field.";
++  return field.validationMessage;
++}
++
++function describe(field, id, on) {
++  const ids = (field.getAttribute("aria-describedby") || "").split(/\s+/).filter((x) => x && x !== id);
++  if (on) ids.push(id);
++  if (ids.length) field.setAttribute("aria-describedby", ids.join(" "));
++  else field.removeAttribute("aria-describedby");
++}
++
++function hide() {
++  if (!open) return;
++  const { field, tip, timer } = open;
++  open = null;
++  clearTimeout(timer);
++  field.removeAttribute("aria-invalid");
++  describe(field, tip.id, false);
++  tip.classList.remove("is-shown");
++  const drop = () => tip.remove();
++  tip.addEventListener("transitionend", drop, { once: true });
++  setTimeout(drop, 600); // reduced motion has no transition to end
++}
++
++function show(field) {
++  hide();
++  const tip = document.createElement("div");
++  tip.className = "form-tip";
++  tip.id = `${field.id}-tip`;
++  tip.setAttribute("role", "alert");
++  tip.innerHTML = '<svg class="icon" aria-hidden="true"><use href="#icon-warning"></use></svg><span></span>';
++  tip.lastChild.textContent = message(field);
++  field.insertAdjacentElement("afterend", tip);
++  field.setAttribute("aria-invalid", "true");
++  describe(field, tip.id, true);
++  open = { field, tip, timer: setTimeout(hide, HIDE_AFTER) };
++  void tip.offsetWidth; // the hidden state is laid out before the class changes it, or the entrance has nothing to run from
++  tip.classList.add("is-shown");
++  field.focus();
++}
++
++export function initForms(root = document) {
++  root.querySelectorAll("form[data-form-validate]").forEach((form) => {
++    form.setAttribute("novalidate", "");
++    const fields = [...form.querySelectorAll("input, textarea, select")].filter((f) => f.id && f.willValidate);
++
++    fields.forEach((field) => {
++      const mine = () => open && open.field === field;
++      field.addEventListener("input", () => { if (mine()) hide(); });
++      field.addEventListener("blur", () => { if (mine()) hide(); });
++      field.addEventListener("keydown", (event) => { if (event.key === "Escape" && mine()) hide(); });
++    });
++
++    form.addEventListener("submit", (event) => {
++      const bad = fields.find((field) => !field.checkValidity());
++      if (!bad) return;
++      event.preventDefault();
++      show(bad);
++    });
++  });
++}
+diff --git a/src/assets/scripts/main.js b/src/assets/scripts/main.js
+index 351e44d..ffb7015 100644
+--- a/src/assets/scripts/main.js
++++ b/src/assets/scripts/main.js
+@@ -10,6 +10,7 @@ import { initPan } from "./pan.js";
+ import { initPageTransition } from "./transition.js";
+ import { initImageCarousels } from "./carousel.js";
+ import { initLoadMore } from "./news.js";
++import { initForms } from "./form.js";
+ 
+ document.addEventListener("DOMContentLoaded", () => {
+   Anim.init({ after: window.__pageArrival });
+@@ -25,6 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
+   initFolds();
+   initImageCarousels();
+   initLoadMore();
++  initForms();
+   initSearch();
+   initStickyHeader();
+   initMenu();
+diff --git a/src/assets/scripts/pan.js b/src/assets/scripts/pan.js
+index 355aa1d..1e406d0 100644
+--- a/src/assets/scripts/pan.js
++++ b/src/assets/scripts/pan.js
+@@ -36,7 +36,9 @@ export function initPan(root = document) {
+     // --pan-card on the section is read at every width so the Swiper snaps too
+     const measure = () => {
+       section.style.removeProperty("--pan-card");
+-      width = snap(cards[0].getBoundingClientRect().width);
++      // a screen wider than the loop would see its end, so the cards grow just enough to cover it (2240+ on home)
++      const cover = lg.matches && cards.length > 1 ? section.clientWidth / (cards.length - 1) : 0;
++      width = snap(Math.max(cards[0].getBoundingClientRect().width, cover));
+       section.style.setProperty("--pan-card", `${width}px`);
+     };
+     // each card sits in its slot moved left by the drift, wrapped so it comes back in from the right
+diff --git a/src/assets/scripts/ui.js b/src/assets/scripts/ui.js
+index 7941ee0..eed2759 100644
+--- a/src/assets/scripts/ui.js
++++ b/src/assets/scripts/ui.js
+@@ -113,6 +113,7 @@ export function initPlaceholderLinks(root = document) {
+ // Hover only, no click: the card under the pointer raises its quote over its overlay, and drops it again
+ // when the pointer leaves. Touch opens the active slide instead (data-slider-open-active).
+ export function initQuoteCards(root = document) {
++  root.querySelectorAll("[data-quote-cards]").forEach(initQuoteScroll);
+   if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+   root.querySelectorAll("[data-quote-cards]").forEach((group) => {
+     const cards = [...group.querySelectorAll("[data-quote-card]")];
+@@ -125,6 +126,92 @@ export function initQuoteCards(root = document) {
+   });
+ }
+ 
++// A quote that scrolls in its box glides to its end once its card opens; a wheel, swipe or key takes over by hand
++const QUOTE_GLIDE = { speed: 24, wait: 1400, reset: 700 };
++
++function initQuoteScroll(group) {
++  const cards = [...group.querySelectorAll("[data-quote-card]")].filter((card) => {
++    const quote = card.querySelector(".quote-slider__quote");
++    return quote && getComputedStyle(quote).overflowY !== "visible";
++  });
++  if (!cards.length) return;
++  const phone = window.matchMedia("(max-width: 767.98px)");
++  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
++  const section = group.closest("[data-slider]") || group;
++  const syncs = [];
++  const marks = [];
++  let inView = false;
++  new IntersectionObserver(
++    ([entry]) => {
++      inView = entry.intersectionRatio >= 0.4;
++      syncs.forEach((sync) => sync());
++    },
++    { threshold: [0, 0.4, 1] }
++  ).observe(section);
++
++  cards.forEach((card) => {
++    const quote = card.querySelector(".quote-slider__quote");
++    let raf = 0;
++    let timer = 0;
++    let manual = false;
++    // only a quote longer than its box is a tab stop and keeps the wheel from the page
++    const mark = () => {
++      const room = quote.scrollHeight - quote.clientHeight;
++      quote.classList.toggle("is-scrolled", quote.scrollTop > 1);
++      quote.classList.toggle("is-end", quote.scrollTop >= room - 1);
++      quote.toggleAttribute("data-lenis-prevent", room > 1);
++      if (room > 1) quote.tabIndex = 0;
++      else quote.removeAttribute("tabindex");
++    };
++    const stop = () => {
++      cancelAnimationFrame(raf);
++      clearTimeout(timer);
++      raf = timer = 0;
++    };
++    const glide = () => {
++      if (raf || timer || manual || reduced.matches) return;
++      timer = setTimeout(() => {
++        timer = 0;
++        let pos = quote.scrollTop;
++        let last = null;
++        const step = (now) => {
++          if (last !== null) pos += ((now - last) / 1000) * QUOTE_GLIDE.speed;
++          last = now;
++          const max = quote.scrollHeight - quote.clientHeight;
++          quote.scrollTop = Math.min(pos, max);
++          raf = pos < max ? requestAnimationFrame(step) : 0;
++        };
++        raf = requestAnimationFrame(step);
++      }, QUOTE_GLIDE.wait);
++    };
++    const isOpen = () => inView && card.classList.contains(phone.matches ? "is-active" : "is-open");
++    const sync = () => {
++      if (isOpen()) return glide();
++      stop();
++      manual = false;
++      setTimeout(() => {
++        if (isOpen()) return;
++        quote.scrollTop = 0;
++        mark();
++      }, QUOTE_GLIDE.reset);
++    };
++    ["wheel", "touchstart", "pointerdown", "keydown"].forEach((type) =>
++      quote.addEventListener(type, () => {
++        manual = true;
++        stop();
++      }, { passive: true })
++    );
++    quote.addEventListener("scroll", mark, { passive: true });
++    new MutationObserver(sync).observe(card, { attributes: true, attributeFilter: ["class"] });
++    syncs.push(sync);
++    marks.push(mark);
++    mark();
++  });
++  const markAll = () => marks.forEach((mark) => mark());
++  document.fonts?.ready.then(markAll);
++  window.addEventListener("resize", markAll);
++}
++
+ export function initScrollers(root = document) {
+   root.querySelectorAll("[data-scroller]").forEach((scroller) => {
+     const track = scroller.querySelector("[data-scroller-track]");
+diff --git a/src/assets/styles/01-settings/_bootstrap-vars.less b/src/assets/styles/01-settings/_bootstrap-vars.less
+index f8f204b..7edcc5c 100644
+--- a/src/assets/styles/01-settings/_bootstrap-vars.less
++++ b/src/assets/styles/01-settings/_bootstrap-vars.less
+@@ -49,6 +49,7 @@
+ }
+ .container-edge {
+   --bs-gutter-x: calc(var(--edge-gutter) * 2);
++  .design-frame();
+ }
+ 
+ // Heading-left / copy-right rows. Figma butts the two 620 columns together and lets the heading's own box
+diff --git a/src/assets/styles/01-settings/_tokens.less b/src/assets/styles/01-settings/_tokens.less
+index ca477d0..22c660e 100644
+--- a/src/assets/styles/01-settings/_tokens.less
++++ b/src/assets/styles/01-settings/_tokens.less
+@@ -131,6 +131,7 @@
+   /* Layout */
+   --container-max: 80rem;        /* 1280 incl. gutters → 1240 content */
+   --container-content: 77.5rem;  /* 1240 */
++  --du: 1rem;                    /* a rem that keeps growing past 1640: for measures tied to a full-bleed photo */
+   /* 20 on phones, 32 from md, 40 from lg, 20 inside the 1280 frame at xxl; never less than a notch inset */
+   --container-gutter: ~"max(1.25rem, env(safe-area-inset-left), env(safe-area-inset-right))";
+   --edge-gutter: var(--container-gutter); /* header + footer side padding (3.75rem at xxl) */
+@@ -186,3 +187,6 @@
+     --header-gutter: 3.75rem;
+   }
+ }
++@media (min-width: @bp-design) {
++  :root { --du: ~"calc(100vw / 102.5)"; } // 16 at 1640, 18.7 at 1920, 25 at 2560
++}
+diff --git a/src/assets/styles/02-tools/_mixins.less b/src/assets/styles/02-tools/_mixins.less
+index 477cf06..55b242a 100644
+--- a/src/assets/styles/02-tools/_mixins.less
++++ b/src/assets/styles/02-tools/_mixins.less
+@@ -112,6 +112,11 @@
+   .timeline-rows(@n, (@i + 1));
+ }
+ 
++// The 1640 frame, centred on a wider screen: the header, footer and rows of text columns keep it.
++.design-frame() {
++  @media (min-width: @bp-design) { max-width: 102.5rem; margin-inline: auto; }
++}
++
+ .reset-list() {
+   list-style: none;
+   margin: 0;
+diff --git a/src/assets/styles/03-base/_base.less b/src/assets/styles/03-base/_base.less
+index fc9a0a9..bd0dbfd 100644
+--- a/src/assets/styles/03-base/_base.less
++++ b/src/assets/styles/03-base/_base.less
+@@ -6,8 +6,8 @@
+ //
+ // 16 is load-bearing up to the 1640 design width: the Figma match, the 44 tap targets (2.75rem), the 16
+ // form controls and the 12 text floor are all rem and verified at 16. Raise or lower a value below 1640
+-// and those break. From the design width up the root follows the viewport (16 at 1640), so a wide screen
+-// shows the 1640 frame scaled to fit, the way Figma shows it zoomed to fit.
++// and those break. Above 1640 it stays 16, so copy, nav, buttons and logos keep their 1640 size (asked for
++// in the October 2026 review); full-bleed photos keep scaling through --du (_tokens.less).
+ // ---------------------------------------------------------------------
+ html {
+   font-size: 16px;
+@@ -17,10 +17,8 @@ html {
+ 
+ @media (min-width: @bp-sm)  { html { font-size: 16px; } } // 576
+ @media (min-width: @bp-md)  { html { font-size: 16px; } } // 768
+-@media (min-width: @bp-lg)  { html { font-size: 16px; } } // 992
+-@media (min-width: @bp-xl)  { html { font-size: 14px; } } // 1200–1399 laptops: 0.875×
+-@media (min-width: @bp-xxl) { html { font-size: 16px; } } // 1400
+-@media (min-width: @bp-design) { html { font-size: ~"calc(100vw / 102.5)"; } } // 1640 / 16: exactly 16 at the frame, 18.7 at 1920, 25 at 2560
++@media (min-width: @bp-lg)  { html { font-size: 14px; } } // 992–1399 laptops: 0.875× (from 992 since Cocogun's slide 11)
++@media (min-width: @bp-xxl) { html { font-size: 16px; } } // 1400 and up
+ 
+ // The root clips too: a phone browser pans to whatever sits past the edge when only body clips
+ html { overflow-x: clip; }
+diff --git a/src/assets/styles/04-layout/_header.less b/src/assets/styles/04-layout/_header.less
+index bc6071f..a59eb87 100644
+--- a/src/assets/styles/04-layout/_header.less
++++ b/src/assets/styles/04-layout/_header.less
+@@ -30,14 +30,15 @@
+     background: inherit;
+   }
+ 
+-  // The full bar only fits a 992 screen with the logo, links and gaps all at their smallest; they grow to the xl measures by 1200
++  // 992 to 1199 is the 1200 bar (logo 238, links 14, gaps 31.5 on the 14 root; Cocogun's slide 11 found the 992 logo too
++  // small): only the gap between the links closes, to 24.5 at 992, so the bar fits. Nothing changes from 1200 up
+   @media (min-width: @bp-lg) {
+     position: absolute;
+     inset: 0 0 auto;
+     background-color: transparent;
+-    --header-logo-width: ~"clamp(11rem, -17.6154rem + 46.1538vw, 17rem)"; // 176 at 992 → 272 at 1200
+-    --header-nav-gap: ~"clamp(1rem, -4.9615rem + 9.6154vw, 2.25rem)";      // 16 → 36
+-    --header-link-size: ~"clamp(0.875rem, 0.2788rem + 0.9615vw, 1rem)";   // 14 → 16
++    --header-logo-width: 17rem; // 238
++    --header-nav-gap: ~"clamp(1.75rem, 33.3333vw - 21.87rem, 2.25rem)"; // 24.5 at 992 → 31.5 by 1013
++    --header-link-size: 1rem; // 14
+     --header-gap: var(--space-3);
+   }
+ 
+diff --git a/src/assets/styles/05-components/_article-grid.less b/src/assets/styles/05-components/_article-grid.less
+index 6247e2c..d4a1fae 100644
+--- a/src/assets/styles/05-components/_article-grid.less
++++ b/src/assets/styles/05-components/_article-grid.less
+@@ -128,6 +128,7 @@
+       inset: 0 0 auto;
+       z-index: var(--z-behind);
+       aspect-ratio: 375 / 216;
++      @media (min-width: @bp-sm) { aspect-ratio: 750 / 216; } // two cards side by side: the strip stops at their photos' foot
+       background: var(--color-primary);
+     }
+ 
+@@ -147,6 +148,7 @@
+       padding: 0 var(--container-gutter) 1.875rem; // 30 under the row
+       font-size: 0.9375rem; // 15
+       line-height: 1.5;     // 22.5
++      letter-spacing: var(--letter-spacing-body); // -0.45: the body hands down -0.48 from its 16
+       .icon {
+         width: 1.625rem; // 26
+         height: 1.625rem;
+diff --git a/src/assets/styles/05-components/_contact.less b/src/assets/styles/05-components/_contact.less
+index 4c8a268..60783c0 100644
+--- a/src/assets/styles/05-components/_contact.less
++++ b/src/assets/styles/05-components/_contact.less
+@@ -89,7 +89,7 @@
+       background-image: linear-gradient(var(--color-primary), var(--color-primary)), linear-gradient(var(--contact-rule), var(--contact-rule)), linear-gradient(var(--contact-rule), var(--contact-rule));
+       background-repeat: no-repeat;
+       background-position: center bottom, left bottom, right bottom;
+-      background-size: 0 var(--contact-line), 50% var(--border-width), 50% var(--border-width);
++      background-size: 0 var(--contact-line), calc(50% + 0.03125rem) var(--border-width), calc(50% + 0.03125rem) var(--border-width); // the halves overlap half a pixel: at an odd width they met on a half pixel, one pale dot mid-rule
+       background-origin: border-box;
+       background-clip: border-box;
+       font-size: var(--font-size-md);
+@@ -123,10 +123,59 @@
+     }
+   }
+ 
++  &__field { position: relative; } // the validation tip hangs from the field
++
+   &__field--wide {
+     @media (min-width: @bp-sm) { grid-column: 1 / -1; }
+   }
+ 
++  // The browser's validation bubble, drawn by the page (form.js) since the browser's own cannot be styled: Dark Green
++  // under the field's rule with a caret up to it, the warning sign in Yellow, white copy; it rises in 4 and fades
++  .form-tip {
++    --tip-caret: 0.625rem; // 10
++    position: absolute;
++    top: calc(100% + var(--tip-caret));
++    left: 0;
++    z-index: var(--z-raised);
++    display: flex;
++    align-items: center;
++    gap: 0.625rem; // 10
++    max-width: 100%;
++    padding: 0.625rem 0.875rem 0.625rem 0.75rem; // 10 14 10 12
++    background: var(--color-primary);
++    color: var(--color-white);
++    font-family: var(--font-body);
++    font-size: var(--font-size-sm); // 13
++    line-height: 1.3846;            // 18
++    letter-spacing: var(--letter-spacing-body);
++    box-shadow: var(--shadow-marker);
++    opacity: 0;
++    transform: translateY(0.375rem); // rises 6, as the fold's copy does
++    transition: opacity var(--duration-fast) ease, transform var(--duration-fast) ease; // out: gone quickly as the reader types
++    &::before {
++      content: "";
++      position: absolute;
++      top: calc(var(--tip-caret) / -2);
++      left: 1.125rem; // 18
++      width: var(--tip-caret);
++      height: var(--tip-caret);
++      background: inherit;
++      transform: rotate(45deg);
++    }
++    .icon {
++      flex: 0 0 auto;
++      width: 1.125rem; // 18
++      height: 1.125rem;
++      color: var(--color-accent);
++    }
++    &.is-shown {
++      opacity: 1;
++      transform: none;
++      transition: opacity var(--duration-fast) ease, transform var(--duration-base) var(--ease-settle); // in: a soft rise with no slow tail (0.45 read as slow)
++    }
++    @media (prefers-reduced-motion: reduce) { transition: none; }
++  }
++
+   &__actions {
+     display: flex;
+     justify-content: flex-end;
+diff --git a/src/assets/styles/05-components/_cta-links.less b/src/assets/styles/05-components/_cta-links.less
+index 9c810d3..ee603ad 100644
+--- a/src/assets/styles/05-components/_cta-links.less
++++ b/src/assets/styles/05-components/_cta-links.less
+@@ -173,6 +173,7 @@
+       margin-bottom: 1.875rem; // 30
+       font-size: 0.9375rem;    // 15
+       line-height: 1.5;        // 22.5
++      letter-spacing: var(--letter-spacing-body); // -0.45: the body hands down -0.48 from its 16
+     }
+ 
+     .fold { margin-inline: calc(-1 * var(--container-gutter)); }
+diff --git a/src/assets/styles/05-components/_feature-banner.less b/src/assets/styles/05-components/_feature-banner.less
+index c51b4b6..4e2a856 100644
+--- a/src/assets/styles/05-components/_feature-banner.less
++++ b/src/assets/styles/05-components/_feature-banner.less
+@@ -1,8 +1,8 @@
+ // 05-components/_feature-banner.less — full-bleed photo (614 tall at 1640), optionally with a callout
+ 
+ .feature-banner {
+-  --banner-height: ~"clamp(30rem, 37.44vw, 38.375rem)";
+-  --banner-top: 13.0625rem;            // 209 (homepage)
++  --banner-height: ~"clamp(30rem, 37.44vw, 38.375 * var(--du))"; // 614 at 1640, then the photo's proportion
++  --banner-top: calc(13.0625 * var(--du)); // 209 (homepage)
+   --banner-content-width: 33rem;       // 528
+   --banner-title-gap: 1.96875rem;      // 31.5 (homepage: 5 + a 15px blank line + 10)
+   --banner-actions-gap: 2.28125rem;    // 36.5
+@@ -27,9 +27,9 @@
+   }
+ 
+   // Inner pages: a 45px title, one blank 32 / 1.1 line, then the copy
+-  &--y168 { --banner-top: 10.5rem;    --banner-title-gap: 2.2rem; --banner-content-width: 31.0625rem; } // 168, 497 wide
+-  &--y237 { --banner-top: 14.8125rem; --banner-title-gap: 2.2rem; }                                      // 237
+-  &--y209 { --banner-top: 13.0625rem; --banner-title-gap: 2.2rem; }                                      // 209: the Extra-curricular music band
++  &--y168 { --banner-top: calc(10.5 * var(--du));    --banner-title-gap: 2.2rem; --banner-content-width: 31.0625rem; } // 168, 497 wide
++  &--y237 { --banner-top: calc(14.8125 * var(--du)); --banner-title-gap: 2.2rem; }                                      // 237
++  &--y209 { --banner-top: calc(13.0625 * var(--du)); --banner-title-gap: 2.2rem; }                                      // 209: the Extra-curricular music band
+ 
+   > .container { width: 100%; }
+ 
+@@ -82,6 +82,7 @@
+   &--right &__content {
+     margin-left: auto;
+     @media (min-width: @bp-xxl) { margin-right: -1.6875rem; } // x 939 (Design 2 home): the 528 box runs 27 past the container
++    @media (min-width: @bp-design) { margin-right: ~"calc(-1 * max(1.6875rem, 7.256vw - 5.75rem))"; } // never left of 57.26%, where it sits on the photo at 1640
+   }
+ 
+   h2 {
+@@ -184,6 +185,7 @@
+     .feature-banner__text {
+       font-size: 0.9375rem; // 15
+       line-height: 1.5;     // 22.5
++      letter-spacing: var(--letter-spacing-body); // -0.45: the body hands down -0.48 from its 16
+     }
+   }
+ 
+diff --git a/src/assets/styles/05-components/_hero.less b/src/assets/styles/05-components/_hero.less
+index 43f903d..b1c9740 100644
+--- a/src/assets/styles/05-components/_hero.less
++++ b/src/assets/styles/05-components/_hero.less
+@@ -73,8 +73,8 @@
+     object-fit: cover;
+     object-position: 50% 0;
+     @media (min-width: @bp-lg) {
+-      --parallax-to: -12%; // data-anim-speed 12, reversed: up by its spare height as the block leaves
+-      height: 124.34%; // export is 1842 × 1650 against the 1842 × 1327 frame crop
++      --parallax-to: -6.34%; // data-anim-speed 6.34, reversed: up by its spare 80 as the block leaves
++      height: 106.77%; // Design 2's photo (2399:6393): 1262 of real photo against the 1182 frame
+       object-position: 50% 50%; // the kids' faces stay where Figma has them when a wider screen crops the photo
+       will-change: transform;
+     }
+@@ -90,6 +90,8 @@
+       max-width: 75.75rem;
+       margin-bottom: var(--hero-title-gap);
+       font-size: ~"min(var(--font-size-display), 8.2246 * var(--hero-u))";
++      // 992 to 1199 only (Cocogun's slide 11, 992 × 600): a tenth smaller, 60 at 600 tall, 77 at 768; the copy keeps its size
++      @media (max-width: 1199.98px) { font-size: ~"min(var(--font-size-display), 7.402 * var(--hero-u))"; }
+       font-kerning: none; // Figma's 1640 render draws the title unkerned ("Welcome to" is 579 of ink there); its 375 render is kerned
+     }
+     @media (min-width: @bp-xxl) { margin-left: -0.125rem; } // x 198
+@@ -134,14 +136,13 @@
+   &__body {
+     font-size: ~"clamp(1.125rem, 5.3731vw - 0.1343rem, 1.3125rem)"; // 18 at 375, scaling with the 335 column
+     line-height: 1.3333; // 24: Figma draws its 24.3 line at a whole pixel
+-    letter-spacing: 0.01em; // looser than Figma's -0.03em, which read cramped once the text scales below 19
++    letter-spacing: var(--letter-spacing-body); // Figma's -3%: -0.54 at the 375 frame's 18, -0.57 at the desktop 19
+     p { margin-bottom: 0.4873em; } // 8.77 at 18
+     strong { font-weight: var(--font-weight-semibold); }
+     @media (min-width: @bp-lg) {
+       max-width: 38.5625rem; // 617
+       font-size: ~"max(1rem, min(var(--font-size-lg), 1.1875 * var(--hero-u)))";
+       line-height: var(--line-height-relaxed);
+-      letter-spacing: var(--letter-spacing-body); // Figma's -0.57 at 19: the longest line is then 461 wide, level with the subtitle
+       p { margin-bottom: calc(0.5483 * var(--hero-u)); } // 8.77
+     }
+   }
+diff --git a/src/assets/styles/05-components/_link-columns.less b/src/assets/styles/05-components/_link-columns.less
+index f7b5743..21c1e54 100644
+--- a/src/assets/styles/05-components/_link-columns.less
++++ b/src/assets/styles/05-components/_link-columns.less
+@@ -32,6 +32,7 @@
+   }
+ 
+   &__grid {
++    .design-frame();
+     display: grid;
+     grid-template-columns: minmax(0, 1fr);
+     @media (min-width: @bp-sm) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@@ -145,6 +146,7 @@
+   h3 { max-width: none; }
+ 
+   .fold__body {
++    color: var(--color-text); // Near Black under the Dark Green titles (1638:5176, 1709:10342)
+     p {
+       margin: 0;
+       padding-top: 0.625rem; // paragraph spacing 10
+@@ -174,6 +176,7 @@
+       max-width: var(--columns-body-width);
+       font-size: 0.9375rem; // 15
+       line-height: 1.5;     // 22.5
++      letter-spacing: var(--letter-spacing-body); // -0.45: the body hands down -0.48 from its 16
+     }
+   }
+ }
+@@ -227,6 +230,7 @@
+       p {
+         font-size: 0.9375rem; // 15
+         line-height: 1.5;     // 22.5
++        letter-spacing: var(--letter-spacing-body); // -0.45: the body hands down -0.48 from its 16
+       }
+     }
+ 
+@@ -262,6 +266,7 @@
+       padding-inline: var(--container-gutter);
+       font-size: 0.9375rem; // 15
+       line-height: 1.5;     // 22.5
++      letter-spacing: var(--letter-spacing-body); // -0.45: the body hands down -0.48 from its 16
+     }
+   }
+ }
+diff --git a/src/assets/styles/05-components/_link-grid.less b/src/assets/styles/05-components/_link-grid.less
+index d139a44..1043cf4 100644
+--- a/src/assets/styles/05-components/_link-grid.less
++++ b/src/assets/styles/05-components/_link-grid.less
+@@ -52,6 +52,7 @@
+     color: var(--color-heading);
+     font-size: var(--font-size-xl);
+     line-height: var(--line-height-snug);
++    letter-spacing: var(--letter-spacing-body); // -0.75 at 25 (1805:6265), not the -0.45 the body hands down
+     @media (min-width: @bp-lg) { min-height: var(--link-grid-row); }
+ 
+     .icon {
+@@ -189,6 +190,7 @@
+       p {
+         font-size: 0.9375rem; // 15
+         line-height: 1.5;     // 22.5
++        letter-spacing: var(--letter-spacing-body); // -0.45: the body hands down -0.48 from its 16
+       }
+     }
+ 
+diff --git a/src/assets/styles/05-components/_mosaic.less b/src/assets/styles/05-components/_mosaic.less
+index 6b0cb05..baed9d2 100644
+--- a/src/assets/styles/05-components/_mosaic.less
++++ b/src/assets/styles/05-components/_mosaic.less
+@@ -122,6 +122,7 @@
+       p {
+         font-size: 0.9375rem; // 15
+         line-height: 1.5333;  // 23: Figma draws the 22.5 line at a whole pixel
++        letter-spacing: var(--letter-spacing-body); // -0.45: the body hands down -0.48 from its 16
+       }
+       .row { --bs-gutter-y: 0; }
+     }
+@@ -166,6 +167,7 @@
+       p {
+         font-size: 0.9375rem; // 15
+         line-height: 1.5333;  // 23
++        letter-spacing: var(--letter-spacing-body); // -0.45: the body hands down -0.48 from its 16
+       }
+       .icon {
+         flex: none;
+diff --git a/src/assets/styles/05-components/_page-hero.less b/src/assets/styles/05-components/_page-hero.less
+index 7539b65..af58d33 100644
+--- a/src/assets/styles/05-components/_page-hero.less
++++ b/src/assets/styles/05-components/_page-hero.less
+@@ -190,6 +190,7 @@
+       gap: 0.625rem; // 10
+       margin-top: 1.875rem; // 30
+       font-size: 0.9375rem; // 15
++      letter-spacing: var(--letter-spacing-body); // -0.45: the body hands down -0.48 from its 16
+       li,
+       li + li {
+         gap: 0.625rem; // 10
+diff --git a/src/assets/styles/05-components/_pillars.less b/src/assets/styles/05-components/_pillars.less
+index d6298bc..6ec5677 100644
+--- a/src/assets/styles/05-components/_pillars.less
++++ b/src/assets/styles/05-components/_pillars.less
+@@ -29,6 +29,7 @@
+ 
+   // The .swiper box clips; from lg the reveals travel past the columns' bottom edge, so it must not
+   &__grid {
++    .design-frame();
+     @media (min-width: @bp-lg) { overflow: visible; }
+   }
+ 
+@@ -112,6 +113,7 @@
+ 
+     &__grid {
+       --swiper-wrapper-transition-timing-function: var(--ease-out); // the card glides to rest
++      border-top: var(--border-width) solid var(--color-line); // 2101:14043's top stroke, 20 under the arrows
+     }
+ 
+     &__item {
+@@ -139,6 +141,7 @@
+     &__text {
+       font-size: 0.9375rem; // 15
+       line-height: 1.5;     // 22.5
++      letter-spacing: var(--letter-spacing-body); // -0.45: the body hands down -0.48 from its 16
+     }
+   }
+ }
+diff --git a/src/assets/styles/05-components/_quote-slider.less b/src/assets/styles/05-components/_quote-slider.less
+index 6f1161a..f5087c6 100644
+--- a/src/assets/styles/05-components/_quote-slider.less
++++ b/src/assets/styles/05-components/_quote-slider.less
+@@ -2,6 +2,9 @@
+ // Light Blue box carries a quote and, optionally, its author (sections/quote-slider.html). One block; the layout
+ // option only sets each page's Figma card size and spacing.
+ 
++@property --qs-fade-top { syntax: "<length>"; inherits: true; initial-value: 0; }
++@property --qs-fade-bottom { syntax: "<length>"; inherits: true; initial-value: 0; }
++
+ .quote-slider {
+   --qs-card: 22.3125rem;          // 357
+   --qs-ratio: 357 / 356;
+@@ -45,6 +48,25 @@
+     --qs-photo-opacity-m: 0.95;      // 2081:10676; the educators' photos are opaque
+   }
+ 
++  // The educator quotes run to 340 characters: they keep Figma's 40 and scroll in the box (ui.js glides them)
++  &--educators &__text {
++    --qs-fade-top: 0rem;
++    --qs-fade-bottom: 2.5rem;     // 40
++    min-height: 0;
++    transition: --qs-fade-top var(--duration-base) ease, --qs-fade-bottom var(--duration-base) ease;
++    &:has(.is-scrolled) { --qs-fade-top: 1.5rem; } // 24
++    &:has(.is-end) { --qs-fade-bottom: 0rem; }
++  }
++  &--educators &__quote {
++    flex: 1 1 0;
++    min-height: 0;
++    overflow-y: auto;
++    overscroll-behavior: contain;
++    scrollbar-width: none;
++    mask-image: ~"linear-gradient(to bottom, transparent, var(--color-white) var(--qs-fade-top), var(--color-white) calc(100% - var(--qs-fade-bottom)), transparent)";
++    &::-webkit-scrollbar { display: none; }
++  }
++
+   &__header {
+     display: grid;
+     gap: var(--space-3);
+@@ -132,7 +154,7 @@
+     max-width: var(--qs-quote-measure);
+     font-family: var(--font-display);
+     font-size: 2.5rem; // 40
+-    line-height: 0.95; // 38
++    line-height: var(--qs-quote-leading, 0.95); // 38
+     letter-spacing: var(--letter-spacing-body);
+     color: var(--color-heading);
+   }
+@@ -252,6 +274,7 @@
+         background: ~"color-mix(in srgb, var(--color-secondary) var(--qs-panel-fill-m, 100%), transparent)";
+         opacity: var(--qs-panel-opacity-m, 1);
+       }
++      &--educators &__caption { height: var(--qs-panel-m); } // the educators' quote scrolls in the frame's 300 instead
+ 
+       &__quote {
+         max-width: var(--qs-quote-measure-m, calc(100% - 0.125em)); // Figma breaks a line 5 short of its box (2088:12808)
+@@ -287,6 +310,7 @@
+     .quote-slider__intro p {
+       font-size: 0.9375rem; // 15
+       line-height: 1.5333;  // 23: Figma draws the 22.5 line at a whole pixel
++      letter-spacing: var(--letter-spacing-body); // -0.45: the body hands down -0.48 from its 16
+     }
+   }
+ }
+diff --git a/src/assets/styles/05-components/_scroller.less b/src/assets/styles/05-components/_scroller.less
+index 7d7d8d1..20e7566 100644
+--- a/src/assets/styles/05-components/_scroller.less
++++ b/src/assets/styles/05-components/_scroller.less
+@@ -42,6 +42,7 @@
+     flex: 0 0 auto;
+     width: ~"min(var(--scroller-card), 80vw)";
+     scroll-snap-align: start;
++    @media (min-width: @bp-design) { flex-grow: 1; } // a wide screen past the six 1640 cards: they share the spare width
+     // Dim the title and the copy: not the card (the reveal leaves an inline opacity on it) and not the fold panel
+     // (a transition set there replaces the fold's own, and the card then snaps open instead of unfolding)
+     > h3,
+@@ -174,6 +175,7 @@
+       max-width: none;
+       font-size: 0.9375rem; // 15
+       line-height: 1.5333;  // 23: Figma draws the 22.5 line at a whole pixel
++      letter-spacing: var(--letter-spacing-body); // -0.45: the body hands down -0.48 from its 16
+     }
+   }
+ }
+diff --git a/src/assets/styles/05-components/_search.less b/src/assets/styles/05-components/_search.less
+index 738a441..36d28b6 100644
+--- a/src/assets/styles/05-components/_search.less
++++ b/src/assets/styles/05-components/_search.less
+@@ -118,7 +118,7 @@ html:has(.search.is-open) {
+     font-family: var(--font-ui);
+     font-size: var(--font-size-sm);
+     letter-spacing: var(--letter-spacing-ui);
+-    color: var(--color-secondary);
++    color: ~"color-mix(in srgb, var(--color-white) 75%, transparent)";
+     &:empty { display: none; }
+   }
+ 
+@@ -134,7 +134,7 @@ html:has(.search.is-open) {
+     padding: var(--space-2) 0;
+     color: var(--color-white);
+     &:hover,
+-    &:focus-visible { color: var(--color-secondary); }
++    &:focus-visible { color: var(--color-accent); }
+   }
+ 
+   &__heading {
+@@ -154,7 +154,7 @@ html:has(.search.is-open) {
+   &__page {
+     font-family: var(--font-ui);
+     letter-spacing: var(--letter-spacing-ui);
+-    color: var(--color-secondary);
++    color: var(--color-white);
+   }
+ 
+   // Bootstrap fills mark yellow with padding; the match is coloured instead
+diff --git a/src/assets/styles/05-components/_split-feature.less b/src/assets/styles/05-components/_split-feature.less
+index 21ac660..a70caf9 100644
+--- a/src/assets/styles/05-components/_split-feature.less
++++ b/src/assets/styles/05-components/_split-feature.less
+@@ -1,8 +1,8 @@
+ // 05-components/_split-feature.less — callout + copy beside a tilted archival photo (614 tall)
+ 
+ .split-feature {
+-  --split-height: ~"clamp(30rem, 37.44vw, 38.375rem)"; // 614 at 1640
+-  --split-top: 11.75rem;                               // 188
++  --split-height: ~"clamp(30rem, 37.44vw, 38.375 * var(--du))"; // 614 at 1640, then the photo's proportion
++  --split-top: calc(11.75 * var(--du));                           // 188
+   --split-title-gap: 2.2rem;                           // 35.2
+   --split-content-width: 33rem;                        // 528
+   --split-paragraph-gap: 0.625rem;                     // 10
+diff --git a/src/assets/styles/05-components/_staff-grid.less b/src/assets/styles/05-components/_staff-grid.less
+index 04bad02..cbaafa1 100644
+--- a/src/assets/styles/05-components/_staff-grid.less
++++ b/src/assets/styles/05-components/_staff-grid.less
+@@ -136,6 +136,7 @@
+     &__bio {
+       margin-top: 0.625rem; // 10
+       padding-bottom: 0;
++      letter-spacing: var(--letter-spacing-body); // -0.45: the body hands down -0.48 from its 16; the Inter role keeps -2%
+     }
+   }
+ }
+diff --git a/src/assets/styles/05-components/_timeline.less b/src/assets/styles/05-components/_timeline.less
+index 15723bc..bb0d365 100644
+--- a/src/assets/styles/05-components/_timeline.less
++++ b/src/assets/styles/05-components/_timeline.less
+@@ -263,8 +263,11 @@
+ 
+     // The frame sets its copy at 15/22.5, not the site's 16 phone body, and the items only fit the drawn heights at that size
+     &__header p,
+-    &__body p,
+-    &__time { font-size: var(--timeline-m-copy); }
++    &__body p {
++      font-size: var(--timeline-m-copy);
++      letter-spacing: var(--letter-spacing-body); // -0.45: the body hands down -0.48 from its 16
++    }
++    &__time { font-size: var(--timeline-m-copy); } // Inter, keeps its -2%
+ 
+     &__list { gap: 1.25rem; } // 20
+ 
+diff --git a/src/partials/footer.html b/src/partials/footer.html
+index b7d674f..36ec4cf 100644
+--- a/src/partials/footer.html
++++ b/src/partials/footer.html
+@@ -11,7 +11,7 @@
+     <div class="site-footer__columns" data-anim-group="fade-up">
+       <div class="site-footer__about">
+         <a class="site-footer__logo" href="index.html">
+-          <img src="assets/images/logo/logo-321.webp" srcset="assets/images/logo/logo-213.webp 213w, assets/images/logo/logo-238.webp 238w, assets/images/logo/logo-272.webp 272w, assets/images/logo/logo-321.webp 321w, assets/images/logo/logo-322.webp 322w, assets/images/logo/logo-361.webp 361w, assets/images/logo/logo-374.webp 374w, assets/images/logo/logo-422.webp 422w, assets/images/logo/logo-482.webp 482w, assets/images/logo/logo-561.webp 561w, assets/images/logo/logo-642.webp 642w, assets/images/logo/logo-722.webp 722w, assets/images/logo/logo-844.webp 844w, assets/images/logo/logo-963.webp 963w, assets/images/logo/logo-1089.webp 1089w" sizes="(min-width: 2560px) 561px, (min-width: 2200px) 491px, (min-width: 1920px) 421px, (min-width: 992px) 374px, 322px" alt="Claremont College — An Anglican Co-Educational Primary School" width="1089" height="270">
++          <img src="assets/images/logo/logo-321.webp" srcset="assets/images/logo/logo-213.webp 213w, assets/images/logo/logo-238.webp 238w, assets/images/logo/logo-272.webp 272w, assets/images/logo/logo-321.webp 321w, assets/images/logo/logo-322.webp 322w, assets/images/logo/logo-361.webp 361w, assets/images/logo/logo-374.webp 374w, assets/images/logo/logo-422.webp 422w, assets/images/logo/logo-482.webp 482w, assets/images/logo/logo-561.webp 561w, assets/images/logo/logo-642.webp 642w, assets/images/logo/logo-722.webp 722w, assets/images/logo/logo-844.webp 844w, assets/images/logo/logo-963.webp 963w, assets/images/logo/logo-1089.webp 1089w" sizes="(min-width: 992px) 374px, 322px" alt="Claremont College — An Anglican Co-Educational Primary School" width="1089" height="270">
+         </a>
+         <p>Claremont College is a member of The Anglican Schools Corporation. Our school nurtures and educates young people in accordance with the doctrines, tenets, beliefs and teachings of the Anglican Church Diocese of Sydney.</p>
+         <div class="site-footer__actions">
+diff --git a/src/partials/header.html b/src/partials/header.html
+index cf08ae7..63d6eca 100644
+--- a/src/partials/header.html
++++ b/src/partials/header.html
+@@ -3,7 +3,7 @@
+   <div class="container-fluid container-edge">
+     <div class="site-header__inner">
+       <a class="site-header__logo" href="index.html" data-anim-item>
+-        <img src="assets/images/logo/logo-321.webp" srcset="assets/images/logo/logo-213.webp 213w, assets/images/logo/logo-238.webp 238w, assets/images/logo/logo-272.webp 272w, assets/images/logo/logo-321.webp 321w, assets/images/logo/logo-322.webp 322w, assets/images/logo/logo-361.webp 361w, assets/images/logo/logo-374.webp 374w, assets/images/logo/logo-422.webp 422w, assets/images/logo/logo-482.webp 482w, assets/images/logo/logo-561.webp 561w, assets/images/logo/logo-642.webp 642w, assets/images/logo/logo-722.webp 722w, assets/images/logo/logo-844.webp 844w, assets/images/logo/logo-963.webp 963w, assets/images/logo/logo-1089.webp 1089w" sizes="(min-width: 2560px) 482px, (min-width: 2200px) 422px, (min-width: 1920px) 361px, (min-width: 1400px) 321px, (min-width: 1200px) 238px, (min-width: 992px) calc(38.4615vw - 189.5px), 213px" alt="Claremont College — An Anglican Co-Educational Primary School" width="1089" height="270">
++        <img src="assets/images/logo/logo-321.webp" srcset="assets/images/logo/logo-213.webp 213w, assets/images/logo/logo-238.webp 238w, assets/images/logo/logo-272.webp 272w, assets/images/logo/logo-321.webp 321w, assets/images/logo/logo-322.webp 322w, assets/images/logo/logo-361.webp 361w, assets/images/logo/logo-374.webp 374w, assets/images/logo/logo-422.webp 422w, assets/images/logo/logo-482.webp 482w, assets/images/logo/logo-561.webp 561w, assets/images/logo/logo-642.webp 642w, assets/images/logo/logo-722.webp 722w, assets/images/logo/logo-844.webp 844w, assets/images/logo/logo-963.webp 963w, assets/images/logo/logo-1089.webp 1089w" sizes="(min-width: 1400px) 321px, (min-width: 992px) 238px, 213px" alt="Claremont College — An Anglican Co-Educational Primary School" width="1089" height="270">
+       </a>
+ 
+       <div class="site-header__right">
+diff --git a/src/partials/icons.html b/src/partials/icons.html
+index d8c2f67..66328c1 100644
+--- a/src/partials/icons.html
++++ b/src/partials/icons.html
+@@ -154,4 +154,9 @@
+   <symbol id="icon-close" viewBox="0 0 20 20" fill="none">
+     <path d="M4 4l12 12M16 4L4 16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+   </symbol>
++  <symbol id="icon-warning" viewBox="0 0 20 20">
++    <circle cx="10" cy="10" r="10" fill="currentColor"/>
++    <path d="M10 5.25v6" stroke="var(--color-primary)" stroke-width="2" stroke-linecap="round"/>
++    <circle cx="10" cy="14.6" r="1.15" fill="var(--color-primary)"/>
++  </symbol>
+ </svg>
+diff --git a/src/partials/search.html b/src/partials/search.html
+index e71e864..bb2a4ba 100644
+--- a/src/partials/search.html
++++ b/src/partials/search.html
+@@ -7,7 +7,7 @@
+   <div class="search__panel">
+     <div class="search__top">
+       <a class="site-header__logo" href="index.html">
+-        <img src="assets/images/logo/logo-321.webp" srcset="assets/images/logo/logo-213.webp 213w, assets/images/logo/logo-238.webp 238w, assets/images/logo/logo-272.webp 272w, assets/images/logo/logo-321.webp 321w, assets/images/logo/logo-322.webp 322w, assets/images/logo/logo-361.webp 361w, assets/images/logo/logo-374.webp 374w, assets/images/logo/logo-422.webp 422w, assets/images/logo/logo-482.webp 482w, assets/images/logo/logo-561.webp 561w, assets/images/logo/logo-642.webp 642w, assets/images/logo/logo-722.webp 722w, assets/images/logo/logo-844.webp 844w, assets/images/logo/logo-963.webp 963w, assets/images/logo/logo-1089.webp 1089w" sizes="(min-width: 2560px) 482px, (min-width: 2200px) 422px, (min-width: 1920px) 361px, (min-width: 1400px) 321px, (min-width: 1200px) 238px, (min-width: 992px) calc(38.4615vw - 189.5px), 213px" alt="Claremont College" width="1089" height="270">
++        <img src="assets/images/logo/logo-321.webp" srcset="assets/images/logo/logo-213.webp 213w, assets/images/logo/logo-238.webp 238w, assets/images/logo/logo-272.webp 272w, assets/images/logo/logo-321.webp 321w, assets/images/logo/logo-322.webp 322w, assets/images/logo/logo-361.webp 361w, assets/images/logo/logo-374.webp 374w, assets/images/logo/logo-422.webp 422w, assets/images/logo/logo-482.webp 482w, assets/images/logo/logo-561.webp 561w, assets/images/logo/logo-642.webp 642w, assets/images/logo/logo-722.webp 722w, assets/images/logo/logo-844.webp 844w, assets/images/logo/logo-963.webp 963w, assets/images/logo/logo-1089.webp 1089w" sizes="(min-width: 1400px) 321px, (min-width: 992px) 238px, 213px" alt="Claremont College" width="1089" height="270">
+       </a>
+       <button class="search__close" type="button" data-search-close aria-label="Close search">
+         <svg class="icon" aria-hidden="true"><use href="#icon-close"></use></svg>
+diff --git a/src/sections/contact/details-form.html b/src/sections/contact/details-form.html
+index c68db99..9ab123e 100644
+--- a/src/sections/contact/details-form.html
++++ b/src/sections/contact/details-form.html
+@@ -23,22 +23,22 @@
+       </div>
+ 
+       <div class="col-lg-6" data-anim="reveal" data-anim-order="1">
+-        <form class="contact__form" action="#" method="post">
+-          <div>
++        <form class="contact__form" action="#" method="post" data-form-validate>
++          <div class="contact__field">
+             <label class="form-label" for="contact-first-name">First Name</label>
+-            <input class="form-control" id="contact-first-name" name="first_name" type="text" placeholder="Jane" autocomplete="given-name" required>
++            <input class="form-control" id="contact-first-name" name="first_name" type="text" placeholder="Jane" autocomplete="given-name" required data-error="Please enter your first name.">
+           </div>
+-          <div>
++          <div class="contact__field">
+             <label class="form-label" for="contact-last-name">Last Name</label>
+-            <input class="form-control" id="contact-last-name" name="last_name" type="text" placeholder="Doe" autocomplete="family-name" required>
++            <input class="form-control" id="contact-last-name" name="last_name" type="text" placeholder="Doe" autocomplete="family-name" required data-error="Please enter your last name.">
+           </div>
+-          <div class="contact__field--wide">
++          <div class="contact__field contact__field--wide">
+             <label class="form-label" for="contact-email">Email</label>
+-            <input class="form-control" id="contact-email" name="email" type="email" placeholder="jane.doe@gmail.com" autocomplete="email" required>
++            <input class="form-control" id="contact-email" name="email" type="email" placeholder="jane.doe@gmail.com" autocomplete="email" required data-error="Please enter your email address." data-error-format="Please enter an email address like jane.doe@gmail.com">
+           </div>
+-          <div class="contact__field--wide">
++          <div class="contact__field contact__field--wide">
+             <label class="form-label" for="contact-message">Message</label>
+-            <textarea class="form-control" id="contact-message" name="message" placeholder="Write your message" rows="4" required></textarea>
++            <textarea class="form-control" id="contact-message" name="message" placeholder="Write your message" rows="4" required data-error="Please write your message."></textarea>
+           </div>
+           <div class="contact__actions">
+             <button class="btn btn-primary" type="submit">Submit</button>
+diff --git a/src/sections/extra-curricular/activities.html b/src/sections/extra-curricular/activities.html
+index a30ff57..dc367a3 100644
+--- a/src/sections/extra-curricular/activities.html
++++ b/src/sections/extra-curricular/activities.html
+@@ -1,7 +1,7 @@
+ <!-- @wagtail-block: scroller (link cards)
+      title: CharBlock(required)
+      cards: ListBlock(StructBlock(title:CharBlock, text:TextBlock(optional), page:PageChooserBlock))
+-     Card copy from Figma 1747:1159, sitting at the card foot; Languages is still “(TBC)” there, so it carries placeholder copy.
++     Card copy from Figma 1747:1159, sitting at the card foot.
+      The cards are the fold (_fold.less, initFolds, .fold--hover): with a mouse from lg the first is open at rest and the one
+      under the mouse after, on touch every card shows its copy; below lg the row is an accordion (Figma 2149:6282), the first open. -->
+ <section class="scroller scroller--reveal" aria-labelledby="activities-title" data-scroller>
+@@ -21,6 +21,6 @@
+     <li class="scroller__card fold__item"><h3><button class="fold__row" type="button" aria-expanded="false" aria-controls="activity-coding-camp"><span>Coding camp</span><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button></h3><div class="fold__panel" id="activity-coding-camp"><div class="fold__body"><p class="scroller__text">At Code Camp, students in Years 2-6 dive into coding, Minecraft engineering, animation, design and robotics.</p></div></div></li>
+     <li class="scroller__card fold__item"><h3><button class="fold__row" type="button" aria-expanded="false" aria-controls="activity-chess-club"><span>Chess club</span><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button></h3><div class="fold__panel" id="activity-chess-club"><div class="fold__body"><p class="scroller__text">At Chess Club, students sharpen their strategy with coaching from the Sydney Academy of Chess, while lunchtime chess classes prepares keen players to represent Claremont at the annual schools’ competition.</p></div></div></li>
+     <li class="scroller__card fold__item"><h3><button class="fold__row" type="button" aria-expanded="false" aria-controls="activity-debating"><span>Debating</span><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button></h3><div class="fold__panel" id="activity-debating"><div class="fold__body"><p class="scroller__text">Through debating, students can build confidence and discover their voice, supported by debating coaching from Masters Academy.</p></div></div></li>
+-    <li class="scroller__card fold__item"><h3><button class="fold__row" type="button" aria-expanded="false" aria-controls="activity-languages"><span>Languages</span><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button></h3><div class="fold__panel" id="activity-languages"><div class="fold__body"><p class="scroller__text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec nunc congue, ultricies felis at, malesuada erat. Morbi nisi nulla, blandit eget dolor id, aliquam vehicula dolor sagittis eleifend.</p></div></div></li>
++    <li class="scroller__card fold__item"><h3><button class="fold__row" type="button" aria-expanded="false" aria-controls="activity-languages"><span>Languages</span><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button></h3><div class="fold__panel" id="activity-languages"><div class="fold__body"><p class="scroller__text">Students in Kindergarten to Year 6 can choose to learn French or Mandarin through our weekly after-school language program. Lessons are designed to develop language skills through engaging, interactive and enjoyable learning experiences, with cultural learning incorporated where it supports and enriches language development.</p></div></div></li>
+   </ul>
+ </section>
+diff --git a/src/sections/home-hero.html b/src/sections/home-hero.html
+index 8077539..bf58397 100644
+--- a/src/sections/home-hero.html
++++ b/src/sections/home-hero.html
+@@ -11,9 +11,9 @@
+ <section class="hero" aria-labelledby="hero-title" data-anim-parallax-trigger>
+   <div class="hero__media" aria-hidden="true">
+     <picture>
+-      <source media="(min-width: 576px)" srcset="assets/images/home/hero.webp" width="1842" height="1650">
++      <source media="(min-width: 576px)" srcset="assets/images/home/hero.webp" width="1842" height="1417">
+       <img class="hero__img" fetchpriority="high" decoding="async" src="assets/images/home/hero-m.webp" alt="" width="750" height="1028"
+-           data-anim="parallax" data-anim-axis="y" data-anim-speed="12" data-anim-reverse data-anim-start="top top" data-anim-disable-mobile>
++           data-anim="parallax" data-anim-axis="y" data-anim-speed="6.34" data-anim-reverse data-anim-start="top top" data-anim-disable-mobile>
+     </picture>
+   </div>
+ 
+diff --git a/src/sections/pillars.html b/src/sections/pillars.html
+index 057ee67..b67414d 100644
+--- a/src/sections/pillars.html
++++ b/src/sections/pillars.html
+@@ -32,7 +32,7 @@
+       <div class="pillars__item swiper-slide" data-anim-group="fade-up">
+         <h3 data-anim-order="2">Our core values</h3>
+         <div data-anim-item>
+-          <p class="pillars__statement">Innovation<br>Collaboration<br>Compassion</p>
++          <p class="pillars__statement">Collaboration<br>Innovation<br>Compassion</p>
+           <p class="pillars__text">Our core values drive us and define us.</p>
+         </div>
+       </div>
+diff --git a/src/sections/quote-slider.html b/src/sections/quote-slider.html
+index 4b1a904..20eeec0 100644
+--- a/src/sections/quote-slider.html
++++ b/src/sections/quote-slider.html
+@@ -6,7 +6,8 @@
+              author:CharBlock (optional), role:CharBlock (optional), page:PageChooserBlock (optional: the photo links there and shows the arrow)))
+      From lg the row drifts slowly to the left, wrapping round, paused under the pointer, the arrows stepping it and a drag
+      throwing it (pan.js). Hovering or focusing a card slides a Light Blue box with the quote and author up over the photo
+-     and turns the arrow down. Below lg it is
++     and turns the arrow down. In the educators layout a quote longer than its box scrolls inside it, gliding to its end
++     once the card is open (ui.js). Below lg it is
+      the Swiper carousel (data-slider-below-lg): on tablets the active card's box is open and the peeking card dims; on
+      phones each card is the photo over the quote panel, the arrows, photo and quote filling one screen: the cards are one
+      stacked deck (data-slider-deck) and change as ref/wcc's split slider does, the next photo wiping up over the last
+diff --git a/src/sections/welcome/educators.html b/src/sections/welcome/educators.html
+index f6f2922..88d51e0 100644
+--- a/src/sections/welcome/educators.html
++++ b/src/sections/welcome/educators.html
+@@ -1,4 +1,5 @@
+ <!-- @wagtail-block: quote_slider (layout: educators) — the shared block is sections/quote-slider.html
+-     Eight cards from the "03- Design 2" strip (2410:7936); the names come from its hover cards (2410:8070…),
+-     the titles and quotes are Figma's placeholder copy. -->
+-<include src="sections/quote-slider.html" locals='{"id": "educators-title", "title": "Our team of educators who inspire", "intro": "", "layout": "educators", "prev_label": "Previous educators", "next_label": "Next educators", "slides": [{"image": "assets/images/welcome/educator-1.webp", "image_m": "", "width_m": "", "height_m": "", "alt": "", "width": "714", "height": "712", "quote": "“Lorem ipsum dolor sit amet, consectetur adipiscing elit.”", "author": "Katrina Calverley", "role": "To provide title", "url": "#", "link_label": "Meet Katrina Calverley"}, {"image": "assets/images/welcome/educator-2.webp", "image_m": "", "width_m": "", "height_m": "", "alt": "", "width": "714", "height": "712", "quote": "“Lorem ipsum dolor sit amet, consectetur adipiscing elit.”", "author": "Bianca Herborn", "role": "To provide title", "url": "#", "link_label": "Meet Bianca Herborn"}, {"image": "assets/images/welcome/educator-3.webp", "image_m": "", "width_m": "", "height_m": "", "alt": "", "width": "714", "height": "712", "quote": "“Lorem ipsum dolor sit amet, consectetur adipiscing elit.”", "author": "Abby Carter", "role": "To provide title", "url": "#", "link_label": "Meet Abby Carter"}, {"image": "assets/images/welcome/educator-4.webp", "image_m": "", "width_m": "", "height_m": "", "alt": "", "width": "714", "height": "712", "quote": "“Lorem ipsum dolor sit amet, consectetur adipiscing elit.”", "author": "Will Mison", "role": "To provide title", "url": "#", "link_label": "Meet Will Mison"}, {"image": "assets/images/welcome/educator-5.webp", "image_m": "", "width_m": "", "height_m": "", "alt": "", "width": "714", "height": "712", "quote": "“Lorem ipsum dolor sit amet, consectetur adipiscing elit.”", "author": "Cath McKersie", "role": "To provide title", "url": "#", "link_label": "Meet Cath McKersie"}, {"image": "assets/images/welcome/educator-6.webp", "image_m": "", "width_m": "", "height_m": "", "alt": "", "width": "714", "height": "712", "quote": "“Lorem ipsum dolor sit amet, consectetur adipiscing elit.”", "author": "Deborah Koh", "role": "To provide title", "url": "#", "link_label": "Meet Deborah Koh"}, {"image": "assets/images/welcome/educator-7.webp", "image_m": "", "width_m": "", "height_m": "", "alt": "", "width": "714", "height": "712", "quote": "“Lorem ipsum dolor sit amet, consectetur adipiscing elit.”", "author": "Lisa Speranza", "role": "To provide title", "url": "#", "link_label": "Meet Lisa Speranza"}, {"image": "assets/images/welcome/educator-8.webp", "image_m": "", "width_m": "", "height_m": "", "alt": "", "width": "714", "height": "712", "quote": "“Lorem ipsum dolor sit amet, consectetur adipiscing elit.”", "author": "Louise McNerney", "role": "To provide title", "url": "#", "link_label": "Meet Louise McNerney"}]}'></include>
++     Eight cards from the "03- Design 2" strip (2410:7936); the names come from its hover cards (2410:8070…), the titles and
++     quotes from the client's comments on those cards (Emily, 2026-09-30 to 2026-10-11). Will Mison, Lisa Speranza and
++     Louise McNerney have no quote yet, so theirs is still Figma's placeholder. -->
++<include src="sections/quote-slider.html" locals='{"id": "educators-title", "title": "Our team of educators who inspire", "intro": "", "layout": "educators", "prev_label": "Previous educators", "next_label": "Next educators", "slides": [{"image": "assets/images/welcome/educator-1.webp", "image_m": "", "width_m": "", "height_m": "", "alt": "", "width": "714", "height": "712", "quote": "“Being a Learning Enrichment Teacher at Claremont College is a privilege. Our unique co-teaching partnerships foster a powerful culture of collective care, shared knowledge and purpose, ensuring every child is known, valued and inspired to be their best.”", "author": "Katrina Calverley", "role": "Learning Enrichment Teacher", "url": "#", "link_label": "Meet Katrina Calverley"}, {"image": "assets/images/welcome/educator-2.webp", "image_m": "", "width_m": "", "height_m": "", "alt": "", "width": "714", "height": "712", "quote": "“STEM and robotics at Claremont equip students with the skills and mindset to thrive in an ever-changing world. Through creativity, collaboration and problem-solving, students are encouraged to imagine what’s possible.”", "author": "Bianca Herborn", "role": "Classroom Teacher", "url": "#", "link_label": "Meet Bianca Herborn"}, {"image": "assets/images/welcome/educator-3.webp", "image_m": "", "width_m": "", "height_m": "", "alt": "", "width": "714", "height": "712", "quote": "“Starting Kindergarten at Claremont College is about building strong foundations for learning and belonging, where every child is known, valued and supported to grow with confidence and curiosity.”", "author": "Abby Carter", "role": "Classroom Teacher", "url": "#", "link_label": "Meet Abby Carter"}, {"image": "assets/images/welcome/educator-4.webp", "image_m": "", "width_m": "", "height_m": "", "alt": "", "width": "714", "height": "712", "quote": "“Lorem ipsum dolor sit amet, consectetur adipiscing elit.”", "author": "Will Mison", "role": "Classroom Teacher", "url": "#", "link_label": "Meet Will Mison"}, {"image": "assets/images/welcome/educator-5.webp", "image_m": "", "width_m": "", "height_m": "", "alt": "", "width": "714", "height": "712", "quote": "“At the heart of our approach to wellbeing is a compassionate and inclusive community where every child feels known, valued and supported. Through counselling and pastoral care, we work closely with students and families to build resilience, strengthen social and emotional skills, and help children navigate life’s challenges with confidence.”", "author": "Cath McKersie", "role": "School Counsellor", "url": "#", "link_label": "Meet Cath McKersie"}, {"image": "assets/images/welcome/educator-6.webp", "image_m": "", "width_m": "", "height_m": "", "alt": "", "width": "714", "height": "712", "quote": "“What makes Claremont special is the way we nurture students in their learning, faith and character. Through Chapel and lunchtime clubs, students build friendships, explore new interests and develop a genuine sense of belonging within our community.”", "author": "Deborah Koh", "role": "Teacher Librarian", "url": "#", "link_label": "Meet Deborah Koh"}, {"image": "assets/images/welcome/educator-7.webp", "image_m": "", "width_m": "", "height_m": "", "alt": "", "width": "714", "height": "712", "quote": "“Lorem ipsum dolor sit amet, consectetur adipiscing elit.”", "author": "Lisa Speranza", "role": "Teaching and Learning Assistant", "url": "#", "link_label": "Meet Lisa Speranza"}, {"image": "assets/images/welcome/educator-8.webp", "image_m": "", "width_m": "", "height_m": "", "alt": "", "width": "714", "height": "712", "quote": "“Lorem ipsum dolor sit amet, consectetur adipiscing elit.”", "author": "Louise McNerney", "role": "Learning Enrichment Teacher", "url": "#", "link_label": "Meet Louise McNerney"}]}'></include>
+diff --git a/src/sections/welcome/executives.html b/src/sections/welcome/executives.html
+index b82e813..4bc1d5b 100644
+--- a/src/sections/welcome/executives.html
++++ b/src/sections/welcome/executives.html
+@@ -1,7 +1,7 @@
+ <!-- @wagtail-block: staff_grid
+      title:  CharBlock(required)
+      people: ListBlock(StructBlock(photo:ImageChooserBlock, name:CharBlock, role:CharBlock, bio:TextBlock))
+-     Portraits are the real ones from Figma; the bios are still Figma's lorem ipsum.
++     Portraits, roles and bios from Figma 1732:12487.
+      One list for every layout: a three-column grid from lg, a two-card Swiper on tablets (data-slider-below-lg) and on
+      phones one stacked deck (data-slider-deck) that changes as ref/wcc's split slider does. Below lg the copy under each
+      portrait reveals on its own as it comes into view (the portrait has usually come in a screen earlier). -->
+@@ -21,7 +21,7 @@
+           <div class="staff-grid__copy deck__copy" data-anim="reveal" data-anim-type="fade-up" data-anim-media="(max-width: 991.98px)">
+             <h3>Alana Koch</h3>
+             <p class="staff-grid__role">Principal</p>
+-            <p class="staff-grid__bio">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec nunc congue, ultricies felis at, malesuada erat. Morbi nisi nulla, blandit eget dolor id, aliquam vehicula dolor sagittis eleifend.</p>
++            <p class="staff-grid__bio">I teach because there is a deep joy in witnessing a child understand something for the first time, achieve what they never thought possible, and discover their potential to make a positive impact on the world.</p>
+           </div>
+         </li>
+         <li class="staff-grid__card swiper-slide">
+@@ -29,39 +29,39 @@
+           <div class="staff-grid__copy deck__copy" data-anim="reveal" data-anim-type="fade-up" data-anim-media="(max-width: 991.98px)">
+             <h3>Janelle Ford</h3>
+             <p class="staff-grid__role">Deputy Principal</p>
+-            <p class="staff-grid__bio">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec nunc congue, ultricies felis at, malesuada erat. Morbi nisi nulla, blandit eget dolor id, aliquam vehicula dolor sagittis eleifend.</p>
++            <p class="staff-grid__bio">With a deep passion for learning, I strive to ignite a sense of wonder in every child, empowering them to become capable, resilient learners who embrace knowledge and exploration throughout their lives.</p>
+           </div>
+         </li>
+         <li class="staff-grid__card swiper-slide">
+           <div class="deck__frame"><span class="deck__shot"><img class="staff-grid__photo" src="assets/images/welcome/chloe-leary.webp" alt="Portrait of Chloe Leary" width="806" height="806" loading="lazy" decoding="async"></span></div>
+           <div class="staff-grid__copy deck__copy" data-anim="reveal" data-anim-type="fade-up" data-anim-media="(max-width: 991.98px)">
+             <h3>Chloe Leary</h3>
+-            <p class="staff-grid__role">Principal's Executive Assistant/Registrar</p>
+-            <p class="staff-grid__bio">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec nunc congue, ultricies felis at, malesuada erat. Morbi nisi nulla, blandit eget dolor id, aliquam vehicula dolor sagittis eleifend.</p>
++            <p class="staff-grid__role">Principal's Executive Assistant | Registrar</p>
++            <p class="staff-grid__bio">I know choosing a school for your child is a big decision. I love being part of that journey with families and then having the privilege of watching their child grow in confidence and thrive.</p>
+           </div>
+         </li>
+         <li class="staff-grid__card swiper-slide">
+           <div class="deck__frame"><span class="deck__shot"><img class="staff-grid__photo" src="assets/images/welcome/renee-de-rossi.webp" alt="Portrait of Renee De Rossi" width="806" height="806" loading="lazy" decoding="async"></span></div>
+           <div class="staff-grid__copy deck__copy" data-anim="reveal" data-anim-type="fade-up" data-anim-media="(max-width: 991.98px)">
+             <h3>Renee De Rossi</h3>
+-            <p class="staff-grid__role">Head of Inclusive Learning</p>
+-            <p class="staff-grid__bio">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec nunc congue, ultricies felis at, malesuada erat. Morbi nisi nulla, blandit eget dolor id, aliquam vehicula dolor sagittis eleifend.</p>
++            <p class="staff-grid__role">Director of Teaching &amp; Learning</p>
++            <p class="staff-grid__bio">I lead because every child deserves to be seen and to thrive, whoever they are and however they experience the world. This conviction inspires everything I do.</p>
+           </div>
+         </li>
+         <li class="staff-grid__card swiper-slide">
+           <div class="deck__frame"><span class="deck__shot"><img class="staff-grid__photo" src="assets/images/welcome/emily-eu.webp" alt="Portrait of Emily Eu" width="806" height="806" loading="lazy" decoding="async"></span></div>
+           <div class="staff-grid__copy deck__copy" data-anim="reveal" data-anim-type="fade-up" data-anim-media="(max-width: 991.98px)">
+             <h3>Emily Eu</h3>
+-            <p class="staff-grid__role">Head of Primary</p>
+-            <p class="staff-grid__bio">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec nunc congue, ultricies felis at, malesuada erat. Morbi nisi nulla, blandit eget dolor id, aliquam vehicula dolor sagittis eleifend.</p>
++            <p class="staff-grid__role">Director of Marketing &amp; Events | Stage&nbsp;Leader</p>
++            <p class="staff-grid__bio">Teaching is deeply rewarding because I have the privilege of watching children discover their strengths, embrace challenges, grow in confidence, and begin to believe in what they can achieve.</p>
+           </div>
+         </li>
+         <li class="staff-grid__card swiper-slide">
+           <div class="deck__frame"><span class="deck__shot"><img class="staff-grid__photo" src="assets/images/welcome/hannah-davis.webp" alt="Portrait of Hannah Davis" width="806" height="806" loading="lazy" decoding="async"></span></div>
+           <div class="staff-grid__copy deck__copy" data-anim="reveal" data-anim-type="fade-up" data-anim-media="(max-width: 991.98px)">
+             <h3>Hannah Davis</h3>
+-            <p class="staff-grid__role">Head of Infants</p>
+-            <p class="staff-grid__bio">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec nunc congue, ultricies felis at, malesuada erat. Morbi nisi nulla, blandit eget dolor id, aliquam vehicula dolor sagittis eleifend.</p>
++            <p class="staff-grid__role">Director of Daily Operations &amp; Pastoral Care | Stage&nbsp;Leader</p>
++            <p class="staff-grid__bio">I believe every child deserves to feel safe, valued and known. Together with families, I nurture wellbeing, confidence and learning, helping every child feel they belong.</p>
+           </div>
+         </li>
+       </ul>
