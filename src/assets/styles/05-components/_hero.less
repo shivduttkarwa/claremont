@@ -90,6 +90,8 @@
       max-width: 75.75rem;
       margin-bottom: var(--hero-title-gap);
       font-size: ~"min(var(--font-size-display), 8.2246 * var(--hero-u))";
+      // 992 to 1199 only (Cocogun's slide 11, 992 × 600): a tenth smaller, 60 at 600 tall, 77 at 768; the copy keeps its size
+      @media (max-width: 1199.98px) { font-size: ~"min(var(--font-size-display), 7.402 * var(--hero-u))"; }
       font-kerning: none; // Figma's 1640 render draws the title unkerned ("Welcome to" is 579 of ink there); its 375 render is kerned
     }
     @media (min-width: @bp-xxl) { margin-left: -0.125rem; } // x 198

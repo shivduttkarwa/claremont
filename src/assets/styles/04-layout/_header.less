@@ -30,14 +30,15 @@
     background: inherit;
   }
 
-  // The full bar only fits a 992 screen with the logo, links and gaps all at their smallest; they grow to the xl measures by 1200
+  // 992 to 1199 is the 1200 bar (logo 238, links 14, gaps 31.5 on the 14 root; Cocogun's slide 11 found the 992 logo too
+  // small): only the gap between the links closes, to 24.5 at 992, so the bar fits. Nothing changes from 1200 up
   @media (min-width: @bp-lg) {
     position: absolute;
     inset: 0 0 auto;
     background-color: transparent;
-    --header-logo-width: ~"clamp(11rem, -17.6154rem + 46.1538vw, 17rem)"; // 211 at 992 → 238 by 1050 on the 14 root
-    --header-nav-gap: ~"clamp(1rem, -4.9615rem + 9.6154vw, 2.25rem)";      // 16 → 36
-    --header-link-size: ~"clamp(0.875rem, 0.2788rem + 0.9615vw, 1rem)";   // 14 → 16
+    --header-logo-width: 17rem; // 238
+    --header-nav-gap: ~"clamp(1.75rem, 33.3333vw - 21.87rem, 2.25rem)"; // 24.5 at 992 → 31.5 by 1013
+    --header-link-size: 1rem; // 14
     --header-gap: var(--space-3);
   }
 
