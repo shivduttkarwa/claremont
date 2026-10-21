@@ -123,8 +123,57 @@
     }
   }
 
+  &__field { position: relative; } // the validation tip hangs from the field
+
   &__field--wide {
     @media (min-width: @bp-sm) { grid-column: 1 / -1; }
+  }
+
+  // The browser's validation bubble, drawn by the page (form.js) since the browser's own cannot be styled: Dark Green
+  // under the field's rule with a caret up to it, the warning sign in Yellow, white copy; it rises in 4 and fades
+  .form-tip {
+    --tip-caret: 0.625rem; // 10
+    position: absolute;
+    top: calc(100% + var(--tip-caret));
+    left: 0;
+    z-index: var(--z-raised);
+    display: flex;
+    align-items: center;
+    gap: 0.625rem; // 10
+    max-width: 100%;
+    padding: 0.625rem 0.875rem 0.625rem 0.75rem; // 10 14 10 12
+    background: var(--color-primary);
+    color: var(--color-white);
+    font-family: var(--font-body);
+    font-size: var(--font-size-sm); // 13
+    line-height: 1.3846;            // 18
+    letter-spacing: var(--letter-spacing-body);
+    box-shadow: var(--shadow-marker);
+    opacity: 0;
+    transform: translateY(0.375rem); // rises 6, as the fold's copy does
+    transition: opacity var(--duration-fast) ease, transform var(--duration-fast) ease; // out: gone quickly as the reader types
+    &::before {
+      content: "";
+      position: absolute;
+      top: calc(var(--tip-caret) / -2);
+      left: 1.125rem; // 18
+      width: var(--tip-caret);
+      height: var(--tip-caret);
+      background: inherit;
+      transform: rotate(45deg);
+    }
+    .icon {
+      flex: 0 0 auto;
+      width: 1.125rem; // 18
+      height: 1.125rem;
+      color: var(--color-accent);
+    }
+    &.is-shown {
+      opacity: 1;
+      transform: none;
+      transition: opacity var(--duration-fast) ease, transform var(--duration-base) var(--ease-settle); // in: a soft rise with no slow tail (0.45 read as slow)
+    }
+    @media (prefers-reduced-motion: reduce) { transition: none; }
   }
 
   &__actions {

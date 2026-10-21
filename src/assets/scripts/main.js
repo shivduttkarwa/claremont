@@ -10,6 +10,7 @@ import { initPan } from "./pan.js";
 import { initPageTransition } from "./transition.js";
 import { initImageCarousels } from "./carousel.js";
 import { initLoadMore } from "./news.js";
+import { initForms } from "./form.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   Anim.init({ after: window.__pageArrival });
@@ -25,6 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initFolds();
   initImageCarousels();
   initLoadMore();
+  initForms();
   initSearch();
   initStickyHeader();
   initMenu();

@@ -23,22 +23,22 @@
       </div>
 
       <div class="col-lg-6" data-anim="reveal" data-anim-order="1">
-        <form class="contact__form" action="#" method="post">
-          <div>
+        <form class="contact__form" action="#" method="post" data-form-validate>
+          <div class="contact__field">
             <label class="form-label" for="contact-first-name">First Name</label>
-            <input class="form-control" id="contact-first-name" name="first_name" type="text" placeholder="Jane" autocomplete="given-name" required>
+            <input class="form-control" id="contact-first-name" name="first_name" type="text" placeholder="Jane" autocomplete="given-name" required data-error="Please enter your first name.">
           </div>
-          <div>
+          <div class="contact__field">
             <label class="form-label" for="contact-last-name">Last Name</label>
-            <input class="form-control" id="contact-last-name" name="last_name" type="text" placeholder="Doe" autocomplete="family-name" required>
+            <input class="form-control" id="contact-last-name" name="last_name" type="text" placeholder="Doe" autocomplete="family-name" required data-error="Please enter your last name.">
           </div>
-          <div class="contact__field--wide">
+          <div class="contact__field contact__field--wide">
             <label class="form-label" for="contact-email">Email</label>
-            <input class="form-control" id="contact-email" name="email" type="email" placeholder="jane.doe@gmail.com" autocomplete="email" required>
+            <input class="form-control" id="contact-email" name="email" type="email" placeholder="jane.doe@gmail.com" autocomplete="email" required data-error="Please enter your email address." data-error-format="Please enter an email address like jane.doe@gmail.com">
           </div>
-          <div class="contact__field--wide">
+          <div class="contact__field contact__field--wide">
             <label class="form-label" for="contact-message">Message</label>
-            <textarea class="form-control" id="contact-message" name="message" placeholder="Write your message" rows="4" required></textarea>
+            <textarea class="form-control" id="contact-message" name="message" placeholder="Write your message" rows="4" required data-error="Please write your message."></textarea>
           </div>
           <div class="contact__actions">
             <button class="btn btn-primary" type="submit">Submit</button>
