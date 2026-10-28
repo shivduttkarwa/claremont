@@ -441,3 +441,37 @@ export function initSubnavTuck(root = document) {
   window.addEventListener("resize", queue);
   update();
 }
+
+// Below lg a copy of the hero's quick links rides at the foot of the screen while the row is scrolled away, until the footer
+export function initSubnavBar(root = document) {
+  const nav = root.querySelector(":is(.hero, .page-hero) .subnav");
+  if (!nav) return;
+  const footer = root.querySelector(".site-footer");
+  const copy = nav.cloneNode(true);
+  for (const el of [copy, ...copy.querySelectorAll("*")]) {
+    el.removeAttribute("style");
+    el.removeAttribute("data-anim-item");
+  }
+  copy.querySelectorAll("a").forEach((a) => a.setAttribute("tabindex", "-1"));
+  const bar = document.createElement("div");
+  bar.className = "subnav-bar";
+  bar.setAttribute("aria-hidden", "true"); // a copy for the eye: the hero's row stays the one in the reading order
+  bar.append(copy);
+  document.body.append(bar);
+  let ticking = false;
+
+  const update = () => {
+    ticking = false;
+    const gone = nav.getBoundingClientRect().bottom < 0;
+    const footerUp = footer && footer.getBoundingClientRect().top < window.innerHeight;
+    bar.classList.toggle("is-shown", gone && !footerUp);
+  };
+  const queue = () => {
+    if (!ticking) requestAnimationFrame(update);
+    ticking = true;
+  };
+
+  window.addEventListener("scroll", queue, { passive: true });
+  window.addEventListener("resize", queue);
+  update();
+}

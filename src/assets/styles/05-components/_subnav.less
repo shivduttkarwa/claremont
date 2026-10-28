@@ -70,3 +70,24 @@
     }
   }
 }
+
+// Below lg, once the hero's row has scrolled away, a copy of it (initSubnavBar) rides above the screen's foot (2101:13039)
+.subnav-bar {
+  --subnav-bar-inset: calc(var(--container-gutter) - 0.3125rem); // 15: as the hero's row, 5 wider than the gutter
+  --subnav-bar-bottom: ~"calc(0.875rem + env(safe-area-inset-bottom))"; // 14 above the screen's edge, clear of the home bar
+
+  position: fixed;
+  inset: auto var(--subnav-bar-inset) var(--subnav-bar-bottom);
+  z-index: var(--z-sticky);
+  visibility: hidden;
+  transform: translateY(calc(100% + var(--subnav-bar-bottom)));
+  transition: transform var(--duration-base) var(--ease-out), visibility 0s var(--duration-base);
+
+  &.is-shown {
+    visibility: visible;
+    transform: none;
+    transition: transform var(--duration-base) var(--ease-out);
+  }
+
+  @media (min-width: @bp-lg) { display: none; }
+}
