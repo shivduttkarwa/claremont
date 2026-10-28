@@ -17,7 +17,7 @@
   background: var(--color-primary);
   color: var(--color-white);
 
-  @media (min-width: @bp-lg) { --page-hero-pad-bottom: 2.45rem; } // title box ends 39.2 above the edge
+  @media (min-width: @bp-lg) { --page-hero-pad-bottom: 2.45rem; z-index: var(--z-sticky); } // title box ends 39.2 above the edge
   // Figma hangs the display title 16 left of the content edge (x 184) on every inner page
   @media (min-width: @bp-xxl) { --page-hero-title-shift: -1rem; }
 

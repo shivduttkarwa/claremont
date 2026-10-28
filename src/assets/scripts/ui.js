@@ -420,3 +420,24 @@ export function initStickyHeader(header = document.querySelector(".site-header")
   }, { passive: true });
   update();
 }
+
+// The fixed quick links tuck to their icons once the hero's bottom edge has risen past them
+export function initSubnavTuck(root = document) {
+  const nav = root.querySelector(":is(.hero, .page-hero) .subnav");
+  if (!nav) return;
+  const hero = nav.closest(".hero, .page-hero");
+  let ticking = false;
+
+  const update = () => {
+    ticking = false;
+    nav.classList.toggle("is-tucked", hero.getBoundingClientRect().bottom < nav.getBoundingClientRect().bottom);
+  };
+  const queue = () => {
+    if (!ticking) requestAnimationFrame(update);
+    ticking = true;
+  };
+
+  window.addEventListener("scroll", queue, { passive: true });
+  window.addEventListener("resize", queue);
+  update();
+}

@@ -87,15 +87,16 @@
   img { .img-cover(); }
 }
 
-// Dock the quick-link subnav to the screen edge of a hero (from lg).
+// Dock the quick-link subnav to the screen edge (from lg): fixed, so it stays in view as the page scrolls.
 .subnav-dock(@top) {
   @media (min-width: @bp-lg) {
-    position: absolute;
+    position: fixed;
     top: @top;
     right: 0;
     z-index: var(--z-raised);
     width: 11.75rem;
     margin-top: 0;
+    .is-scroll-locked & { right: var(--scrollbar-size, 0); } // the locked page's scrollbar width, so the strip holds still
   }
 }
 

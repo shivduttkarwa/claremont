@@ -2,6 +2,7 @@
 
 .subnav {
   --subnav-stretch: 1.125rem; // 18
+  --subnav-tab: 3.25rem;      // 52: what a tucked chip leaves in view, the 18 and the icon and 14 more, stopping 2 short of the label
 
   display: flex;
   gap: var(--space-1);
@@ -55,6 +56,16 @@
       @media (min-width: @bp-lg) {
         transform: translateX(calc(-1 * var(--subnav-stretch)));
         transition: transform var(--duration-slow) var(--ease-elastic);
+      }
+    }
+
+    // Past the hero (initSubnavTuck), where the strip would cover the column, only the icons stay in view
+    @media (min-width: @bp-lg) and @upto-design {
+      .subnav.is-tucked & {
+        transition: transform var(--duration-slow) var(--ease-out); // a plain glide both ways: the back-out stretch over the whole label read as a jump
+        &:not(:hover, :focus-visible) { transform: translateX(calc(100% - var(--subnav-tab))); }
+        &:hover,
+        &:focus-visible { transform: none; }
       }
     }
   }
