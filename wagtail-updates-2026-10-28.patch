@@ -1,5 +1,5 @@
 diff --git a/src/assets/scripts/main.js b/src/assets/scripts/main.js
-index ffb7015..c6b2247 100644
+index ffb7015..3d772a8 100644
 --- a/src/assets/scripts/main.js
 +++ b/src/assets/scripts/main.js
 @@ -3,7 +3,7 @@
@@ -7,23 +7,24 @@ index ffb7015..c6b2247 100644
  import "bootstrap/js/dist/offcanvas";
  import { Anim } from "./anim.js";
 -import { initApproachAccordion, initCurrentNav, initFolds, initHotspots, initMenu, initPlaceholderLinks, initQuoteCards, initScrollers, initStickyHeader, initTabArrows } from "./ui.js";
-+import { initApproachAccordion, initCurrentNav, initFolds, initHotspots, initMenu, initPlaceholderLinks, initQuoteCards, initScrollers, initStickyHeader, initSubnavTuck, initTabArrows } from "./ui.js";
++import { initApproachAccordion, initCurrentNav, initFolds, initHotspots, initMenu, initPlaceholderLinks, initQuoteCards, initScrollers, initStickyHeader, initSubnavBar, initSubnavTuck, initTabArrows } from "./ui.js";
  import { initSearch } from "./search.js";
  import { initSliders } from "./slider.js";
  import { initPan } from "./pan.js";
-@@ -29,6 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
+@@ -29,6 +29,8 @@ document.addEventListener("DOMContentLoaded", () => {
    initForms();
    initSearch();
    initStickyHeader();
 +  initSubnavTuck();
++  initSubnavBar();
    initMenu();
    initPageTransition();
  });
 diff --git a/src/assets/scripts/ui.js b/src/assets/scripts/ui.js
-index eed2759..451181b 100644
+index eed2759..6a9b3e4 100644
 --- a/src/assets/scripts/ui.js
 +++ b/src/assets/scripts/ui.js
-@@ -420,3 +420,24 @@ export function initStickyHeader(header = document.querySelector(".site-header")
+@@ -420,3 +420,58 @@ export function initStickyHeader(header = document.querySelector(".site-header")
    }, { passive: true });
    update();
  }
@@ -48,8 +49,42 @@ index eed2759..451181b 100644
 +  window.addEventListener("resize", queue);
 +  update();
 +}
++
++// Below lg a copy of the hero's quick links rides at the foot of the screen while the row is scrolled away, until the footer
++export function initSubnavBar(root = document) {
++  const nav = root.querySelector(":is(.hero, .page-hero) .subnav");
++  if (!nav) return;
++  const footer = root.querySelector(".site-footer");
++  const copy = nav.cloneNode(true);
++  for (const el of [copy, ...copy.querySelectorAll("*")]) {
++    el.removeAttribute("style");
++    el.removeAttribute("data-anim-item");
++  }
++  copy.querySelectorAll("a").forEach((a) => a.setAttribute("tabindex", "-1"));
++  const bar = document.createElement("div");
++  bar.className = "subnav-bar";
++  bar.setAttribute("aria-hidden", "true"); // a copy for the eye: the hero's row stays the one in the reading order
++  bar.append(copy);
++  document.body.append(bar);
++  let ticking = false;
++
++  const update = () => {
++    ticking = false;
++    const gone = nav.getBoundingClientRect().bottom < 0;
++    const footerUp = footer && footer.getBoundingClientRect().top < window.innerHeight;
++    bar.classList.toggle("is-shown", gone && !footerUp);
++  };
++  const queue = () => {
++    if (!ticking) requestAnimationFrame(update);
++    ticking = true;
++  };
++
++  window.addEventListener("scroll", queue, { passive: true });
++  window.addEventListener("resize", queue);
++  update();
++}
 diff --git a/src/assets/styles/01-settings/_tokens.less b/src/assets/styles/01-settings/_tokens.less
-index 22c660e..2c39c26 100644
+index 22c660e..0b2ee82 100644
 --- a/src/assets/styles/01-settings/_tokens.less
 +++ b/src/assets/styles/01-settings/_tokens.less
 @@ -15,6 +15,8 @@
@@ -65,7 +100,7 @@ index 22c660e..2c39c26 100644
    --z-behind: -1;
    --z-content: 2;
    --z-raised: 3;
-+  --z-sticky: 1020;              /* a hero from lg, so its fixed quick links ride over every section below it */
++  --z-sticky: 1020;              /* the quick links riding over the page: a hero from lg (its fixed strip), the phone bar below it */
    --z-header: 1050;              /* above Bootstrap's offcanvas (1045): the phone bar stays over its menu, open or closing */
    --z-overlay: 1080;             /* above Bootstrap's offcanvas + backdrop */
  }
@@ -138,7 +173,7 @@ index af58d33..75573da 100644
    @media (min-width: @bp-xxl) { --page-hero-title-shift: -1rem; }
  
 diff --git a/src/assets/styles/05-components/_subnav.less b/src/assets/styles/05-components/_subnav.less
-index 3f56ed1..56bb692 100644
+index 3f56ed1..0e0bd6f 100644
 --- a/src/assets/styles/05-components/_subnav.less
 +++ b/src/assets/styles/05-components/_subnav.less
 @@ -2,6 +2,7 @@
@@ -149,7 +184,7 @@ index 3f56ed1..56bb692 100644
  
    display: flex;
    gap: var(--space-1);
-@@ -57,5 +58,15 @@
+@@ -57,5 +58,36 @@
          transition: transform var(--duration-slow) var(--ease-elastic);
        }
      }
@@ -163,7 +198,28 @@ index 3f56ed1..56bb692 100644
 +        &:focus-visible { transform: none; }
 +      }
 +    }
++  }
++}
++
++// Below lg, once the hero's row has scrolled away, a copy of it (initSubnavBar) rides above the screen's foot (2101:13039)
++.subnav-bar {
++  --subnav-bar-inset: calc(var(--container-gutter) - 0.3125rem); // 15: as the hero's row, 5 wider than the gutter
++  --subnav-bar-bottom: ~"calc(0.875rem + env(safe-area-inset-bottom))"; // 14 above the screen's edge, clear of the home bar
++
++  position: fixed;
++  inset: auto var(--subnav-bar-inset) var(--subnav-bar-bottom);
++  z-index: var(--z-sticky);
++  visibility: hidden;
++  transform: translateY(calc(100% + var(--subnav-bar-bottom)));
++  transition: transform var(--duration-base) var(--ease-out), visibility 0s var(--duration-base);
++
++  &.is-shown {
++    visibility: visible;
++    transform: none;
++    transition: transform var(--duration-base) var(--ease-out);
    }
++
++  @media (min-width: @bp-lg) { display: none; }
  }
 diff --git a/src/news-2.html b/src/news-2.html
 index cc01ead..410eeb2 100644
