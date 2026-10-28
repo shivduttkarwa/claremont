@@ -147,6 +147,42 @@ index 803b6e4..5713879 100644
        justify-content: flex-end;
        gap: 1.375rem; // 22
        text-align: right;
+diff --git a/src/assets/styles/05-components/_fold.less b/src/assets/styles/05-components/_fold.less
+index b8e2a5c..60902a1 100644
+--- a/src/assets/styles/05-components/_fold.less
++++ b/src/assets/styles/05-components/_fold.less
+@@ -60,26 +60,22 @@
+     width: 2rem; // the 32 symbol overhangs Figma's 26 frame by 6
+     height: 1.625rem;
+     margin-right: -0.375rem;
+-    transition: transform var(--duration-base) var(--ease-out);
++    transition: transform var(--duration-fold) var(--ease-settle); // the fold's own curve: on --ease-out most of the quarter turn landed in its first 70ms
+   }
+-  // a fold row's arrow turns on the fold's own curve: on --ease-out most of the quarter turn landed in its first 70ms
+-  button& .icon { transition: transform var(--duration-fold) var(--ease-settle); }
+ 
+-  // hover and focus change the colour and show the fill where a block gives one, nothing moves; a link row nudges
+-  // its arrow, a fold row turns it down as the frames' hover state does (1680:5968), and keeps it down while open
++  // hover and focus change the colour and show the fill where a block gives one; every row, link or fold, turns its
++  // arrow down as the frames' hover state does (1680:5968), and a fold row keeps it down while open
+   &:focus-visible {
+     color: var(--fold-hover);
+     &::after { opacity: 1; }
++    .icon { transform: rotate(90deg); }
+   }
+-  a&:focus-visible .icon { transform: translate(0.25rem, -0.25rem); }
+-  button&:focus-visible .icon { transform: rotate(90deg); }
+   @media (hover: hover) {
+     &:hover {
+       color: var(--fold-hover);
+       &::after { opacity: 1; }
++      .icon { transform: rotate(90deg); }
+     }
+-    a&:hover .icon { transform: translate(0.25rem, -0.25rem); }
+-    button&:hover .icon { transform: rotate(90deg); }
+   }
+ }
+ .fold__row[aria-expanded="true"] .icon { transform: rotate(90deg); } // the button's own state: a heading may wrap it
 diff --git a/src/assets/styles/05-components/_hero.less b/src/assets/styles/05-components/_hero.less
 index b1c9740..fbce4de 100644
 --- a/src/assets/styles/05-components/_hero.less
@@ -263,6 +299,23 @@ index 6afef07..76292a7 100644
        "width": "1840",
        "height": "1090"
      }'></include>
+diff --git a/src/index.html b/src/index.html
+index 5a8d6db..fc0c8f9 100644
+--- a/src/index.html
++++ b/src/index.html
+@@ -47,9 +47,9 @@
+       "title": "Where would you like to start?",
+       "modifier": "",
+       "items": [
+-        { "id": "start-preparatory", "label": "Preparatory Program", "body": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec nunc congue, ultricies felis at, malesuada erat. Morbi nisi nulla, blandit eget dolor id, aliquam vehicula dolor sagittis eleifend.</p>" },
+-        { "id": "start-k-6", "label": "K-6 Primary", "body": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec nunc congue, ultricies felis at, malesuada erat. Morbi nisi nulla, blandit eget dolor id, aliquam vehicula dolor sagittis eleifend.</p>" },
+-        { "id": "start-tour", "label": "Book a tour", "body": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec nunc congue, ultricies felis at, malesuada erat. Morbi nisi nulla, blandit eget dolor id, aliquam vehicula dolor sagittis eleifend.</p>" }
++        { "label": "Preparatory Program", "url": "preparatory-program.html" },
++        { "label": "K-6 Primary", "url": "k-6-primary.html" },
++        { "label": "Book a tour", "url": "contact-us.html#book-a-tour" }
+       ],
+       "cta_text": "",
+       "cta_url": ""
 diff --git a/src/k-6-primary.html b/src/k-6-primary.html
 index d5bce60..9a18309 100644
 --- a/src/k-6-primary.html
@@ -399,6 +452,40 @@ index 1431d6e..47a481d 100644
        "width": "1840",
        "height": "1090"
      }'></include>
+diff --git a/src/sections/cta-links.html b/src/sections/cta-links.html
+index f5bf37b..5eab7fa 100644
+--- a/src/sections/cta-links.html
++++ b/src/sections/cta-links.html
+@@ -1,10 +1,11 @@
+ <!-- @wagtail-block: cta_links
+      title: RichTextBlock (may carry a line break)
+-     items: ListBlock(StructBlock(label:CharBlock, body:RichTextBlock))
++     items: ListBlock(StructBlock(label:CharBlock, body:RichTextBlock, url:URLBlock — optional))
+      cta:   StructBlock(text:CharBlock, url:URLBlock) — optional
+      The rows are Figma's "Drop down" component, the fold (_fold.less, initFolds): every row shut at rest, a click opens one.
++     A row with a url is a plain link to it instead, with no copy (the home rows, 2026-10-28).
+      Home 1619:7085, enrolment 1801:5705 / 2149:7929, policies strategy band.
+-     locals: id, title, modifier (or empty), items [{ id, label, body }], cta_text and cta_url (empty for no button) -->
++     locals: id, title, modifier (or empty), items [{ id, label, body } or { label, url }], cta_text and cta_url (empty for no button) -->
+ <section class="cta-links{{ modifier ? ' ' + modifier : '' }}" aria-labelledby="{{ id }}">
+   <div class="container">
+     <div class="row g-4 row-split">
+@@ -16,10 +17,15 @@
+         <ul class="fold" data-fold>
+           <each loop="item in items">
+           <li class="fold__item" data-anim="reveal" data-anim-type="fade">
++            <if condition="item.url">
++            <a class="fold__row" href="{{ item.url }}">{{ item.label }}<svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
++            </if>
++            <else>
+             <button class="fold__row" type="button" aria-expanded="false" aria-controls="{{ item.id }}">{{ item.label }}<svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button>
+             <div class="fold__panel" id="{{ item.id }}">
+               <div class="fold__body">{{{ item.body }}}</div>
+             </div>
++            </else>
+           </li>
+           </each>
+         </ul>
 diff --git a/src/sections/home-hero.html b/src/sections/home-hero.html
 index bf58397..4b7f93a 100644
 --- a/src/sections/home-hero.html

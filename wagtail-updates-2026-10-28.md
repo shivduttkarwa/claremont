@@ -2,14 +2,14 @@
 
 Date: 2026-10-28
 Source of truth: the static cutup repo, `static/claremont`
-Baseline: commit `aa6c057`, the last commit covered by `wagtail-updates-2026-10-21.md`. Everything below is the difference between that commit and commit `71d8132`.
-Companion file: `wagtail-updates-2026-10-28.patch` (same folder) is the full `git diff` of `src/` for these updates, 22 files, all text. `git apply wagtail-updates-2026-10-28.patch` applies cleanly to the baseline. `build.mjs` did not change.
+Baseline: commit `aa6c057`, the last commit covered by `wagtail-updates-2026-10-21.md`. Everything below is the difference between that commit and commit `947e255`.
+Companion file: `wagtail-updates-2026-10-28.patch` (same folder) is the full `git diff` of `src/` for these updates, 25 files, all text. `git apply wagtail-updates-2026-10-28.patch` applies cleanly to the baseline. `build.mjs` did not change.
 
 ## Purpose
 
-The 2026-10-21 updates should already be in the Wagtail build. Since then the client asked for the yellow quick links (Book a tour, Apply to enrol, Contact us) to stay on screen as the page scrolls, on every page. They now do on desktop (update 1) and on phones and tablets (update 2). The client also found the hero photos slightly blurred: on a Retina laptop, a large monitor or a 3× phone the one 1840px file was stretched up to 2.5 times, so every hero now offers the browser a second, larger size (update 4). This file tells you exactly what to change in the Wagtail project so it matches the static repo again.
+The 2026-10-21 updates should already be in the Wagtail build. Since then the client asked for the yellow quick links (Book a tour, Apply to enrol, Contact us) to stay on screen as the page scrolls, on every page. They now do on desktop (update 1) and on phones and tablets (update 2). The client also found the hero photos slightly blurred: on a Retina laptop, a large monitor or a 3× phone the one 1840px file was stretched up to 2.5 times, so every hero now offers the browser a second, larger size (update 4). And the home page's "Where would you like to start?" rows are links to their pages again rather than an accordion (update 5). This file tells you exactly what to change in the Wagtail project so it matches the static repo again.
 
-This one is CSS and JS, plus three template edits: the news article page and the two hero templates. There are no block changes and no content to enter.
+This one is CSS and JS, four template edits (the news article page, the two hero templates and the CTA rows), one optional field on the `cta_links` block and three links to set on the home page.
 
 The static news listing was also rebuilt to generate its cards from data instead of eight hand-written copies. What it renders is unchanged, so there is nothing to port for the listing.
 
@@ -18,7 +18,7 @@ The static news listing was also rebuilt to generate its cards from data instead
 1. Treat the static repo as the reference. Replicate these changes; do not redesign or "improve" them.
 2. The snippets below are the static HTML. In Wagtail the same markup lives in Django templates. Keep whatever template tags are already there (`{% static %}`, `{% image %}`, `{{ page.x }}`, block loops); only add, move or rename the parts called out.
 3. Find the Wagtail counterpart of each static file by searching for the anchor string given with each edit. Do not assume file names match.
-4. Do the work in this order: assets (section 1), the template edits (section 2), then the checks (section 6).
+4. Do the work in this order: assets (section 1), the template edits and the block field (section 2), the home page's three links (end of section 2), then the checks (section 6).
 5. Deploy the CSS and the JS together. The quick links need both (section 5).
 6. If a Wagtail copy of a file has local changes, merge the change shown here into it. Do not overwrite the file.
 7. If something in the Wagtail project does not match what this file describes, stop and report it rather than guessing.
@@ -31,6 +31,7 @@ The static news listing was also rebuilt to generate its cards from data instead
 | 2 | **Quick links stay in view on phones and tablets** (below 992). The row stays where it was, on the hero photo's bottom edge, and scrolls with the page. Once it has scrolled off the top of the screen, a copy of it slides up from the bottom and sits 14px above the screen's bottom edge, 15px in from each side on phones, as Figma's scrolled phone frame draws it (`2101:13039`). It slides away when the footer comes into view (the footer has its own buttons) and when the row is back on screen. On an iPhone it also clears the home bar. Tablets show the long labels, as the hero row does. The script builds the copy, so there is no new markup | CSS, JS |
 | 3 | **News article: optional standfirst and previous / next.** An article without a standfirst shows only Back to news in the left column. The newest article has no Previous link and the oldest no Next; a lone Next link stays in the right-hand column. A picture inserted in the article body gets 24px above and below | CSS, template edit 1 |
 | 4 | **Sharper hero photos.** Every hero (home and inner pages) offers the browser two sizes of its photo, 1840 and 3280 wide, and two of its phone crop, 750 and 1125 wide, and the browser downloads only the one the screen needs: an ordinary laptop at 100% gets the same 1840 file as before, a Retina Mac, a large monitor, a scaled Windows laptop or a 3× phone the larger one. The crop, the position, the parallax and the entrance do not change | template edits 2 and 3 |
+| 5 | **Home "Where would you like to start?" rows are links.** The three rows (Preparatory Program, K-6 Primary, Book a tour) go to their pages instead of opening as an accordion. Hovering or keyboard-focusing a row fills it Light Blue, turns its title Dark Green and turns its arrow down a quarter turn, as the accordion rows do; on phones the rows look as before. The enrolment and policies bands use the same block and still fold | CSS, block field, template edit 4, content |
 
 ## 1. Assets: CSS and JS
 
@@ -49,7 +50,7 @@ Styles (`src/assets/styles/`):
 
 - `01-settings/_tokens.less`
 - `02-tools/_mixins.less`
-- `05-components/_hero.less`, `05-components/_page-hero.less`, `05-components/_subnav.less`, `05-components/_article.less`
+- `05-components/_hero.less`, `05-components/_page-hero.less`, `05-components/_subnav.less`, `05-components/_article.less`, `05-components/_fold.less`
 
 Scripts (`src/assets/scripts/`):
 
@@ -140,6 +141,37 @@ Find in Wagtail: `hero__img`
 
 The same change with the home photo's sizes: the desktop `srcset` is `1842w` and `3280w`, the phone `srcset` is `750w` and `1125w`, both with `sizes="100vw"`; the `width` / `height` attributes stay 1842 × 1417 and 750 × 1028. In Django terms, `width-1842` and `width-3280` on the desktop photo, `width-750` and `width-1125` on the phone crop, with the `w` numbers taken from the renditions as in edit 2.
 
+### Edit 4. CTA rows: a row can be a link
+
+Static file: `src/sections/cta-links.html`
+Find in Wagtail: `fold__row` inside the `cta_links` template
+
+**Block field.** Each item of `cta_links` gets an optional link (`url`; a page chooser with an optional anchor works as well, if the project prefers one). A row with a link is a plain link row and does not use its body copy; a row without one folds as now. This needs a migration.
+
+**Template.** Inside the item loop, render the link row when the item has a link, and the existing button and panel otherwise:
+
+```html
+<li class="fold__item" data-anim="reveal" data-anim-type="fade">
+  {% if item.url %}
+  <a class="fold__row" href="{{ item.url }}">{{ item.label }}<svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+  {% else %}
+  {# the existing button.fold__row and div.fold__panel, unchanged #}
+  {% endif %}
+</li>
+```
+
+Keep the `ul.fold` and its `data-fold` attribute as they are; the script ignores link rows. The hover (fill, colour and the turning arrow) comes from the CSS, so the link needs no class beyond `fold__row`.
+
+**Home page content.** On the home page's "Where would you like to start?" block, give the three rows their links and clear their placeholder body copy:
+
+| Row | Link |
+| --- | --- |
+| Preparatory Program | the Preparatory Program page |
+| K-6 Primary | the K-6 Primary page |
+| Book a tour | the Contact us page, anchored to its form: `#book-a-tour` (the form section's id, as the quick links' Book a tour uses) |
+
+Leave the enrolment and policies bands as they are; their rows keep their copy and fold.
+
 ## 3. Script changes in detail
 
 Only needed for Option B, or if the Wagtail copy of a script was modified. The `.patch` file has every hunk with full context.
@@ -161,6 +193,7 @@ Only needed for Option B. Copy the whole file unless the Wagtail copy has local 
 | `05-components/_hero.less` | `.hero` takes `z-index: var(--z-sticky)` inside its existing `min-width: 992px` block | 1 |
 | `05-components/_page-hero.less` | `.page-hero` takes `z-index: var(--z-sticky)` in its `min-width: 992px` rule | 1 |
 | `05-components/_subnav.less` | New `--subnav-tab: 3.25rem` (52). From 992 to 1639, `.subnav.is-tucked .subnav__link` transitions `transform` over `--duration-slow` on `--ease-out`, is moved `translateX(calc(100% - var(--subnav-tab)))` when not hovered or focused, and `transform: none` when hovered or keyboard-focused. New `.subnav-bar`: `position: fixed`, `inset: auto var(--subnav-bar-inset) var(--subnav-bar-bottom)` (15 in at phones, the gutter less 5; 14 above the screen's foot plus `env(safe-area-inset-bottom)`), `z-index: var(--z-sticky)`; hidden below the screen's edge (`translateY(calc(100% + var(--subnav-bar-bottom)))`, `visibility: hidden`) until `.is-shown`, sliding over `--duration-base` on `--ease-out`; `display: none` from 992 | 1, 2 |
+| `05-components/_fold.less` | In `.fold__row`: the arrow (`.icon`) transitions `transform` over `--duration-fold` on `--ease-settle` for every row, and every row turns it `rotate(90deg)` on hover (inside `@media (hover: hover)`) and on `:focus-visible`. Before, only button rows turned; link rows nudged theirs `translate(0.25rem, -0.25rem)` over `--duration-base`. The `a.fold__row` / `button.fold__row` split is gone | 5 |
 | `05-components/_article.less` | `.article__body figure { margin: var(--space-3) 0; }`; `.article__nav-link--next { grid-column: 2; }` | 3 |
 
 ## 5. Things that break if missed
@@ -192,3 +225,6 @@ Only needed for Option B. Copy the whole file unless the Wagtail copy has local 
 - [ ] **Hero photos, a Retina Mac or DevTools' device toolbar at DPR 2, 1440 wide:** the hero loads the 3280 rendition, and the photo is as crisp as the static build on GitHub Pages.
 - [ ] **Hero photos, phone at DPR 3 (iPhone in the device toolbar):** the hero loads the 1125 phone crop.
 - [ ] **Hero photos, all nine pages:** each hero shows the same photo, crop and position as before, only sharper.
+- [ ] **Home, "Where would you like to start?", 1280 wide:** the three rows are links. Hover one: it fills Light Blue, its title turns Dark Green and its arrow turns down; it goes back when the pointer leaves. Tab to a row: the same. Each goes to its page, and Book a tour lands on the Contact us form.
+- [ ] **Home, the same band at 375:** three ruled rows with their arrows, as before; tapping one opens its page.
+- [ ] **Enrolment and Policies:** their bands still fold, a click opening a row's copy, the arrow turning down while it is open.
