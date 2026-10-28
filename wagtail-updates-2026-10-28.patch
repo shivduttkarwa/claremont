@@ -221,11 +221,77 @@ index 3f56ed1..0e0bd6f 100644
 +
 +  @media (min-width: @bp-lg) { display: none; }
  }
+diff --git a/src/contact-us.html b/src/contact-us.html
+index e292c7b..09f9f43 100644
+--- a/src/contact-us.html
++++ b/src/contact-us.html
+@@ -20,7 +20,9 @@
+       "title": "Contact us",
+       "aside": "",
+       "image": "assets/images/contact/hero.webp",
++      "image_2x": "assets/images/contact/hero-2x.webp",
+       "image_m": "assets/images/contact/hero-m.webp",
++      "image_m_3x": "assets/images/contact/hero-m-3x.webp",
+       "width": "1840",
+       "height": "1090"
+     }'></include>
+diff --git a/src/enrolment.html b/src/enrolment.html
+index d845b05..241dae5 100644
+--- a/src/enrolment.html
++++ b/src/enrolment.html
+@@ -20,7 +20,9 @@
+       "title": "Enrolment",
+       "aside": "<li><svg class=\"icon\" aria-hidden=\"true\"><use href=\"#icon-contact-phone\"></use></svg><a href=\"tel:+61292130733\"><span>Direct line 8am-4pm:</span> (02) 9213 0733</a></li><li><svg class=\"icon\" aria-hidden=\"true\"><use href=\"#icon-contact-mail\"></use></svg><a href=\"mailto:enrolments@claremont.nsw.edu.au\">enrolments@claremont.nsw.edu.au</a></li>",
+       "image": "assets/images/enrolment/hero.webp",
++      "image_2x": "assets/images/enrolment/hero-2x.webp",
+       "image_m": "assets/images/enrolment/hero-m.webp",
++      "image_m_3x": "assets/images/enrolment/hero-m-3x.webp",
+       "width": "1840",
+       "height": "1090"
+     }'></include>
+diff --git a/src/extra-curricular.html b/src/extra-curricular.html
+index 6afef07..76292a7 100644
+--- a/src/extra-curricular.html
++++ b/src/extra-curricular.html
+@@ -20,7 +20,9 @@
+       "title": "Extra Curricular",
+       "aside": "",
+       "image": "assets/images/extra-curricular/hero.webp",
++      "image_2x": "assets/images/extra-curricular/hero-2x.webp",
+       "image_m": "assets/images/extra-curricular/hero-m.webp",
++      "image_m_3x": "assets/images/extra-curricular/hero-m-3x.webp",
+       "width": "1840",
+       "height": "1090"
+     }'></include>
+diff --git a/src/k-6-primary.html b/src/k-6-primary.html
+index d5bce60..9a18309 100644
+--- a/src/k-6-primary.html
++++ b/src/k-6-primary.html
+@@ -20,7 +20,9 @@
+       "aside": "",
+       "title": "K-6 Primary",
+       "image": "assets/images/k-6-primary/hero.webp",
++      "image_2x": "assets/images/k-6-primary/hero-2x.webp",
+       "image_m": "assets/images/k-6-primary/hero-m.webp",
++      "image_m_3x": "assets/images/k-6-primary/hero-m-3x.webp",
+       "width": "1840",
+       "height": "1090"
+     }'></include>
 diff --git a/src/news-2.html b/src/news-2.html
-index cc01ead..410eeb2 100644
+index cc01ead..eda32c4 100644
 --- a/src/news-2.html
 +++ b/src/news-2.html
-@@ -34,7 +34,19 @@
+@@ -20,7 +20,9 @@
+       "title": "News and community",
+       "aside": "",
+       "image": "assets/images/news/hero.webp",
++      "image_2x": "assets/images/news/hero-2x.webp",
+       "image_m": "assets/images/news/hero-m.webp",
++      "image_m_3x": "assets/images/news/hero-m-3x.webp",
+       "width": "1840",
+       "height": "1090"
+     }'></include>
+@@ -34,7 +36,19 @@
      }'></include>
  
      <!-- Article listing -->
@@ -271,10 +337,20 @@ index 5183110..173be93 100644
  
    <include src="partials/footer.html"></include>
 diff --git a/src/news.html b/src/news.html
-index aaa3fb4..4b162d2 100644
+index aaa3fb4..97b8f90 100644
 --- a/src/news.html
 +++ b/src/news.html
-@@ -34,7 +34,19 @@
+@@ -20,7 +20,9 @@
+       "title": "News and community",
+       "aside": "",
+       "image": "assets/images/news/hero.webp",
++      "image_2x": "assets/images/news/hero-2x.webp",
+       "image_m": "assets/images/news/hero-m.webp",
++      "image_m_3x": "assets/images/news/hero-m-3x.webp",
+       "width": "1840",
+       "height": "1090"
+     }'></include>
+@@ -34,7 +36,19 @@
      }'></include>
  
      <!-- Article listing -->
@@ -295,6 +371,49 @@ index aaa3fb4..4b162d2 100644
    </main>
  
    <include src="partials/footer.html"></include>
+diff --git a/src/policies.html b/src/policies.html
+index 1766da3..29702dc 100644
+--- a/src/policies.html
++++ b/src/policies.html
+@@ -20,7 +20,9 @@
+       "title": "Policies, procedures and publications",
+       "aside": "",
+       "image": "assets/images/policies/hero.webp",
++      "image_2x": "assets/images/policies/hero-2x.webp",
+       "image_m": "assets/images/policies/hero-m.webp",
++      "image_m_3x": "assets/images/policies/hero-m-3x.webp",
+       "width": "1840",
+       "height": "1090"
+     }'></include>
+diff --git a/src/preparatory-program.html b/src/preparatory-program.html
+index 1431d6e..47a481d 100644
+--- a/src/preparatory-program.html
++++ b/src/preparatory-program.html
+@@ -20,7 +20,9 @@
+       "aside": "",
+       "title": "Welcome to Wylie Cottage",
+       "image": "assets/images/preparatory-program/hero.webp",
++      "image_2x": "assets/images/preparatory-program/hero-2x.webp",
+       "image_m": "assets/images/preparatory-program/hero-m.webp",
++      "image_m_3x": "assets/images/preparatory-program/hero-m-3x.webp",
+       "width": "1840",
+       "height": "1090"
+     }'></include>
+diff --git a/src/sections/home-hero.html b/src/sections/home-hero.html
+index bf58397..4b7f93a 100644
+--- a/src/sections/home-hero.html
++++ b/src/sections/home-hero.html
+@@ -11,8 +11,8 @@
+ <section class="hero" aria-labelledby="hero-title" data-anim-parallax-trigger>
+   <div class="hero__media" aria-hidden="true">
+     <picture>
+-      <source media="(min-width: 576px)" srcset="assets/images/home/hero.webp" width="1842" height="1417">
+-      <img class="hero__img" fetchpriority="high" decoding="async" src="assets/images/home/hero-m.webp" alt="" width="750" height="1028"
++      <source media="(min-width: 576px)" srcset="assets/images/home/hero.webp 1842w, assets/images/home/hero-2x.webp 3280w" sizes="100vw" width="1842" height="1417">
++      <img class="hero__img" fetchpriority="high" decoding="async" src="assets/images/home/hero-m.webp" srcset="assets/images/home/hero-m.webp 750w, assets/images/home/hero-m-3x.webp 1125w" sizes="100vw" alt="" width="750" height="1028"
+            data-anim="parallax" data-anim-axis="y" data-anim-speed="6.34" data-anim-reverse data-anim-start="top top" data-anim-disable-mobile>
+     </picture>
+   </div>
 diff --git a/src/sections/news/article-body.html b/src/sections/news/article-body.html
 index 41a4a30..873aace 100644
 --- a/src/sections/news/article-body.html
@@ -438,3 +557,38 @@ index 3e05846..0621896 100644
      </ul>
  
      <if condition="next">
+diff --git a/src/sections/page-hero.html b/src/sections/page-hero.html
+index 6192a10..c6ab2c9 100644
+--- a/src/sections/page-hero.html
++++ b/src/sections/page-hero.html
+@@ -5,12 +5,13 @@
+      quick links come from the subnav site setting (partials/subnav.html)
+      Below lg (the 375 frames' "Mobile header", 2087:12629) the photo sits under the bar, a square on phones and 3 : 2
+      from sm, and the title follows on Dark Green; the quick links sit on the block's bottom edge and scroll with the page.
+-     locals: title, image, width, height, image_m (the square phone crop, 750 × 750), aside (HTML list items, or empty), modifier -->
++     locals: title, image, image_2x (the same photo at 3280, for dense and wide screens), width, height,
++     image_m (the square phone crop, 750 × 750), image_m_3x (the same at 1125), aside (HTML list items, or empty), modifier -->
+ <section class="page-hero {{ modifier }}" aria-labelledby="page-title" data-anim-parallax-trigger>
+   <div class="page-hero__media" aria-hidden="true">
+     <picture>
+-      <source media="(min-width: 576px)" srcset="{{ image }}" width="{{ width }}" height="{{ height }}">
+-      <img class="page-hero__img" fetchpriority="high" decoding="async" src="{{ image_m }}" alt="" width="750" height="750"
++      <source media="(min-width: 576px)" srcset="{{ image }} {{ width }}w, {{ image_2x }} 3280w" sizes="100vw" width="{{ width }}" height="{{ height }}">
++      <img class="page-hero__img" fetchpriority="high" decoding="async" src="{{ image_m }}" srcset="{{ image_m }} 750w, {{ image_m_3x }} 1125w" sizes="100vw" alt="" width="750" height="750"
+            data-anim="parallax" data-anim-axis="y" data-anim-speed="12" data-anim-reverse data-anim-start="top top" data-anim-disable-mobile>
+     </picture>
+   </div>
+diff --git a/src/welcome.html b/src/welcome.html
+index 16488ce..bbd4644 100644
+--- a/src/welcome.html
++++ b/src/welcome.html
+@@ -20,7 +20,9 @@
+       "title": "Passionate about education<br>since 1882",
+       "aside": "",
+       "image": "assets/images/welcome/hero.webp",
++      "image_2x": "assets/images/welcome/hero-2x.webp",
+       "image_m": "assets/images/welcome/hero-m.webp",
++      "image_m_3x": "assets/images/welcome/hero-m-3x.webp",
+       "width": "1840",
+       "height": "1090"
+     }'></include>

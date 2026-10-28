@@ -2,14 +2,14 @@
 
 Date: 2026-10-28
 Source of truth: the static cutup repo, `static/claremont`
-Baseline: commit `aa6c057`, the last commit covered by `wagtail-updates-2026-10-21.md`. Everything below is the difference between that commit and commit `6e11167`.
-Companion file: `wagtail-updates-2026-10-28.patch` (same folder) is the full `git diff` of `src/` for these updates, 13 files, all text. `git apply wagtail-updates-2026-10-28.patch` applies cleanly to the baseline. `build.mjs` did not change.
+Baseline: commit `aa6c057`, the last commit covered by `wagtail-updates-2026-10-21.md`. Everything below is the difference between that commit and commit `71d8132`.
+Companion file: `wagtail-updates-2026-10-28.patch` (same folder) is the full `git diff` of `src/` for these updates, 22 files, all text. `git apply wagtail-updates-2026-10-28.patch` applies cleanly to the baseline. `build.mjs` did not change.
 
 ## Purpose
 
-The 2026-10-21 updates should already be in the Wagtail build. Since then the client asked for the yellow quick links (Book a tour, Apply to enrol, Contact us) to stay on screen as the page scrolls, on every page. They now do on desktop (update 1) and on phones and tablets (update 2). This file tells you exactly what to change in the Wagtail project so it matches the static repo again.
+The 2026-10-21 updates should already be in the Wagtail build. Since then the client asked for the yellow quick links (Book a tour, Apply to enrol, Contact us) to stay on screen as the page scrolls, on every page. They now do on desktop (update 1) and on phones and tablets (update 2). The client also found the hero photos slightly blurred: on a Retina laptop, a large monitor or a 3× phone the one 1840px file was stretched up to 2.5 times, so every hero now offers the browser a second, larger size (update 4). This file tells you exactly what to change in the Wagtail project so it matches the static repo again.
 
-This one is CSS and JS, plus one small template edit on the news article page. There are no new images, no block changes and no content to enter.
+This one is CSS and JS, plus three template edits: the news article page and the two hero templates. There are no block changes and no content to enter.
 
 The static news listing was also rebuilt to generate its cards from data instead of eight hand-written copies. What it renders is unchanged, so there is nothing to port for the listing.
 
@@ -18,7 +18,7 @@ The static news listing was also rebuilt to generate its cards from data instead
 1. Treat the static repo as the reference. Replicate these changes; do not redesign or "improve" them.
 2. The snippets below are the static HTML. In Wagtail the same markup lives in Django templates. Keep whatever template tags are already there (`{% static %}`, `{% image %}`, `{{ page.x }}`, block loops); only add, move or rename the parts called out.
 3. Find the Wagtail counterpart of each static file by searching for the anchor string given with each edit. Do not assume file names match.
-4. Do the work in this order: assets (section 1), the template edit (section 2), then the checks (section 6).
+4. Do the work in this order: assets (section 1), the template edits (section 2), then the checks (section 6).
 5. Deploy the CSS and the JS together. The quick links need both (section 5).
 6. If a Wagtail copy of a file has local changes, merge the change shown here into it. Do not overwrite the file.
 7. If something in the Wagtail project does not match what this file describes, stop and report it rather than guessing.
@@ -30,6 +30,7 @@ The static news listing was also rebuilt to generate its cards from data instead
 | 1 | **Quick links stay in view on desktop** (the client, 28 October). From 992 wide, the yellow strip at the right edge of every hero (home and inner pages) is fixed to the screen, so it follows the page as it scrolls and stays above every section. At 1640 and wider it stays whole all the way down, because it fits in the margin beside the 1240 content column. Below 1640 the full 188px strip would cover the copy, so once the hero's bottom edge rises past the strip, each chip slides right until only its yellow icon tab shows at the screen edge (52px, 45.5px on laptops). Hovering or keyboard-focusing a tab glides its label back out over 0.6s with no bounce, and it glides back when the pointer leaves. Scrolling back up to the hero brings the full strip back | CSS, JS |
 | 2 | **Quick links stay in view on phones and tablets** (below 992). The row stays where it was, on the hero photo's bottom edge, and scrolls with the page. Once it has scrolled off the top of the screen, a copy of it slides up from the bottom and sits 14px above the screen's bottom edge, 15px in from each side on phones, as Figma's scrolled phone frame draws it (`2101:13039`). It slides away when the footer comes into view (the footer has its own buttons) and when the row is back on screen. On an iPhone it also clears the home bar. Tablets show the long labels, as the hero row does. The script builds the copy, so there is no new markup | CSS, JS |
 | 3 | **News article: optional standfirst and previous / next.** An article without a standfirst shows only Back to news in the left column. The newest article has no Previous link and the oldest no Next; a lone Next link stays in the right-hand column. A picture inserted in the article body gets 24px above and below | CSS, template edit 1 |
+| 4 | **Sharper hero photos.** Every hero (home and inner pages) offers the browser two sizes of its photo, 1840 and 3280 wide, and two of its phone crop, 750 and 1125 wide, and the browser downloads only the one the screen needs: an ordinary laptop at 100% gets the same 1840 file as before, a Retina Mac, a large monitor, a scaled Windows laptop or a 3× phone the larger one. The crop, the position, the parallax and the entrance do not change | template edits 2 and 3 |
 
 ## 1. Assets: CSS and JS
 
@@ -56,7 +57,7 @@ Scripts (`src/assets/scripts/`):
 
 Copy `_tokens.less` first: `_hero`, `_page-hero` and `_subnav` use its new `--z-sticky` property and `@upto-design` breakpoint, and `_subnav.less` does not compile without the breakpoint.
 
-## 2. Template edit
+## 2. Template edits
 
 ### Edit 1. News article: optional standfirst and previous / next
 
@@ -100,6 +101,45 @@ If the Wagtail template already has these conditions, there is nothing to do her
 
 The quick links need **no** template change: the script and styles find them through the classes the templates already have (`.hero` or `.page-hero`, and `.subnav` inside them).
 
+### Edit 2. Inner-page hero: two sizes of the photo
+
+Static file: `src/sections/page-hero.html`
+Find in Wagtail: `page-hero__img`
+
+Before:
+
+```html
+<source media="(min-width: 576px)" srcset="{image}" width="1840" height="1090">
+<img class="page-hero__img" fetchpriority="high" decoding="async" src="{image_m}" alt="" width="750" height="750" ...>
+```
+
+After:
+
+```html
+<source media="(min-width: 576px)" srcset="{image at 1840} 1840w, {image at 3280} 3280w" sizes="100vw" width="1840" height="1090">
+<img class="page-hero__img" fetchpriority="high" decoding="async" src="{image_m at 750}" srcset="{image_m at 750} 750w, {image_m at 1125} 1125w" sizes="100vw" alt="" width="750" height="750" ...>
+```
+
+Everything after `height="750"` (the `data-anim-*` attributes) stays as it is.
+
+In Django terms (use the project's own field names). Take each `w` number from the rendition, not as a fixed figure, so the list always states the files' real widths:
+
+```html
+{% image page.hero_image width-1840 as hero_1x %}
+{% image page.hero_image width-3280 as hero_2x %}
+{% image page.hero_image_m width-750 as hero_m %}
+{% image page.hero_image_m width-1125 as hero_m_3x %}
+<source media="(min-width: 576px)" srcset="{{ hero_1x.url }} {{ hero_1x.width }}w, {{ hero_2x.url }} {{ hero_2x.width }}w" sizes="100vw" width="{{ hero_1x.width }}" height="{{ hero_1x.height }}">
+<img class="page-hero__img" fetchpriority="high" decoding="async" src="{{ hero_m.url }}" srcset="{{ hero_m.url }} {{ hero_m.width }}w, {{ hero_m_3x.url }} {{ hero_m_3x.width }}w" sizes="100vw" alt="" width="{{ hero_m.width }}" height="{{ hero_m.height }}" ...>
+```
+
+### Edit 3. Home hero: two sizes of the photo
+
+Static file: `src/sections/home-hero.html`
+Find in Wagtail: `hero__img`
+
+The same change with the home photo's sizes: the desktop `srcset` is `1842w` and `3280w`, the phone `srcset` is `750w` and `1125w`, both with `sizes="100vw"`; the `width` / `height` attributes stay 1842 × 1417 and 750 × 1028. In Django terms, `width-1842` and `width-3280` on the desktop photo, `width-750` and `width-1125` on the phone crop, with the `w` numbers taken from the renditions as in edit 2.
+
 ## 3. Script changes in detail
 
 Only needed for Option B, or if the Wagtail copy of a script was modified. The `.patch` file has every hunk with full context.
@@ -131,6 +171,9 @@ Only needed for Option B. Copy the whole file unless the Wagtail copy has local 
 - **The footer's class.** The bar hides when `.site-footer` comes into view. If the Wagtail footer has another class, the bar stays over the footer: stop and report it.
 - **Do not add the bar to the templates.** The script builds it. A hand-written copy would show two bars.
 - **Anything that must sit above the strip** needs a `z-index` above 1020 at the top level of the page. Bootstrap's modals (1055) and the site's header (1050) and search overlay (1080) are already above it. A dropdown or tooltip at Bootstrap's 1000 inside a later section would show under the strip where the two meet.
+- **Hero photos: rendition quality.** Wagtail re-encodes every rendition. The project's WebP quality (`WAGTAILIMAGES_WEBP_QUALITY`, and `WAGTAILIMAGES_JPEG_QUALITY` if the heroes are JPEG) should be 80 or higher, and the hero `{% image %}` tags should carry no `webpquality-` / `jpegquality-` below 80; lower softens the photos again.
+- **Hero photos: keep `sizes="100vw"`.** A smaller value would send the small file to large screens.
+- **Hero photos: renditions, not the original file.** If a hero template serves the original image file (`{{ image.file.url }}` or `original`), switch it to the renditions in edits 2 and 3; otherwise the largest file goes to every screen.
 - **Cached assets.** If Wagtail serves `main.css` and `main.js` with a long cache and no version in the URL, bump the version, or returning visitors get the new CSS with the old JS (or the reverse) until their cache expires.
 
 ## 6. Checks after porting
@@ -145,3 +188,7 @@ Only needed for Option B. Copy the whole file unless the Wagtail copy has local 
 - [ ] **Phone menu and search:** open either from a scrolled page; it covers the bar.
 - [ ] **Tablet, 820 wide:** the bar shows the long labels (Book a tour, Apply to enrol, Contact us). At 992 and wider there is no bar.
 - [ ] **News article:** the newest article shows only Next, on the right; the oldest shows only Previous. An article without a standfirst shows only the Back to news button in the left column. A picture in the body has space above and below it.
+- [ ] **Hero photos, DevTools → Network → Img, 1366 × 768 at 100%:** an inner page's hero loads the 1840 rendition.
+- [ ] **Hero photos, a Retina Mac or DevTools' device toolbar at DPR 2, 1440 wide:** the hero loads the 3280 rendition, and the photo is as crisp as the static build on GitHub Pages.
+- [ ] **Hero photos, phone at DPR 3 (iPhone in the device toolbar):** the hero loads the 1125 phone crop.
+- [ ] **Hero photos, all nine pages:** each hero shows the same photo, crop and position as before, only sharper.
