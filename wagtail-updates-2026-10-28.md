@@ -1,0 +1,140 @@
+# Claremont: front-end updates to port into the Wagtail build
+
+Date: 2026-10-28
+Source of truth: the static cutup repo, `static/claremont`
+Baseline: commit `aa6c057`, the last commit covered by `wagtail-updates-2026-10-21.md`. Everything below is the difference between that commit and commit `49c93e3`.
+Companion file: `wagtail-updates-2026-10-28.patch` (same folder) is the full `git diff` of `src/` for these updates, 13 files, all text. `git apply wagtail-updates-2026-10-28.patch` applies cleanly to the baseline. `build.mjs` did not change.
+
+## Purpose
+
+The 2026-10-21 updates should already be in the Wagtail build. Since then the client asked for the yellow quick links (Book a tour, Apply to enrol, Contact us) to stay on screen as the page scrolls, on every page. This file tells you exactly what to change in the Wagtail project so it matches the static repo again.
+
+This one is CSS and JS, plus one small template edit on the news article page. There are no new images, no block changes and no content to enter.
+
+The static news listing was also rebuilt to generate its cards from data instead of eight hand-written copies. What it renders is unchanged, so there is nothing to port for the listing.
+
+## Instructions for the agent doing the port
+
+1. Treat the static repo as the reference. Replicate these changes; do not redesign or "improve" them.
+2. The snippets below are the static HTML. In Wagtail the same markup lives in Django templates. Keep whatever template tags are already there (`{% static %}`, `{% image %}`, `{{ page.x }}`, block loops); only add, move or rename the parts called out.
+3. Find the Wagtail counterpart of each static file by searching for the anchor string given with each edit. Do not assume file names match.
+4. Do the work in this order: assets (section 1), the template edit (section 2), then the checks (section 6).
+5. Deploy the CSS and the JS together. The quick links need both (section 5).
+6. If a Wagtail copy of a file has local changes, merge the change shown here into it. Do not overwrite the file.
+7. If something in the Wagtail project does not match what this file describes, stop and report it rather than guessing.
+
+## The updates
+
+| # | Update | Wagtail work |
+| --- | --- | --- |
+| 1 | **Quick links stay in view on desktop** (the client, 28 October). From 992 wide, the yellow strip at the right edge of every hero (home and inner pages) is fixed to the screen, so it follows the page as it scrolls and stays above every section. At 1640 and wider it stays whole all the way down, because it fits in the margin beside the 1240 content column. Below 1640 the full 188px strip would cover the copy, so once the hero's bottom edge rises past the strip, each chip slides right until only its yellow icon tab shows at the screen edge (52px, 45.5px on laptops). Hovering or keyboard-focusing a tab glides its label back out over 0.6s with no bounce, and it glides back when the pointer leaves. Scrolling back up to the hero brings the full strip back. Phones are unchanged: the row still sits on the hero photo's bottom edge and scrolls with the page | CSS, JS |
+| 2 | **News article: optional standfirst and previous / next.** An article without a standfirst shows only Back to news in the left column. The newest article has no Previous link and the oldest no Next; a lone Next link stays in the right-hand column. A picture inserted in the article body gets 24px above and below | CSS, template edit 1 |
+
+## 1. Assets: CSS and JS
+
+Pick the option that matches how the Wagtail project gets its front-end assets.
+
+**Option A: Wagtail serves the compiled files.** Copy the two built files over the ones Wagtail serves. Get them one of two ways:
+
+- Build them: in the static repo run `npm ci` and then `npm run build`, and take `dist/assets/css/main.css` and `dist/assets/js/main.js`.
+- Download them from the GitHub Pages deploy, which rebuilds on every push to `main`: `https://shivduttkarwa.github.io/claremont/assets/css/main.css` and `https://shivduttkarwa.github.io/claremont/assets/js/main.js`. Pages caches files for ten minutes, so if a download looks stale, retry after that.
+
+That covers every style and script change in this document. Skip to section 2.
+
+**Option B: Wagtail builds from the LESS and JS sources.** Copy these files from the static repo's `src/assets/` over the Wagtail copies, then rebuild. If a Wagtail copy has local edits, apply the matching hunk from the `.patch` file instead.
+
+Styles (`src/assets/styles/`):
+
+- `01-settings/_tokens.less`
+- `02-tools/_mixins.less`
+- `05-components/_hero.less`, `05-components/_page-hero.less`, `05-components/_subnav.less`, `05-components/_article.less`
+
+Scripts (`src/assets/scripts/`):
+
+- `main.js`, `ui.js`
+
+Copy `_tokens.less` first: `_hero`, `_page-hero` and `_subnav` use its new `--z-sticky` property and `@upto-design` breakpoint, and `_subnav.less` does not compile without the breakpoint.
+
+## 2. Template edit
+
+### Edit 1. News article: optional standfirst and previous / next
+
+Static file: `src/sections/news/article-body.html`
+Find in Wagtail: `article__nav`
+
+Three conditions, nothing else in the markup changes:
+
+- The standfirst `h2` renders only when the article has one.
+- The Previous link renders only when there is an older article, and the Next link only when there is a newer one.
+
+In Django terms (use the project's own field and variable names):
+
+```html
+<div class="col-lg-5">
+  {% if standfirst %}
+  <h2 data-anim="split" data-anim-type="chars-soft" data-anim-type-mobile="lines">{{ standfirst }}</h2>
+  {% endif %}
+  <a class="btn btn-primary article__back" href="{news index url}" data-anim="reveal" data-anim-order="1">Back to news</a>
+</div>
+```
+
+```html
+<nav class="article__nav" aria-label="More articles">
+  {% if previous %}
+  <a class="article__nav-link" href="{{ previous.url }}">
+    <span class="arrow-btn arrow-btn--prev" aria-hidden="true"><svg class="icon"><use href="#icon-arrow-right"></use></svg></span>
+    <span class="article__nav-label"><span>Previous</span><span>{{ previous.title }}</span></span>
+  </a>
+  {% endif %}
+  {% if next %}
+  <a class="article__nav-link article__nav-link--next" href="{{ next.url }}">
+    <span class="article__nav-label"><span>Next</span><span>{{ next.title }}</span></span>
+    <span class="arrow-btn arrow-btn--next" aria-hidden="true"><svg class="icon"><use href="#icon-arrow-right"></use></svg></span>
+  </a>
+  {% endif %}
+</nav>
+```
+
+If the Wagtail template already has these conditions, there is nothing to do here; the CSS in `_article.less` keeps a lone Next link on the right.
+
+The quick links need **no** template change: the script and styles find them through the classes the templates already have (`.hero` or `.page-hero`, and `.subnav` inside them).
+
+## 3. Script changes in detail
+
+Only needed for Option B, or if the Wagtail copy of a script was modified. The `.patch` file has every hunk with full context.
+
+| File | What changed | Update |
+| --- | --- | --- |
+| `ui.js` | New `initSubnavTuck()`: finds the `.subnav` inside the page's `.hero` or `.page-hero` (returns if there is none). On scroll and resize, at most once per frame, it toggles `is-tucked` on that `.subnav`: on when the hero's bottom edge is above the strip's bottom edge, off otherwise. It runs at every width; the CSS only acts on the class from 992 to 1639 | 1 |
+| `main.js` | Imports `initSubnavTuck` from `ui.js` and calls it straight after `initStickyHeader()` | 1 |
+
+## 4. Style changes per file
+
+Only needed for Option B. Copy the whole file unless the Wagtail copy has local edits.
+
+| File (under `src/assets/styles/`) | What changed | Update |
+| --- | --- | --- |
+| `01-settings/_tokens.less` | New `--z-sticky: 1020` (between the page's own layers, 3 at most, and the header's 1050) and a new breakpoint `@upto-design: ~"(max-width: 1639.98px)"` | 1 |
+| `02-tools/_mixins.less` | `.subnav-dock()` (the quick-link strip from 992): `position: fixed` instead of `absolute`; while the search overlay locks the page (`.is-scroll-locked`) its `right` is `var(--scrollbar-size, 0)`, so the strip holds still when the scrollbar goes | 1 |
+| `05-components/_hero.less` | `.hero` takes `z-index: var(--z-sticky)` inside its existing `min-width: 992px` block | 1 |
+| `05-components/_page-hero.less` | `.page-hero` takes `z-index: var(--z-sticky)` in its `min-width: 992px` rule | 1 |
+| `05-components/_subnav.less` | New `--subnav-tab: 3.25rem` (52). From 992 to 1639, `.subnav.is-tucked .subnav__link` transitions `transform` over `--duration-slow` on `--ease-out`, is moved `translateX(calc(100% - var(--subnav-tab)))` when not hovered or focused, and `transform: none` when hovered or keyboard-focused | 1 |
+| `05-components/_article.less` | `.article__body figure { margin: var(--space-3) 0; }`; `.article__nav-link--next { grid-column: 2; }` | 2 |
+
+## 5. Things that break if missed
+
+- **The hero's `z-index` is what lifts the strip over the page.** The hero has `isolation: isolate`, so without the new `z-index` the fixed strip is trapped in the hero's layer and later sections scroll over it. Port the `_hero.less` and `_page-hero.less` lines with the mixin change.
+- **The quick links must stay inside the hero section element** (`<section class="hero">` or `<section class="page-hero">`). The script finds them there, and the hero's layer is what carries them. A page whose hero uses another class gets a strip that is fixed but never tucks and stays under later sections. If the Wagtail build has such a page type, stop and report it.
+- **CSS and JS together.** With the CSS alone the strip follows the scroll but never tucks, so between 992 and 1639 it covers the right edge of the copy. With the JS alone nothing changes.
+- **Anything that must sit above the strip** needs a `z-index` above 1020 at the top level of the page. Bootstrap's modals (1055) and the site's header (1050) and search overlay (1080) are already above it. A dropdown or tooltip at Bootstrap's 1000 inside a later section would show under the strip where the two meet.
+- **Cached assets.** If Wagtail serves `main.css` and `main.js` with a long cache and no version in the URL, bump the version, or returning visitors get the new CSS with the old JS (or the reverse) until their cache expires.
+
+## 6. Checks after porting
+
+- [ ] **1280 × 800, an inner page (K-6 Primary):** the strip sits at the top right of the hero as before. Scroll down: once the hero's bottom passes the strip, the three chips slide right and leave three yellow icon tabs at the screen edge, clear of the copy. Hover a tab: its label glides out with no bounce, and glides back when the pointer leaves. Scroll back up to the hero: the full strip returns.
+- [ ] **1280 × 800, the home page:** the same, with the strip level with the top of the hero title.
+- [ ] **1640 × 1000 or wider:** the full strip follows the page all the way down and never tucks; it sits in the margin beside the content column, above every section, photos and colour bands included.
+- [ ] **Keyboard, below 1640:** scroll past the hero and Tab to a tucked tab: its label slides out while it has the focus.
+- [ ] **Search:** open the search from a scrolled page. The overlay covers the strip, and nothing jumps at the right edge as it opens or closes.
+- [ ] **Phone, 375 wide:** the Tour / Enrol / Contact row sits on the hero photo's bottom edge and scrolls away with the page, as before.
+- [ ] **News article:** the newest article shows only Next, on the right; the oldest shows only Previous. An article without a standfirst shows only the Back to news button in the left column. A picture in the body has space above and below it.

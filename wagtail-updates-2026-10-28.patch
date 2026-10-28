@@ -1,0 +1,384 @@
+diff --git a/src/assets/scripts/main.js b/src/assets/scripts/main.js
+index ffb7015..c6b2247 100644
+--- a/src/assets/scripts/main.js
++++ b/src/assets/scripts/main.js
+@@ -3,7 +3,7 @@
+  */
+ import "bootstrap/js/dist/offcanvas";
+ import { Anim } from "./anim.js";
+-import { initApproachAccordion, initCurrentNav, initFolds, initHotspots, initMenu, initPlaceholderLinks, initQuoteCards, initScrollers, initStickyHeader, initTabArrows } from "./ui.js";
++import { initApproachAccordion, initCurrentNav, initFolds, initHotspots, initMenu, initPlaceholderLinks, initQuoteCards, initScrollers, initStickyHeader, initSubnavTuck, initTabArrows } from "./ui.js";
+ import { initSearch } from "./search.js";
+ import { initSliders } from "./slider.js";
+ import { initPan } from "./pan.js";
+@@ -29,6 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
+   initForms();
+   initSearch();
+   initStickyHeader();
++  initSubnavTuck();
+   initMenu();
+   initPageTransition();
+ });
+diff --git a/src/assets/scripts/ui.js b/src/assets/scripts/ui.js
+index eed2759..451181b 100644
+--- a/src/assets/scripts/ui.js
++++ b/src/assets/scripts/ui.js
+@@ -420,3 +420,24 @@ export function initStickyHeader(header = document.querySelector(".site-header")
+   }, { passive: true });
+   update();
+ }
++
++// The fixed quick links tuck to their icons once the hero's bottom edge has risen past them
++export function initSubnavTuck(root = document) {
++  const nav = root.querySelector(":is(.hero, .page-hero) .subnav");
++  if (!nav) return;
++  const hero = nav.closest(".hero, .page-hero");
++  let ticking = false;
++
++  const update = () => {
++    ticking = false;
++    nav.classList.toggle("is-tucked", hero.getBoundingClientRect().bottom < nav.getBoundingClientRect().bottom);
++  };
++  const queue = () => {
++    if (!ticking) requestAnimationFrame(update);
++    ticking = true;
++  };
++
++  window.addEventListener("scroll", queue, { passive: true });
++  window.addEventListener("resize", queue);
++  update();
++}
+diff --git a/src/assets/styles/01-settings/_tokens.less b/src/assets/styles/01-settings/_tokens.less
+index 22c660e..2c39c26 100644
+--- a/src/assets/styles/01-settings/_tokens.less
++++ b/src/assets/styles/01-settings/_tokens.less
+@@ -15,6 +15,8 @@
+ @upto-md: ~"(max-width: 767.98px)";
+ // Below the 1280 container cap, where Figma's 620 columns do not exist yet
+ @upto-xxl: ~"(max-width: 1399.98px)";
++// Below the design width, where the margin beside the 1240 column is narrower than the docked quick links
++@upto-design: ~"(max-width: 1639.98px)";
+ // Compact Figma hit areas only apply to a mouse at desktop widths; touch screens keep 44px targets
+ @fine-lg: ~"(min-width: 992px) and (hover: hover) and (pointer: fine)";
+ @fine-xl: ~"(min-width: 1200px) and (hover: hover) and (pointer: fine)";
+@@ -163,6 +165,7 @@
+   --z-behind: -1;
+   --z-content: 2;
+   --z-raised: 3;
++  --z-sticky: 1020;              /* a hero from lg, so its fixed quick links ride over every section below it */
+   --z-header: 1050;              /* above Bootstrap's offcanvas (1045): the phone bar stays over its menu, open or closing */
+   --z-overlay: 1080;             /* above Bootstrap's offcanvas + backdrop */
+ }
+diff --git a/src/assets/styles/02-tools/_mixins.less b/src/assets/styles/02-tools/_mixins.less
+index 55b242a..89d8012 100644
+--- a/src/assets/styles/02-tools/_mixins.less
++++ b/src/assets/styles/02-tools/_mixins.less
+@@ -87,15 +87,16 @@
+   img { .img-cover(); }
+ }
+ 
+-// Dock the quick-link subnav to the screen edge of a hero (from lg).
++// Dock the quick-link subnav to the screen edge (from lg): fixed, so it stays in view as the page scrolls.
+ .subnav-dock(@top) {
+   @media (min-width: @bp-lg) {
+-    position: absolute;
++    position: fixed;
+     top: @top;
+     right: 0;
+     z-index: var(--z-raised);
+     width: 11.75rem;
+     margin-top: 0;
++    .is-scroll-locked & { right: var(--scrollbar-size, 0); } // the locked page's scrollbar width, so the strip holds still
+   }
+ }
+ 
+diff --git a/src/assets/styles/05-components/_article.less b/src/assets/styles/05-components/_article.less
+index 803b6e4..5713879 100644
+--- a/src/assets/styles/05-components/_article.less
++++ b/src/assets/styles/05-components/_article.less
+@@ -40,6 +40,7 @@
+     max-width: var(--article-body-width);
+     p { margin-bottom: 0.625rem; } // 10
+     p:last-child { margin-bottom: 0; }
++    figure { margin: var(--space-3) 0; }
+   }
+ 
+   // Previous / next article
+@@ -58,6 +59,7 @@
+     gap: 1.1875rem; // 19
+     color: var(--color-text);
+     &--next {
++      grid-column: 2; // stays on the right when the newest article has no previous
+       justify-content: flex-end;
+       gap: 1.375rem; // 22
+       text-align: right;
+diff --git a/src/assets/styles/05-components/_hero.less b/src/assets/styles/05-components/_hero.less
+index b1c9740..fbce4de 100644
+--- a/src/assets/styles/05-components/_hero.less
++++ b/src/assets/styles/05-components/_hero.less
+@@ -26,6 +26,7 @@
+     --hero-media-height: 100%;
+     --hero-title-gap: calc(4.66875 * var(--hero-u)); // 74.7: title 212 + 2 × 102.64 → subtitle at 492
+     min-height: 100svh;
++    z-index: var(--z-sticky);
+     background: var(--color-primary);
+     color: var(--color-white);
+   }
+diff --git a/src/assets/styles/05-components/_page-hero.less b/src/assets/styles/05-components/_page-hero.less
+index af58d33..75573da 100644
+--- a/src/assets/styles/05-components/_page-hero.less
++++ b/src/assets/styles/05-components/_page-hero.less
+@@ -17,7 +17,7 @@
+   background: var(--color-primary);
+   color: var(--color-white);
+ 
+-  @media (min-width: @bp-lg) { --page-hero-pad-bottom: 2.45rem; } // title box ends 39.2 above the edge
++  @media (min-width: @bp-lg) { --page-hero-pad-bottom: 2.45rem; z-index: var(--z-sticky); } // title box ends 39.2 above the edge
+   // Figma hangs the display title 16 left of the content edge (x 184) on every inner page
+   @media (min-width: @bp-xxl) { --page-hero-title-shift: -1rem; }
+ 
+diff --git a/src/assets/styles/05-components/_subnav.less b/src/assets/styles/05-components/_subnav.less
+index 3f56ed1..56bb692 100644
+--- a/src/assets/styles/05-components/_subnav.less
++++ b/src/assets/styles/05-components/_subnav.less
+@@ -2,6 +2,7 @@
+ 
+ .subnav {
+   --subnav-stretch: 1.125rem; // 18
++  --subnav-tab: 3.25rem;      // 52: what a tucked chip leaves in view, the 18 and the icon and 14 more, stopping 2 short of the label
+ 
+   display: flex;
+   gap: var(--space-1);
+@@ -57,5 +58,15 @@
+         transition: transform var(--duration-slow) var(--ease-elastic);
+       }
+     }
++
++    // Past the hero (initSubnavTuck), where the strip would cover the column, only the icons stay in view
++    @media (min-width: @bp-lg) and @upto-design {
++      .subnav.is-tucked & {
++        transition: transform var(--duration-slow) var(--ease-out); // a plain glide both ways: the back-out stretch over the whole label read as a jump
++        &:not(:hover, :focus-visible) { transform: translateX(calc(100% - var(--subnav-tab))); }
++        &:hover,
++        &:focus-visible { transform: none; }
++      }
++    }
+   }
+ }
+diff --git a/src/news-2.html b/src/news-2.html
+index cc01ead..410eeb2 100644
+--- a/src/news-2.html
++++ b/src/news-2.html
+@@ -34,7 +34,19 @@
+     }'></include>
+ 
+     <!-- Article listing -->
+-    <include src="sections/news/article-grid.html" locals='{ "next": "" }'></include>
++    <include src="sections/news/article-grid.html" locals='{
++      "next": "",
++      "articles": [
++      { "title": "Article headline written here", "date": "Date published written here", "url": "news-article.html", "image": "assets/images/news/card.webp", "width": "605", "height": "603", "image_m": "assets/images/news/card-m.webp", "width_m": "750", "height_m": "432" },
++      { "title": "Article headline written here", "date": "Date published written here", "url": "news-article.html", "image": "assets/images/news/card.webp", "width": "605", "height": "603", "image_m": "assets/images/news/card-m.webp", "width_m": "750", "height_m": "432" },
++      { "title": "Article headline written here", "date": "Date published written here", "url": "news-article.html", "image": "assets/images/news/card.webp", "width": "605", "height": "603", "image_m": "assets/images/news/card-m.webp", "width_m": "750", "height_m": "432" },
++      { "title": "Article headline written here", "date": "Date published written here", "url": "news-article.html", "image": "assets/images/news/card.webp", "width": "605", "height": "603", "image_m": "assets/images/news/card-m.webp", "width_m": "750", "height_m": "432" },
++      { "title": "Article headline written here", "date": "Date published written here", "url": "news-article.html", "image": "assets/images/news/card.webp", "width": "605", "height": "603", "image_m": "assets/images/news/card-m.webp", "width_m": "750", "height_m": "432" },
++      { "title": "Article headline written here", "date": "Date published written here", "url": "news-article.html", "image": "assets/images/news/card.webp", "width": "605", "height": "603", "image_m": "assets/images/news/card-m.webp", "width_m": "750", "height_m": "432" },
++      { "title": "Article headline written here", "date": "Date published written here", "url": "news-article.html", "image": "assets/images/news/card.webp", "width": "605", "height": "603", "image_m": "assets/images/news/card-m.webp", "width_m": "750", "height_m": "432" },
++      { "title": "Article headline written here", "date": "Date published written here", "url": "news-article.html", "image": "assets/images/news/card.webp", "width": "605", "height": "603", "image_m": "assets/images/news/card-m.webp", "width_m": "750", "height_m": "432" }
++      ]
++    }'></include>
+   </main>
+ 
+   <include src="partials/footer.html"></include>
+diff --git a/src/news-article.html b/src/news-article.html
+index 5183110..173be93 100644
+--- a/src/news-article.html
++++ b/src/news-article.html
+@@ -20,7 +20,18 @@
+     }'></include>
+ 
+     <!-- Article -->
+-    <include src="sections/news/article-body.html"></include>
++    <include src="sections/news/article-body.html" locals='{
++      "standfirst": "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
++      "image": "assets/images/news/article.webp",
++      "alt": "Two Claremont students in green hats and cardigans standing in the school garden",
++      "width": "1424",
++      "height": "776",
++      "body": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin id est eget est imperdiet consequat. Nam venenatis erat sed viverra tempor. In eu porta magna. Proin vestibulum nisl ut facilisis viverra. Proin non leo ex. Quisque gravida tincidunt auctor. Morbi ac tellus mi. Proin tempus, nunc et ultrices eleifend, augue est sagittis dolor, ac aliquam odio lectus et dolor. Morbi nec eros maximus, volutpat lorem sollicitudin, blandit nulla. Fusce scelerisque erat sem, et eleifend neque posuere ac. Mauris sollicitudin suscipit diam, sit amet gravida ex auctor at. Fusce laoreet eros enim, at rhoncus ante tempor eget. Curabitur lorem orci, consectetur quis orci id, varius mollis elit. Sed dictum nisl et interdum elementum. Sed quis elementum turpis. Duis eu erat odio.</p>\n          <p>In hac habitasse platea dictumst. Phasellus at pretium augue. Vestibulum non neque nec enim ornare elementum rhoncus eget lacus. Sed lacinia lacus ante. Sed ac tempus nisi, vel suscipit sapien. Sed varius ut erat et elementum. Proin tempus diam porta justo placerat, in vehicula ligula sodales. Vivamus vitae tincidunt metus. Aenean at condimentum ante, a varius est. Proin dignissim in arcu id cursus. Etiam quis erat gravida nibh euismod luctus non ac magna. Nullam aliquam massa a lacinia lacinia. Fusce ac pharetra lacus, interdum dapibus elit.</p>\n          <p>Aenean pharetra magna orci, sit amet tempor dui convallis vitae. Morbi malesuada placerat bibendum. Etiam commodo velit sed sem congue efficitur. Cras ac dolor aliquam, finibus nunc sit amet, porta erat. Nunc vel velit id ante consequat cursus. Mauris in porta ex. Nunc finibus urna in sagittis elementum. Vestibulum ac eleifend diam. Aenean nec est vehicula, suscipit mi quis, ornare ex. Sed ex turpis, pellentesque a pharetra molestie, sagittis tristique tellus. Curabitur porta rutrum orci quis imperdiet.</p>\n          <p>Cras imperdiet massa nec nibh ornare, sed dapibus metus sagittis. Donec lacinia eleifend mi ac cursus. Nulla id sapien id nisl sodales fermentum. Suspendisse malesuada mi nec neque luctus, nec aliquet orci mattis. Ut ultrices augue vitae odio iaculis vestibulum. Vestibulum diam nisi, egestas ac dui id, consectetur tempus risus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Pellentesque ut est eu quam facilisis molestie. Cras at lorem id ex accumsan sollicitudin. Duis hendrerit ac tellus id vestibulum. Nullam luctus vulputate pulvinar.</p>\n          <p>Curabitur in convallis arcu, non commodo odio. Phasellus ornare tortor eget elementum ultrices. Proin sollicitudin orci id ex blandit, vitae maximus quam ultricies. Phasellus sollicitudin eget velit quis viverra. Pellentesque maximus lorem in elementum blandit. Nunc sed dui feugiat, viverra turpis ac, ultrices lectus. Curabitur feugiat elit vel lorem efficitur laoreet et sed nisi. Maecenas consequat lorem ac turpis tincidunt, eget aliquam velit pellentesque. Duis ut vehicula est. Sed lobortis efficitur nulla, et semper massa viverra id. Nullam at est nec augue pharetra scelerisque. Vestibulum vehicula orci ac ante iaculis feugiat.</p>",
++      "prev_url": "news-article.html",
++      "prev_title": "Article name here",
++      "next_url": "news-article.html",
++      "next_title": "Article name here"
++    }'></include>
+   </main>
+ 
+   <include src="partials/footer.html"></include>
+diff --git a/src/news.html b/src/news.html
+index aaa3fb4..4b162d2 100644
+--- a/src/news.html
++++ b/src/news.html
+@@ -34,7 +34,19 @@
+     }'></include>
+ 
+     <!-- Article listing -->
+-    <include src="sections/news/article-grid.html" locals='{ "next": "news-2.html" }'></include>
++    <include src="sections/news/article-grid.html" locals='{
++      "next": "news-2.html",
++      "articles": [
++      { "title": "Article headline written here", "date": "Date published written here", "url": "news-article.html", "image": "assets/images/news/card.webp", "width": "605", "height": "603", "image_m": "assets/images/news/card-m.webp", "width_m": "750", "height_m": "432" },
++      { "title": "Article headline written here", "date": "Date published written here", "url": "news-article.html", "image": "assets/images/news/card.webp", "width": "605", "height": "603", "image_m": "assets/images/news/card-m.webp", "width_m": "750", "height_m": "432" },
++      { "title": "Article headline written here", "date": "Date published written here", "url": "news-article.html", "image": "assets/images/news/card.webp", "width": "605", "height": "603", "image_m": "assets/images/news/card-m.webp", "width_m": "750", "height_m": "432" },
++      { "title": "Article headline written here", "date": "Date published written here", "url": "news-article.html", "image": "assets/images/news/card.webp", "width": "605", "height": "603", "image_m": "assets/images/news/card-m.webp", "width_m": "750", "height_m": "432" },
++      { "title": "Article headline written here", "date": "Date published written here", "url": "news-article.html", "image": "assets/images/news/card.webp", "width": "605", "height": "603", "image_m": "assets/images/news/card-m.webp", "width_m": "750", "height_m": "432" },
++      { "title": "Article headline written here", "date": "Date published written here", "url": "news-article.html", "image": "assets/images/news/card.webp", "width": "605", "height": "603", "image_m": "assets/images/news/card-m.webp", "width_m": "750", "height_m": "432" },
++      { "title": "Article headline written here", "date": "Date published written here", "url": "news-article.html", "image": "assets/images/news/card.webp", "width": "605", "height": "603", "image_m": "assets/images/news/card-m.webp", "width_m": "750", "height_m": "432" },
++      { "title": "Article headline written here", "date": "Date published written here", "url": "news-article.html", "image": "assets/images/news/card.webp", "width": "605", "height": "603", "image_m": "assets/images/news/card-m.webp", "width_m": "750", "height_m": "432" }
++      ]
++    }'></include>
+   </main>
+ 
+   <include src="partials/footer.html"></include>
+diff --git a/src/sections/news/article-body.html b/src/sections/news/article-body.html
+index 41a4a30..873aace 100644
+--- a/src/sections/news/article-body.html
++++ b/src/sections/news/article-body.html
+@@ -1,37 +1,40 @@
+ <!-- @wagtail-page: NewsArticlePage
+-     standfirst: CharBlock
++     standfirst: CharBlock (optional: without one the left column is only Back to news)
+      image:      ImageChooserBlock
+      body:       RichTextBlock
+-     previous / next: sibling pages -->
++     previous / next: sibling pages (either may be missing: the newest has no previous, the oldest no next)
++     locals: standfirst, image, alt, width, height, body, prev_url, prev_title, next_url, next_title -->
+ <article class="article">
+   <div class="container">
+     <div class="row g-4 row-split">
+       <div class="col-lg-5">
+-        <h2 data-anim="split" data-anim-type="chars-soft" data-anim-type-mobile="lines">Lorem ipsum dolor sit amet, consectetur adipiscing elit</h2>
++        <if condition="standfirst">
++        <h2 data-anim="split" data-anim-type="chars-soft" data-anim-type-mobile="lines">{{ standfirst }}</h2>
++        </if>
+         <a class="btn btn-primary article__back" href="news.html" data-anim="reveal" data-anim-order="1">Back to news</a>
+       </div>
+       <div class="col-lg-7">
+         <div class="article__main">
+         <figure class="article__media" data-anim="reveal" data-anim-type="fade" data-anim-order="2">
+-          <img src="assets/images/news/article.webp" alt="Two Claremont students in green hats and cardigans standing in the school garden" width="1424" height="776">
++          <img src="{{ image }}" alt="{{ alt }}" width="{{ width }}" height="{{ height }}">
+         </figure>
+         <div class="article__body rich-text" data-anim-group="fade-up">
+-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin id est eget est imperdiet consequat. Nam venenatis erat sed viverra tempor. In eu porta magna. Proin vestibulum nisl ut facilisis viverra. Proin non leo ex. Quisque gravida tincidunt auctor. Morbi ac tellus mi. Proin tempus, nunc et ultrices eleifend, augue est sagittis dolor, ac aliquam odio lectus et dolor. Morbi nec eros maximus, volutpat lorem sollicitudin, blandit nulla. Fusce scelerisque erat sem, et eleifend neque posuere ac. Mauris sollicitudin suscipit diam, sit amet gravida ex auctor at. Fusce laoreet eros enim, at rhoncus ante tempor eget. Curabitur lorem orci, consectetur quis orci id, varius mollis elit. Sed dictum nisl et interdum elementum. Sed quis elementum turpis. Duis eu erat odio.</p>
+-          <p>In hac habitasse platea dictumst. Phasellus at pretium augue. Vestibulum non neque nec enim ornare elementum rhoncus eget lacus. Sed lacinia lacus ante. Sed ac tempus nisi, vel suscipit sapien. Sed varius ut erat et elementum. Proin tempus diam porta justo placerat, in vehicula ligula sodales. Vivamus vitae tincidunt metus. Aenean at condimentum ante, a varius est. Proin dignissim in arcu id cursus. Etiam quis erat gravida nibh euismod luctus non ac magna. Nullam aliquam massa a lacinia lacinia. Fusce ac pharetra lacus, interdum dapibus elit.</p>
+-          <p>Aenean pharetra magna orci, sit amet tempor dui convallis vitae. Morbi malesuada placerat bibendum. Etiam commodo velit sed sem congue efficitur. Cras ac dolor aliquam, finibus nunc sit amet, porta erat. Nunc vel velit id ante consequat cursus. Mauris in porta ex. Nunc finibus urna in sagittis elementum. Vestibulum ac eleifend diam. Aenean nec est vehicula, suscipit mi quis, ornare ex. Sed ex turpis, pellentesque a pharetra molestie, sagittis tristique tellus. Curabitur porta rutrum orci quis imperdiet.</p>
+-          <p>Cras imperdiet massa nec nibh ornare, sed dapibus metus sagittis. Donec lacinia eleifend mi ac cursus. Nulla id sapien id nisl sodales fermentum. Suspendisse malesuada mi nec neque luctus, nec aliquet orci mattis. Ut ultrices augue vitae odio iaculis vestibulum. Vestibulum diam nisi, egestas ac dui id, consectetur tempus risus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Pellentesque ut est eu quam facilisis molestie. Cras at lorem id ex accumsan sollicitudin. Duis hendrerit ac tellus id vestibulum. Nullam luctus vulputate pulvinar.</p>
+-          <p>Curabitur in convallis arcu, non commodo odio. Phasellus ornare tortor eget elementum ultrices. Proin sollicitudin orci id ex blandit, vitae maximus quam ultricies. Phasellus sollicitudin eget velit quis viverra. Pellentesque maximus lorem in elementum blandit. Nunc sed dui feugiat, viverra turpis ac, ultrices lectus. Curabitur feugiat elit vel lorem efficitur laoreet et sed nisi. Maecenas consequat lorem ac turpis tincidunt, eget aliquam velit pellentesque. Duis ut vehicula est. Sed lobortis efficitur nulla, et semper massa viverra id. Nullam at est nec augue pharetra scelerisque. Vestibulum vehicula orci ac ante iaculis feugiat.</p>
++          {{{ body }}}
+         </div>
+ 
+         <nav class="article__nav" aria-label="More articles">
+-          <a class="article__nav-link" href="news-article.html">
++          <if condition="prev_url">
++          <a class="article__nav-link" href="{{ prev_url }}">
+             <span class="arrow-btn arrow-btn--prev" aria-hidden="true"><svg class="icon"><use href="#icon-arrow-right"></use></svg></span>
+-            <span class="article__nav-label"><span>Previous</span><span>Article name here</span></span>
++            <span class="article__nav-label"><span>Previous</span><span>{{ prev_title }}</span></span>
+           </a>
+-          <a class="article__nav-link article__nav-link--next" href="news-article.html">
+-            <span class="article__nav-label"><span>Next</span><span>Article name here</span></span>
++          </if>
++          <if condition="next_url">
++          <a class="article__nav-link article__nav-link--next" href="{{ next_url }}">
++            <span class="article__nav-label"><span>Next</span><span>{{ next_title }}</span></span>
+             <span class="arrow-btn arrow-btn--next" aria-hidden="true"><svg class="icon"><use href="#icon-arrow-right"></use></svg></span>
+           </a>
++          </if>
+         </nav>
+         </div>
+       </div>
+diff --git a/src/sections/news/article-grid.html b/src/sections/news/article-grid.html
+index 3e05846..0621896 100644
+--- a/src/sections/news/article-grid.html
++++ b/src/sections/news/article-grid.html
+@@ -2,69 +2,23 @@
+      articles: query of NewsArticlePage — photo:ImageChooserBlock, title, date
+      next:     the next listing page's URL (Wagtail: ?page=N), or "" on the last page. The arrow loads that page's cards in
+                place (news.js) and points at the page after, or goes once there is none; without the script it opens the page
+-     locals: next
+-     Figma uses one placeholder photo, headline and date for every card. Phones (news M 2149:8421) stack the cards full-bleed
+-     with a 375 x 216 landscape crop of their own (card-m.webp), the caption padded 30 / 20 and the pager right under the last card;
+-     each caption reveals on its own there as it comes into view, under the photo that came in before it. -->
++     locals: articles [{ title, date, url, image, width, height, image_m, width_m, height_m }], next
++     Figma uses one placeholder photo, headline and date for every card, and the cutup keeps them until the client's articles
++     arrive. Phones (news M 2149:8421) stack the cards full-bleed with a 375 x 216 landscape crop of their own (image_m), the
++     caption padded 30 / 20 and the pager right under the last card; each caption reveals on its own there as it comes into
++     view, under the photo that came in before it. -->
+ <section class="article-grid" aria-label="Latest news">
+   <div class="container">
+     <ul class="article-grid__grid" data-anim-group="fade-up">
+-      <li><a class="article-grid__card" href="news-article.html">
+-        <div class="article-grid__media"><picture><source media="(min-width: 768px)" srcset="assets/images/news/card.webp" width="605" height="603"><img src="assets/images/news/card-m.webp" alt="" width="750" height="432" loading="lazy" decoding="async"></picture></div>
++      <each loop="article in articles">
++      <li><a class="article-grid__card" href="{{ article.url }}">
++        <div class="article-grid__media"><picture><source media="(min-width: 768px)" srcset="{{ article.image }}" width="{{ article.width }}" height="{{ article.height }}"><img src="{{ article.image_m }}" alt="" width="{{ article.width_m }}" height="{{ article.height_m }}" loading="lazy" decoding="async"></picture></div>
+         <div class="article-grid__copy" data-anim="reveal" data-anim-type="fade-up" data-anim-media="(max-width: 767.98px)">
+-          <h3>Article headline written here</h3>
+-          <div class="article-grid__meta"><span>Date published written here</span><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></div>
+-        </div>
+-      </a></li>
+-      <li><a class="article-grid__card" href="news-article.html">
+-        <div class="article-grid__media"><picture><source media="(min-width: 768px)" srcset="assets/images/news/card.webp" width="605" height="603"><img src="assets/images/news/card-m.webp" alt="" width="750" height="432" loading="lazy" decoding="async"></picture></div>
+-        <div class="article-grid__copy" data-anim="reveal" data-anim-type="fade-up" data-anim-media="(max-width: 767.98px)">
+-          <h3>Article headline written here</h3>
+-          <div class="article-grid__meta"><span>Date published written here</span><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></div>
+-        </div>
+-      </a></li>
+-      <li><a class="article-grid__card" href="news-article.html">
+-        <div class="article-grid__media"><picture><source media="(min-width: 768px)" srcset="assets/images/news/card.webp" width="605" height="603"><img src="assets/images/news/card-m.webp" alt="" width="750" height="432" loading="lazy" decoding="async"></picture></div>
+-        <div class="article-grid__copy" data-anim="reveal" data-anim-type="fade-up" data-anim-media="(max-width: 767.98px)">
+-          <h3>Article headline written here</h3>
+-          <div class="article-grid__meta"><span>Date published written here</span><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></div>
+-        </div>
+-      </a></li>
+-      <li><a class="article-grid__card" href="news-article.html">
+-        <div class="article-grid__media"><picture><source media="(min-width: 768px)" srcset="assets/images/news/card.webp" width="605" height="603"><img src="assets/images/news/card-m.webp" alt="" width="750" height="432" loading="lazy" decoding="async"></picture></div>
+-        <div class="article-grid__copy" data-anim="reveal" data-anim-type="fade-up" data-anim-media="(max-width: 767.98px)">
+-          <h3>Article headline written here</h3>
+-          <div class="article-grid__meta"><span>Date published written here</span><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></div>
+-        </div>
+-      </a></li>
+-      <li><a class="article-grid__card" href="news-article.html">
+-        <div class="article-grid__media"><picture><source media="(min-width: 768px)" srcset="assets/images/news/card.webp" width="605" height="603"><img src="assets/images/news/card-m.webp" alt="" width="750" height="432" loading="lazy" decoding="async"></picture></div>
+-        <div class="article-grid__copy" data-anim="reveal" data-anim-type="fade-up" data-anim-media="(max-width: 767.98px)">
+-          <h3>Article headline written here</h3>
+-          <div class="article-grid__meta"><span>Date published written here</span><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></div>
+-        </div>
+-      </a></li>
+-      <li><a class="article-grid__card" href="news-article.html">
+-        <div class="article-grid__media"><picture><source media="(min-width: 768px)" srcset="assets/images/news/card.webp" width="605" height="603"><img src="assets/images/news/card-m.webp" alt="" width="750" height="432" loading="lazy" decoding="async"></picture></div>
+-        <div class="article-grid__copy" data-anim="reveal" data-anim-type="fade-up" data-anim-media="(max-width: 767.98px)">
+-          <h3>Article headline written here</h3>
+-          <div class="article-grid__meta"><span>Date published written here</span><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></div>
+-        </div>
+-      </a></li>
+-      <li><a class="article-grid__card" href="news-article.html">
+-        <div class="article-grid__media"><picture><source media="(min-width: 768px)" srcset="assets/images/news/card.webp" width="605" height="603"><img src="assets/images/news/card-m.webp" alt="" width="750" height="432" loading="lazy" decoding="async"></picture></div>
+-        <div class="article-grid__copy" data-anim="reveal" data-anim-type="fade-up" data-anim-media="(max-width: 767.98px)">
+-          <h3>Article headline written here</h3>
+-          <div class="article-grid__meta"><span>Date published written here</span><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></div>
+-        </div>
+-      </a></li>
+-      <li><a class="article-grid__card" href="news-article.html">
+-        <div class="article-grid__media"><picture><source media="(min-width: 768px)" srcset="assets/images/news/card.webp" width="605" height="603"><img src="assets/images/news/card-m.webp" alt="" width="750" height="432" loading="lazy" decoding="async"></picture></div>
+-        <div class="article-grid__copy" data-anim="reveal" data-anim-type="fade-up" data-anim-media="(max-width: 767.98px)">
+-          <h3>Article headline written here</h3>
+-          <div class="article-grid__meta"><span>Date published written here</span><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></div>
++          <h3>{{ article.title }}</h3>
++          <div class="article-grid__meta"><span>{{ article.date }}</span><svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></div>
+         </div>
+       </a></li>
++      </each>
+     </ul>
+ 
+     <if condition="next">
