@@ -1,10 +1,11 @@
 <!-- @wagtail-block: cta_links
      title: RichTextBlock (may carry a line break)
-     items: ListBlock(StructBlock(label:CharBlock, body:RichTextBlock))
+     items: ListBlock(StructBlock(label:CharBlock, body:RichTextBlock, url:URLBlock — optional))
      cta:   StructBlock(text:CharBlock, url:URLBlock) — optional
      The rows are Figma's "Drop down" component, the fold (_fold.less, initFolds): every row shut at rest, a click opens one.
+     A row with a url is a plain link to it instead, with no copy (the home rows, 2026-10-28).
      Home 1619:7085, enrolment 1801:5705 / 2149:7929, policies strategy band.
-     locals: id, title, modifier (or empty), items [{ id, label, body }], cta_text and cta_url (empty for no button) -->
+     locals: id, title, modifier (or empty), items [{ id, label, body } or { label, url }], cta_text and cta_url (empty for no button) -->
 <section class="cta-links{{ modifier ? ' ' + modifier : '' }}" aria-labelledby="{{ id }}">
   <div class="container">
     <div class="row g-4 row-split">
@@ -16,10 +17,15 @@
         <ul class="fold" data-fold>
           <each loop="item in items">
           <li class="fold__item" data-anim="reveal" data-anim-type="fade">
+            <if condition="item.url">
+            <a class="fold__row" href="{{ item.url }}">{{ item.label }}<svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></a>
+            </if>
+            <else>
             <button class="fold__row" type="button" aria-expanded="false" aria-controls="{{ item.id }}">{{ item.label }}<svg class="icon" aria-hidden="true"><use href="#icon-arrow-diagonal"></use></svg></button>
             <div class="fold__panel" id="{{ item.id }}">
               <div class="fold__body">{{{ item.body }}}</div>
             </div>
+            </else>
           </li>
           </each>
         </ul>
